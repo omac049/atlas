@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Atlas — Mispricing Command</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/dashboard.css" />
+    <link rel="stylesheet" href="/dashboard-research.css?v=20260810-provenance" />
+    <link rel="stylesheet" href="/dashboard-agent.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand"><span class="brand-mark">A</span><div><strong>ATLAS</strong><small>cross-market intelligence</small></div></div>
+        <div class="top-status"><span class="pulse"></span><span id="connection">CONNECTING</span><span class="divider"></span><span id="updated">—</span></div>
+      </header>
+
+      <section class="intro">
+        <div><p class="eyebrow">PAPER TRADING / V0.1</p><h1>Mispricing command surface</h1><p class="subhead">Relationships proposed by AI. Reality checked by rules. Edge measured against executable depth.</p></div>
+        <div class="safety"><span>●</span> LIVE ORDERS DISABLED</div>
+      </section>
+
+      <section class="evidence-banner"><div><span class="section-label">EVIDENCE MODE</span><strong id="evidence-mode">—</strong></div><p id="evidence-detail">Loading current live-discovery state.</p></section>
+
+      <section class="agent-panel"><div class="agent-head"><div><span id="agent-label" class="section-label">AGENT RESEARCH LOOP / PAPER ONLY</span><h2 id="agent-status">Waiting for agent trace</h2><p id="agent-detail">Atlas will choose the next research action from the observed catalog state.</p></div><div class="agent-metric"><span>OPPORTUNITIES</span><strong id="agent-opportunities">—</strong></div></div><div id="agent-steps" class="agent-steps"><div class="empty">No agent steps recorded.</div></div></section>
+
+      <section class="shadow-panel"><div><span class="section-label">LIVE SHADOW TEST / NEVER EXECUTED</span><h2 id="shadow-title">Waiting for a safe observation candidate</h2><p id="shadow-detail">Atlas may observe blocked pairs to test market-data plumbing without treating them as arbitrage.</p></div><div class="shadow-metrics"><div><span>COMBINED COST</span><strong id="shadow-cost">—</strong></div><div><span>RAW EDGE</span><strong id="shadow-edge">—</strong></div><div><span>RULE STATUS</span><strong id="shadow-status">BLOCKED</strong></div><div><span>OBSERVATIONS</span><strong id="shadow-observations">0</strong></div><div><span>UNIQUE PAIRS</span><strong id="shadow-pairs">0</strong></div><div><span>POSITIVE RATE</span><strong id="shadow-positive">0%</strong></div></div><div id="shadow-blockers" class="shadow-blockers">No observation yet.</div></section>
+
+      <section class="settlement-panel"><div class="settlement-head"><div><span class="section-label">GUARANTEED-SETTLEMENT DISCOVERY</span><h2 id="settlement-status">Ranking shared events</h2><p id="settlement-detail">Contracts with discretionary or unknown settlement cannot enter the executable queue.</p></div><div class="settlement-metrics"><div><span>SHARED EVENTS</span><strong id="settlement-shared">—</strong></div><div><span>GUARANTEED</span><strong id="settlement-guaranteed">—</strong></div><div><span>EVIDENCE COMPLETE</span><strong id="settlement-evidence-complete">—</strong></div><div><span>EXECUTION READY</span><strong id="settlement-ready">—</strong></div><div><span>SAFE CONTRACTS K / P</span><strong id="settlement-contracts">—</strong></div></div></div><div id="settlement-rankings" class="settlement-rankings"><div class="empty">No settlement ranking recorded yet.</div></div></section>
+
+      <section class="normalization-panel"><div class="normalization-head"><div><span class="section-label">DETERMINISTIC NORMALIZATION / FOUR MARKET FAMILIES</span><h2 id="normalization-status">Measuring rule coverage</h2><p id="normalization-detail">Economic, weather, election, and crypto contracts are compared on explicit rule fields—not title similarity.</p><p id="normalization-audit" class="normalization-audit">Waiting for the full-detail weather rule audit.</p><p id="shared-rule-audit" class="normalization-audit">Waiting for bounded cross-family rule enrichment.</p><p id="identity-audit" class="normalization-audit">Waiting for the structured identity audit.</p></div><div class="normalization-totals"><div><span>NORMALIZED</span><strong id="normalization-total">—</strong></div><div><span>SHARED EVENTS</span><strong id="normalization-shared">—</strong></div><div><span>GUARANTEED</span><strong id="normalization-guaranteed">—</strong></div><div><span>EXACT RULE MATCHES</span><strong id="normalization-exact">—</strong></div></div></div><div class="normalization-table"><div class="normalization-table-head"><span>FAMILY</span><span>CONTRACTS K / P</span><span>NORMALIZED K / P</span><span>SHARED</span><span>SAFE</span><span>EXACT</span><span>STATE / BLOCKERS</span></div><div id="normalization-families"><div class="empty">No family coverage recorded yet.</div></div></div></section>
+
+      <section class="cohort-panel" aria-labelledby="cohort-status">
+        <div class="cohort-head">
+          <div>
+            <span class="section-label">FIRST VALIDATION COHORT / PAPER ONLY</span>
+            <h2 id="cohort-status">Waiting for the first shared event</h2>
+            <p id="cohort-detail">Atlas must clear deterministic rules before a case can be followed through settlement.</p>
+          </div>
+          <div class="cohort-safety"><span></span> LIVE ORDERS DISABLED</div>
+        </div>
+        <div class="cohort-path" aria-label="Validation cohort progress">
+          <div class="cohort-step" data-cohort-step="shared"><span>STRUCTURED SHARED EVENTS</span><strong id="cohort-shared">—</strong><small>same event identity</small></div>
+          <div class="cohort-step" data-cohort-step="ready"><span>GUARANTEED / READY</span><strong id="cohort-ready">— / —</strong><small>rules cleared</small></div>
+          <div class="cohort-step" data-cohort-step="blockers"><span>UNRESOLVED BLOCKERS</span><strong id="cohort-blocker-count">—</strong><small>must reach zero</small></div>
+          <div class="cohort-step" data-cohort-step="awaiting"><span>AWAITING SETTLEMENT</span><strong id="cohort-awaiting">—</strong><small>both venues pending</small></div>
+          <div class="cohort-step" data-cohort-step="resolved"><span>RESOLVED CASES</span><strong id="cohort-resolved">—</strong><small>outcomes compared</small></div>
+          <div class="cohort-step" data-cohort-step="labels"><span>TRUSTED LABELS</span><strong id="cohort-labels">—</strong><small id="cohort-label-target">target: 50</small></div>
+        </div>
+        <div class="cohort-gate">
+          <div><span class="section-label">NEXT GATE</span><strong id="cohort-next-gate">Complete a deterministic rule match</strong></div>
+          <p id="cohort-blockers">Waiting for settlement evidence.</p>
+        </div>
+      </section>
+
+      <section class="validation-panel"><div><span class="section-label">AUTOMATED VALIDATION / SETTLEMENT LABELS ONLY</span><h2 id="validation-status">Preparing evidence ledger</h2><p id="validation-detail">Atlas versions market rules and waits for both venues to settle before creating a trusted learning label.</p><p id="validation-backfill" class="validation-backfill">Historical backfill has not run yet.</p><p id="validation-provenance" class="validation-provenance">HISTORICAL PROVENANCE · waiting for the first verified run</p><div class="validation-signal"><span>LEARNING READINESS</span><strong id="validation-readiness">BLOCKED</strong><small id="validation-readiness-detail">Waiting for settlement-verified labels and both outcome classes.</small></div><p id="validation-safety" class="validation-safety">PAPER ONLY / NEVER EXECUTED · SETTLEMENT-VERIFIED LABELS ONLY</p></div><div class="validation-metrics"><div><span>MARKETS TRACKED</span><strong id="validation-markets">—</strong></div><div><span>EVIDENCE VERSIONS</span><strong id="validation-versions">—</strong></div><div><span>RULE CHANGES</span><strong id="validation-changes">—</strong></div><div><span>AWAITING SETTLEMENT</span><strong id="validation-awaiting">—</strong></div><div><span>RESOLVED CASES</span><strong id="validation-resolved">—</strong></div><div><span>SETTLEMENT COVERAGE</span><strong id="validation-coverage">—</strong></div><div><span>CONFIRMATION PRECISION</span><strong id="validation-precision">—</strong></div><div><span>INCONCLUSIVE RATE</span><strong id="validation-inconclusive">—</strong></div><div><span>TRUSTED LABELS</span><strong id="validation-labels">—</strong></div><div><span>LABEL MIX A / R</span><strong id="validation-label-mix">— / —</strong></div><div><span>PM SOURCES FINAL / CLOSED</span><strong id="backfill-polymarket">— / —</strong></div><div><span>HISTORICAL CANDIDATE EVENTS</span><strong id="backfill-shared">—</strong></div><div><span>MIN LABEL COUNT GAP</span><strong id="backfill-remaining">50</strong></div><div><span>PROVENANCE STATE</span><strong id="validation-provenance-state">NO VERIFIED RUN</strong></div></div></section>
+
+      <section class="election-panel"><div class="election-head"><div><span class="section-label">NON-SPORTS DISCOVERY / 2026 CHAMBER CONTROL</span><h2 id="election-status">Checking live catalogs</h2><p id="election-detail">Atlas is looking for the same deterministically settled election contract on both venues.</p></div><div class="election-metrics"><div><span>KALSHI</span><strong id="election-kalshi">—</strong></div><div><span>POLYMARKET US</span><strong id="election-polymarket">—</strong></div><div><span>SHARED EVENTS</span><strong id="election-shared">—</strong></div><div><span>RULE-COMPLETE</span><strong id="election-deterministic">—</strong></div></div></div><div id="election-candidates" class="election-candidates"><div class="empty">No election catalog evidence recorded yet.</div></div></section>
+
+      <p id="milestone-alert" class="validation-alert">NO MILESTONE TRANSITION YET</p>
+
+      <section class="workspace">
+        <div class="workspace-head"><div><p class="eyebrow">LIVE OPPORTUNITIES</p><h2>Approved equivalents</h2></div><button id="refresh">Refresh <span>↻</span></button></div>
+        <div id="opportunity" class="opportunity"><div class="skeleton"></div></div>
+      </section>
+
+      <section class="lower-grid">
+        <div class="section-block"><div class="section-label">SYSTEM STATE</div><div class="state-row"><span class="state-dot"></span><div><strong id="system-status">Paper pipeline ready</strong><small>Deterministic verification active</small></div></div><div class="state-row muted"><span class="mini-line"></span><div><strong>Market feeds</strong><small id="venues">Fixture / Fixture</small></div></div></div>
+        <div class="section-block"><div class="section-label">TRUST GATES</div><div class="gate-row"><span>RULE CHECK</span><strong id="rule-check">—</strong></div><div class="gate-row"><span>PAIR STATUS</span><strong id="pair-status">—</strong></div><div class="gate-row"><span>PAIR SOURCE</span><strong id="pair-source">—</strong></div><div class="gate-row"><span>PAPER TRADES</span><strong id="paper-trades">—</strong></div><div class="gate-row"><span>DISCOVERY</span><strong id="discovery-status">—</strong></div><div class="gate-row"><span>CATALOG FIT</span><strong id="catalog-fit">—</strong></div><div class="gate-row"><span>LEARNING</span><strong id="learning-status">—</strong></div></div>
+        <div class="section-block interpretation"><div class="section-label">OPERATOR NOTE</div><p id="operator-note">A positive displayed edge is not a trade. Confirm freshness, depth, and contract rules before treating it as evidence.</p></div>
+      </section>
+
+      <section class="research-strip"><div><div class="section-label">CONCEPT VALIDATION / FIXTURE RESEARCH</div><h2>Does the edge survive contact with execution?</h2></div><div class="research-metrics"><div><span>DETECTED</span><strong id="detected">—</strong></div><div><span>EXECUTABLE</span><strong id="executable">—</strong></div><div><span>PHANTOM RATE</span><strong id="phantom">—</strong></div><div><span>FAILED HEDGE LOSS</span><strong id="failed-loss">—</strong></div><div><span>MEDIAN LIFETIME</span><strong id="lifetime">—</strong></div></div></section>
+
+      <section class="candidate-section"><div class="section-label">CONTRACT REVIEW / DETERMINISTIC REJECTION REASONS</div><div id="candidates" class="candidates"><div class="empty">No candidate proposals recorded.</div></div></section>
+
+      <footer><span>ATLAS / research instrument</span><span>no execution module installed</span></footer>
+    </main>
+    <script src="/dashboard.js?v=20260810-metrics"></script>
+  </body>
+</html>

@@ -1,0 +1,115 @@
+from enum import StrEnum
+
+from atlas.fingerprints import build_fingerprint, has_explicit_binary_fallback
+from atlas.models import ContractFingerprint, Market
+from atlas.policy_evidence import parse_market_policy_evidence
+
+
+class GuaranteeStatus(StrEnum):
+    GUARANTEED = "GUARANTEED"
+    NON_GUARANTEED = "NON_GUARANTEED"
+    UNKNOWN = "UNKNOWN"
+
+
+def assess_settlement_guarantee(
+    market: Market, fingerprint: ContractFingerprint | None = None
+) -> dict[str, object]:
+    """Classify whether a contract has deterministic rather than discretionary settlement."""
+    fingerprint = fingerprint or build_fingerprint(market)
+    text = f"{market.raw_rules_text} {market.description or ''}".lower()
+
+    if any(
+        marker in text
+        for marker in (
+            "fair market price",
+            "last fair market price",
+            "fair price",
+            "sole discretion of the exchange",
+        )
+    ) or (fingerprint.settlement_policy and "fair_price" in fingerprint.settlement_policy):
+        return {
+            "status": GuaranteeStatus.NON_GUARANTEED.value,
+            "reason_codes": ["DISCRETIONARY_FAIR_PRICE_SETTLEMENT"],
+        }
+
+    if _complete_chamber_control_policy(fingerprint):
+        return {
+            "status": GuaranteeStatus.GUARANTEED.value,
+            "reason_codes": ["COMPLETE_CHAMBER_CONTROL_TIEBREAK_POLICY"],
+        }
+
+    if _complete_cpi_release_policy(fingerprint):
+        return {
+            "status": GuaranteeStatus.GUARANTEED.value,
+            "reason_codes": ["COMPLETE_CPI_RELEASE_AND_MISSING_DATA_POLICY"],
+        }
+
+    if fingerprint.market_type == "weather":
+        evidence = parse_market_policy_evidence(market)
+        if evidence.complete:
+            return {
+                "status": GuaranteeStatus.GUARANTEED.value,
+                "reason_codes": ["COMPLETE_WEATHER_SETTLEMENT_POLICY"],
+                "policy_evidence": evidence.model_dump(mode="json"),
+            }
+        return {
+            "status": GuaranteeStatus.UNKNOWN.value,
+            "reason_codes": evidence.blockers,
+            "policy_evidence": evidence.model_dump(mode="json"),
+        }
+
+    if fingerprint.settlement_policy and "cancel=half" in fingerprint.settlement_policy:
+        return {
+            "status": GuaranteeStatus.GUARANTEED.value,
+            "reason_codes": ["EXPLICIT_HALF_PAYOUT_EXCEPTION_POLICY"],
+        }
+
+    if has_explicit_binary_fallback(text):
+        return {
+            "status": GuaranteeStatus.GUARANTEED.value,
+            "reason_codes": ["EXPLICIT_YES_NO_FALLBACK"],
+        }
+
+    reasons = ["NO_EXPLICIT_EXCEPTION_FALLBACK"]
+    if fingerprint.resolution_source in {"", "unknown"}:
+        reasons.append("MISSING_RESOLUTION_SOURCE")
+    if not fingerprint.settlement_policy:
+        reasons.append("UNPARSED_SETTLEMENT_POLICY")
+    return {"status": GuaranteeStatus.UNKNOWN.value, "reason_codes": reasons}
+
+
+def _complete_chamber_control_policy(fingerprint: ContractFingerprint) -> bool:
+    if fingerprint.event_action != "party_control" or not fingerprint.settlement_policy:
+        return False
+    policies = set(fingerprint.settlement_policy.split("|"))
+    if fingerprint.contract_scope == "us_house_control":
+        return {
+            "control=majority_voting_seats",
+            "tie=first_elected_speaker_party",
+        } <= policies
+    if fingerprint.contract_scope == "us_senate_control":
+        return {
+            "control=majority_voting_seats",
+            "tie=half_seats_plus_vp",
+            "ambiguous=first_president_pro_tempore_party",
+        } <= policies
+    return False
+
+
+def _complete_cpi_release_policy(fingerprint: ContractFingerprint) -> bool:
+    if (
+        fingerprint.market_type != "economic"
+        or fingerprint.contract_scope != "cpi_yoy_not_seasonally_adjusted"
+        or fingerprint.resolution_source != "us_bls_cpi"
+        or fingerprint.threshold is None
+        or fingerprint.threshold_operator is None
+        or fingerprint.threshold_unit != "percent"
+        or not fingerprint.measurement_period
+        or not fingerprint.settlement_policy
+    ):
+        return False
+    policies = set(fingerprint.settlement_policy.split("|"))
+    return {
+        "revision=first_official_release",
+        "missing=first_within_3m_else_previous_month",
+    } <= policies

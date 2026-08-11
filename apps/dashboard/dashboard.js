@@ -1,0 +1,312 @@
+const $ = (id) => document.getElementById(id);
+const money = (value, digits = 2) => `$${Number(value).toFixed(digits)}`;
+const pct = (value) => `${(Number(value) * 100).toFixed(1)}%`;
+const rate = (numerator, denominator) => denominator > 0 ? pct(Number(numerator) / Number(denominator)) : '—';
+const safe = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+function terms(value = {}) { const strike = `${value.threshold_operator || ''}${value.threshold || '—'} ${value.threshold_unit || ''}`.trim(); return `${strike} · ${value.market_type || 'unknown'} · ${value.measurement_period || 'no period'}`; }
+function age(iso) { const seconds = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000); return seconds < 2 ? 'just now' : `${Math.round(seconds)}s ago`; }
+function settlementTime(iso) { if (!iso) return 'not published'; const date = new Date(iso); return Number.isNaN(date.getTime()) ? 'not published' : `${date.toISOString().replace('T', ' ').slice(0, 16)}Z`; }
+function render(data) {
+  $('connection').textContent = 'CONNECTED'; $('updated').textContent = `UPDATED ${age(data.last_updated).toUpperCase()}`;
+  const evidence = data.evidence || {};
+  const livePairs = Number(evidence.live_pair_count || 0);
+  $('evidence-mode').textContent = livePairs > 0 ? 'LIVE PAIR VALIDATED / PAPER ONLY' : 'NO LIVE PAIR VALIDATED';
+  $('evidence-detail').textContent = livePairs > 0 ? `${livePairs} deterministic live pair(s) are eligible for paper monitoring.` : 'The displayed opportunity is fixture research; live catalogs currently have no deterministic equivalent pair.';
+  const agent = data.agent || {};
+  const demoAgent = Boolean(evidence.demo_opportunity);
+  $('agent-label').textContent = demoAgent ? 'FIXTURE AGENT TRACE / PAPER ONLY' : 'LIVE AGENT RESEARCH LOOP / PAPER ONLY';
+  $('agent-status').textContent = `${String(agent.status || 'unknown').toUpperCase()} / ${agent.steps?.length || 0} STEPS`;
+  $('agent-detail').textContent = agent.state?.catalog ? `${demoAgent ? 'Fixture trace' : 'Live trace'} reviewed ${agent.state.proposal_count || 0} candidate(s) via ${String(agent.state.proposal_source || 'unknown').replaceAll('_', ' ')},${agent.state.proposal_error ? ` with safe fallback (${agent.state.proposal_error})` : ''} and stayed within the paper-only policy.` : 'Agent trace unavailable.';
+  $('agent-opportunities').textContent = demoAgent ? `0 LIVE / ${agent.opportunities?.length || 0} DEMO` : agent.opportunities?.length || 0;
+  $('agent-steps').innerHTML = (agent.steps || []).length ? agent.steps.map((step, index) => `<div class="agent-step"><b>${index + 1}</b><div><strong>${safe(step.action.replaceAll('_', ' ').toUpperCase())}</strong><span>${safe(step.reason)}</span></div></div>`).join('') : '<div class="empty">No agent steps recorded.</div>';
+  const shadow = data.shadow_observation;
+  const shadowValidation = data.shadow_validation || {};
+  $('shadow-observations').textContent = shadowValidation.observation_count || 0;
+  $('shadow-pairs').textContent = shadowValidation.unique_pairs || 0;
+  $('shadow-positive').textContent = pct(shadowValidation.positive_edge_rate || 0);
+  if (shadow) {
+    const quote = shadow.best_direction || {};
+    $('shadow-title').textContent = `${shadow.kalshi_title} ↔ ${shadow.polymarket_title}`;
+    $('shadow-detail').textContent = `${quote.kalshi_side || '—'} + ${quote.polymarket_side || '—'} · ${quote.contracts || '0'} contracts · observation only`;
+    $('shadow-cost').textContent = money(quote.gross_cost || 0);
+    $('shadow-edge').textContent = money(quote.raw_edge_if_complementary || 0);
+    $('shadow-status').textContent = shadow.rule_status || 'BLOCKED';
+    $('shadow-blockers').textContent = (shadow.blockers || []).map((code) => code.replace('_MISMATCH', '').replaceAll('_', ' ')).join(' · ');
+  }
+  $('venues').textContent = `${data.venues.kalshi.toUpperCase()} / ${data.venues.polymarket_us.toUpperCase()}`;
+  $('detected').textContent = data.research.detected_opportunities;
+  $('executable').textContent = data.research.executable_opportunities;
+  $('phantom').textContent = pct(data.research.phantom_rate);
+  $('failed-loss').textContent = money(data.research.failed_hedge_losses);
+  $('lifetime').textContent = `${data.research.median_lifetime_ms}ms`;
+  $('rule-check').textContent = data.opportunity?.rule_check || '—'; $('pair-status').textContent = data.pair.status;
+  $('pair-source').textContent = data.pair.source.toUpperCase();
+  $('paper-trades').textContent = data.paper_trades.count;
+  const scan = data.discovery_scan;
+  $('discovery-status').textContent = scan ? `${scan.polymarket_active} ACTIVE / ${scan.approved} CANDIDATE` : '—';
+  const training = data.training_readiness || {};
+  $('learning-status').textContent = training.ready ? `${training.labels} LABELS / READY` : `${training.labels || 0}/50 LABELS / BLOCKED`;
+  const catalog = data.catalog_compatibility;
+  $('catalog-fit').textContent = catalog ? (catalog.event_compatible ? `EXACT: ${catalog.compatible_families.join(', ').toUpperCase()}` : catalog.shared_event_count ? `EVENTS OVERLAP: ${catalog.shared_event_count}` : `FAMILY ONLY: ${catalog.compatible_families.join(', ').toUpperCase() || 'NONE'}`) : '—';
+  const settlement = catalog?.settlement_discovery || {};
+  const safeShared = Number(settlement.guaranteed_shared_events || 0);
+  const executionReady = Number(settlement.execution_ready_events || 0);
+  $('settlement-status').textContent = executionReady > 0 ? 'EXECUTION REVIEW AVAILABLE' : safeShared > 0 ? 'GUARANTEED EVENTS NEED RULE ALIGNMENT' : 'NO GUARANTEED SHARED EVENT';
+  $('settlement-detail').textContent = executionReady > 0
+    ? 'Settlement-ready pairs are ranked by the later venue deadline so the earliest fully reconcilable pair stays first.'
+    : safeShared > 0
+      ? 'Both venues have deterministic settlement, but contract terms still differ.'
+      : 'Shared events are currently discretionary or insufficiently specified; none can become a paper trade.';
+  $('settlement-shared').textContent = settlement.shared_events_ranked ?? '—';
+  $('settlement-guaranteed').textContent = safeShared;
+  $('settlement-evidence-complete').textContent = settlement.evidence_complete_shared_events ?? '—';
+  $('settlement-ready').textContent = executionReady;
+  $('settlement-contracts').textContent = `${settlement.kalshi_counts?.GUARANTEED || 0} / ${settlement.polymarket_counts?.GUARANTEED || 0}`;
+  const normalization = catalog?.normalization_coverage || {};
+  const normalizedTotal = Number(normalization.normalized_contracts || 0);
+  const normalizedShared = Number(normalization.shared_events || 0);
+  const normalizedGuaranteed = Number(normalization.guaranteed_shared_events || 0);
+  const normalizedExact = Number(normalization.exact_rule_matches || 0);
+  $('normalization-status').textContent = normalizedExact > 0 ? 'EXACT CROSS-VENUE RULE MATCH FOUND' : normalizedGuaranteed > 0 ? 'SAFE EVENTS NEED TERM ALIGNMENT' : normalizedShared > 0 ? 'SHARED EVENTS NEED SETTLEMENT EVIDENCE' : `${normalizedTotal} CONTRACTS NORMALIZED`;
+  $('normalization-detail').textContent = normalizedExact > 0
+    ? 'At least one family has identical event, threshold, source, timing, revision, and settlement terms on both venues.'
+    : normalizedShared > 0
+      ? 'Atlas found the same underlying events, but no family has cleared every deterministic rule gate yet.'
+      : 'Normalization is active. Atlas is waiting for the same rule-complete event to appear on both venues.';
+  $('normalization-total').textContent = normalizedTotal;
+  $('normalization-shared').textContent = normalizedShared;
+  $('normalization-guaranteed').textContent = normalizedGuaranteed;
+  $('normalization-exact').textContent = normalizedExact;
+  const weatherAudit = catalog?.weather_rule_enrichment || {};
+  const weatherRefreshed = Number(weatherAudit.pairs_refreshed || 0);
+  const weatherUnresolved = Number(weatherAudit.unresolved_pairs || 0);
+  $('normalization-audit').textContent = weatherRefreshed > 0
+    ? `FULL-DETAIL WEATHER AUDIT · ${weatherRefreshed} shared pair(s) refreshed · ${weatherUnresolved} unresolved · ${Number(weatherAudit.new_evidence_versions || 0)} new rule version(s)`
+    : 'FULL-DETAIL WEATHER AUDIT · waiting for the next live scan';
+  const sharedRuleAudit = catalog?.shared_rule_enrichment || {};
+  $('shared-rule-audit').textContent = Number(sharedRuleAudit.shared_events_considered || 0) > 0
+    ? `BOUNDED CROSS-FAMILY AUDIT · ${Number(sharedRuleAudit.pairs_refreshed || 0)} pair(s) refreshed · ${Number(sharedRuleAudit.complete_policy_pairs || 0)} complete policy pair(s) · ${Number(sharedRuleAudit.shared_events_skipped_non_guaranteed || 0)} known discretionary event(s) skipped · ${Number(sharedRuleAudit.detail_failures || 0)} detail failure(s)`
+    : Number(sharedRuleAudit.shared_events_skipped_non_guaranteed || 0) > 0
+      ? `BOUNDED CROSS-FAMILY AUDIT · ${Number(sharedRuleAudit.shared_events_skipped_non_guaranteed || 0)} known discretionary event(s) skipped · waiting for a candidate with explicit deterministic policy`
+      : 'BOUNDED CROSS-FAMILY AUDIT · waiting for the next live scan';
+  const identity = catalog?.identity_discovery || {};
+  $('identity-audit').textContent = `STRUCTURED IDENTITY AUDIT · ${Number(identity.structured_shared_keys || 0)} shared key(s) · ${Number(identity.novel_alias_candidates || 0)} novel alias(es) · ${String(identity.status || 'WAITING_FOR_SCAN').replaceAll('_', ' ')}`;
+  const familyCoverage = normalization.families || {};
+  const familyOrder = ['economic', 'weather', 'election', 'crypto'];
+  $('normalization-families').innerHTML = familyOrder.map((family) => {
+    const item = familyCoverage[family] || {};
+    const blockerEntries = Object.entries(item.blocker_counts || {}).slice(0, 2);
+    const blockers = blockerEntries.length
+      ? blockerEntries.map(([code, count]) => `${code.replaceAll('_', ' ')} ×${count}`).join(' · ')
+      : 'NO NORMALIZATION BLOCKERS';
+    const status = String(item.status || 'NOT_PRESENT').replaceAll('_', ' ');
+    const statusClass = item.exact_rule_matches ? 'exact' : item.guaranteed_shared_events ? 'safe' : 'waiting';
+    return `<div class="normalization-row"><strong>${safe(family.toUpperCase())}</strong><span>${Number(item.kalshi_contracts || 0)} / ${Number(item.polymarket_contracts || 0)}</span><span>${Number(item.kalshi_normalized || 0)} / ${Number(item.polymarket_normalized || 0)}</span><span>${Number(item.shared_events || 0)}</span><span>${Number(item.guaranteed_shared_events || 0)}</span><span>${Number(item.exact_rule_matches || 0)}</span><div><em class="${statusClass}">${safe(status)}</em><small>${safe(blockers)}</small></div></div>`;
+  }).join('');
+  const validation = data.validation || {};
+  const backfill = data.historical_backfill || {};
+  const venueCoverage = backfill.venue_coverage || {};
+  const coverageSummary = Object.entries(venueCoverage).map(([venue, counts]) => {
+    const label = venue === 'polymarket_global' ? 'GLOBAL' : venue === 'polymarket_us' ? 'US' : venue.toUpperCase();
+    return `${label} ${Number(counts.final_binary_markets || 0)}/${Number(counts.closed_markets || 0)}`;
+  }).join(' · ');
+  const trustedLabels = Number(validation.trusted_labels || 0);
+  const validationCases = Number(validation.cases || 0);
+  const structuredShared = Number(identity.structured_shared_keys || 0);
+  const awaitingSettlement = Number(validation.awaiting_settlement || 0);
+  const resolvedCases = Number(validation.resolved_cases || 0);
+  const blockerCounts = Object.keys(weatherAudit.policy_blocker_counts || {}).length
+    ? weatherAudit.policy_blocker_counts
+    : weatherAudit.blocker_counts || {};
+  const blockerEntries = Object.entries(blockerCounts).filter(([, count]) => Number(count) > 0);
+  const unresolvedBlockers = blockerEntries.reduce((total, [, count]) => total + Number(count), 0);
+  const proposals = data.candidate_proposals || [];
+  const reviewQueue = proposals.filter((proposal) => proposal.status === 'REVIEW_REQUIRED').length;
+  const trainingLabels = Number(training.labels ?? trustedLabels);
+  const approvedLabels = Number(training.approved || backfill.approved_labels || 0);
+  const rejectedLabels = Number(training.rejected || backfill.rejected_labels || 0);
+  const confirmedOutcomes = Number(validation.confirmed || 0);
+  const divergedOutcomes = Number(validation.diverged || 0);
+  const inconclusiveOutcomes = Number(validation.inconclusive || 0);
+  const resolvedOutcomes = confirmedOutcomes + divergedOutcomes + inconclusiveOutcomes;
+  const decisiveOutcomes = confirmedOutcomes + divergedOutcomes;
+  $('validation-coverage').textContent = rate(resolvedCases, validationCases);
+  $('validation-precision').textContent = rate(confirmedOutcomes, decisiveOutcomes);
+  $('validation-inconclusive').textContent = rate(inconclusiveOutcomes, resolvedOutcomes);
+  $('validation-readiness').textContent = training.ready ? 'READY' : String(training.status || 'BLOCKED').replaceAll('_', ' ');
+  $('validation-readiness-detail').textContent = training.ready
+    ? 'Minimum label count and both outcome classes are present; evaluation still gates promotion.'
+    : (training.reasons || ['Settlement-verified labels and both outcome classes are required.'])[0];
+  $('validation-provenance-state').textContent = backfill.completed_at
+    ? `${String(backfill.status || 'VERIFIED RUN').replaceAll('_', ' ')} · ${age(backfill.completed_at).toUpperCase()}`
+    : validationCases > 0
+      ? 'SETTLEMENT LEDGER · ACTIVE'
+      : 'NO VERIFIED RUN';
+  const executionEnabled = training.execution_enabled ?? training.loop?.execution_enabled ?? true;
+  $('validation-safety').textContent = data.paper_only && executionEnabled === false
+    ? 'PAPER ONLY / NEVER EXECUTED · SETTLEMENT-VERIFIED LABELS ONLY'
+    : 'SAFETY STATE REQUIRES REVIEW';
+  const trainingTarget = 50;
+  const labelsRemaining = Math.max(0, trainingTarget - trainingLabels);
+  $('cohort-shared').textContent = structuredShared;
+  $('cohort-ready').textContent = `${safeShared} / ${executionReady}`;
+  $('cohort-blocker-count').textContent = unresolvedBlockers;
+  $('cohort-awaiting').textContent = awaitingSettlement;
+  $('cohort-resolved').textContent = resolvedCases;
+  $('cohort-labels').textContent = trainingLabels;
+  $('cohort-label-target').textContent = training.ready
+    ? 'minimum and class mix reached'
+    : labelsRemaining > 0
+      ? `${labelsRemaining} needed for training review`
+      : 'approved examples still required';
+  const cohortSteps = document.querySelectorAll('[data-cohort-step]');
+  cohortSteps.forEach((step) => step.classList.remove('active', 'complete'));
+  const setCohortStep = (name, state) => document.querySelector(`[data-cohort-step="${name}"]`)?.classList.add(state);
+  if (structuredShared > 0) setCohortStep('shared', 'complete');
+  if (executionReady > 0) setCohortStep('ready', 'complete');
+  if (unresolvedBlockers > 0) setCohortStep('blockers', 'active');
+  else if (structuredShared > 0) setCohortStep('blockers', 'complete');
+  if (awaitingSettlement > 0) setCohortStep('awaiting', 'active');
+  if (resolvedCases > 0) setCohortStep('resolved', 'complete');
+  if (trainingLabels > 0) setCohortStep('labels', training.ready ? 'complete' : 'active');
+  if (training.ready) {
+    $('cohort-status').textContent = 'MINIMUM EVIDENCE GATE REACHED';
+    $('cohort-detail').textContent = `${trainingLabels} settlement-verified labels are available. Model evaluation remains separate from live trading.`;
+    $('cohort-next-gate').textContent = 'Evaluate labels before any model promotion';
+  } else if (resolvedCases > 0 && approvedLabels === 0) {
+    $('cohort-status').textContent = 'NEGATIVE COHORT BUILT / POSITIVE EVIDENCE MISSING';
+    $('cohort-detail').textContent = `${rejectedLabels} settlement-backed rejection(s) are available, but zero approved-equivalent labels exist. Training remains blocked.`;
+    $('cohort-next-gate').textContent = 'Find and verify settled rule-equivalent contracts';
+  } else if (resolvedCases > 0) {
+    $('cohort-status').textContent = 'FIRST COHORT IS PRODUCING LABELS';
+    $('cohort-detail').textContent = `${resolvedCases} case(s) resolved and ${trainingLabels} trusted label(s) recorded. All evidence remains paper-only.`;
+    $('cohort-next-gate').textContent = `Collect ${labelsRemaining} more trusted labels, including approvals and rejections`;
+  } else if (awaitingSettlement > 0) {
+    $('cohort-status').textContent = 'FIRST COHORT IS AWAITING SETTLEMENT';
+    $('cohort-detail').textContent = `${awaitingSettlement} paper-only case(s) are waiting for both venues to publish final outcomes.`;
+    $('cohort-next-gate').textContent = 'Reconcile both venue outcomes into trusted labels';
+  } else if (executionReady > 0) {
+    $('cohort-status').textContent = 'FIRST COHORT IS READY TO TRACK';
+    $('cohort-detail').textContent = `${executionReady} event(s) cleared deterministic equivalence and settlement-safety checks.`;
+    $('cohort-next-gate').textContent = 'Open paper-only validation cases and wait for settlement';
+  } else if (safeShared > 0) {
+    $('cohort-status').textContent = 'FIRST COHORT NEEDS FINAL RULE ALIGNMENT';
+    $('cohort-detail').textContent = `${safeShared} event(s) have guaranteed settlement, but none are ready for outcome tracking.`;
+    $('cohort-next-gate').textContent = 'Clear every remaining contract-rule mismatch';
+  } else if (structuredShared > 0) {
+    $('cohort-status').textContent = 'FIRST COHORT IDENTIFIED / RULES UNRESOLVED';
+    $('cohort-detail').textContent = `${structuredShared} shared event(s) have the same structured identity; zero are guaranteed or ready.`;
+    $('cohort-next-gate').textContent = 'Resolve settlement guarantees and revision-policy differences';
+  } else if (backfill.status === 'EXTERNAL_EVIDENCE_BLOCKED') {
+    $('cohort-status').textContent = 'HISTORICAL EVIDENCE INVENTORY EXHAUSTED';
+    $('cohort-detail').textContent = `Atlas checked ${Number(backfill.polymarket_closed_markets || 0)} closed Polymarket contracts across ${Object.keys(venueCoverage).length || 1} evidence source(s) and found ${Number(backfill.polymarket_final_binary_markets || 0)} with final binary evidence; none produced a verified cross-venue label.`;
+    $('cohort-next-gate').textContent = 'Keep backfilling as both venues publish final overlapping settlements';
+  } else {
+    $('cohort-status').textContent = 'WAITING FOR THE FIRST SHARED EVENT';
+    $('cohort-detail').textContent = 'No cross-venue event has enough structured identity evidence to begin settlement validation.';
+    $('cohort-next-gate').textContent = 'Find the same rule-complete event on both venues';
+  }
+  $('cohort-blockers').textContent = blockerEntries.length
+    ? blockerEntries.map(([code, count]) => `${code.replace('_MISMATCH', '').replaceAll('_', ' ')} ×${Number(count)}`).join(' · ')
+    : reviewQueue > 0
+      ? `${reviewQueue} contract review(s) remain outside the first settlement-ready cohort.`
+      : 'No unresolved cohort blocker is recorded.';
+  $('validation-status').textContent = training.ready
+    ? 'TRAINING EVIDENCE READY'
+    : trustedLabels >= 50 && approvedLabels === 0
+      ? 'LABEL MIX BLOCKED'
+    : validationCases > 0
+      ? 'SETTLEMENT MONITORING ACTIVE'
+      : backfill.status === 'EXTERNAL_EVIDENCE_BLOCKED'
+        ? 'HISTORICAL OVERLAP BLOCKED'
+        : 'WAITING FOR GUARANTEED PAIR';
+  $('validation-detail').textContent = training.ready
+    ? 'The minimum settlement-verified label gate is met; evaluation must still pass before any model promotion.'
+    : trustedLabels >= 50 && approvedLabels === 0
+      ? `${rejectedLabels} settlement-backed rejections are stored, but no approved-equivalent labels exist. Atlas will not train on a one-class dataset.`
+    : validationCases > 0
+      ? 'Tracked cases remain paper-only. Matching outcomes confirm approved relationships; divergence creates a rejection label.'
+      : backfill.status === 'EXTERNAL_EVIDENCE_BLOCKED'
+        ? `Backfill completed across ${Number(backfill.kalshi_events_scanned || 0)} Kalshi events and ${Number(backfill.polymarket_closed_markets || 0)} closed Polymarket contracts; no shared terminal event can create a trusted label yet.`
+        : 'Validation-universe rules are being versioned, but no guaranteed cross-venue pair is eligible for outcome validation yet.';
+  const milestoneAlerts = data.milestone_alerts || [];
+  if (milestoneAlerts.length) {
+    const alert = milestoneAlerts[0];
+    const transition = alert.transition_kind === 'DETERMINISTIC_RULE_GATE'
+      ? 'DETERMINISTIC RULE GATE CLEARED'
+      : `${String(alert.queue_status || 'TRANSITION').replaceAll('_', ' ')}`;
+    $('milestone-alert').textContent = `MILESTONE ALERT · ${transition} · ${safe(alert.candidate_id)}`;
+  } else {
+    $('milestone-alert').textContent = 'NO MILESTONE TRANSITION YET';
+  }
+  $('validation-markets').textContent = validation.markets_tracked ?? 0;
+  $('validation-versions').textContent = validation.evidence_versions ?? 0;
+  $('validation-changes').textContent = validation.rule_changes ?? 0;
+  $('validation-awaiting').textContent = validation.awaiting_settlement ?? 0;
+  $('validation-resolved').textContent = validation.resolved_cases ?? 0;
+  $('validation-labels').textContent = trustedLabels;
+  $('validation-label-mix').textContent = `${approvedLabels} / ${rejectedLabels}`;
+  const backfillBlockers = Object.entries(backfill.blockers || {});
+  $('validation-backfill').textContent = backfill.completed_at
+    ? `HISTORICAL BACKFILL · ${String(backfill.status || 'UNKNOWN').replaceAll('_', ' ')} · ${coverageSummary || 'SOURCE DETAIL UNAVAILABLE'} · ${Number(backfill.new_labels || 0)} new label(s) · ${backfillBlockers.length ? backfillBlockers.map(([code, count]) => `${code.replaceAll('_', ' ')} ×${Number(count)}`).join(' · ') : 'no recorded blocker'}`
+    : 'HISTORICAL BACKFILL · waiting for the first verified run';
+  const globalScope = venueCoverage.polymarket_global?.catalog_scope || 'not reported';
+  const candidateEvents = Number(backfill.historical_candidate_events ?? backfill.cross_venue_event_candidates ?? 0);
+  const candidateEventsFound = Number(backfill.historical_candidate_events_found ?? candidateEvents);
+  const pairsReviewed = Number(backfill.market_pairs_reviewed || 0);
+  const pairsCap = Number(backfill.max_market_pairs || 0);
+  const resolvedPairs = Number(backfill.resolved_pairs || 0);
+  const resolvedPairsCap = Number(backfill.max_resolved_pairs || 0);
+  const capCodes = new Set(Object.keys(backfill.blockers || {}));
+  const appliedCaps = [
+    capCodes.has('HISTORICAL_CANDIDATE_EVENT_CAP_APPLIED') ? 'EVENT CAP APPLIED' : '',
+    capCodes.has('HISTORICAL_MARKET_PAIR_CAP_APPLIED') ? 'PAIR CAP APPLIED' : '',
+  ].filter(Boolean);
+  $('validation-provenance').textContent = backfill.completed_at
+    ? `GLOBAL TAG SCOPE · ${globalScope} · SCAN BOUNDS · EVENTS ${candidateEvents} SELECTED / ${candidateEventsFound} FOUND · PAIRS ${pairsReviewed}/${pairsCap || '—'} · RESOLVED ${resolvedPairs}/${resolvedPairsCap || '—'}${appliedCaps.length ? ` · ${appliedCaps.join(' · ')}` : ''}`
+    : 'HISTORICAL PROVENANCE · waiting for the first verified run';
+  $('backfill-polymarket').textContent = coverageSummary || `${Number(backfill.polymarket_final_binary_markets || 0)} / ${Number(backfill.polymarket_closed_markets || 0)}`;
+  $('backfill-shared').textContent = Number(backfill.historical_candidate_events ?? backfill.cross_venue_event_candidates ?? 0);
+  $('backfill-remaining').textContent = Number(backfill.labels_remaining ?? labelsRemaining);
+  const settlementRankings = data.settlement_candidates || settlement.rankings || [];
+  $('settlement-rankings').innerHTML = settlementRankings.length ? settlementRankings.slice(0, 8).map((item, index) => {
+    const mismatches = (item.mismatch_codes || []).map((code) => code.replace('_MISMATCH', '').replaceAll('_', ' ')).join(' · ') || 'EXACT RULE MATCH';
+    const lifecycle = String(item.lifecycle_status || 'UNKNOWN').replaceAll('_', ' ');
+    const settlementTimes = `K ${settlementTime(item.kalshi_resolution_time)} · P ${settlementTime(item.polymarket_resolution_time)}`;
+    const readyAt = settlementTime(item.settlement_ready_at);
+    const evidenceSummary = (evidence) => {
+      if (!evidence || typeof evidence !== 'object') return 'EVIDENCE NOT REFRESHED';
+      const label = evidence?.complete ? 'EVIDENCE COMPLETE' : 'EVIDENCE BLOCKED';
+      const blockers = (evidence?.blockers || []).slice(0, 2).map((code) => code.replaceAll('_', ' ')).join(' · ');
+      const missing = (evidence?.missing_fields || []).slice(0, 2).map((field) => field.replaceAll('_', ' ')).join(' · ');
+      const detail = blockers || (missing ? `MISSING ${missing}` : 'SOURCE FIELDS CAPTURED');
+      return `${label}${detail ? ` · ${detail}` : ''}`;
+    };
+    const evidence = `K ${evidenceSummary(item.kalshi_evidence)} · P ${evidenceSummary(item.polymarket_evidence)}`;
+    return `<div class="settlement-rank"><b>${index + 1}</b><div><strong>${safe(item.kalshi_title)}</strong><span>↔ ${safe(item.polymarket_title)}</span></div><div class="settlement-rank-meta"><em class="${String(item.guarantee_status).toLowerCase()}">${safe(item.guarantee_status)}</em><span>${safe(item.market_type || 'unknown')} · rule distance ${safe(item.rule_distance)}</span><span class="settlement-lifecycle">${safe(lifecycle)}</span><span class="settlement-time">READY BY · ${safe(readyAt)}</span><span class="settlement-time">VENUES · ${safe(settlementTimes)}</span><small>${safe(mismatches)}</small><small class="settlement-evidence">${safe(evidence)}</small></div></div>`;
+  }).join('') : '<div class="empty">No shared event rankings found.</div>';
+  const election = catalog?.election_discovery || {};
+  const electionStatus = String(election.status || 'NO_ELECTION_SCAN').replaceAll('_', ' ');
+  $('election-status').textContent = electionStatus;
+  $('election-kalshi').textContent = election.kalshi_contracts ?? '—';
+  $('election-polymarket').textContent = election.polymarket_contracts ?? '—';
+  $('election-shared').textContent = election.shared_events ?? '—';
+  $('election-deterministic').textContent = `${Number(election.deterministic_kalshi || 0) + Number(election.deterministic_polymarket || 0)}`;
+  $('election-detail').textContent = election.status === 'WAITING_FOR_KALSHI_COUNTERPART'
+    ? 'Polymarket contracts passed normalization, but Kalshi has no open counterpart. Atlas will keep checking automatically.'
+    : election.shared_events
+      ? 'Both venues expose the same event. Exact settlement rules and executable books now decide eligibility.'
+      : 'No shared live chamber-control event is available on both venues yet.';
+  const electionCandidates = election.polymarket_candidates || [];
+  $('election-candidates').innerHTML = electionCandidates.length ? electionCandidates.map((candidate) => {
+    const ready = candidate.deterministic_settlement ? 'RULE-COMPLETE' : `BLOCKED: ${(candidate.blockers || []).join(' · ')}`;
+    return `<div class="election-candidate"><div><strong>${safe(candidate.title)}</strong><span>${safe(candidate.event_subject)}</span></div><div><b>${safe(candidate.affirmative_outcome || 'unknown outcome')}</b><em class="${candidate.deterministic_settlement ? 'ready' : ''}">${safe(ready)}</em></div></div>`;
+  }).join('') : '<div class="empty">No live chamber-control contracts found.</div>';
+  $('candidates').innerHTML = proposals.length ? proposals.map((p) => { const mismatches = (p.mismatch_codes || []).map((code) => code.replace('_MISMATCH', '').replaceAll('_', ' ')).join(' · ') || 'LEXICAL REVIEW'; return `<div class="candidate"><div class="candidate-contracts"><strong>${safe(p.kalshi_title)}</strong><small>KALSHI: ${safe(terms(p.kalshi_terms))}</small><span>↔ ${safe(p.polymarket_title)}</span><small>POLYMARKET: ${safe(terms(p.polymarket_terms))}</small></div><div class="candidate-meta"><b>${pct(p.score)}</b><em>${safe(mismatches)}</em><span>${safe(p.review_kind || 'REVIEW REQUIRED')}</span></div></div>`; }).join('') : '<div class="empty">No same-event contract mismatches recorded.</div>';
+  const o = data.opportunity;
+  if (!o) { $('opportunity').innerHTML = '<div class="empty">No approved executable opportunities.</div>'; return; }
+  const demo = Boolean(evidence.demo_opportunity);
+  $('opportunity').innerHTML = `<div class="opp-top"><span class="match">${demo ? 'FIXTURE RESEARCH / DEMO EDGE' : 'MATCH FOUND / APPROVED EQUIVALENT'}</span><span class="execute">${demo ? 'NOT LIVE' : `PAPER ${o.status}`}</span></div><div class="contracts">Kalshi <span class="arrow">↔</span> Polymarket US</div><div class="legs"><div class="leg"><span class="leg-label">KALSHI / YES EXECUTABLE</span><span class="price">${money(o.leg_a_average_price)}</span></div><div class="leg"><span class="leg-label">POLYMARKET US / NO HEDGE</span><span class="price">${money(o.leg_b_average_price)}</span></div><div class="metrics"><div class="metric"><span>NET LOCKED EDGE</span><strong class="positive">${pct(o.expected_roi)}</strong></div><div class="metric"><span>EXECUTABLE SIZE</span><strong>${money(o.contracts)}</strong></div><div class="metric"><span>NET COST</span><strong>${money(o.net_cost)}</strong></div></div></div>`;
+}
+async function refresh() { try { const response = await fetch('/api/overview', {cache:'no-store'}); render(await response.json()); } catch { $('connection').textContent = 'OFFLINE'; } }
+$('refresh').addEventListener('click', refresh); refresh(); setInterval(refresh, 15000);

@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.py[cod]
+.env
+.env.*
+!.env.example
+keys/
+*.pem
+*.key
+*.p12
+data/
+output/
+*.egg-info/
+*.db
+*.log
+.DS_Store
+
+# Agent tool local state
+.cursor/hooks/state/
+.claude/settings.local.json
+.playwright-cli/

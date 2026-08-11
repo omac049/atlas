@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: atlas
+      POSTGRES_PASSWORD: ${ATLAS_POSTGRES_PASSWORD:?Set ATLAS_POSTGRES_PASSWORD in your local environment}
+      POSTGRES_DB: atlas
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: ["atlas_postgres:/var/lib/postgresql/data"]
+  redis:
+    image: redis:7-alpine
+    ports: ["127.0.0.1:6379:6379"]
+
+volumes:
+  atlas_postgres:
