@@ -16,7 +16,7 @@ from atlas.discovery import (
 from atlas.fingerprints import build_fingerprint, deterministic_settlement_blockers
 from atlas.models import VenueName
 from atlas.venues.fixtures import fixture_markets
-from atlas.venues.kalshi import KalshiVenue
+from atlas.venues.kalshi import SETTLED_SERIES_MAX_PAGES, KalshiVenue
 from atlas.venues.polymarket_global import PolymarketGlobalHistoricalVenue
 from atlas.venues.polymarket_us import PolymarketUSVenue, _levels, _market_items
 
@@ -185,11 +185,106 @@ async def test_kalshi_event_markets_preserve_current_results_when_archive_fails(
     assert [market.venue_market_id for market in markets] == ["KX-EVENT-YES"]
 
 
+@pytest.mark.asyncio
+async def test_kalshi_settled_series_scan_merges_series_events_before_recent_scan(monkeypatch):
+    venue = KalshiVenue(fixture=False)
+    requests = []
+
+    async def fake_get(path, params=None):
+        requests.append((path, params))
+        series = params.get("series_ticker")
+        if series == "KXFEDDECISION":
+            return {
+                "events": [
+                    {"event_ticker": "KXFEDDECISION-26JUL", "title": "Fed decision in July?"}
+                ],
+                "cursor": "",
+            }
+        if series == "KXFED":
+            return {"events": [], "cursor": ""}
+        return {
+            "events": [
+                # The recent scan re-returns the July event; dedupe must keep one copy.
+                {"event_ticker": "KXFEDDECISION-26JUL", "title": "Fed decision in July?"},
+                {"event_ticker": "KXNFLGAME-26AUG10", "title": "Sunday night football"},
+            ],
+            "cursor": "",
+        }
+
+    monkeypatch.setattr(venue, "_get", fake_get)
+
+    events = await venue.list_settled_events(
+        max_pages=1, series_tickers=("KXFEDDECISION", "KXFED")
+    )
+
+    assert [event["event_ticker"] for event in events] == [
+        "KXFEDDECISION-26JUL",
+        "KXNFLGAME-26AUG10",
+    ]
+    series_params = [params for _, params in requests if params.get("series_ticker")]
+    assert [params["series_ticker"] for params in series_params] == ["KXFEDDECISION", "KXFED"]
+    assert all(params["status"] == "settled" for _, params in requests)
+
+
+@pytest.mark.asyncio
+async def test_kalshi_settled_series_scan_pages_are_bounded(monkeypatch):
+    venue = KalshiVenue(fixture=False)
+    calls = []
+
+    async def endless_pages(path, params=None):
+        calls.append(params)
+        return {
+            "events": [
+                {"event_ticker": f"KXFED-{len(calls)}-{index}", "title": "page filler"}
+                for index in range(200)
+            ],
+            "cursor": "next",
+        }
+
+    monkeypatch.setattr(venue, "_get", endless_pages)
+
+    await venue.list_settled_events(max_pages=1, series_tickers=("KXFED",))
+
+    series_calls = [params for params in calls if params.get("series_ticker")]
+    assert len(series_calls) == SETTLED_SERIES_MAX_PAGES
+    assert len(calls) == SETTLED_SERIES_MAX_PAGES + 1
+
+
 def test_closed_polymarket_market_maps_to_closed_until_final_settlement():
     market = PolymarketUSVenue._normalize_market(
         {"slug": "closed-market", "status": "MARKET_STATUS_CLOSED", "closed": True}
     )
     assert market.status.value == "closed"
+
+
+@pytest.mark.asyncio
+async def test_global_polymarket_open_listing_is_tag_scoped_and_active(monkeypatch):
+    venue = PolymarketGlobalHistoricalVenue(tag_ids=("100196",))
+    requests = []
+
+    async def fake_get(path, params=None):
+        requests.append((path, params))
+        return [
+            {
+                "id": "999001",
+                "question": "Will the upper bound of the target federal funds rate be 3.5% at the end of 2026?",
+                "closed": False,
+                "description": "resolves per the Federal Reserve",
+            }
+        ]
+
+    monkeypatch.setattr(venue, "_get", fake_get)
+
+    markets = await venue.list_open_markets(max_pages=1)
+
+    assert [market.status.value for market in markets] == ["active"]
+    assert markets[0].market_id == "polymarket_global:999001"
+    path, params = requests[0]
+    assert path == "/markets"
+    assert params["closed"] is False
+    assert params["active"] is True
+    assert params["tag_id"] == "100196"
+    assert not hasattr(venue, "get_orderbook")
 
 
 def test_global_polymarket_history_is_an_isolated_evidence_adapter():

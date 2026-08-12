@@ -44,6 +44,18 @@ def assess_settlement_guarantee(
             "reason_codes": ["COMPLETE_CPI_RELEASE_AND_MISSING_DATA_POLICY"],
         }
 
+    if _complete_fomc_decision_policy(fingerprint):
+        return {
+            "status": GuaranteeStatus.GUARANTEED.value,
+            "reason_codes": ["COMPLETE_FOMC_DECISION_BUCKET_POLICY"],
+        }
+
+    if _complete_fed_funds_level_policy(fingerprint):
+        return {
+            "status": GuaranteeStatus.GUARANTEED.value,
+            "reason_codes": ["COMPLETE_FED_FUNDS_LEVEL_POLICY"],
+        }
+
     if fingerprint.market_type == "weather":
         evidence = parse_market_policy_evidence(market)
         if evidence.complete:
@@ -96,6 +108,46 @@ def _complete_chamber_control_policy(fingerprint: ContractFingerprint) -> bool:
     return False
 
 
+def _complete_fomc_decision_policy(fingerprint: ContractFingerprint) -> bool:
+    """A per-meeting FOMC rate bucket is deterministic when the venue publishes what
+    happens if the meeting produces no decision (canceled meeting / no statement)."""
+    if (
+        fingerprint.market_type != "economic"
+        or fingerprint.contract_scope != "fomc_rate_change_bucket"
+        or fingerprint.resolution_source != "federal_reserve"
+        or fingerprint.threshold is None
+        or fingerprint.threshold_operator is None
+        or fingerprint.threshold_unit != "bps"
+        or not fingerprint.measurement_period
+        or not fingerprint.settlement_policy
+    ):
+        return False
+    return "no_meeting=no_change_bucket" in fingerprint.settlement_policy.split("|")
+
+
+def _complete_fed_funds_level_policy(fingerprint: ContractFingerprint) -> bool:
+    """A fed-funds upper-bound level contract is deterministic when the published
+    anchor cannot fail to produce a value: a year-end snapshot with a published
+    single-rate fallback, or a meeting anchor with a published no-decision fallback."""
+    if (
+        fingerprint.market_type != "economic"
+        or fingerprint.contract_scope != "fed_funds_upper_bound_level"
+        or fingerprint.resolution_source != "federal_reserve"
+        or fingerprint.threshold is None
+        or fingerprint.threshold_operator is None
+        or fingerprint.threshold_unit != "percent"
+        or not fingerprint.measurement_period
+        or not fingerprint.settlement_policy
+    ):
+        return False
+    policies = set(fingerprint.settlement_policy.split("|"))
+    if fingerprint.measurement_period.startswith("snapshot:"):
+        return "single_rate=target_rate_used" in policies
+    if fingerprint.measurement_period.startswith("meeting:"):
+        return "no_decision=year_end_rate_snapshot" in policies
+    return False
+
+
 def _complete_cpi_release_policy(fingerprint: ContractFingerprint) -> bool:
     if (
         fingerprint.market_type != "economic"
@@ -109,7 +161,17 @@ def _complete_cpi_release_policy(fingerprint: ContractFingerprint) -> bool:
     ):
         return False
     policies = set(fingerprint.settlement_policy.split("|"))
-    return {
+    if {
         "revision=first_official_release",
         "missing=first_within_3m_else_previous_month",
+    } <= policies:
+        return True
+    # A published terminal missing-data fallback (resolve on the most recent prior
+    # month's figures) plus the published BLS one-decimal precision clause determines
+    # the outcome in every branch, including a release that never happens. A published
+    # delay-extension alone (Kalshi's shutdown clause) leaves the never-released
+    # branch unspecified and must NOT satisfy this path.
+    return {
+        "missing=previous_month_figures_at_next_release",
+        "precision=bls_one_decimal",
     } <= policies

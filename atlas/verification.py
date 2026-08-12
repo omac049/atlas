@@ -40,6 +40,12 @@ def verify_equivalence(market_a: Market, market_b: Market, pair_id: str = "pair-
             "SIGNED_LINE_COMPLEMENT",
         ]
         differences = []
+    elif guarantee_code is None and _is_threshold_complement(
+        fingerprint_a, fingerprint_b, differences
+    ):
+        status = MatchStatus.APPROVED_INVERSE
+        relationship_codes = ["THRESHOLD_OPERATOR_COMPLEMENT"]
+        differences = []
     else:
         status = MatchStatus.REVIEW_REQUIRED
         if guarantee_code and guarantee_code not in differences:
@@ -85,6 +91,38 @@ def _is_strict_inverse(left: object, right: object, differences: list[str]) -> b
     if left.signed_line is None or right.signed_line is None:
         return False
     return left.signed_line == -right.signed_line
+
+
+def _is_threshold_complement(left: object, right: object, differences: list[str]) -> bool:
+    """Two predicate contracts over the same published value are exact inverses when
+    the ONLY rule difference is a complementary threshold operator at the identical
+    threshold: `x > t` vs `x <= t`, or `x >= t` vs `x < t` — Yes on one side is No on
+    the other for every possible published value, with no gap and no overlap.
+
+    Gated verifier rule (review 2026-08-12): every other term — subject, action,
+    scope, period, unit, source, revision, and the full settlement-policy token set —
+    must already match exactly, so genuine published divergences (missing-data
+    fallbacks, rounding, delay clauses) still refuse the pair, and the surrounding
+    guarantee gate still requires both legs GUARANTEED before this is consulted.
+    """
+    if set(differences) != {"THRESHOLD_OPERATOR_MISMATCH"}:
+        return False
+    if left.affirmative_outcome != "predicate_true":
+        return False
+    if right.affirmative_outcome != "predicate_true":
+        return False
+    if left.threshold is None or left.threshold != right.threshold:
+        return False
+    if left.threshold_upper is not None or right.threshold_upper is not None:
+        return False
+    if not left.threshold_unit or left.threshold_unit != right.threshold_unit:
+        return False
+    return (left.threshold_operator, right.threshold_operator) in {
+        (">", "<="),
+        ("<=", ">"),
+        (">=", "<"),
+        ("<", ">="),
+    }
 
 
 def _guarantee_blocker(

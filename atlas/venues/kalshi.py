@@ -12,6 +12,11 @@ from atlas.venues.http import get_json
 
 _EVENT_SOURCE_CACHE: dict[str, str] = {}
 
+# Recent-first settled-event paging drowns low-frequency macro events (FOMC, CPI)
+# under thousands of daily sports/hourly settlements, so explicit series scans get
+# their own small page budget instead of raising the global recent-scan bound.
+SETTLED_SERIES_MAX_PAGES = 5
+
 
 class KalshiVenue(PredictionVenue):
     name = VenueName.KALSHI
@@ -44,10 +49,17 @@ class KalshiVenue(PredictionVenue):
                 return markets
         return markets
 
-    async def list_settled_events(self, max_pages: int = 100) -> list[dict]:
-        """List terminal event metadata without loading every historical market."""
+    async def list_settled_events(
+        self, max_pages: int = 100, series_tickers: tuple[str, ...] | None = None
+    ) -> list[dict]:
+        """List terminal event metadata without loading every historical market.
+
+        Explicit ``series_tickers`` (e.g. ``KXFEDDECISION``) are scanned first with
+        a bounded per-series page budget so macro events buried far below the
+        recent-first settlement flood still reach the candidate pool.
+        """
         if self.fixture:
-            return [
+            events = [
                 {
                     "event_ticker": market.raw_market_json.get("event_ticker")
                     or market.event_subject,
@@ -56,10 +68,32 @@ class KalshiVenue(PredictionVenue):
                 }
                 for market in await self.list_markets()
             ]
+            if series_tickers:
+                events = [
+                    event
+                    for event in events
+                    if _event_in_series(str(event.get("event_ticker") or ""), series_tickers)
+                ]
+            return events
+        merged: dict[str, dict] = {}
+        for series_ticker in series_tickers or ():
+            for item in await self._scan_settled_events(
+                {"series_ticker": series_ticker}, SETTLED_SERIES_MAX_PAGES
+            ):
+                key = str(item.get("event_ticker") or "")
+                if key and key not in merged:
+                    merged[key] = item
+        for item in await self._scan_settled_events({}, max_pages):
+            key = str(item.get("event_ticker") or "")
+            if key and key not in merged:
+                merged[key] = item
+        return list(merged.values())
+
+    async def _scan_settled_events(self, extra_params: dict, max_pages: int) -> list[dict]:
         events: list[dict] = []
         cursor = ""
         for _ in range(max_pages):
-            params: dict[str, object] = {"status": "settled", "limit": 200}
+            params: dict[str, object] = {"status": "settled", "limit": 200, **extra_params}
             if cursor:
                 params["cursor"] = cursor
             payload = await self._get("/events", params)
@@ -219,6 +253,13 @@ class KalshiVenue(PredictionVenue):
             raw_market_json=item,
             raw_rules_text=rules,
         )
+
+
+def _event_in_series(event_ticker: str, series_tickers: tuple[str, ...]) -> bool:
+    return any(
+        event_ticker == series_ticker or event_ticker.startswith(f"{series_ticker}-")
+        for series_ticker in series_tickers
+    )
 
 
 def _decimal(value: object) -> Decimal:

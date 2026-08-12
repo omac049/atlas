@@ -86,6 +86,7 @@ async def backfill_historical_validation(
     *,
     target_labels: int = 50,
     kalshi_event_pages: int = 100,
+    kalshi_series_tickers: tuple[str, ...] | None = None,
     polymarket_pages: int = 20,
     additional_polymarket_venues: dict[str, object] | None = None,
     additional_polymarket_pages: int = 20,
@@ -124,10 +125,45 @@ async def backfill_historical_validation(
         if not source_final:
             blockers[f"{source_name.upper()}_FINAL_BINARY_EVIDENCE_UNAVAILABLE"] += 1
 
-    events = await kalshi_venue.list_settled_events(max_pages=kalshi_event_pages)
+    if kalshi_series_tickers:
+        events = await kalshi_venue.list_settled_events(
+            max_pages=kalshi_event_pages, series_tickers=kalshi_series_tickers
+        )
+    else:
+        events = await kalshi_venue.list_settled_events(max_pages=kalshi_event_pages)
     if not events:
         blockers["KALSHI_SETTLED_EVENT_CATALOG_EMPTY"] += 1
+    series_event_counts: dict[str, int] = {}
+    for series_ticker in kalshi_series_tickers or ():
+        series_event_counts[series_ticker] = sum(
+            1
+            for event in events
+            if _event_ticker_in_series(str(event.get("event_ticker") or ""), series_ticker)
+        )
+        if series_event_counts[series_ticker] == 0:
+            blockers["KALSHI_SERIES_EVENT_SCAN_EMPTY"] += 1
     event_candidates = historical_event_candidates(events, final_polymarket)
+    if kalshi_series_tickers and final_polymarket:
+        # Explicitly requested series bypass the lexical proposer: their canonical
+        # phrasings ("Fed decision in July?" vs "increase interest rates by 25 bps
+        # after the July 2026 meeting") share too few tokens to co-occur lexically.
+        # Deterministic verification still decides every pair; caps still bound work.
+        series_candidates = [
+            (event, final_polymarket)
+            for event in events
+            if any(
+                _event_ticker_in_series(str(event.get("event_ticker") or ""), series_ticker)
+                for series_ticker in kalshi_series_tickers
+            )
+        ]
+        series_event_tickers = {
+            str(event.get("event_ticker") or "") for event, _ in series_candidates
+        }
+        event_candidates = series_candidates + [
+            (event, markets)
+            for event, markets in event_candidates
+            if str(event.get("event_ticker") or "") not in series_event_tickers
+        ]
     candidate_events_found = len(event_candidates)
     if candidate_events_found > max_candidate_events:
         blockers["HISTORICAL_CANDIDATE_EVENT_CAP_APPLIED"] += 1
@@ -271,6 +307,8 @@ async def backfill_historical_validation(
         "polymarket_final_binary_markets": len(final_polymarket),
         "venue_coverage": venue_coverage,
         "kalshi_events_scanned": len(events),
+        "kalshi_series_tickers": list(kalshi_series_tickers or ()),
+        "kalshi_series_event_counts": series_event_counts,
         "cross_venue_event_candidates": len(event_candidates),
         "historical_candidate_events": len(event_candidates),
         "historical_candidate_events_found": candidate_events_found,
@@ -381,6 +419,10 @@ def historical_event_candidates(
         ),
     )
     return [matches[ticker] for ticker in ordered_tickers]
+
+
+def _event_ticker_in_series(event_ticker: str, series_ticker: str) -> bool:
+    return event_ticker == series_ticker or event_ticker.startswith(f"{series_ticker}-")
 
 
 def _identity_tokens(value: str) -> set[str]:

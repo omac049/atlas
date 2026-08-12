@@ -51,3 +51,28 @@ def test_missing_exception_policy_remains_unknown():
     assessment = assess_settlement_guarantee(market)
     assert assessment["status"] == GuaranteeStatus.UNKNOWN
     assert "UNPARSED_SETTLEMENT_POLICY" in assessment["reason_codes"]
+
+
+def test_quoted_yes_no_outcome_words_are_recognized_as_explicit_fallback():
+    """Polymarket Global's real boilerplate quotes the outcome word, e.g.
+    `resolve to "Yes" if ... Otherwise, this market will resolve to "No".` The
+    unquoted-only regex previously missed this and left every such market UNKNOWN."""
+    market = fixture_markets()["kalshi"][0]
+    market.raw_rules_text = (
+        'This market will resolve to "Yes" if the event occurs by the deadline. '
+        'Otherwise, this market will resolve to "No".'
+    )
+    assessment = assess_settlement_guarantee(market)
+    assert assessment["status"] == GuaranteeStatus.GUARANTEED
+    assert assessment["reason_codes"] == ["EXPLICIT_YES_NO_FALLBACK"]
+
+
+def test_curly_quoted_yes_no_outcome_words_are_recognized_as_explicit_fallback():
+    market = fixture_markets()["kalshi"][0]
+    market.raw_rules_text = (
+        "This market will resolve to “Yes” if the event occurs by the deadline. "
+        "Otherwise, this market will resolve to “No”."
+    )
+    assessment = assess_settlement_guarantee(market)
+    assert assessment["status"] == GuaranteeStatus.GUARANTEED
+    assert assessment["reason_codes"] == ["EXPLICIT_YES_NO_FALLBACK"]

@@ -109,14 +109,34 @@ def _economic_terms(market: Market) -> dict[str, object] | None:
     market_source = _market_source(market)
     period = _month_period(text, market.venue_market_id)
     threshold, upper, operator = _threshold_terms(market, text)
-    if re.search(r"\b(?:cpi yoy|consumer price index|inflation).{0,100}\b(?:12-month|yoy)\b", text):
+    cpi_trigger = re.search(
+        r"\b(?:cpi yoy|consumer price index|inflation).{0,100}\b(?:12-month|yoy)\b", text
+    )
+    if not cpi_trigger and ("bureau of labor statistics" in text or re.search(r"\bbls\b", text)):
+        # Kalshi KXCPIYOY spells the window out ("in the twelve months ending July
+        # 2026", "for the year ending in July 2026"); these wider alternatives are
+        # gated on an explicit BLS mention so non-US annual-inflation contracts
+        # (IBGE, NBS, ...) cannot be misfiled under the US subject.
+        cpi_trigger = re.search(
+            r"\b(?:cpi yoy|consumer price index|inflation).{0,100}"
+            r"\b(?:twelve months|year ending)\b",
+            text,
+        )
+    if cpi_trigger:
         if not period:
             return None
+        threshold, upper, operator = _cpi_level_terms(text, threshold, upper, operator)
         policies = []
         if "subsequent revisions" in text and "not be considered" in text:
             policies.append("revision=first_official_release")
         if "first figure officially published" in text and "within three months" in text:
             policies.append("missing=first_within_3m_else_previous_month")
+        if "most recent previous month" in text and "not released" in text:
+            policies.append("missing=previous_month_figures_at_next_release")
+        if "one-decimal place value" in text or "one decimal point" in text:
+            policies.append("precision=bls_one_decimal")
+        if "government shutdown" in text and "expiration date will be extended" in text:
+            policies.append("delay=shutdown_extension_release_or_6m")
         return {
             "event_subject": f"us_cpi_yoy|{period}",
             "event_date": period,
@@ -132,10 +152,16 @@ def _economic_terms(market: Market) -> dict[str, object] | None:
             "geography": "us",
             "resolution_source": (
                 "us_bls_cpi"
-                if "bls" in text or "bureau of labor statistics" in market_source
+                if "bls" in text
+                or "bureau of labor statistics" in text
+                or "bureau of labor statistics" in market_source
                 else None
             ),
-            "revision_policy": "first_official_release" if policies else None,
+            "revision_policy": (
+                "first_official_release"
+                if "revision=first_official_release" in policies
+                else None
+            ),
             "settlement_policy": "|".join(policies) or None,
         }
     unemployment = re.search(r"\b(canada|u\.?s\.?|united states) unemployment rate\b", text)
@@ -165,6 +191,10 @@ def _economic_terms(market: Market) -> dict[str, object] | None:
             "geography": jurisdiction,
             "resolution_source": source,
         }
+    if fomc := _fomc_decision_bucket_terms(text):
+        return fomc
+    if level := _fed_funds_level_terms(text):
+        return level
     if (
         "federal reserve" in text
         and "upper bound" in text
@@ -184,6 +214,152 @@ def _economic_terms(market: Market) -> dict[str, object] | None:
             "resolution_source": "federal_reserve",
         }
     return None
+
+
+def _fomc_decision_bucket_terms(text: str) -> dict[str, object] | None:
+    """Canonicalize per-meeting FOMC rate-change bucket contracts across venues.
+
+    Kalshi phrases the bucket as `the Federal Reserve does a Hike of 25bps` /
+    `Hike rates by 25bps at their July 2026 meeting`; Polymarket as `increase
+    interest rates by 25 bps after the July 2026 meeting`. Both are anchored to a
+    single scheduled meeting, unlike cumulative `rate cut by <deadline>` contracts,
+    so the trigger requires both a bucket phrase and a per-meeting reference.
+    """
+    bucket = re.search(
+        r"(?:federal reserve|fed)(?:’s| will|'s)?\s+"
+        r"(?:does a\s+|will\s+)?(hike|cut|increase|decrease)s?"
+        r"(?:\s+of|\s+(?:interest\s+)?rates?\s+by)?\s+"
+        r"(>?)(\d+(?:\.\d+)?)(\+?)\s*bps",
+        text,
+    )
+    if not bucket:
+        return None
+    meeting = re.search(
+        r"(?:at their|after the|for their|at the)\s+"
+        rf"({'|'.join(MONTHS)})\.?\s+(20\d{{2}})\s+meeting",
+        text,
+    ) or re.search(
+        rf"(?:on|meeting scheduled for)\s+({'|'.join(MONTHS)})\.?\s+\d{{1,2}}"
+        rf"(?:\s*-\s*\d{{1,2}})?,\s+(20\d{{2}})",
+        text,
+    )
+    if not meeting:
+        return None
+    period = f"{meeting.group(2)}-{MONTHS[meeting.group(1)]:02d}"
+    magnitude = Decimal(bucket.group(3))
+    direction = {"hike": "increase", "cut": "decrease"}.get(bucket.group(1), bucket.group(1))
+    if magnitude == 0:
+        direction = "maintain"
+    operator = ">" if bucket.group(2) else ">=" if bucket.group(4) else "="
+    # Only outcome-determining policies become tokens; structural notes like
+    # "mutually exclusive" are already encoded by the exact-match operator.
+    policies = []
+    if re.search(
+        r"meeting is canceled and does not occur.{0,120}maintains rate.{0,60}resolve to yes", text
+    ) or re.search(r"no statement is released.{0,120}no change.{0,60}bracket", text):
+        policies.append("no_meeting=no_change_bucket")
+    if re.search(r"rounded up to the nearest 25", text):
+        policies.append("rounding=up_nearest_25bps")
+    return {
+        "event_subject": f"us_fomc_rate_decision|{period}",
+        "event_date": period,
+        "event_action": "rate_change_bucket",
+        "market_type": "economic",
+        "contract_scope": "fomc_rate_change_bucket",
+        "affirmative_outcome": direction,
+        "threshold": magnitude,
+        "threshold_operator": operator,
+        "threshold_unit": "bps",
+        "measurement_period": period,
+        "geography": "us",
+        "resolution_source": "federal_reserve",
+        "settlement_policy": "|".join(policies) or None,
+    }
+
+
+def _fed_funds_level_terms(text: str) -> dict[str, object] | None:
+    """Canonicalize fed funds target upper-bound *level* contracts across venues.
+
+    Kalshi phrases the level as a strict threshold — per-meeting KXFED (`be above
+    3.50% following the Fed's Dec 9, 2026 meeting`) or year-end KXFEDFUNDSYEAR
+    (`in effect at 11:59 PM ET on December 31, 2027 be above 5.75%`). Polymarket
+    lists exact-level buckets with tail operators (`be [≥|≤]3.5% at the end of
+    2026`) whose published rules anchor resolution to the December FOMC meeting
+    with a Dec-31 snapshot fallback. Anchors are namespaced (`meeting:` vs
+    `snapshot:`) because those are different published measurement events.
+    """
+    level = re.search(
+        r"upper bound of the (?:target )?(?:range for the )?(?:target )?federal funds "
+        r"(?:rate|range)\b.{0,80}?\bbe\s+(above\s+|greater than\s+|≥\s*|≤\s*)?"
+        r"(\d+(?:\.\d+)?)\s*%",
+        text,
+    )
+    if not level:
+        return None
+    month_names = "|".join(MONTHS)
+    meeting = re.search(
+        rf"following the fed(?:eral reserve)?['’]?s?\s+({month_names})\.?\s+"
+        r"(\d{1,2}),\s*(20\d{2})\s+meeting",
+        text,
+    ) or re.search(
+        rf"meeting,? currently scheduled for\s+({month_names})\.?\s+"
+        r"(?:\d{1,2}\s*-\s*)?(\d{1,2}),\s*(20\d{2})",
+        text,
+    )
+    snapshot = re.search(
+        rf"in effect at 11:59 pm et on\s+({month_names})\.?\s+(\d{{1,2}}),\s*(20\d{{2}})",
+        text,
+    )
+    if meeting:
+        anchor_date = f"{meeting.group(3)}-{MONTHS[meeting.group(1)]:02d}-{int(meeting.group(2)):02d}"
+        anchor = f"meeting:{anchor_date}"
+    elif snapshot:
+        anchor_date = (
+            f"{snapshot.group(3)}-{MONTHS[snapshot.group(1)]:02d}-{int(snapshot.group(2)):02d}"
+        )
+        anchor = f"snapshot:{anchor_date}"
+    else:
+        return None
+    qualifier = (level.group(1) or "").strip()
+    operator = {
+        "above": ">",
+        "greater than": ">",
+        "≥": ">=",
+        "≤": "<=",
+    }.get(qualifier, "=")
+    # Only outcome-determining published policies become tokens.
+    policies = []
+    if re.search(
+        r"no fomc decision.{0,160}?resolve according to the upper bound of the target "
+        r"federal funds range at that time",
+        text,
+    ):
+        policies.append("no_decision=year_end_rate_snapshot")
+    if "rounded to the nearest 25 basis points" in text:
+        policies.append(
+            "rounding=nearest_25bps_away_from_zero"
+            if "rounded away from zero" in text
+            else "rounding=nearest_25bps"
+        )
+    if re.search(
+        r"single target rate rather than a target range.{0,40}?target rate will be used", text
+    ):
+        policies.append("single_rate=target_rate_used")
+    return {
+        "event_subject": f"us_fed_funds_upper_bound|{anchor}",
+        "event_date": anchor_date,
+        "event_action": "published_level",
+        "market_type": "economic",
+        "contract_scope": "fed_funds_upper_bound_level",
+        "affirmative_outcome": "predicate_true",
+        "threshold": Decimal(level.group(2)),
+        "threshold_operator": operator,
+        "threshold_unit": "percent",
+        "measurement_period": anchor,
+        "geography": "us",
+        "resolution_source": "federal_reserve" if "federal reserve" in text else None,
+        "settlement_policy": "|".join(policies) or None,
+    }
 
 
 def _weather_terms(market: Market) -> dict[str, object] | None:
@@ -354,6 +530,30 @@ def _text(market: Market) -> str:
 
 def _number(value: str) -> Decimal:
     return Decimal(value.replace(",", ""))
+
+
+def _cpi_level_terms(
+    text: str,
+    threshold: Decimal | None,
+    upper: Decimal | None,
+    operator: str | None,
+) -> tuple[Decimal | None, Decimal | None, str | None]:
+    """Threshold phrasings specific to published CPI level buckets.
+
+    Polymarket phrases its tails postfix ("3.1% or less", "4.2% or more") and its
+    interior buckets as exact one-decimal levels ("be 3.4% in July"), none of which
+    the generic prefix patterns in ``_threshold_terms`` can read. The exact-level
+    branch only fires when the generic pass found no operator, so Kalshi's strict
+    "above 3.1%" phrasing keeps its ``>`` reading.
+    """
+    value = r"([0-9]+(?:\.[0-9]+)?)"
+    if match := re.search(value + r"\s*%\s*or\s+(?:less|lower)\b", text):
+        return _number(match.group(1)), None, "<="
+    if match := re.search(value + r"\s*%\s*or\s+(?:more|higher)\b", text):
+        return _number(match.group(1)), None, ">="
+    if operator is None and (match := re.search(r"\bbe\s+" + value + r"\s*%", text)):
+        return _number(match.group(1)), None, "="
+    return threshold, upper, operator
 
 
 def _threshold_terms(

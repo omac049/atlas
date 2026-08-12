@@ -294,26 +294,36 @@ def _settlement_policy(market: Market) -> str | None:
     return "|".join(policies) or None
 
 
+_QUOTE = "[\"'“”‘’]?"
+
+
 def has_explicit_binary_fallback(text: str) -> bool:
-    """Recognize a complete Yes/No rule despite harmless venue wording differences."""
+    """Recognize a complete Yes/No rule despite harmless venue wording differences.
+
+    Some venues (e.g. Polymarket Global) quote the outcome word: `resolve to "Yes" if`.
+    The optional quote class here tolerates that without loosening what counts as an
+    explicit fallback otherwise.
+    """
     normalized = _clean(text)
     yes_rule = bool(
-        re.search(r"(?:settle|resolve)(?:s|d)?(?: to)? yes if", normalized)
+        re.search(
+            rf"(?:settle|resolve)(?:s|d)?(?: to)? {_QUOTE}yes{_QUOTE} if", normalized
+        )
         or re.search(
-            r"\bif\b.{1,1200}(?:(?:the|this) market )?(?:will )?"
-            r"(?:settle|resolve)(?:s|d)?(?: to)? yes\b",
+            rf"\bif\b.{{1,1200}}(?:(?:the|this) market )?(?:will )?"
+            rf"(?:settle|resolve)(?:s|d)?(?: to)? {_QUOTE}yes\b",
             normalized,
         )
         or re.search(
-            r"then[\s,:;-]*(?:(?:the|this) )?market (?:will )?"
-            r"(?:settle|resolve)(?:s|d)?(?: to)? yes\b",
+            rf"then[\s,:;-]*(?:(?:the|this) )?market (?:will )?"
+            rf"(?:settle|resolve)(?:s|d)?(?: to)? {_QUOTE}yes\b",
             normalized,
         )
     )
     no_rule = bool(
         re.search(
-            r"otherwise[\s,:;-]*(?:(?:the|this) market )?(?:will )?"
-            r"(?:settle|resolve)(?:s|d)?(?: to)? no\b",
+            rf"otherwise[\s,:;-]*(?:(?:the|this) market )?(?:will )?"
+            rf"(?:settle|resolve)(?:s|d)?(?: to)? {_QUOTE}no\b",
             normalized,
         )
     )

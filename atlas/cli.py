@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import json
+import re
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
@@ -45,6 +46,7 @@ TARGETED_GLOBAL_TAG_IDS = (
     "487",  # House of Representatives
     "100196",  # Fed Rates
     "101031",  # Commodities
+    "101701",  # CPI
     "103840",  # Midterm
 )
 MAX_GLOBAL_TAG_IDS = 20
@@ -53,7 +55,17 @@ MAX_GLOBAL_TAG_IDS = 20
 # 2026-08-11 (100 most-recent closed markets per tag): Elections 144 = 71% election
 # family, Fed Rates 100196 = 15% economic, House 487 = chamber-control scope; the prior
 # defaults Crypto 21 / Weather 84 / Commodities 101031 sampled 0% of those families.
-BATCH_DEFAULT_GLOBAL_TAG_IDS = ("144", "487", "100196")
+# CPI 101701 added 2026-08-12 (verified live: 80 of the 100 most-recent closed markets
+# are CPI-family, including the settled July 2026 annual-inflation buckets).
+BATCH_DEFAULT_GLOBAL_TAG_IDS = ("144", "487", "100196", "101701")
+MAX_KALSHI_SERIES_TICKERS = 10
+_KALSHI_SERIES_TICKER_PATTERN = re.compile(r"[A-Z][A-Z0-9]{1,39}")
+# Kalshi's recent-first settled-event paging never reaches low-frequency macro
+# events (the July 2026 FOMC decision sits below thousands of daily sports and
+# hourly settlements), so scheduled batches also scan these series directly.
+# KXFEDDECISION = per-meeting rate-change buckets; KXFED = rate upper-bound levels;
+# KXCPIYOY = monthly CPI YoY strikes (verified live: KXCPIYOY-26JUL settled).
+BATCH_DEFAULT_KALSHI_SERIES_TICKERS = ("KXFEDDECISION", "KXFED", "KXCPIYOY")
 BATCH_MAX_TARGET_LABELS = 50
 BATCH_MAX_KALSHI_EVENT_PAGES = 100
 BATCH_MAX_POLYMARKET_PAGES = 20
@@ -62,6 +74,12 @@ BATCH_MAX_CANDIDATE_EVENTS = 50
 BATCH_MAX_MARKET_PAIRS = 500
 BATCH_MAX_RESOLVED_PAIRS = 100
 BATCH_MAX_TAG_SECONDS = 120
+# Live settlement-candidate discovery also watches the tag-scoped Polymarket Global
+# open catalog (e.g. the end-of-2026 fed-funds level event has no US-gateway
+# counterpart). Global markets have no order books, so they feed the queue and
+# catalog report only — never shadow, approval, or paper-trading paths.
+LIVE_GLOBAL_TAG_IDS = BATCH_DEFAULT_GLOBAL_TAG_IDS
+LIVE_GLOBAL_OPEN_PAGES = 2
 
 
 def _parse_global_tag_ids(raw_values: list[str] | None) -> tuple[str, ...]:
@@ -92,6 +110,36 @@ def _parse_batch_tag_ids(raw_values: list[str] | None) -> tuple[str, ...]:
     if not raw_values:
         return BATCH_DEFAULT_GLOBAL_TAG_IDS
     return _parse_global_tag_ids(raw_values)
+
+
+def _parse_kalshi_series_tickers(raw_values: list[str] | None) -> tuple[str, ...]:
+    """Parse a bounded Kalshi settled-series ticker list; empty means no series scan."""
+    if not raw_values:
+        return ()
+
+    tickers: list[str] = []
+    for raw_value in raw_values:
+        for value in raw_value.split(","):
+            ticker = value.strip().upper()
+            if not ticker:
+                raise ValueError("--kalshi-series-tickers cannot contain empty tickers")
+            if not _KALSHI_SERIES_TICKER_PATTERN.fullmatch(ticker):
+                raise ValueError(f"invalid Kalshi series ticker: {ticker!r}")
+            if ticker not in tickers:
+                tickers.append(ticker)
+
+    if len(tickers) > MAX_KALSHI_SERIES_TICKERS:
+        raise ValueError(
+            f"--kalshi-series-tickers accepts at most {MAX_KALSHI_SERIES_TICKERS} unique tickers"
+        )
+    return tuple(tickers)
+
+
+def _parse_batch_series_tickers(raw_values: list[str] | None) -> tuple[str, ...]:
+    """Return the reproducible default settled-series scan or a validated override."""
+    if not raw_values:
+        return BATCH_DEFAULT_KALSHI_SERIES_TICKERS
+    return _parse_kalshi_series_tickers(raw_values)
 
 
 def _validate_batch_limits(
@@ -230,11 +278,30 @@ async def approve_live_pair(kalshi_id: str, polymarket_id: str, approved_by: str
     print(f"approved_pair={pair.pair_id}")
 
 
+async def _safe_global_open_markets() -> list:
+    """Tag-scoped Polymarket Global open catalog for settlement discovery only.
+
+    Global markets expose no order books, so they extend the compatibility/queue
+    computation and never the shadow, approval, or paper-trading paths. A Gamma
+    outage degrades to the US-only catalog instead of failing the scan.
+    """
+    venue = PolymarketGlobalHistoricalVenue(tag_ids=LIVE_GLOBAL_TAG_IDS)
+    try:
+        return await venue.list_open_markets(max_pages=LIVE_GLOBAL_OPEN_PAGES)
+    except (httpx.HTTPError, OSError, ValueError) as exc:
+        print(
+            f"global_open_catalog_failed={type(exc).__name__} "
+            "continuing_with_us_catalog_only"
+        )
+        return []
+
+
 async def scan_pairs(live: bool) -> list:
     kalshi_venue = KalshiVenue(fixture=not live)
     polymarket_venue = PolymarketUSVenue(fixture=not live)
     kalshi_markets = await kalshi_venue.list_markets()
     polymarket_markets = await polymarket_venue.list_markets()
+    global_open_markets = await _safe_global_open_markets() if live else []
     store = AtlasStore()
     kalshi_active = len(filter_live_markets(kalshi_markets))
     polymarket_active = len(filter_live_markets(polymarket_markets))
@@ -288,7 +355,13 @@ async def scan_pairs(live: bool) -> list:
         pair for pair in pairs if pair.status.value in {"APPROVED_EQUIVALENT", "APPROVED_INVERSE"}
     ]
     review = [pair for pair in pairs if pair.status.value == "REVIEW_REQUIRED"]
-    catalog_report = compatibility_report(kalshi_markets, polymarket_markets)
+    catalog_report = compatibility_report(
+        kalshi_markets, [*polymarket_markets, *global_open_markets]
+    )
+    catalog_report["polymarket_global_open_markets"] = len(global_open_markets)
+    catalog_report["polymarket_global_open_tag_ids"] = list(
+        LIVE_GLOBAL_TAG_IDS if global_open_markets else ()
+    )
     if weather_enrichment is not None:
         catalog_report["weather_rule_enrichment"] = weather_enrichment
     if shared_rule_enrichment is not None:
@@ -336,6 +409,7 @@ async def scan_pairs(live: bool) -> list:
     print(
         f"scan: kalshi_active={kalshi_active} "
         f"polymarket_active={polymarket_active} "
+        f"global_open={len(global_open_markets)} "
         f"comparisons={len(pairs)} approved={len(approved)} review={len(review)}"
     )
     for pair in approved:
@@ -523,6 +597,7 @@ async def _run_scheduled_backfill() -> dict[str, object]:
         market_pairs=BATCH_MAX_MARKET_PAIRS,
         resolved_pairs=BATCH_MAX_RESOLVED_PAIRS,
         global_tag_ids=BATCH_DEFAULT_GLOBAL_TAG_IDS,
+        kalshi_series_tickers=BATCH_DEFAULT_KALSHI_SERIES_TICKERS,
     )
 
 
@@ -599,6 +674,7 @@ async def _run_learning_backfill(
     market_pairs: int = 2_000,
     resolved_pairs: int = 250,
     global_tag_ids: tuple[str, ...] | None = None,
+    kalshi_series_tickers: tuple[str, ...] | None = None,
 ) -> dict[str, object]:
     if not live:
         raise ValueError("historical backfill requires --live public venue data")
@@ -608,6 +684,7 @@ async def _run_learning_backfill(
         PolymarketUSVenue(fixture=False),
         target_labels=target,
         kalshi_event_pages=kalshi_event_pages,
+        kalshi_series_tickers=kalshi_series_tickers,
         polymarket_pages=polymarket_pages,
         additional_polymarket_venues={
             "polymarket_global": PolymarketGlobalHistoricalVenue(
@@ -635,6 +712,10 @@ def _print_historical_backfill_report(report: dict[str, object]) -> None:
             f"  source={source} final={coverage['final_binary_markets']} "
             f"closed={coverage['closed_markets']}"
         )
+    series_counts = report.get("kalshi_series_event_counts") or {}
+    if series_counts:
+        joined = " ".join(f"{ticker}={count}" for ticker, count in series_counts.items())
+        print(f"  kalshi_series_events: {joined}")
     for blocker, count in report["blockers"].items():
         print(f"  BLOCKED: {blocker} x{count}")
 
@@ -649,6 +730,7 @@ async def learning_backfill(
     market_pairs: int = 2_000,
     resolved_pairs: int = 250,
     global_tag_ids: tuple[str, ...] | None = None,
+    kalshi_series_tickers: tuple[str, ...] | None = None,
 ) -> dict[str, object]:
     report = await _run_learning_backfill(
         live,
@@ -660,6 +742,7 @@ async def learning_backfill(
         market_pairs,
         resolved_pairs,
         global_tag_ids,
+        kalshi_series_tickers=kalshi_series_tickers,
     )
     _print_historical_backfill_report(report)
     return report
@@ -675,6 +758,7 @@ async def learning_backfill_batch(
     market_pairs: int = BATCH_MAX_MARKET_PAIRS,
     resolved_pairs: int = BATCH_MAX_RESOLVED_PAIRS,
     global_tag_ids: tuple[str, ...] | None = None,
+    kalshi_series_tickers: tuple[str, ...] | None = None,
 ) -> dict[str, object]:
     """Run one bounded, paper-only historical probe per Global tag."""
     if not live:
@@ -689,6 +773,9 @@ async def learning_backfill_batch(
         resolved_pairs=resolved_pairs,
     )
     tag_ids = _parse_batch_tag_ids(list(global_tag_ids) if global_tag_ids else None)
+    series_tickers = _parse_batch_series_tickers(
+        list(kalshi_series_tickers) if kalshi_series_tickers else None
+    )
 
     per_tag: list[dict[str, object]] = []
     for tag_id in tag_ids:
@@ -704,6 +791,7 @@ async def learning_backfill_batch(
                     market_pairs,
                     resolved_pairs,
                     (tag_id,),
+                    kalshi_series_tickers=series_tickers,
                 ),
                 timeout=BATCH_MAX_TAG_SECONDS,
             )
@@ -746,6 +834,7 @@ async def learning_backfill_batch(
                     "historical_candidate_events_found"
                 ),
                 "venue_coverage": report.get("venue_coverage", {}),
+                "kalshi_series_event_counts": report.get("kalshi_series_event_counts", {}),
                 "blockers": report.get("blockers", {}),
             }
         )
@@ -756,6 +845,7 @@ async def learning_backfill_batch(
         "paper_only": True,
         "execution_enabled": False,
         "tag_ids": list(tag_ids),
+        "kalshi_series_tickers": list(series_tickers),
         "completed_tags": [
             result["tag_id"] for result in per_tag if result["status"] != "FAILED"
         ],
@@ -887,6 +977,15 @@ def main() -> None:
         metavar="TAG_ID[,TAG_ID...]",
         help="bounded Polymarket Global tag-ID override; repeat or comma-separate values",
     )
+    backfill.add_argument(
+        "--kalshi-series-tickers",
+        action="append",
+        metavar="SERIES[,SERIES...]",
+        help=(
+            "bounded Kalshi settled-series scan (e.g. KXFEDDECISION,KXFED) so macro "
+            "events beyond recent-first paging reach the candidate pool"
+        ),
+    )
     backfill.add_argument("--candidate-events", type=int, default=100)
     backfill.add_argument("--market-pairs", type=int, default=2_000)
     backfill.add_argument("--resolved-pairs", type=int, default=250)
@@ -906,6 +1005,15 @@ def main() -> None:
         help=(
             "bounded tag override; defaults to crypto, weather, and commodities; "
             "repeat or comma-separate values"
+        ),
+    )
+    batch.add_argument(
+        "--kalshi-series-tickers",
+        action="append",
+        metavar="SERIES[,SERIES...]",
+        help=(
+            "bounded Kalshi settled-series scan; defaults to the FOMC decision series "
+            "(KXFEDDECISION, KXFED); repeat or comma-separate values"
         ),
     )
     batch.add_argument("--candidate-events", type=int, default=BATCH_MAX_CANDIDATE_EVENTS)
@@ -958,6 +1066,7 @@ def main() -> None:
     elif args.command == "learning" and args.action == "backfill":
         try:
             global_tag_ids = _parse_global_tag_ids(args.global_tag_ids)
+            kalshi_series_tickers = _parse_kalshi_series_tickers(args.kalshi_series_tickers)
         except ValueError as exc:
             parser.error(str(exc))
         asyncio.run(
@@ -971,11 +1080,13 @@ def main() -> None:
                 max(args.market_pairs, 1),
                 max(args.resolved_pairs, 1),
                 global_tag_ids,
+                kalshi_series_tickers,
             )
         )
     elif args.command == "learning" and args.action == "backfill-batch":
         try:
             global_tag_ids = _parse_batch_tag_ids(args.global_tag_ids)
+            kalshi_series_tickers = _parse_batch_series_tickers(args.kalshi_series_tickers)
             _validate_batch_limits(
                 target=args.target,
                 kalshi_event_pages=args.kalshi_event_pages,
@@ -998,6 +1109,7 @@ def main() -> None:
                 args.market_pairs,
                 args.resolved_pairs,
                 global_tag_ids,
+                kalshi_series_tickers,
             )
         )
     elif args.command == "replay" and args.action == "capture":

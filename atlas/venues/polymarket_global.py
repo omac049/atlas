@@ -59,6 +59,40 @@ class PolymarketGlobalHistoricalVenue:
                     break
         return markets
 
+    async def list_open_markets(self, max_pages: int = 2) -> list[Market]:
+        """List tag-scoped open markets for settlement-candidate discovery.
+
+        Open Global markets are research inputs for the queue only: this adapter
+        still exposes no order books, so they can never reach shadow, approval,
+        or paper-trading paths that require executable prices.
+        """
+        markets: list[Market] = []
+        seen: set[str] = set()
+        limit = 100
+        for tag_id in self.tag_ids or (None,):
+            for page in range(max_pages):
+                params = {
+                    "closed": False,
+                    "active": True,
+                    "limit": limit,
+                    "offset": page * limit,
+                    "order": "volumeNum",
+                    "ascending": False,
+                }
+                if tag_id is not None:
+                    params["tag_id"] = tag_id
+                payload = await self._get("/markets", params=params)
+                items = payload if isinstance(payload, list) else []
+                for item in items:
+                    market_id = str(item.get("id") or "")
+                    if not market_id or market_id in seen:
+                        continue
+                    seen.add(market_id)
+                    markets.append(self._normalize_market(item))
+                if len(items) < limit:
+                    break
+        return markets
+
     async def get_terminal_settlement_evidence(self, market_id: str) -> dict:
         item = self._closed_markets.get(str(market_id))
         if item is None:

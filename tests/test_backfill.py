@@ -85,6 +85,85 @@ async def test_historical_backfill_creates_positive_and_negative_labels(tmp_path
     assert (await store.latest_historical_backfill())["status"] == "MILESTONE_COMPLETE"
 
 
+@pytest.mark.asyncio
+async def test_historical_backfill_scans_requested_kalshi_series(tmp_path):
+    class SeriesKalshiVenue:
+        def __init__(self):
+            self.captured_series = None
+
+        async def list_settled_events(self, max_pages=100, series_tickers=None):
+            self.captured_series = series_tickers
+            return [
+                {
+                    "event_ticker": "KXFEDDECISION-26JUL",
+                    "title": "Fed decision in July?",
+                    "sub_title": "On Jul 29, 2026",
+                }
+            ]
+
+        async def list_settled_event_markets(self, event_ticker):
+            return []
+
+    venue = SeriesKalshiVenue()
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    report = await backfill_historical_validation(
+        store,
+        venue,
+        HistoricalPolymarketVenue([]),
+        target_labels=1,
+        kalshi_series_tickers=("KXFEDDECISION", "KXFED"),
+    )
+
+    assert venue.captured_series == ("KXFEDDECISION", "KXFED")
+    assert report["kalshi_series_tickers"] == ["KXFEDDECISION", "KXFED"]
+    assert report["kalshi_series_event_counts"] == {"KXFEDDECISION": 1, "KXFED": 0}
+    assert report["blockers"]["KALSHI_SERIES_EVENT_SCAN_EMPTY"] == 1
+    assert report["paper_only"] is True
+
+
+@pytest.mark.asyncio
+async def test_requested_series_events_bypass_the_lexical_candidate_gate(tmp_path):
+    """'Fed decision in July?' shares too few tokens with 'increase interest rates by
+    25 bps after the July 2026 meeting' to match lexically; an explicitly requested
+    series must still reach deterministic verification."""
+    kalshi_market = fixture_markets()["kalshi"][0].model_copy(deep=True)
+    kalshi_market.status = MarketStatus.SETTLED
+    kalshi_market.raw_market_json["result"] = "yes"
+    kalshi_market.raw_market_json["event_ticker"] = "KXFEDDECISION-26JUL"
+
+    class SeriesKalshiVenue:
+        async def list_settled_events(self, max_pages=100, series_tickers=None):
+            return [
+                {
+                    "event_ticker": "KXFEDDECISION-26JUL",
+                    "title": "Fed decision in July?",
+                    "sub_title": "On Jul 29, 2026",
+                }
+            ]
+
+        async def list_settled_event_markets(self, event_ticker):
+            return [kalshi_market]
+
+    polymarket = fixture_markets()["polymarket_us"][0].model_copy(deep=True)
+    polymarket.status = MarketStatus.CLOSED
+    polymarket.title = "Will the Fed increase interest rates by 25 bps after the July 2026 meeting?"
+    polymarket.raw_market_json["question"] = polymarket.title
+
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    report = await backfill_historical_validation(
+        store,
+        SeriesKalshiVenue(),
+        HistoricalPolymarketVenue([polymarket]),
+        target_labels=1,
+        kalshi_series_tickers=("KXFEDDECISION",),
+    )
+
+    assert report["cross_venue_event_candidates"] == 1
+    assert report["market_pairs_reviewed"] == 1
+    assert report["kalshi_series_event_counts"] == {"KXFEDDECISION": 1}
+    assert "NO_CROSS_VENUE_SETTLED_EVENT_OVERLAP" not in report["blockers"]
+
+
 def test_historical_label_keeps_review_pairs_inconclusive():
     markets = fixture_markets()
     pair = verify_equivalence(

@@ -28,14 +28,16 @@ Do not add a live order client casually. Any future execution capability must be
 
 ## Where we stand
 
-Last verified: **2026-08-11**.
+Last verified: **2026-08-12**.
 
-- API: serving at `http://127.0.0.1:8000/`.
-- Test suite: `172 passed, 1 warning` at the latest full run; `ruff check .` reports zero issues.
+- API: serving locally (`/health` reports `trading_enabled=false`).
+- Test suite: `222 passed, 1 warning` at the latest full run; `ruff check .` reports zero issues.
 - Trusted settlement labels: `0`.
-- Latest learning readiness check: `training_ready=False`, `labels=0`, `observations=289`.
+- Latest learning readiness check: `training_ready=False`, `labels=0`, `observations=290`.
 - Current queue: 12 persisted settlement candidates; all are `BLOCKED`. Discretionary fair-price pairs now carry the terminal gate `STRUCTURALLY_UNREACHABLE_DISCRETIONARY_SETTLEMENT` and sort below every reachable candidate, so the queue surfaces where a first trusted label is possible.
-- Scheduled bounded backfills default to guarantee-reachable Polymarket Global tags (`144` Elections, `487` House, `100196` Fed Rates), verified against a live catalog probe; the latest bounded batch on those tags completed `BATCH_COMPLETE` with `paper_only=true` and 0 trusted labels (179/17/180 inconclusive pairs).
+- Scheduled bounded backfills default to guarantee-reachable Polymarket Global tags (`144` Elections, `487` House, `100196` Fed Rates, `101701` CPI) plus explicit Kalshi series scans (`KXFEDDECISION`, `KXFED`, `KXCPIYOY`), all verified against live catalog probes; the latest bounded batch completed `BATCH_COMPLETE` with `paper_only=true` and 0 trusted labels.
+- Three canonical macro families now make real cross-venue pairs visible end-to-end with honest published divergences isolated: the settled July 2026 FOMC decision pair (blocked only on Polymarket's published rounding), the open December 2026 fed-funds level overlap, and the settled July 2026 CPI YoY pair — the closest frontier, because both venues publish BLS one-decimal precision there.
+- The verifier now recognizes exact threshold-operator complements (`>X` vs `≤X` on identical terms) as `APPROVED_INVERSE` — a gated rule change reviewed and signed off 2026-08-12, verified to change no current verdict. It requires both legs `GUARANTEED` and every other term equal, so the CPI tail pair auto-promotes to the first trusted label if the venues' missing-data fallback texts ever align.
 - Execution-ready events: `0`.
 - Awaiting-settlement cases: `0`.
 - Milestone alerts: none yet, because no candidate has cleared the deterministic gate.
