@@ -261,3 +261,29 @@ async def test_shadow_validation_summary_aggregates_pairs_and_edges(tmp_path):
     assert summary["unique_pairs"] == 2
     assert summary["positive_edge_count"] == 1
     assert summary["positive_edge_rate"] == "0.5"
+
+
+@pytest.mark.asyncio
+async def test_recent_historical_backfills_return_newest_first(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    for index in range(3):
+        await store.save_historical_backfill(
+            {
+                "status": "EXTERNAL_EVIDENCE_BLOCKED",
+                "completed_at": f"2026-08-1{index}T00:00:00+00:00",
+                "new_labels": index,
+                "kalshi_series_tickers": ["KXFEDDECISION"],
+                "kalshi_series_event_counts": {"KXFEDDECISION": index},
+            }
+        )
+    runs = await store.recent_historical_backfills(limit=2)
+    assert [run["new_labels"] for run in runs] == [2, 1]
+    assert runs[0]["kalshi_series_event_counts"] == {"KXFEDDECISION": 2}
+
+
+@pytest.mark.asyncio
+async def test_recent_historical_backfills_bound_the_requested_limit(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await store.save_historical_backfill({"status": "NO_NEW_TRUSTED_LABELS"})
+    assert len(await store.recent_historical_backfills(limit=0)) == 1
+    assert len(await store.recent_historical_backfills(limit=500)) == 1

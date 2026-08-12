@@ -64,6 +64,33 @@ def test_dashboard_styles_provenance_as_research_metadata():
     assert ".settlement-evidence" in styles
 
 
+def test_dashboard_surfaces_kalshi_series_scan_and_recent_backfill_runs():
+    html = (ROOT / "apps" / "dashboard" / "index.html").read_text()
+    script = (ROOT / "apps" / "dashboard" / "dashboard.js").read_text()
+
+    assert 'id="backfill-series"' in html
+    assert 'id="backfill-runs"' in html
+    for field in (
+        "kalshi_series_tickers",
+        "kalshi_series_event_counts",
+        "historical_backfill_runs",
+        "tag_scopes",
+    ):
+        assert field in script
+    assert "KALSHI SERIES SCAN" in script
+    assert "RECENT BACKFILL RUNS" in script
+
+
+def test_dashboard_renders_guarantee_reason_codes_beside_guarantee_pills():
+    script = (ROOT / "apps" / "dashboard" / "dashboard.js").read_text()
+    styles = (ROOT / "apps" / "dashboard" / "dashboard-research.css").read_text()
+
+    assert "item.kalshi_guarantee?.reason_codes" in script
+    assert "item.polymarket_guarantee?.reason_codes" in script
+    assert "settlement-guarantee-reason" in script
+    assert ".settlement-guarantee-reason" in styles
+
+
 def test_dashboard_keeps_paper_only_safety_messaging_visible():
     html = (ROOT / "apps" / "dashboard" / "index.html").read_text()
 

@@ -3,112 +3,139 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Atlas — Mispricing Command</title>
+    <meta name="description" content="Atlas — paper-only cross-market prediction research. One event, two markets, priced apart." />
+    <title>Atlas — Cross-Market Intelligence</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/dashboard.css?v=20260811-helpful" />
-    <link rel="stylesheet" href="/dashboard-research.css?v=20260811-helpful" />
-    <link rel="stylesheet" href="/dashboard-agent.css?v=20260811-helpful" />
+    <link rel="stylesheet" href="/dashboard.css?v=20260812-overhaul" />
+    <link rel="stylesheet" href="/dashboard-research.css?v=20260812-overhaul" />
+    <link rel="stylesheet" href="/dashboard-agent.css?v=20260812-overhaul" />
   </head>
   <body>
-    <main class="shell">
+    <main class="shell" id="top">
       <header class="topbar">
-        <div class="brand">
+        <a class="brand" href="#top">
           <span class="brand-mark">A</span>
-          <div><strong>ATLAS</strong><small>cross-market intelligence</small></div>
-        </div>
+          <span><strong>ATLAS</strong><small>Cross-market intelligence</small></span>
+        </a>
         <nav class="topnav" aria-label="Sections">
           <a href="#pipeline">Pipeline</a>
+          <a href="#opportunities">Opportunities</a>
           <a href="#agent">Agent</a>
           <a href="#settlement">Settlement</a>
           <a href="#normalization">Normalization</a>
           <a href="#validation">Validation</a>
-          <a href="#opportunities">Opportunities</a>
         </nav>
         <div class="top-status">
+          <span class="paper-chip badge badge--warn badge--dot" title="Atlas is a research instrument. No order-placement path exists.">PAPER · LIVE ORDERS DISABLED</span>
           <span class="pulse"></span><span id="connection">CONNECTING</span>
           <span class="divider"></span><span id="updated">—</span>
         </div>
       </header>
 
       <section class="intro">
-        <div>
-          <p class="eyebrow">PAPER TRADING / V0.1</p>
-          <h1>Mispricing command surface</h1>
-          <p class="subhead">Relationships proposed by AI. Reality checked by rules. Edge measured against executable depth.</p>
+        <div class="intro-copy">
+          <p class="eyebrow">Paper-only research · v0.1</p>
+          <h1>One event. Two markets. Priced apart.</h1>
+          <p class="subhead">Atlas watches Kalshi and Polymarket for contracts settling on the same real-world event, proves they are economically identical with deterministic rules, and measures whether the price gap survives real order-book depth — entirely on paper.</p>
         </div>
-        <div class="safety"><span>●</span> LIVE ORDERS DISABLED</div>
+        <div class="intro-stats" aria-label="Pipeline at a glance">
+          <div class="stat"><span>Contracts normalized</span><strong id="hero-normalized">—</strong></div>
+          <div class="stat"><span>Shared events</span><strong id="hero-shared">—</strong></div>
+          <div class="stat stat--accent"><span>Execution ready</span><strong id="hero-ready">—</strong></div>
+          <div class="stat"><span>Trusted labels</span><strong id="hero-labels">—</strong><div class="progress"><i id="hero-labels-bar"></i></div></div>
+        </div>
       </section>
 
-      <section class="evidence-banner">
-        <div><span class="section-label">EVIDENCE MODE</span><strong id="evidence-mode">—</strong></div>
+      <section class="evidence-banner" role="status">
+        <div><span class="section-label">Evidence mode</span><strong id="evidence-mode">—</strong></div>
         <p id="evidence-detail">Loading current live-discovery state.</p>
       </section>
 
       <section class="cohort-panel panel" id="pipeline" aria-labelledby="cohort-status">
         <div class="cohort-head">
           <div>
-            <span class="section-label">FIRST VALIDATION COHORT / PAPER ONLY</span>
+            <span class="section-label">First validation cohort · paper only</span>
             <h2 id="cohort-status">Waiting for the first shared event</h2>
             <p id="cohort-detail">Atlas must clear deterministic rules before a case can be followed through settlement.</p>
           </div>
-          <div class="cohort-safety"><span></span> LIVE ORDERS DISABLED</div>
         </div>
         <div class="cohort-path" aria-label="Validation cohort progress">
-          <div class="cohort-step" data-cohort-step="shared"><span>STRUCTURED SHARED EVENTS</span><strong id="cohort-shared">—</strong><small>same event identity</small></div>
-          <div class="cohort-step" data-cohort-step="ready"><span>GUARANTEED / READY</span><strong id="cohort-ready">— / —</strong><small>rules cleared</small></div>
-          <div class="cohort-step" data-cohort-step="blockers"><span>UNRESOLVED BLOCKERS</span><strong id="cohort-blocker-count">—</strong><small>must reach zero</small></div>
-          <div class="cohort-step" data-cohort-step="awaiting"><span>AWAITING SETTLEMENT</span><strong id="cohort-awaiting">—</strong><small>both venues pending</small></div>
-          <div class="cohort-step" data-cohort-step="resolved"><span>RESOLVED CASES</span><strong id="cohort-resolved">—</strong><small>outcomes compared</small></div>
-          <div class="cohort-step" data-cohort-step="labels"><span>TRUSTED LABELS</span><strong id="cohort-labels">—</strong><small id="cohort-label-target">target: 50</small></div>
+          <div class="cohort-step" data-cohort-step="shared"><span>Structured shared events</span><strong id="cohort-shared">—</strong><small>same event identity</small></div>
+          <div class="cohort-step" data-cohort-step="ready"><span>Guaranteed / ready</span><strong id="cohort-ready">— / —</strong><small>rules cleared</small></div>
+          <div class="cohort-step" data-cohort-step="blockers"><span>Unresolved blockers</span><strong id="cohort-blocker-count">—</strong><small>must reach zero</small></div>
+          <div class="cohort-step" data-cohort-step="awaiting"><span>Awaiting settlement</span><strong id="cohort-awaiting">—</strong><small>both venues pending</small></div>
+          <div class="cohort-step" data-cohort-step="resolved"><span>Resolved cases</span><strong id="cohort-resolved">—</strong><small>outcomes compared</small></div>
+          <div class="cohort-step" data-cohort-step="labels"><span>Trusted labels</span><strong id="cohort-labels">—</strong><small id="cohort-label-target">target: 50</small></div>
         </div>
         <div class="cohort-gate">
-          <div><span class="section-label">NEXT GATE</span><strong id="cohort-next-gate">Complete a deterministic rule match</strong></div>
+          <div><span class="section-label">Next gate</span><strong id="cohort-next-gate">Complete a deterministic rule match</strong></div>
           <p id="cohort-blockers">Waiting for settlement evidence.</p>
         </div>
       </section>
 
-      <section class="agent-panel panel" id="agent">
-        <div class="agent-head">
-          <div>
-            <span id="agent-label" class="section-label">AGENT RESEARCH LOOP / PAPER ONLY</span>
-            <h2 id="agent-status">Waiting for agent trace</h2>
-            <p id="agent-detail">Atlas will choose the next research action from the observed catalog state.</p>
+      <section class="grid" id="opportunities">
+        <div class="panel col-8 workspace">
+          <div class="workspace-head">
+            <div><span class="section-label">Live opportunities</span><h2>Approved equivalents</h2></div>
+            <button id="refresh">Refresh <span>↻</span></button>
           </div>
-          <div class="agent-metric"><span>OPPORTUNITIES</span><strong id="agent-opportunities">—</strong></div>
+          <div id="opportunity" class="opportunity"><div class="skeleton"></div></div>
         </div>
-        <div id="agent-steps" class="agent-steps"><div class="empty">No agent steps recorded.</div></div>
+        <aside class="panel col-4 gates" aria-label="Trust gates">
+          <span class="section-label">Trust gates</span>
+          <div class="gate-row"><span title="Deterministic rule verdict for the displayed pair">Rule check</span><strong id="rule-check">—</strong></div>
+          <div class="gate-row"><span>Pair status</span><strong id="pair-status">—</strong></div>
+          <div class="gate-row"><span title="REGISTRY = stored live pair · FIXTURE = built-in demo data">Pair source</span><strong id="pair-source">—</strong></div>
+          <div class="gate-row"><span>Paper trades</span><strong id="paper-trades">—</strong></div>
+          <div class="gate-row"><span title="Active Polymarket contracts / approved candidates in the latest scan">Discovery</span><strong id="discovery-status">—</strong></div>
+          <div class="gate-row"><span title="How closely live venue catalogs overlap: exact rule matches, shared events, or family only">Catalog fit</span><strong id="catalog-fit">—</strong></div>
+          <div class="gate-row"><span title="Trusted labels collected toward the 50-label training gate">Learning</span><strong id="learning-status">—</strong></div>
+        </aside>
       </section>
 
-      <section class="shadow-panel panel">
-        <div>
-          <span class="section-label">LIVE SHADOW TEST / NEVER EXECUTED</span>
-          <h2 id="shadow-title">Waiting for a safe observation candidate</h2>
-          <p id="shadow-detail">Atlas may observe blocked pairs to test market-data plumbing without treating them as arbitrage.</p>
+      <section class="grid" id="agent">
+        <div class="panel col-7 agent-panel">
+          <div class="agent-head">
+            <div>
+              <span id="agent-label" class="section-label">Agent research loop · paper only</span>
+              <h2 id="agent-status">Waiting for agent trace</h2>
+              <p id="agent-detail">Atlas will choose the next research action from the observed catalog state.</p>
+            </div>
+            <div class="agent-metric"><span>Opportunities</span><strong id="agent-opportunities">—</strong></div>
+          </div>
+          <div id="agent-steps" class="agent-steps"><div class="empty">No agent steps recorded.</div></div>
         </div>
-        <div class="shadow-metrics metric-grid">
-          <div><span title="Cost of buying both hedged sides at observed executable prices">COMBINED COST</span><strong id="shadow-cost">—</strong></div>
-          <div><span title="$1.00 payout minus combined cost, before contract rules are considered">RAW EDGE</span><strong id="shadow-edge">—</strong></div>
-          <div><span title="Deterministic rule verdict for this pair — BLOCKED pairs are observation-only">RULE STATUS</span><strong id="shadow-status">BLOCKED</strong></div>
-          <div><span>OBSERVATIONS</span><strong id="shadow-observations">0</strong></div>
-          <div><span>UNIQUE PAIRS</span><strong id="shadow-pairs">0</strong></div>
-          <div><span title="Share of observations where the raw edge was positive">POSITIVE RATE</span><strong id="shadow-positive">0%</strong></div>
+        <div class="panel col-5 shadow-panel">
+          <div>
+            <span class="section-label">LIVE SHADOW TEST / NEVER EXECUTED</span>
+            <h2 id="shadow-title">Waiting for a safe observation candidate</h2>
+            <p id="shadow-detail">Atlas may observe blocked pairs to test market-data plumbing without treating them as arbitrage.</p>
+          </div>
+          <div class="shadow-metrics metric-grid">
+            <div><span title="Cost of buying both hedged sides at observed executable prices">Combined cost</span><strong id="shadow-cost">—</strong></div>
+            <div><span title="$1.00 payout minus combined cost, before contract rules are considered">Raw edge</span><strong id="shadow-edge">—</strong></div>
+            <div><span title="Deterministic rule verdict for this pair — blocked pairs are observation-only">Rule status</span><strong id="shadow-status">BLOCKED</strong></div>
+            <div><span>Observations</span><strong id="shadow-observations">0</strong></div>
+            <div><span>Unique pairs</span><strong id="shadow-pairs">0</strong></div>
+            <div><span title="Share of observations where the raw edge was positive">Positive rate</span><strong id="shadow-positive">0%</strong></div>
+          </div>
+          <div id="shadow-blockers" class="shadow-blockers">No observation yet.</div>
         </div>
-        <div id="shadow-blockers" class="shadow-blockers">No observation yet.</div>
       </section>
 
       <section class="settlement-panel panel" id="settlement">
         <div class="settlement-head">
           <div>
-            <span class="section-label">GUARANTEED-SETTLEMENT DISCOVERY</span>
+            <span class="section-label">Guaranteed-settlement discovery</span>
             <h2 id="settlement-status">Ranking shared events</h2>
             <p id="settlement-detail">Contracts with discretionary or unknown settlement cannot enter the executable queue.</p>
           </div>
           <div class="settlement-metrics metric-grid">
-            <div><span title="Cross-venue events ranked by settlement discovery">SHARED EVENTS</span><strong id="settlement-shared">—</strong></div>
-            <div><span title="Shared events where both venues have guaranteed, non-discretionary settlement">GUARANTEED</span><strong id="settlement-guaranteed">—</strong></div>
-            <div><span title="Shared events with every required settlement-source field captured">EVIDENCE COMPLETE</span><strong id="settlement-evidence-complete">—</strong></div>
-            <div><span title="Events clearing every deterministic gate — eligible for paper tracking">EXECUTION READY</span><strong id="settlement-ready">—</strong></div>
-            <div><span title="Contracts with guaranteed settlement: Kalshi / Polymarket">SAFE CONTRACTS K / P</span><strong id="settlement-contracts">—</strong></div>
+            <div><span title="Cross-venue events ranked by settlement discovery">Shared events</span><strong id="settlement-shared">—</strong></div>
+            <div><span title="Shared events where both venues have guaranteed, non-discretionary settlement">Guaranteed</span><strong id="settlement-guaranteed">—</strong></div>
+            <div><span title="Shared events with every required settlement-source field captured">Evidence complete</span><strong id="settlement-evidence-complete">—</strong></div>
+            <div><span title="Events clearing every deterministic gate — eligible for paper tracking">Execution ready</span><strong id="settlement-ready">—</strong></div>
+            <div><span title="Contracts with guaranteed settlement: Kalshi / Polymarket">Safe contracts K / P</span><strong id="settlement-contracts">—</strong></div>
           </div>
         </div>
         <div id="settlement-rankings" class="settlement-rankings"><div class="empty">No settlement ranking recorded yet.</div></div>
@@ -117,130 +144,115 @@
       <section class="normalization-panel panel" id="normalization">
         <div class="normalization-head">
           <div>
-            <span class="section-label">DETERMINISTIC NORMALIZATION / FOUR MARKET FAMILIES</span>
+            <span class="section-label">Deterministic normalization · four market families</span>
             <h2 id="normalization-status">Measuring rule coverage</h2>
-            <p id="normalization-detail">Economic, weather, election, and crypto contracts are compared on explicit rule fields—not title similarity.</p>
+            <p id="normalization-detail">Economic, weather, election, and crypto contracts are compared on explicit rule fields — not title similarity.</p>
             <p id="normalization-audit" class="normalization-audit">Waiting for the full-detail weather rule audit.</p>
             <p id="shared-rule-audit" class="normalization-audit">Waiting for bounded cross-family rule enrichment.</p>
             <p id="identity-audit" class="normalization-audit">Waiting for the structured identity audit.</p>
           </div>
           <div class="normalization-totals metric-grid">
-            <div><span title="Contracts parsed into explicit structured rule fields">NORMALIZED</span><strong id="normalization-total">—</strong></div>
-            <div><span title="Same underlying event found on both venues">SHARED EVENTS</span><strong id="normalization-shared">—</strong></div>
-            <div><span title="Shared events with guaranteed settlement on both venues">GUARANTEED</span><strong id="normalization-guaranteed">—</strong></div>
-            <div><span title="Shared events with identical threshold, source, timing, and settlement terms">EXACT RULE MATCHES</span><strong id="normalization-exact">—</strong></div>
+            <div><span title="Contracts parsed into explicit structured rule fields">Normalized</span><strong id="normalization-total">—</strong></div>
+            <div><span title="Same underlying event found on both venues">Shared events</span><strong id="normalization-shared">—</strong></div>
+            <div><span title="Shared events with guaranteed settlement on both venues">Guaranteed</span><strong id="normalization-guaranteed">—</strong></div>
+            <div><span title="Shared events with identical threshold, source, timing, and settlement terms">Exact rule matches</span><strong id="normalization-exact">—</strong></div>
           </div>
         </div>
         <div class="normalization-table">
           <div class="normalization-table-head">
-            <span>FAMILY</span><span>CONTRACTS K / P</span><span>NORMALIZED K / P</span><span>SHARED</span><span>SAFE</span><span>EXACT</span><span>STATE / BLOCKERS</span>
+            <span>Family</span><span>Contracts K / P</span><span>Normalized K / P</span><span>Shared</span><span>Safe</span><span>Exact</span><span>State / blockers</span>
           </div>
           <div id="normalization-families"><div class="empty">No family coverage recorded yet.</div></div>
         </div>
       </section>
 
+      <p id="milestone-alert" class="validation-alert">No milestone transition yet</p>
+
       <section class="validation-panel panel" id="validation">
         <div>
-          <span class="section-label">AUTOMATED VALIDATION / SETTLEMENT LABELS ONLY</span>
+          <span class="section-label">Automated validation · settlement labels only</span>
           <h2 id="validation-status">Preparing evidence ledger</h2>
           <p id="validation-detail">Atlas versions market rules and waits for both venues to settle before creating a trusted learning label.</p>
           <p id="validation-backfill" class="validation-backfill">Historical backfill has not run yet.</p>
-          <p id="validation-provenance" class="validation-provenance">HISTORICAL PROVENANCE · waiting for the first verified run</p>
+          <p id="validation-provenance" class="validation-provenance">Historical provenance · waiting for the first verified run</p>
+          <p id="backfill-series" class="validation-provenance">Kalshi series scan · waiting for the first verified run</p>
+          <div id="backfill-runs" class="backfill-runs"></div>
           <div class="validation-signal">
-            <span>LEARNING READINESS</span>
+            <span>Learning readiness</span>
             <strong id="validation-readiness">BLOCKED</strong>
             <small id="validation-readiness-detail">Waiting for settlement-verified labels and both outcome classes.</small>
           </div>
-          <p id="validation-safety" class="validation-safety">PAPER ONLY / NEVER EXECUTED · SETTLEMENT-VERIFIED LABELS ONLY</p>
+          <p id="validation-safety" class="validation-safety">Paper only / never executed · settlement-verified labels only</p>
         </div>
         <div class="validation-metrics metric-grid">
-          <div><span title="Markets whose rules are versioned in the evidence ledger">MARKETS TRACKED</span><strong id="validation-markets">—</strong></div>
-          <div><span title="Stored snapshots of market rule text">EVIDENCE VERSIONS</span><strong id="validation-versions">—</strong></div>
-          <div><span title="Detected edits to market rules after listing">RULE CHANGES</span><strong id="validation-changes">—</strong></div>
-          <div><span title="Paper cases waiting for both venues to publish final outcomes">AWAITING SETTLEMENT</span><strong id="validation-awaiting">—</strong></div>
-          <div><span title="Cases where both venues have settled">RESOLVED CASES</span><strong id="validation-resolved">—</strong></div>
-          <div><span title="Resolved cases as a share of all tracked cases">SETTLEMENT COVERAGE</span><strong id="validation-coverage">—</strong></div>
-          <div><span title="Confirmed matches as a share of decisive outcomes (confirmed + diverged)">CONFIRMATION PRECISION</span><strong id="validation-precision">—</strong></div>
-          <div><span title="Resolved cases without a decisive outcome">INCONCLUSIVE RATE</span><strong id="validation-inconclusive">—</strong></div>
-          <div><span title="Settlement-verified learning labels">TRUSTED LABELS</span><strong id="validation-labels">—</strong></div>
-          <div><span title="Approved-equivalent / rejected labels — training needs both classes">LABEL MIX A / R</span><strong id="validation-label-mix">— / —</strong></div>
-          <div><span title="Polymarket markets with final binary evidence / closed markets scanned">PM SOURCES FINAL / CLOSED</span><strong id="backfill-polymarket">— / —</strong></div>
-          <div><span title="Closed cross-venue events considered by historical backfill">HISTORICAL CANDIDATE EVENTS</span><strong id="backfill-shared">—</strong></div>
-          <div><span title="Labels still needed to reach the 50-label training gate">MIN LABEL COUNT GAP</span><strong id="backfill-remaining">50</strong></div>
-          <div><span title="Verification status of the latest historical backfill run">PROVENANCE STATE</span><strong id="validation-provenance-state">NO VERIFIED RUN</strong></div>
+          <div><span title="Markets whose rules are versioned in the evidence ledger">Markets tracked</span><strong id="validation-markets">—</strong></div>
+          <div><span title="Stored snapshots of market rule text">Evidence versions</span><strong id="validation-versions">—</strong></div>
+          <div><span title="Detected edits to market rules after listing">Rule changes</span><strong id="validation-changes">—</strong></div>
+          <div><span title="Paper cases waiting for both venues to publish final outcomes">Awaiting settlement</span><strong id="validation-awaiting">—</strong></div>
+          <div><span title="Cases where both venues have settled">Resolved cases</span><strong id="validation-resolved">—</strong></div>
+          <div><span title="Resolved cases as a share of all tracked cases">Settlement coverage</span><strong id="validation-coverage">—</strong></div>
+          <div><span title="Confirmed matches as a share of decisive outcomes (confirmed + diverged)">Confirmation precision</span><strong id="validation-precision">—</strong></div>
+          <div><span title="Resolved cases without a decisive outcome">Inconclusive rate</span><strong id="validation-inconclusive">—</strong></div>
+          <div><span title="Settlement-verified learning labels">Trusted labels</span><strong id="validation-labels">—</strong></div>
+          <div><span title="Approved-equivalent / rejected labels — training needs both classes">Label mix A / R</span><strong id="validation-label-mix">— / —</strong></div>
+          <div><span title="Polymarket markets with final binary evidence / closed markets scanned">PM sources final / closed</span><strong id="backfill-polymarket">— / —</strong></div>
+          <div><span title="Closed cross-venue events considered by historical backfill">Historical candidate events</span><strong id="backfill-shared">—</strong></div>
+          <div><span title="Labels still needed to reach the 50-label training gate">Min label count gap</span><strong id="backfill-remaining">50</strong></div>
+          <div><span title="Verification status of the latest historical backfill run">Provenance state</span><strong id="validation-provenance-state">NO VERIFIED RUN</strong></div>
         </div>
       </section>
 
-      <section class="election-panel panel">
-        <div class="election-head">
+      <section class="grid">
+        <div class="panel col-7 election-panel">
+          <div class="election-head">
+            <div>
+              <span class="section-label">Non-sports discovery · 2026 chamber control</span>
+              <h2 id="election-status">Checking live catalogs</h2>
+              <p id="election-detail">Atlas is looking for the same deterministically settled election contract on both venues.</p>
+            </div>
+            <div class="election-metrics metric-grid">
+              <div><span>Kalshi</span><strong id="election-kalshi">—</strong></div>
+              <div><span>Polymarket US</span><strong id="election-polymarket">—</strong></div>
+              <div><span>Shared events</span><strong id="election-shared">—</strong></div>
+              <div><span>Rule-complete</span><strong id="election-deterministic">—</strong></div>
+            </div>
+          </div>
+          <div id="election-candidates" class="election-candidates"><div class="empty">No live chamber-control contracts found.</div></div>
+        </div>
+        <div class="panel col-5 research-strip">
           <div>
-            <span class="section-label">NON-SPORTS DISCOVERY / 2026 CHAMBER CONTROL</span>
-            <h2 id="election-status">Checking live catalogs</h2>
-            <p id="election-detail">Atlas is looking for the same deterministically settled election contract on both venues.</p>
+            <span class="section-label">Concept validation · fixture research</span>
+            <h2>Does the edge survive contact with execution?</h2>
           </div>
-          <div class="election-metrics metric-grid">
-            <div><span>KALSHI</span><strong id="election-kalshi">—</strong></div>
-            <div><span>POLYMARKET US</span><strong id="election-polymarket">—</strong></div>
-            <div><span>SHARED EVENTS</span><strong id="election-shared">—</strong></div>
-            <div><span>RULE-COMPLETE</span><strong id="election-deterministic">—</strong></div>
+          <div class="research-metrics metric-grid">
+            <div><span title="Edges detected at top-of-book prices in fixture research">Detected</span><strong id="detected">—</strong></div>
+            <div><span title="Edges that survive when priced against full order-book depth">Executable</span><strong id="executable">—</strong></div>
+            <div><span title="Detected edges that disappear once depth, fees, and slippage are applied">Phantom rate</span><strong id="phantom">—</strong></div>
+            <div><span title="Simulated loss when the second leg cannot be filled">Failed hedge loss</span><strong id="failed-loss">—</strong></div>
+            <div><span title="How long a detected edge remains executable">Median lifetime</span><strong id="lifetime">—</strong></div>
           </div>
         </div>
-        <div id="election-candidates" class="election-candidates"><div class="empty">No election catalog evidence recorded yet.</div></div>
       </section>
 
-      <p id="milestone-alert" class="validation-alert">NO MILESTONE TRANSITION YET</p>
-
-      <section class="workspace" id="opportunities">
-        <div class="workspace-head">
-          <div><p class="eyebrow">LIVE OPPORTUNITIES</p><h2>Approved equivalents</h2></div>
-          <button id="refresh">Refresh <span>↻</span></button>
-        </div>
-        <div id="opportunity" class="opportunity"><div class="skeleton"></div></div>
+      <section class="candidate-section panel">
+        <span class="section-label">Contract review · deterministic rejection reasons</span>
+        <div id="candidates" class="candidates"><div class="empty">No candidate proposals recorded.</div></div>
       </section>
 
-      <section class="lower-grid">
-        <div class="section-block">
-          <div class="section-label">SYSTEM STATE</div>
+      <section class="syscheck grid">
+        <div class="col-4">
+          <span class="section-label">System state</span>
           <div class="state-row"><span class="state-dot"></span><div><strong id="system-status">Paper pipeline ready</strong><small>Deterministic verification active</small></div></div>
           <div class="state-row muted"><span class="mini-line"></span><div><strong>Market feeds</strong><small id="venues">Fixture / Fixture</small></div></div>
         </div>
-        <div class="section-block">
-          <div class="section-label">TRUST GATES</div>
-          <div class="gate-row"><span title="Deterministic rule verdict for the displayed pair">RULE CHECK</span><strong id="rule-check">—</strong></div>
-          <div class="gate-row"><span>PAIR STATUS</span><strong id="pair-status">—</strong></div>
-          <div class="gate-row"><span title="REGISTRY = stored live pair · FIXTURE = built-in demo data">PAIR SOURCE</span><strong id="pair-source">—</strong></div>
-          <div class="gate-row"><span>PAPER TRADES</span><strong id="paper-trades">—</strong></div>
-          <div class="gate-row"><span title="Active Polymarket contracts / approved candidates in the latest scan">DISCOVERY</span><strong id="discovery-status">—</strong></div>
-          <div class="gate-row"><span title="How closely live venue catalogs overlap: exact rule matches, shared events, or family only">CATALOG FIT</span><strong id="catalog-fit">—</strong></div>
-          <div class="gate-row"><span title="Trusted labels collected toward the 50-label training gate">LEARNING</span><strong id="learning-status">—</strong></div>
-        </div>
-        <div class="section-block interpretation">
-          <div class="section-label">OPERATOR NOTE</div>
+        <div class="col-8 interpretation">
+          <span class="section-label">Operator note</span>
           <p id="operator-note">A positive displayed edge is not a trade. Confirm freshness, depth, and contract rules before treating it as evidence.</p>
         </div>
       </section>
 
-      <section class="research-strip">
-        <div>
-          <div class="section-label">CONCEPT VALIDATION / FIXTURE RESEARCH</div>
-          <h2>Does the edge survive contact with execution?</h2>
-        </div>
-        <div class="research-metrics metric-grid">
-          <div><span title="Edges detected at top-of-book prices in fixture research">DETECTED</span><strong id="detected">—</strong></div>
-          <div><span title="Edges that survive when priced against full order-book depth">EXECUTABLE</span><strong id="executable">—</strong></div>
-          <div><span title="Detected edges that disappear once depth, fees, and slippage are applied">PHANTOM RATE</span><strong id="phantom">—</strong></div>
-          <div><span title="Simulated loss when the second leg cannot be filled">FAILED HEDGE LOSS</span><strong id="failed-loss">—</strong></div>
-          <div><span title="How long a detected edge remains executable">MEDIAN LIFETIME</span><strong id="lifetime">—</strong></div>
-        </div>
-      </section>
-
-      <section class="candidate-section">
-        <div class="section-label">CONTRACT REVIEW / DETERMINISTIC REJECTION REASONS</div>
-        <div id="candidates" class="candidates"><div class="empty">No candidate proposals recorded.</div></div>
-      </section>
-
       <footer><span>ATLAS / research instrument</span><span>no execution module installed</span></footer>
     </main>
-    <script src="/dashboard.js?v=20260811-helpful"></script>
+    <script src="/dashboard.js?v=20260812-overhaul"></script>
   </body>
 </html>

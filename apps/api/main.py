@@ -16,6 +16,29 @@ def health() -> dict[str, str | bool]:
     return {"service": "atlas", "version": __version__, "trading_enabled": False, "status": "ok"}
 
 
+def _backfill_run_summary(run: dict) -> dict:
+    """Compact one persisted historical-backfill run for the overview payload."""
+    venue_coverage = run.get("venue_coverage") or {}
+    tag_scopes = sorted(
+        {
+            str(coverage.get("catalog_scope"))
+            for coverage in venue_coverage.values()
+            if isinstance(coverage, dict)
+            and str(coverage.get("catalog_scope", "")).startswith("tagged:")
+        }
+    )
+    return {
+        "status": run.get("status"),
+        "completed_at": run.get("completed_at"),
+        "new_labels": run.get("new_labels"),
+        "resolved_pairs": run.get("resolved_pairs"),
+        "inconclusive_pairs": run.get("inconclusive_pairs"),
+        "kalshi_series_tickers": run.get("kalshi_series_tickers") or [],
+        "kalshi_series_event_counts": run.get("kalshi_series_event_counts") or {},
+        "tag_scopes": tag_scopes,
+    }
+
+
 @app.get("/api/overview")
 async def overview() -> dict:
     from atlas.agent import AtlasAgent
@@ -42,6 +65,7 @@ async def overview() -> dict:
     shadow_validation = await store.shadow_validation_summary()
     validation = await store.validation_summary()
     historical_backfill = await store.latest_historical_backfill()
+    recent_backfills = await store.recent_historical_backfills(limit=6)
     training_readiness = await learning_readiness(store)
     pair = verify_equivalence(
         markets["kalshi"][0], markets["polymarket_us"][0], "fixture-fed-sep26"
@@ -107,6 +131,7 @@ async def overview() -> dict:
         "shadow_validation": shadow_validation,
         "validation": validation,
         "historical_backfill": historical_backfill,
+        "historical_backfill_runs": [_backfill_run_summary(run) for run in recent_backfills],
         "research": {
             "detected_opportunities": research.detected_opportunities,
             "executable_opportunities": research.executable_opportunities,

@@ -640,6 +640,19 @@ class AtlasStore:
             ).fetchone()
         return json.loads(row[0]) if row else None
 
+    async def recent_historical_backfills(self, limit: int = 6) -> list[dict[str, object]]:
+        """Return the most recent persisted backfill reports, newest first."""
+        await self.initialize()
+        async with aiosqlite.connect(self.path) as db:
+            rows = await (
+                await db.execute(
+                    """SELECT payload_json FROM historical_backfills
+                    ORDER BY run_id DESC LIMIT ?""",
+                    (max(1, min(int(limit), 20)),),
+                )
+            ).fetchall()
+        return [json.loads(row[0]) for row in rows]
+
     async def pending_trade_contexts(self) -> list[dict[str, object]]:
         await self.initialize()
         async with aiosqlite.connect(self.path) as db:
