@@ -65,7 +65,13 @@ _KALSHI_SERIES_TICKER_PATTERN = re.compile(r"[A-Z][A-Z0-9]{1,39}")
 # hourly settlements), so scheduled batches also scan these series directly.
 # KXFEDDECISION = per-meeting rate-change buckets; KXFED = rate upper-bound levels;
 # KXCPIYOY = monthly CPI YoY strikes (verified live: KXCPIYOY-26JUL settled).
-BATCH_DEFAULT_KALSHI_SERIES_TICKERS = ("KXFEDDECISION", "KXFED", "KXCPIYOY")
+BATCH_DEFAULT_KALSHI_SERIES_TICKERS = (
+    "KXFEDDECISION",
+    "KXFED",
+    "KXCPIYOY",
+    "KXCPI",
+    "KXCPICORE",
+)
 BATCH_MAX_TARGET_LABELS = 50
 BATCH_MAX_KALSHI_EVENT_PAGES = 100
 BATCH_MAX_POLYMARKET_PAGES = 20

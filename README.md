@@ -31,11 +31,12 @@ Do not add a live order client casually. Any future execution capability must be
 Last verified: **2026-08-12**.
 
 - API: serving locally (`/health` reports `trading_enabled=false`).
-- Test suite: `222 passed, 1 warning` at the latest full run; `ruff check .` reports zero issues.
+- Test suite: `231 passed, 1 warning` at the latest full run; `ruff check .` reports zero issues.
 - Trusted settlement labels: `0`.
 - Latest learning readiness check: `training_ready=False`, `labels=0`, `observations=290`.
 - Current queue: 12 persisted settlement candidates; all are `BLOCKED`. Discretionary fair-price pairs now carry the terminal gate `STRUCTURALLY_UNREACHABLE_DISCRETIONARY_SETTLEMENT` and sort below every reachable candidate, so the queue surfaces where a first trusted label is possible.
-- Scheduled bounded backfills default to guarantee-reachable Polymarket Global tags (`144` Elections, `487` House, `100196` Fed Rates, `101701` CPI) plus explicit Kalshi series scans (`KXFEDDECISION`, `KXFED`, `KXCPIYOY`), all verified against live catalog probes; the latest bounded batch completed `BATCH_COMPLETE` with `paper_only=true` and 0 trusted labels.
+- Scheduled bounded backfills default to guarantee-reachable Polymarket Global tags (`144` Elections, `487` House, `100196` Fed Rates, `101701` CPI) plus explicit Kalshi series scans (`KXFEDDECISION`, `KXFED`, `KXCPIYOY`, `KXCPI`, `KXCPICORE`), all verified against live catalog probes; the latest bounded batch completed with `paper_only=true` and 0 trusted labels.
+- The US CPI family covers all four published variants (headline/core x YoY/MoM) with signed thresholds from published wording only. Every monthly BLS release yields at least two settled exact-complement pairs (headline YoY tail, core MoM tail), each blocked only on the same two venue-text gaps: the divergent missing-data fallback and Kalshi's absent terminal fallback.
 - Three canonical macro families now make real cross-venue pairs visible end-to-end with honest published divergences isolated: the settled July 2026 FOMC decision pair (blocked only on Polymarket's published rounding), the open December 2026 fed-funds level overlap, and the settled July 2026 CPI YoY pair — the closest frontier, because both venues publish BLS one-decimal precision there.
 - The verifier now recognizes exact threshold-operator complements (`>X` vs `≤X` on identical terms) as `APPROVED_INVERSE` — a gated rule change reviewed and signed off 2026-08-12, verified to change no current verdict. It requires both legs `GUARANTEED` and every other term equal, so the CPI tail pair auto-promotes to the first trusted label if the venues' missing-data fallback texts ever align.
 - Execution-ready events: `0`.

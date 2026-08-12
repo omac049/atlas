@@ -151,7 +151,16 @@ def _complete_fed_funds_level_policy(fingerprint: ContractFingerprint) -> bool:
 def _complete_cpi_release_policy(fingerprint: ContractFingerprint) -> bool:
     if (
         fingerprint.market_type != "economic"
-        or fingerprint.contract_scope != "cpi_yoy_not_seasonally_adjusted"
+        # Scopes with a published adjustment basis only; a leg whose venue does
+        # not publish its basis (Kalshi headline MoM: bare "cpi_mom") cannot be
+        # guarantee-complete no matter how complete its other policy tokens are.
+        or fingerprint.contract_scope
+        not in {
+            "cpi_yoy_not_seasonally_adjusted",
+            "cpi_core_yoy_not_seasonally_adjusted",
+            "cpi_mom_seasonally_adjusted",
+            "cpi_core_mom_seasonally_adjusted",
+        }
         or fingerprint.resolution_source != "us_bls_cpi"
         or fingerprint.threshold is None
         or fingerprint.threshold_operator is None

@@ -109,61 +109,8 @@ def _economic_terms(market: Market) -> dict[str, object] | None:
     market_source = _market_source(market)
     period = _month_period(text, market.venue_market_id)
     threshold, upper, operator = _threshold_terms(market, text)
-    cpi_trigger = re.search(
-        r"\b(?:cpi yoy|consumer price index|inflation).{0,100}\b(?:12-month|yoy)\b", text
-    )
-    if not cpi_trigger and ("bureau of labor statistics" in text or re.search(r"\bbls\b", text)):
-        # Kalshi KXCPIYOY spells the window out ("in the twelve months ending July
-        # 2026", "for the year ending in July 2026"); these wider alternatives are
-        # gated on an explicit BLS mention so non-US annual-inflation contracts
-        # (IBGE, NBS, ...) cannot be misfiled under the US subject.
-        cpi_trigger = re.search(
-            r"\b(?:cpi yoy|consumer price index|inflation).{0,100}"
-            r"\b(?:twelve months|year ending)\b",
-            text,
-        )
-    if cpi_trigger:
-        if not period:
-            return None
-        threshold, upper, operator = _cpi_level_terms(text, threshold, upper, operator)
-        policies = []
-        if "subsequent revisions" in text and "not be considered" in text:
-            policies.append("revision=first_official_release")
-        if "first figure officially published" in text and "within three months" in text:
-            policies.append("missing=first_within_3m_else_previous_month")
-        if "most recent previous month" in text and "not released" in text:
-            policies.append("missing=previous_month_figures_at_next_release")
-        if "one-decimal place value" in text or "one decimal point" in text:
-            policies.append("precision=bls_one_decimal")
-        if "government shutdown" in text and "expiration date will be extended" in text:
-            policies.append("delay=shutdown_extension_release_or_6m")
-        return {
-            "event_subject": f"us_cpi_yoy|{period}",
-            "event_date": period,
-            "event_action": "published_value",
-            "market_type": "economic",
-            "contract_scope": "cpi_yoy_not_seasonally_adjusted",
-            "affirmative_outcome": "predicate_true",
-            "threshold": threshold,
-            "threshold_upper": upper,
-            "threshold_operator": operator,
-            "threshold_unit": "percent",
-            "measurement_period": period,
-            "geography": "us",
-            "resolution_source": (
-                "us_bls_cpi"
-                if "bls" in text
-                or "bureau of labor statistics" in text
-                or "bureau of labor statistics" in market_source
-                else None
-            ),
-            "revision_policy": (
-                "first_official_release"
-                if "revision=first_official_release" in policies
-                else None
-            ),
-            "settlement_policy": "|".join(policies) or None,
-        }
+    if cpi := _cpi_family_terms(text, market_source, period, threshold, upper, operator):
+        return cpi
     unemployment = re.search(r"\b(canada|u\.?s\.?|united states) unemployment rate\b", text)
     if unemployment and period:
         jurisdiction = "ca" if unemployment.group(1) == "canada" else "us"
@@ -532,6 +479,151 @@ def _number(value: str) -> Decimal:
     return Decimal(value.replace(",", ""))
 
 
+# Non-US jurisdictions whose CPI/inflation contracts must not be filed under a
+# us_cpi_* subject. Contracts naming one of these without any US/BLS marker fall
+# through to generic terms; misfiled pairs were already refused on source and
+# guarantee gates, so this is taxonomy honesty rather than a label-safety fix.
+_CPI_FOREIGN_JURISDICTION = re.compile(
+    r"\b(?:uk|united kingdom|britain|british|china|chinese|brazil|brazilian|canada|"
+    r"canadian|eurozone|euro area|european|germany|france|india|japan|mexico|korea|"
+    r"australia|ipca|ibge|ons|nbs)\b"
+)
+
+_CPI_YOY_TRIGGER = re.compile(
+    r"\b(?:cpi yoy|consumer price index|inflation).{0,100}"
+    r"\b(?:12[- ]month|yoy|twelve months|year ending)\b"
+)
+
+
+def _cpi_family_terms(
+    text: str,
+    market_source: str,
+    period: str | None,
+    threshold: Decimal | None,
+    upper: Decimal | None,
+    operator: str | None,
+) -> dict[str, object] | None:
+    """US CPI family: headline/core x YoY/MoM, from published wording only.
+
+    The YoY window is announced explicitly ("12-month", "twelve months ending",
+    "year ending in"). Absent those markers, a CPI change bucket anchored to a
+    single month ("increases by more than 0.1% (single-decimal) in July 2026",
+    "one-month percent change") is the month-over-month series. Core variants
+    are announced by the published "less/excluding food and energy" phrasing.
+    Adjustment basis is encoded in scope only when the venue publishes it —
+    Kalshi's headline-MoM rules state no basis, and that stays visible as a
+    scope difference rather than being inferred away.
+    """
+    yoy = _CPI_YOY_TRIGGER.search(text)
+    mom = None
+    if not yoy:
+        mom = (
+            re.search(r"\bone-month percent(?:age)? change\b", text)
+            or re.search(r"\bmonthly inflation\b", text)
+            or (
+                re.search(r"\b(?:consumer price index|cpi)\b", text)
+                and re.search(r"\b(?:increases? by|rise)\b", text)
+            )
+        )
+    if not (yoy or mom) or not period:
+        return None
+    us_context = (
+        "bureau of labor statistics" in text
+        or re.search(r"\bbls\b", text)
+        or "bureau of labor statistics" in market_source
+        or re.search(r"\bu\.?s\.?\b|united states", text)
+    )
+    if _CPI_FOREIGN_JURISDICTION.search(text) and not us_context:
+        return None
+    core = bool(
+        "less food and energy" in text
+        or "excluding food and energy" in text
+        or re.search(r"\bcore cpi\b|\bcpi core\b|\bcore inflation\b", text)
+    )
+    if yoy:
+        subject_base = "us_cpi_core_yoy" if core else "us_cpi_yoy"
+        scope = (
+            "cpi_core_yoy_not_seasonally_adjusted"
+            if core
+            else "cpi_yoy_not_seasonally_adjusted"
+        )
+    else:
+        subject_base = "us_cpi_core_mom" if core else "us_cpi_mom"
+        scope = ("cpi_core_mom" if core else "cpi_mom") + (
+            "_seasonally_adjusted" if "seasonally adjusted" in text else ""
+        )
+    signed_change = None if yoy else _cpi_change_terms(text)
+    if signed_change is not None:
+        threshold, upper, operator = signed_change
+    else:
+        threshold, upper, operator = _cpi_level_terms(text, threshold, upper, operator)
+    policies = []
+    if "subsequent revisions" in text and "not be considered" in text:
+        policies.append("revision=first_official_release")
+    if "first figure officially published" in text and "within three months" in text:
+        policies.append("missing=first_within_3m_else_previous_month")
+    if "most recent previous month" in text and "not released" in text:
+        policies.append("missing=previous_month_figures_at_next_release")
+    if (
+        "one-decimal place value" in text
+        or "one decimal point" in text
+        or "single-decimal" in text
+    ):
+        policies.append("precision=bls_one_decimal")
+    if "government shutdown" in text and "expiration date will be extended" in text:
+        policies.append("delay=shutdown_extension_release_or_6m")
+    return {
+        "event_subject": f"{subject_base}|{period}",
+        "event_date": period,
+        "event_action": "published_value",
+        "market_type": "economic",
+        "contract_scope": scope,
+        "affirmative_outcome": "predicate_true",
+        "threshold": threshold,
+        "threshold_upper": upper,
+        "threshold_operator": operator,
+        "threshold_unit": "percent",
+        "measurement_period": period,
+        "geography": "us",
+        "resolution_source": (
+            "us_bls_cpi"
+            if "bls" in text
+            or "bureau of labor statistics" in text
+            or "bureau of labor statistics" in market_source
+            else None
+        ),
+        "revision_policy": (
+            "first_official_release"
+            if "revision=first_official_release" in policies
+            else None
+        ),
+        "settlement_policy": "|".join(policies) or None,
+    }
+
+
+def _cpi_change_terms(text: str) -> tuple[Decimal | None, Decimal | None, str] | None:
+    """Signed month-over-month change phrasings, or None when none are present.
+
+    Polymarket's monthly buckets carry the sign in the verb ("decrease by 0.7%
+    or more" is a change of -0.7 or lower); Kalshi's signed strikes ("more than
+    -0.1%") are handled by the generic prefix patterns. When these match, the
+    postfix level patterns must not run, or "0.7% or more" would be re-read
+    unsigned.
+    """
+    value = r"(-?[0-9]+(?:\.[0-9]+)?)"
+    if match := re.search(r"\bdecreases? by\s+" + value + r"\s*%\s*or\s+more\b", text):
+        return -_number(match.group(1)), None, "<="
+    if match := re.search(r"\bincreases? by\s+" + value + r"\s*%\s*or\s+more\b", text):
+        return _number(match.group(1)), None, ">="
+    if match := re.search(r"\bdecreases? by\s+" + value + r"\s*%", text):
+        return -_number(match.group(1)), None, "="
+    if re.search(r"\bstays? flat \(0\.0%\)", text):
+        return Decimal("0.0"), None, "="
+    if match := re.search(r"\bincreases? by\s+" + value + r"\s*%", text):
+        return _number(match.group(1)), None, "="
+    return None
+
+
 def _cpi_level_terms(
     text: str,
     threshold: Decimal | None,
@@ -546,7 +638,7 @@ def _cpi_level_terms(
     branch only fires when the generic pass found no operator, so Kalshi's strict
     "above 3.1%" phrasing keeps its ``>`` reading.
     """
-    value = r"([0-9]+(?:\.[0-9]+)?)"
+    value = r"(-?[0-9]+(?:\.[0-9]+)?)"
     if match := re.search(value + r"\s*%\s*or\s+(?:less|lower)\b", text):
         return _number(match.group(1)), None, "<="
     if match := re.search(value + r"\s*%\s*or\s+(?:more|higher)\b", text):
@@ -576,10 +668,10 @@ def _threshold_terms(
             "between_inclusive",
         )
     patterns = (
-        (">=", r"\b(?:at least|or above)\s+\$?([0-9][0-9,.]*)"),
-        ("<=", r"\b(?:at most|or below)\s+\$?([0-9][0-9,.]*)"),
-        (">", r"\b(?:above|greater than)\s+\$?([0-9][0-9,.]*)"),
-        ("<", r"\b(?:below|less than)\s+\$?([0-9][0-9,.]*)"),
+        (">=", r"\b(?:at least|or above)\s+\$?(-?[0-9][0-9,.]*)"),
+        ("<=", r"\b(?:at most|or below)\s+\$?(-?[0-9][0-9,.]*)"),
+        (">", r"\b(?:above|greater than|more than)\s+\$?(-?[0-9][0-9,.]*)"),
+        ("<", r"\b(?:below|less than)\s+\$?(-?[0-9][0-9,.]*)"),
     )
     for source_text in source_texts:
         for operator, pattern in patterns:
