@@ -4,7 +4,14 @@ const pct = (value) => `${(Number(value) * 100).toFixed(1)}%`;
 const rate = (numerator, denominator) => denominator > 0 ? pct(Number(numerator) / Number(denominator)) : '—';
 const safe = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 function terms(value = {}) { const strike = `${value.threshold_operator || ''}${value.threshold || '—'} ${value.threshold_unit || ''}`.trim(); return `${strike} · ${value.market_type || 'unknown'} · ${value.measurement_period || 'no period'}`; }
-function age(iso) { const seconds = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000); return seconds < 2 ? 'just now' : `${Math.round(seconds)}s ago`; }
+function age(iso) {
+  const seconds = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+  if (seconds < 2) return 'just now';
+  if (seconds < 90) return `${Math.round(seconds)}s ago`;
+  if (seconds < 5400) return `${Math.round(seconds / 60)}m ago`;
+  if (seconds < 129600) return `${Math.round(seconds / 3600)}h ago`;
+  return `${Math.round(seconds / 86400)}d ago`;
+}
 function settlementTime(iso) { if (!iso) return 'not published'; const date = new Date(iso); return Number.isNaN(date.getTime()) ? 'not published' : `${date.toISOString().replace('T', ' ').slice(0, 16)}Z`; }
 function render(data) {
   $('connection').textContent = 'CONNECTED'; $('updated').textContent = `UPDATED ${age(data.last_updated).toUpperCase()}`;
