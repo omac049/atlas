@@ -104,6 +104,37 @@ class KalshiVenue(PredictionVenue):
                 break
         return events
 
+    async def list_open_series_markets(
+        self, series_tickers: tuple[str, ...], max_events_per_series: int = 4
+    ) -> list[Market]:
+        """Open markets for explicit series, for read-only cross-venue gap
+        observation. Bounded: one events page per series, one markets request
+        per event. Never used for order placement — Atlas has no such path."""
+        if self.fixture:
+            return await self.list_markets()
+        markets: list[Market] = []
+        for series_ticker in series_tickers:
+            payload = await self._get(
+                "/events",
+                {
+                    "status": "open",
+                    "series_ticker": series_ticker,
+                    "limit": max_events_per_series,
+                },
+            )
+            for event in payload.get("events", []) or []:
+                event_ticker = str(event.get("event_ticker") or "")
+                if not event_ticker:
+                    continue
+                markets_payload = await self._get(
+                    "/markets",
+                    {"event_ticker": event_ticker, "status": "open", "limit": 100},
+                )
+                for item in markets_payload.get("markets", []) or []:
+                    if isinstance(item, dict):
+                        markets.append(self._normalize_market(item))
+        return markets
+
     async def list_settled_event_markets(self, event_ticker: str) -> list[Market]:
         """Load recent and archived settled markets for one already-matched event."""
         if self.fixture:

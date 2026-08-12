@@ -300,6 +300,14 @@ function render(data) {
     return `<div class="backfill-run"><b>${safe(String(run.status || 'UNKNOWN').replaceAll('_', ' '))}</b><span>${safe(when)} · ${Number(run.new_labels || 0)} new label(s) · ${Number(run.resolved_pairs || 0)} resolved / ${Number(run.inconclusive_pairs || 0)} inconclusive</span><small>${safe(series)} · ${safe(scopes)}</small></div>`;
   }).join('') : '<div class="empty">No completed backfill runs recorded yet.</div>';
   $('backfill-runs').innerHTML = `<span class="section-label">RECENT BACKFILL RUNS</span>${runsMarkup}`;
+  const gapRadar = data.gap_radar || {};
+  const gapSummary = gapRadar.summary || {};
+  $('gap-bankroll').textContent = gapSummary.paper_bankroll
+    ? `PAPER $2K GAP METER · $${gapSummary.paper_bankroll} · ${Number(gapSummary.distinct_executable_opportunities || 0)} EXECUTABLE GAP(S) SEEN · CANDIDATES ONLY — NOT PROVEN TWINS`
+    : 'PAPER $2K GAP METER · no radar scans recorded yet';
+  const gapRows = gapRadar.recent || [];
+  const gapMarkup = gapRows.length ? gapRows.map((row) => `<div class="backfill-run"><b>${safe(row.executable_gap ? 'GAP' : 'NO GAP')}</b><span>${safe(String(row.best_gap ?? '—'))} · ${safe(String(row.shape || ''))} · ${safe(String(row.verification_status || ''))}</span><small>${safe(String(row.event_subject || ''))}</small></div>`).join('') : '<div class="empty">No gap observations recorded yet.</div>';
+  $('gap-recent').innerHTML = `<span class="section-label">RECENT GAP RADAR · PAPER ONLY</span>${gapMarkup}`;
   $('backfill-polymarket').textContent = coverageSummary || `${Number(backfill.polymarket_final_binary_markets || 0)} / ${Number(backfill.polymarket_closed_markets || 0)}`;
   $('backfill-shared').textContent = fmt(backfill.historical_candidate_events ?? backfill.cross_venue_event_candidates ?? 0);
   $('backfill-remaining').textContent = fmt(backfill.labels_remaining ?? labelsRemaining);

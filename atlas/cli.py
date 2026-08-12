@@ -918,6 +918,61 @@ async def monitor_live(pair_id: str) -> None:
     await run_pair(pair)
 
 
+async def gaps_scan(live: bool) -> None:
+    """One bounded, read-only radar pass over open twin-shaped candidate pairs.
+
+    Observes and records executable top-of-book gaps; never places orders and
+    never touches the approved-pair registry. Pairs are candidates only.
+    """
+    from atlas.gap_radar import match_twin_shapes, observe_pair, paper_bankroll_summary
+
+    kalshi = KalshiVenue(fixture=not live)
+    globalpm = PolymarketGlobalHistoricalVenue(tag_ids=LIVE_GLOBAL_TAG_IDS)
+    kalshi_markets = await kalshi.list_open_series_markets(BATCH_DEFAULT_KALSHI_SERIES_TICKERS)
+    polymarket_markets = await globalpm.list_open_markets() if live else []
+    pairs = match_twin_shapes(kalshi_markets, polymarket_markets)
+    store = AtlasStore()
+    recorded = 0
+    executable = 0
+    for pair in pairs:
+        observation = observe_pair(pair)
+        if observation is None:
+            continue
+        await store.save_gap_observation(observation)
+        recorded += 1
+        if observation["executable_gap"]:
+            executable += 1
+            print(
+                f"  GAP {observation['best_gap']} {observation['event_subject']} "
+                f"[{observation['best_basket']}] status={observation['verification_status']}"
+            )
+    summary = paper_bankroll_summary(await store.all_gap_observations())
+    print(
+        f"gap_radar: paper_only=true kalshi_markets={len(kalshi_markets)} "
+        f"polymarket_markets={len(polymarket_markets)} twin_shaped_pairs={len(pairs)} "
+        f"recorded={recorded} executable_now={executable}"
+    )
+    print(
+        f"paper_bankroll={summary['paper_bankroll']} "
+        f"opportunities={summary['distinct_executable_opportunities']} "
+        f"(start {summary['start_bankroll']}; candidates only, not proven twins)"
+    )
+
+
+async def gaps_status() -> None:
+    from atlas.gap_radar import paper_bankroll_summary
+
+    store = AtlasStore()
+    observations = await store.all_gap_observations()
+    summary = paper_bankroll_summary(observations)
+    print(json.dumps(summary, indent=2))
+    for observation in (await store.recent_gap_observations(5)) or []:
+        print(
+            f"  {observation.get('observed_at', '')[:19]} gap={observation.get('best_gap')} "
+            f"{observation.get('event_subject')} status={observation.get('verification_status')}"
+        )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="atlas")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -962,6 +1017,11 @@ def main() -> None:
     candidates = pairs_sub.add_parser("candidates")
     candidates.add_argument("--live", action="store_true")
     candidates.add_argument("--limit", type=int, default=25)
+    gaps = sub.add_parser("gaps", help="paper-only cross-venue price-gap radar")
+    gaps_sub = gaps.add_subparsers(dest="action", required=True)
+    gaps_scan_parser = gaps_sub.add_parser("scan")
+    gaps_scan_parser.add_argument("--live", action="store_true")
+    gaps_sub.add_parser("status")
     learning = sub.add_parser("learning")
     learning_sub = learning.add_subparsers(dest="action", required=True)
     export = learning_sub.add_parser("export")
@@ -1061,6 +1121,10 @@ def main() -> None:
         asyncio.run(shadow_watch(args.interval, args.limit))
     elif args.command == "pairs" and args.action == "candidates":
         asyncio.run(candidate_pairs(args.live, max(args.limit, 1)))
+    elif args.command == "gaps" and args.action == "scan":
+        asyncio.run(gaps_scan(args.live))
+    elif args.command == "gaps" and args.action == "status":
+        asyncio.run(gaps_status())
     elif args.command == "learning" and args.action == "export":
         asyncio.run(learning_export(args.output, args.eval_output, args.eval_ratio))
     elif args.command == "learning" and args.action == "status":

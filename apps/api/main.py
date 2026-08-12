@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
 from atlas import __version__
+from atlas.gap_radar import paper_bankroll_summary
 
 app = FastAPI(title="Atlas", version=__version__)
 dashboard_path = Path(__file__).resolve().parents[2] / "apps" / "dashboard" / "index.html"
@@ -65,6 +66,8 @@ async def overview() -> dict:
     shadow_validation = await store.shadow_validation_summary()
     validation = await store.validation_summary()
     historical_backfill = await store.latest_historical_backfill()
+    gap_observations = await store.all_gap_observations()
+    recent_gaps = await store.recent_gap_observations(6)
     recent_backfills = await store.recent_historical_backfills(limit=6)
     training_readiness = await learning_readiness(store)
     pair = verify_equivalence(
@@ -132,6 +135,20 @@ async def overview() -> dict:
         "validation": validation,
         "historical_backfill": historical_backfill,
         "historical_backfill_runs": [_backfill_run_summary(run) for run in recent_backfills],
+        "gap_radar": {
+            "summary": paper_bankroll_summary(gap_observations),
+            "recent": [
+                {
+                    "observed_at": observation.get("observed_at"),
+                    "event_subject": observation.get("event_subject"),
+                    "shape": observation.get("shape"),
+                    "best_gap": observation.get("best_gap"),
+                    "executable_gap": observation.get("executable_gap"),
+                    "verification_status": observation.get("verification_status"),
+                }
+                for observation in recent_gaps
+            ],
+        },
         "research": {
             "detected_opportunities": research.detected_opportunities,
             "executable_opportunities": research.executable_opportunities,

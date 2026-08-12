@@ -61,6 +61,9 @@ CREATE TABLE IF NOT EXISTS catalog_reports (
 CREATE TABLE IF NOT EXISTS shadow_observations (
   observation_id TEXT PRIMARY KEY, created_at TEXT NOT NULL, payload_json TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS gap_observations (
+  observation_id TEXT PRIMARY KEY, created_at TEXT NOT NULL, payload_json TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS agent_runs (
   run_id INTEGER PRIMARY KEY AUTOINCREMENT, created_at TEXT NOT NULL, payload_json TEXT NOT NULL
 );
@@ -694,6 +697,42 @@ class AtlasStore:
                 "SELECT payload_json FROM catalog_reports ORDER BY report_id DESC LIMIT 1"
             )).fetchone()
         return json.loads(row[0]) if row else None
+
+    async def save_gap_observation(self, observation: dict[str, object]) -> None:
+        await self.initialize()
+        async with aiosqlite.connect(self.path) as db:
+            await db.execute(
+                "INSERT OR REPLACE INTO gap_observations VALUES (?, ?, ?)",
+                (
+                    observation["observation_id"],
+                    observation["observed_at"],
+                    json.dumps(observation),
+                ),
+            )
+            await db.commit()
+
+    async def recent_gap_observations(self, limit: int = 20) -> list[dict[str, object]]:
+        await self.initialize()
+        limit = max(1, min(int(limit), 200))
+        async with aiosqlite.connect(self.path) as db:
+            rows = await (
+                await db.execute(
+                    "SELECT payload_json FROM gap_observations ORDER BY created_at DESC LIMIT ?",
+                    (limit,),
+                )
+            ).fetchall()
+        return [json.loads(row[0]) for row in rows]
+
+    async def all_gap_observations(self, limit: int = 50000) -> list[dict[str, object]]:
+        await self.initialize()
+        async with aiosqlite.connect(self.path) as db:
+            rows = await (
+                await db.execute(
+                    "SELECT payload_json FROM gap_observations ORDER BY created_at ASC LIMIT ?",
+                    (limit,),
+                )
+            ).fetchall()
+        return [json.loads(row[0]) for row in rows]
 
     async def save_shadow_observation(self, observation: dict[str, object]) -> None:
         await self.initialize()
