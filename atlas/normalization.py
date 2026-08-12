@@ -109,8 +109,6 @@ def _economic_terms(market: Market) -> dict[str, object] | None:
     market_source = _market_source(market)
     period = _month_period(text, market.venue_market_id)
     threshold, upper, operator = _threshold_terms(market, text)
-    if cpi := _cpi_family_terms(text, market_source, period, threshold, upper, operator):
-        return cpi
     unemployment = re.search(r"\b(canada|u\.?s\.?|united states) unemployment rate\b", text)
     if unemployment and period:
         jurisdiction = "ca" if unemployment.group(1) == "canada" else "us"
@@ -142,6 +140,12 @@ def _economic_terms(market: Market) -> dict[str, object] | None:
         return fomc
     if level := _fed_funds_level_terms(text):
         return level
+    # CPI runs after the more specific macro families so a fed/unemployment
+    # contract whose commentary merely mentions CPI cannot be captured here.
+    if cpi := _cpi_family_terms(
+        (market.title or "").lower(), text, market_source, period, threshold, upper, operator
+    ):
+        return cpi
     if (
         "federal reserve" in text
         and "upper bound" in text
@@ -486,7 +490,9 @@ def _number(value: str) -> Decimal:
 _CPI_FOREIGN_JURISDICTION = re.compile(
     r"\b(?:uk|united kingdom|britain|british|china|chinese|brazil|brazilian|canada|"
     r"canadian|eurozone|euro area|european|germany|france|india|japan|mexico|korea|"
-    r"australia|ipca|ibge|ons|nbs)\b"
+    r"australia|argentina|turkey|russia|poland|sweden|norway|switzerland|colombia|"
+    r"chile|peru|indonesia|philippines|thailand|vietnam|south africa|nigeria|egypt|"
+    r"ipca|ibge|ons|nbs|indec|tuik|rosstat)\b"
 )
 
 _CPI_YOY_TRIGGER = re.compile(
@@ -496,6 +502,7 @@ _CPI_YOY_TRIGGER = re.compile(
 
 
 def _cpi_family_terms(
+    title: str,
     text: str,
     market_source: str,
     period: str | None,
@@ -517,12 +524,16 @@ def _cpi_family_terms(
     yoy = _CPI_YOY_TRIGGER.search(text)
     mom = None
     if not yoy:
+        # The bare-co-occurrence form ("cpi" anywhere + "rise" anywhere) captured
+        # unrelated markets whose commentary mentions CPI; require the CPI
+        # reference, the change verb, and a percent value in proximity.
         mom = (
             re.search(r"\bone-month percent(?:age)? change\b", text)
             or re.search(r"\bmonthly inflation\b", text)
-            or (
-                re.search(r"\b(?:consumer price index|cpi)\b", text)
-                and re.search(r"\b(?:increases? by|rise)\b", text)
+            or re.search(
+                r"\b(?:consumer price index|cpi)\b.{0,160}"
+                r"\b(?:increases? by|rises?)\b.{0,40}-?[0-9]+(?:\.[0-9]+)?\s*%",
+                text,
             )
         )
     if not (yoy or mom) or not period:
@@ -531,7 +542,8 @@ def _cpi_family_terms(
         "bureau of labor statistics" in text
         or re.search(r"\bbls\b", text)
         or "bureau of labor statistics" in market_source
-        or re.search(r"\bu\.?s\.?\b|united states", text)
+        # Dotted form only: the bare word "us" ("contact us") is not a marker.
+        or re.search(r"\bu\.s\.?(?![a-z])|\bunited states\b", text)
     )
     if _CPI_FOREIGN_JURISDICTION.search(text) and not us_context:
         return None
@@ -552,8 +564,17 @@ def _cpi_family_terms(
         scope = ("cpi_core_mom" if core else "cpi_mom") + (
             "_seasonally_adjusted" if "seasonally adjusted" in text else ""
         )
-    signed_change = None if yoy else _cpi_change_terms(text)
-    if signed_change is not None:
+    # Title first: the title always states the market's OWN bucket, while
+    # descriptions may enumerate sibling buckets whose phrasings would match.
+    signed_change = _cpi_change_terms(title)
+    if signed_change is None:
+        signed_change = _cpi_change_terms(text)
+    if signed_change is _UNPARSEABLE_CHANGE:
+        # A directional phrasing we do not model: refuse a threshold rather
+        # than risk reading it unsigned. No threshold means the leg can never
+        # be guarantee-complete, so the pair can never approve.
+        threshold, upper, operator = None, None, None
+    elif signed_change is not None:
         threshold, upper, operator = signed_change
     else:
         threshold, upper, operator = _cpi_level_terms(text, threshold, upper, operator)
@@ -601,26 +622,46 @@ def _cpi_family_terms(
     }
 
 
-def _cpi_change_terms(text: str) -> tuple[Decimal | None, Decimal | None, str] | None:
-    """Signed month-over-month change phrasings, or None when none are present.
+# Sentinel: a directional phrasing was present but not modeled — the caller must
+# refuse a threshold rather than let an unsigned reading through.
+_UNPARSEABLE_CHANGE: tuple = ("UNPARSEABLE",)
 
-    Polymarket's monthly buckets carry the sign in the verb ("decrease by 0.7%
-    or more" is a change of -0.7 or lower); Kalshi's signed strikes ("more than
-    -0.1%") are handled by the generic prefix patterns. When these match, the
-    postfix level patterns must not run, or "0.7% or more" would be re-read
-    unsigned.
+_CPI_DOWN_VERB = r"(?:decreases?|falls?|drops?|declines?)"
+_CPI_UP_VERB = r"(?:increases?|rises?|gains?|climbs?)"
+_CPI_VALUE = r"(-?[0-9]+(?:\.[0-9]+)?)"
+
+
+def _cpi_change_terms(text: str) -> tuple | None:
+    """Signed change phrasings, or None when no directional phrasing is present.
+
+    The sign lives in the verb ("decrease by 0.7% or more" is a change of -0.7
+    or lower; "increases by more than 3.1%" is strictly above +3.1). Any
+    directional phrasing outside this vocabulary returns ``_UNPARSEABLE_CHANGE``
+    so the caller drops the threshold entirely — an unsigned misreading of a
+    signed bucket must never produce a comparable fingerprint.
     """
-    value = r"(-?[0-9]+(?:\.[0-9]+)?)"
-    if match := re.search(r"\bdecreases? by\s+" + value + r"\s*%\s*or\s+more\b", text):
-        return -_number(match.group(1)), None, "<="
-    if match := re.search(r"\bincreases? by\s+" + value + r"\s*%\s*or\s+more\b", text):
-        return _number(match.group(1)), None, ">="
-    if match := re.search(r"\bdecreases? by\s+" + value + r"\s*%", text):
-        return -_number(match.group(1)), None, "="
+    strict = r"(?:\s+by)?\s+(?:more than|above|over)\s+"
+    at_least = r"(?:\s+by)?\s+at least\s+"
+    for pattern, sign, operator in (
+        (_CPI_DOWN_VERB + strict + _CPI_VALUE + r"\s*%", -1, "<"),
+        (_CPI_UP_VERB + strict + _CPI_VALUE + r"\s*%", 1, ">"),
+        (_CPI_DOWN_VERB + at_least + _CPI_VALUE + r"\s*%", -1, "<="),
+        (_CPI_UP_VERB + at_least + _CPI_VALUE + r"\s*%", 1, ">="),
+        (_CPI_DOWN_VERB + r"\s+by\s+" + _CPI_VALUE + r"\s*%\s*or\s+more\b", -1, "<="),
+        (_CPI_UP_VERB + r"\s+by\s+" + _CPI_VALUE + r"\s*%\s*or\s+more\b", 1, ">="),
+        (_CPI_DOWN_VERB + r"\s+by\s+" + _CPI_VALUE + r"\s*%(?!\s*or\b)", -1, "="),
+        (_CPI_UP_VERB + r"\s+by\s+" + _CPI_VALUE + r"\s*%(?!\s*or\b)", 1, "="),
+    ):
+        if match := re.search(r"\b" + pattern, text):
+            return sign * _number(match.group(1)), None, operator
     if re.search(r"\bstays? flat \(0\.0%\)", text):
         return Decimal("0.0"), None, "="
-    if match := re.search(r"\bincreases? by\s+" + value + r"\s*%", text):
-        return _number(match.group(1)), None, "="
+    if re.search(
+        r"\b(?:" + _CPI_DOWN_VERB + "|" + _CPI_UP_VERB + r")\s+(?:by\s+)?"
+        r"(?:more than\s+|above\s+|over\s+|at least\s+)?-?[0-9]",
+        text,
+    ):
+        return _UNPARSEABLE_CHANGE
     return None
 
 
@@ -670,7 +711,7 @@ def _threshold_terms(
     patterns = (
         (">=", r"\b(?:at least|or above)\s+\$?(-?[0-9][0-9,.]*)"),
         ("<=", r"\b(?:at most|or below)\s+\$?(-?[0-9][0-9,.]*)"),
-        (">", r"\b(?:above|greater than|more than)\s+\$?(-?[0-9][0-9,.]*)"),
+        (">", r"\b(?:above|greater than)\s+\$?(-?[0-9][0-9,.]*)"),
         ("<", r"\b(?:below|less than)\s+\$?(-?[0-9][0-9,.]*)"),
     )
     for source_text in source_texts:

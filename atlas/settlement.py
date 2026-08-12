@@ -70,6 +70,19 @@ def assess_settlement_guarantee(
             "policy_evidence": evidence.model_dump(mode="json"),
         }
 
+    specialized_scope = str(fingerprint.contract_scope or "")
+    if specialized_scope.startswith("cpi_") or specialized_scope in {
+        "fomc_rate_change_bucket",
+        "fed_funds_upper_bound_level",
+    }:
+        # Specialized macro families may earn GUARANTEED only through their own
+        # complete-policy path above. The generic yes/no-fallback grant below
+        # would otherwise let a misfiled or partially-parsed leg reach approval.
+        reasons = ["FAMILY_POLICY_INCOMPLETE"]
+        if fingerprint.resolution_source in {"", "unknown"}:
+            reasons.append("MISSING_RESOLUTION_SOURCE")
+        return {"status": GuaranteeStatus.UNKNOWN.value, "reason_codes": reasons}
+
     if fingerprint.settlement_policy and "cancel=half" in fingerprint.settlement_policy:
         return {
             "status": GuaranteeStatus.GUARANTEED.value,

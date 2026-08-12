@@ -31,7 +31,7 @@ Do not add a live order client casually. Any future execution capability must be
 Last verified: **2026-08-12**.
 
 - API: serving locally (`/health` reports `trading_enabled=false`).
-- Test suite: `231 passed, 1 warning` at the latest full run; `ruff check .` reports zero issues.
+- Test suite: `248 passed, 1 warning` at the latest full run; `ruff check .` reports zero issues.
 - Trusted settlement labels: `0`.
 - Latest learning readiness check: `training_ready=False`, `labels=0`, `observations=290`.
 - Current queue: 12 persisted settlement candidates; all are `BLOCKED`. Discretionary fair-price pairs now carry the terminal gate `STRUCTURALLY_UNREACHABLE_DISCRETIONARY_SETTLEMENT` and sort below every reachable candidate, so the queue surfaces where a first trusted label is possible.
