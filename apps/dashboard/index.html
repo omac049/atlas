@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Atlas — Mispricing Command</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/dashboard.css?v=20260811-redesign" />
-    <link rel="stylesheet" href="/dashboard-research.css?v=20260811-redesign" />
-    <link rel="stylesheet" href="/dashboard-agent.css?v=20260811-redesign" />
+    <link rel="stylesheet" href="/dashboard.css?v=20260811-helpful" />
+    <link rel="stylesheet" href="/dashboard-research.css?v=20260811-helpful" />
+    <link rel="stylesheet" href="/dashboard-agent.css?v=20260811-helpful" />
   </head>
   <body>
     <main class="shell">
@@ -86,12 +86,12 @@
           <p id="shadow-detail">Atlas may observe blocked pairs to test market-data plumbing without treating them as arbitrage.</p>
         </div>
         <div class="shadow-metrics metric-grid">
-          <div><span>COMBINED COST</span><strong id="shadow-cost">—</strong></div>
-          <div><span>RAW EDGE</span><strong id="shadow-edge">—</strong></div>
-          <div><span>RULE STATUS</span><strong id="shadow-status">BLOCKED</strong></div>
+          <div><span title="Cost of buying both hedged sides at observed executable prices">COMBINED COST</span><strong id="shadow-cost">—</strong></div>
+          <div><span title="$1.00 payout minus combined cost, before contract rules are considered">RAW EDGE</span><strong id="shadow-edge">—</strong></div>
+          <div><span title="Deterministic rule verdict for this pair — BLOCKED pairs are observation-only">RULE STATUS</span><strong id="shadow-status">BLOCKED</strong></div>
           <div><span>OBSERVATIONS</span><strong id="shadow-observations">0</strong></div>
           <div><span>UNIQUE PAIRS</span><strong id="shadow-pairs">0</strong></div>
-          <div><span>POSITIVE RATE</span><strong id="shadow-positive">0%</strong></div>
+          <div><span title="Share of observations where the raw edge was positive">POSITIVE RATE</span><strong id="shadow-positive">0%</strong></div>
         </div>
         <div id="shadow-blockers" class="shadow-blockers">No observation yet.</div>
       </section>
@@ -104,11 +104,11 @@
             <p id="settlement-detail">Contracts with discretionary or unknown settlement cannot enter the executable queue.</p>
           </div>
           <div class="settlement-metrics metric-grid">
-            <div><span>SHARED EVENTS</span><strong id="settlement-shared">—</strong></div>
-            <div><span>GUARANTEED</span><strong id="settlement-guaranteed">—</strong></div>
-            <div><span>EVIDENCE COMPLETE</span><strong id="settlement-evidence-complete">—</strong></div>
-            <div><span>EXECUTION READY</span><strong id="settlement-ready">—</strong></div>
-            <div><span>SAFE CONTRACTS K / P</span><strong id="settlement-contracts">—</strong></div>
+            <div><span title="Cross-venue events ranked by settlement discovery">SHARED EVENTS</span><strong id="settlement-shared">—</strong></div>
+            <div><span title="Shared events where both venues have guaranteed, non-discretionary settlement">GUARANTEED</span><strong id="settlement-guaranteed">—</strong></div>
+            <div><span title="Shared events with every required settlement-source field captured">EVIDENCE COMPLETE</span><strong id="settlement-evidence-complete">—</strong></div>
+            <div><span title="Events clearing every deterministic gate — eligible for paper tracking">EXECUTION READY</span><strong id="settlement-ready">—</strong></div>
+            <div><span title="Contracts with guaranteed settlement: Kalshi / Polymarket">SAFE CONTRACTS K / P</span><strong id="settlement-contracts">—</strong></div>
           </div>
         </div>
         <div id="settlement-rankings" class="settlement-rankings"><div class="empty">No settlement ranking recorded yet.</div></div>
@@ -125,10 +125,10 @@
             <p id="identity-audit" class="normalization-audit">Waiting for the structured identity audit.</p>
           </div>
           <div class="normalization-totals metric-grid">
-            <div><span>NORMALIZED</span><strong id="normalization-total">—</strong></div>
-            <div><span>SHARED EVENTS</span><strong id="normalization-shared">—</strong></div>
-            <div><span>GUARANTEED</span><strong id="normalization-guaranteed">—</strong></div>
-            <div><span>EXACT RULE MATCHES</span><strong id="normalization-exact">—</strong></div>
+            <div><span title="Contracts parsed into explicit structured rule fields">NORMALIZED</span><strong id="normalization-total">—</strong></div>
+            <div><span title="Same underlying event found on both venues">SHARED EVENTS</span><strong id="normalization-shared">—</strong></div>
+            <div><span title="Shared events with guaranteed settlement on both venues">GUARANTEED</span><strong id="normalization-guaranteed">—</strong></div>
+            <div><span title="Shared events with identical threshold, source, timing, and settlement terms">EXACT RULE MATCHES</span><strong id="normalization-exact">—</strong></div>
           </div>
         </div>
         <div class="normalization-table">
@@ -154,20 +154,20 @@
           <p id="validation-safety" class="validation-safety">PAPER ONLY / NEVER EXECUTED · SETTLEMENT-VERIFIED LABELS ONLY</p>
         </div>
         <div class="validation-metrics metric-grid">
-          <div><span>MARKETS TRACKED</span><strong id="validation-markets">—</strong></div>
-          <div><span>EVIDENCE VERSIONS</span><strong id="validation-versions">—</strong></div>
-          <div><span>RULE CHANGES</span><strong id="validation-changes">—</strong></div>
-          <div><span>AWAITING SETTLEMENT</span><strong id="validation-awaiting">—</strong></div>
-          <div><span>RESOLVED CASES</span><strong id="validation-resolved">—</strong></div>
-          <div><span>SETTLEMENT COVERAGE</span><strong id="validation-coverage">—</strong></div>
-          <div><span>CONFIRMATION PRECISION</span><strong id="validation-precision">—</strong></div>
-          <div><span>INCONCLUSIVE RATE</span><strong id="validation-inconclusive">—</strong></div>
-          <div><span>TRUSTED LABELS</span><strong id="validation-labels">—</strong></div>
-          <div><span>LABEL MIX A / R</span><strong id="validation-label-mix">— / —</strong></div>
-          <div><span>PM SOURCES FINAL / CLOSED</span><strong id="backfill-polymarket">— / —</strong></div>
-          <div><span>HISTORICAL CANDIDATE EVENTS</span><strong id="backfill-shared">—</strong></div>
-          <div><span>MIN LABEL COUNT GAP</span><strong id="backfill-remaining">50</strong></div>
-          <div><span>PROVENANCE STATE</span><strong id="validation-provenance-state">NO VERIFIED RUN</strong></div>
+          <div><span title="Markets whose rules are versioned in the evidence ledger">MARKETS TRACKED</span><strong id="validation-markets">—</strong></div>
+          <div><span title="Stored snapshots of market rule text">EVIDENCE VERSIONS</span><strong id="validation-versions">—</strong></div>
+          <div><span title="Detected edits to market rules after listing">RULE CHANGES</span><strong id="validation-changes">—</strong></div>
+          <div><span title="Paper cases waiting for both venues to publish final outcomes">AWAITING SETTLEMENT</span><strong id="validation-awaiting">—</strong></div>
+          <div><span title="Cases where both venues have settled">RESOLVED CASES</span><strong id="validation-resolved">—</strong></div>
+          <div><span title="Resolved cases as a share of all tracked cases">SETTLEMENT COVERAGE</span><strong id="validation-coverage">—</strong></div>
+          <div><span title="Confirmed matches as a share of decisive outcomes (confirmed + diverged)">CONFIRMATION PRECISION</span><strong id="validation-precision">—</strong></div>
+          <div><span title="Resolved cases without a decisive outcome">INCONCLUSIVE RATE</span><strong id="validation-inconclusive">—</strong></div>
+          <div><span title="Settlement-verified learning labels">TRUSTED LABELS</span><strong id="validation-labels">—</strong></div>
+          <div><span title="Approved-equivalent / rejected labels — training needs both classes">LABEL MIX A / R</span><strong id="validation-label-mix">— / —</strong></div>
+          <div><span title="Polymarket markets with final binary evidence / closed markets scanned">PM SOURCES FINAL / CLOSED</span><strong id="backfill-polymarket">— / —</strong></div>
+          <div><span title="Closed cross-venue events considered by historical backfill">HISTORICAL CANDIDATE EVENTS</span><strong id="backfill-shared">—</strong></div>
+          <div><span title="Labels still needed to reach the 50-label training gate">MIN LABEL COUNT GAP</span><strong id="backfill-remaining">50</strong></div>
+          <div><span title="Verification status of the latest historical backfill run">PROVENANCE STATE</span><strong id="validation-provenance-state">NO VERIFIED RUN</strong></div>
         </div>
       </section>
 
@@ -206,13 +206,13 @@
         </div>
         <div class="section-block">
           <div class="section-label">TRUST GATES</div>
-          <div class="gate-row"><span>RULE CHECK</span><strong id="rule-check">—</strong></div>
+          <div class="gate-row"><span title="Deterministic rule verdict for the displayed pair">RULE CHECK</span><strong id="rule-check">—</strong></div>
           <div class="gate-row"><span>PAIR STATUS</span><strong id="pair-status">—</strong></div>
-          <div class="gate-row"><span>PAIR SOURCE</span><strong id="pair-source">—</strong></div>
+          <div class="gate-row"><span title="REGISTRY = stored live pair · FIXTURE = built-in demo data">PAIR SOURCE</span><strong id="pair-source">—</strong></div>
           <div class="gate-row"><span>PAPER TRADES</span><strong id="paper-trades">—</strong></div>
-          <div class="gate-row"><span>DISCOVERY</span><strong id="discovery-status">—</strong></div>
-          <div class="gate-row"><span>CATALOG FIT</span><strong id="catalog-fit">—</strong></div>
-          <div class="gate-row"><span>LEARNING</span><strong id="learning-status">—</strong></div>
+          <div class="gate-row"><span title="Active Polymarket contracts / approved candidates in the latest scan">DISCOVERY</span><strong id="discovery-status">—</strong></div>
+          <div class="gate-row"><span title="How closely live venue catalogs overlap: exact rule matches, shared events, or family only">CATALOG FIT</span><strong id="catalog-fit">—</strong></div>
+          <div class="gate-row"><span title="Trusted labels collected toward the 50-label training gate">LEARNING</span><strong id="learning-status">—</strong></div>
         </div>
         <div class="section-block interpretation">
           <div class="section-label">OPERATOR NOTE</div>
@@ -226,11 +226,11 @@
           <h2>Does the edge survive contact with execution?</h2>
         </div>
         <div class="research-metrics metric-grid">
-          <div><span>DETECTED</span><strong id="detected">—</strong></div>
-          <div><span>EXECUTABLE</span><strong id="executable">—</strong></div>
-          <div><span>PHANTOM RATE</span><strong id="phantom">—</strong></div>
-          <div><span>FAILED HEDGE LOSS</span><strong id="failed-loss">—</strong></div>
-          <div><span>MEDIAN LIFETIME</span><strong id="lifetime">—</strong></div>
+          <div><span title="Edges detected at top-of-book prices in fixture research">DETECTED</span><strong id="detected">—</strong></div>
+          <div><span title="Edges that survive when priced against full order-book depth">EXECUTABLE</span><strong id="executable">—</strong></div>
+          <div><span title="Detected edges that disappear once depth, fees, and slippage are applied">PHANTOM RATE</span><strong id="phantom">—</strong></div>
+          <div><span title="Simulated loss when the second leg cannot be filled">FAILED HEDGE LOSS</span><strong id="failed-loss">—</strong></div>
+          <div><span title="How long a detected edge remains executable">MEDIAN LIFETIME</span><strong id="lifetime">—</strong></div>
         </div>
       </section>
 
@@ -241,6 +241,6 @@
 
       <footer><span>ATLAS / research instrument</span><span>no execution module installed</span></footer>
     </main>
-    <script src="/dashboard.js?v=20260811-redesign2"></script>
+    <script src="/dashboard.js?v=20260811-helpful"></script>
   </body>
 </html>

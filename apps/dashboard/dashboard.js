@@ -13,8 +13,11 @@ function age(iso) {
   return `${Math.round(seconds / 86400)}d ago`;
 }
 function settlementTime(iso) { if (!iso) return 'not published'; const date = new Date(iso); return Number.isNaN(date.getTime()) ? 'not published' : `${date.toISOString().replace('T', ' ').slice(0, 16)}Z`; }
+let lastGoodUpdate = null;
 function render(data) {
-  $('connection').textContent = 'CONNECTED'; $('updated').textContent = `UPDATED ${age(data.last_updated).toUpperCase()}`;
+  lastGoodUpdate = data.last_updated;
+  $('connection').textContent = 'CONNECTED'; $('connection').classList.remove('offline');
+  $('updated').textContent = `UPDATED ${age(data.last_updated).toUpperCase()}`;
   const evidence = data.evidence || {};
   const livePairs = Number(evidence.live_pair_count || 0);
   $('evidence-mode').textContent = livePairs > 0 ? 'LIVE PAIR VALIDATED / PAPER ONLY' : 'NO LIVE PAIR VALIDATED';
@@ -315,5 +318,18 @@ function render(data) {
   const demo = Boolean(evidence.demo_opportunity);
   $('opportunity').innerHTML = `<div class="opp-top"><span class="match">${demo ? 'FIXTURE RESEARCH / DEMO EDGE' : 'MATCH FOUND / APPROVED EQUIVALENT'}</span><span class="execute">${demo ? 'NOT LIVE' : `PAPER ${o.status}`}</span></div><div class="contracts">Kalshi <span class="arrow">↔</span> Polymarket US</div><div class="legs"><div class="leg"><span class="leg-label">KALSHI / YES EXECUTABLE</span><span class="price">${money(o.leg_a_average_price)}</span></div><div class="leg"><span class="leg-label">POLYMARKET US / NO HEDGE</span><span class="price">${money(o.leg_b_average_price)}</span></div><div class="metrics"><div class="metric"><span>NET LOCKED EDGE</span><strong class="positive">${pct(o.expected_roi)}</strong></div><div class="metric"><span>EXECUTABLE SIZE</span><strong>${money(o.contracts)}</strong></div><div class="metric"><span>NET COST</span><strong>${money(o.net_cost)}</strong></div></div></div>`;
 }
-async function refresh() { try { const response = await fetch('/api/overview', {cache:'no-store'}); render(await response.json()); } catch { $('connection').textContent = 'OFFLINE'; } }
+async function refresh() {
+  try {
+    const response = await fetch('/api/overview', {cache:'no-store'});
+    render(await response.json());
+  } catch {
+    $('connection').textContent = 'OFFLINE'; $('connection').classList.add('offline');
+    $('updated').textContent = lastGoodUpdate ? `SHOWING DATA FROM ${age(lastGoodUpdate).toUpperCase()}` : 'NO DATA RECEIVED YET';
+  }
+}
 $('refresh').addEventListener('click', refresh); refresh(); setInterval(refresh, 15000);
+setInterval(() => {
+  if (lastGoodUpdate && !$('connection').classList.contains('offline')) {
+    $('updated').textContent = `UPDATED ${age(lastGoodUpdate).toUpperCase()}`;
+  }
+}, 5000);

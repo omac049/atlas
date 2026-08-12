@@ -1,6 +1,6 @@
 /* Agent research loop + live shadow test panels */
 
-.agent-panel { border-color: #33423f; }
+.agent-panel { border-color: var(--line-green); }
 .agent-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; }
 .agent-head h2 { font-size: 18px; letter-spacing: -0.01em; text-transform: none; }
 .agent-metric { text-align: right; }

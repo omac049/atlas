@@ -1,7 +1,7 @@
 /* Research panels: cohort pipeline, settlement, normalization, validation, election */
 
 /* -------------------------------------------------------- cohort pipeline */
-.cohort-panel { border-color: #30433e; }
+.cohort-panel { border-color: var(--line-green); }
 .cohort-head { display: flex; justify-content: space-between; gap: 32px; align-items: start; }
 .cohort-safety {
   display: flex; align-items: center; gap: 8px;
@@ -72,7 +72,7 @@
 }
 
 /* --------------------------------------------------- settlement discovery */
-.settlement-panel { border-color: #33423f; }
+.settlement-panel { border-color: var(--line-green); }
 .settlement-head { display: flex; justify-content: space-between; gap: 28px; align-items: start; }
 .settlement-metrics { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
 .settlement-metrics strong { color: var(--green); }
@@ -160,7 +160,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(420px, 1fr);
   gap: 32px;
-  border-color: #2c3c50;
+  border-color: var(--line-blue);
 }
 .validation-panel .validation-backfill {
   margin-top: 14px; padding-top: 14px;
@@ -187,10 +187,10 @@
 }
 .validation-signal strong { display: block; margin: 7px 0; color: var(--amber); font: var(--value); }
 .validation-signal small { color: var(--muted); line-height: 1.55; text-transform: none; max-width: 560px; }
-.validation-safety {
-  margin-top: 16px !important;
-  color: var(--amber) !important;
-  font: 400 10px/1.6 var(--mono) !important;
+.validation-panel .validation-safety {
+  margin-top: 16px;
+  color: var(--amber);
+  font: 400 10px/1.6 var(--mono);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
