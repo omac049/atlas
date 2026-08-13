@@ -109,33 +109,10 @@ def _economic_terms(market: Market) -> dict[str, object] | None:
     market_source = _market_source(market)
     period = _month_period(text, market.venue_market_id)
     threshold, upper, operator = _threshold_terms(market, text)
-    unemployment = re.search(r"\b(canada|u\.?s\.?|united states) unemployment rate\b", text)
-    if unemployment and period:
-        jurisdiction = "ca" if unemployment.group(1) == "canada" else "us"
-        source = (
-            "statistics_canada"
-            if "statistics canada" in text or "statistics canada" in market_source
-            else "trading_economics"
-            if "trading economics" in market_source
-            else "us_bls"
-            if "bls" in text or "bureau of labor statistics" in market_source
-            else _named_authority_source(market.resolution_source)
-        )
-        return {
-            "event_subject": f"{jurisdiction}_unemployment_rate|{period}",
-            "event_date": period,
-            "event_action": "published_value",
-            "market_type": "economic",
-            "contract_scope": "unemployment_rate",
-            "affirmative_outcome": "predicate_true",
-            "threshold": threshold,
-            "threshold_upper": upper,
-            "threshold_operator": operator,
-            "threshold_unit": "percent",
-            "measurement_period": period,
-            "geography": jurisdiction,
-            "resolution_source": source,
-        }
+    if unemployment := _unemployment_rate_terms(
+        market, (market.title or "").lower(), text, market_source, period, threshold, upper, operator
+    ):
+        return unemployment
     if fomc := _fomc_decision_bucket_terms(text):
         return fomc
     if level := _fed_funds_level_terms(text):
@@ -165,6 +142,113 @@ def _economic_terms(market: Market) -> dict[str, object] | None:
             "resolution_source": "federal_reserve",
         }
     return None
+
+
+# The U-3 designation adjacent to an unemployment-rate reference is the published
+# BLS series marker (Kalshi: "unemployment rate (U-3)"; Polymarket: "official
+# unemployment rate denoted as U-3"). Proximity is required so a distant U-3
+# mention in commentary cannot re-file an unrelated market under the US subject.
+_U3_SERIES_MARKER = re.compile(r"\bunemployment rate\b.{0,40}?\bu-3\b")
+
+
+def _unemployment_rate_terms(
+    market: Market,
+    title: str,
+    text: str,
+    market_source: str,
+    period: str | None,
+    threshold: Decimal | None,
+    upper: Decimal | None,
+    operator: str | None,
+) -> dict[str, object] | None:
+    """US U-3 (and explicitly named foreign) unemployment-rate contracts.
+
+    Kalshi's KXU3 rules publish the series and basis inline ("the seasonally
+    adjusted unemployment rate (U-3) reported by the Bureau of Labor Statistics
+    in the Employment Situation Report") with a strict "above X%" strike and no
+    revision, missing-data, or precision clauses — that absence stays visible as
+    an empty settlement policy. Polymarket publishes the same subject plus a
+    first-release revision freeze, a terminal last-available-month fallback
+    (added to its template after Feb 2025 — older events lack it and must not
+    look complete), and the one-decimal precision clause, with exact one-decimal
+    buckets ("be 4.1%", "be exactly 4.0%") and tails ("be ≤3.9%", "greater than
+    or equal to 4.3%"). The measurement basis enters the scope only when the
+    text publishes it; contracts naming a non-US jurisdiction without the U-3
+    marker are never filed under the US subject.
+    """
+    explicit = re.search(r"\b(canada|u\.?s\.?|united states) unemployment rate\b", text)
+    if not period:
+        return None
+    if explicit and explicit.group(1) == "canada":
+        jurisdiction = "ca"
+    elif explicit or (
+        _U3_SERIES_MARKER.search(text) and not _CPI_FOREIGN_JURISDICTION.search(text)
+    ):
+        jurisdiction = "us"
+    else:
+        return None
+    scope = "unemployment_rate"
+    if (
+        jurisdiction == "us"
+        and _U3_SERIES_MARKER.search(text)
+        and "seasonally adjusted unemployment rate" in text
+    ):
+        scope = "unemployment_rate_u3_seasonally_adjusted"
+    bls_named = bool(
+        "bureau of labor statistics" in text
+        or re.search(r"\bbls\b", text)
+        or "bureau of labor statistics" in market_source
+    )
+    source = (
+        "statistics_canada"
+        if "statistics canada" in text or "statistics canada" in market_source
+        else "trading_economics"
+        if "trading economics" in market_source
+        else "us_bls_employment_situation"
+        if bls_named and "employment situation report" in text
+        else "us_bls"
+        if bls_named
+        else _named_authority_source(market.resolution_source)
+    )
+    # Title first: the title always states the market's OWN bucket, while
+    # descriptions may enumerate sibling buckets whose phrasings would match.
+    title_level = _cpi_level_terms(title, None, None, None)
+    if title_level[2] is not None:
+        threshold, upper, operator = title_level
+    else:
+        threshold, upper, operator = _cpi_level_terms(text, threshold, upper, operator)
+    # Only published outcome-determining clauses become tokens; Kalshi's KXU3
+    # rules publish none, so its legs keep an empty policy.
+    policies = []
+    if re.search(r"revisions to the data after the first release will not count", text):
+        policies.append("revision=first_official_release")
+    if re.search(
+        r"no data for the specified month is released by the date the next month", text
+    ) and "resolve based on data from the last available month" in text:
+        policies.append("missing=last_available_month_at_next_release")
+    if "one decimal point" in text and "level of precision" in text:
+        policies.append("precision=bls_one_decimal")
+    return {
+        "event_subject": f"{jurisdiction}_unemployment_rate|{period}",
+        "event_date": period,
+        "event_action": "published_value",
+        "market_type": "economic",
+        "contract_scope": scope,
+        "affirmative_outcome": "predicate_true",
+        "threshold": threshold,
+        "threshold_upper": upper,
+        "threshold_operator": operator,
+        "threshold_unit": "percent",
+        "measurement_period": period,
+        "geography": jurisdiction,
+        "resolution_source": source,
+        "revision_policy": (
+            "first_official_release"
+            if "revision=first_official_release" in policies
+            else None
+        ),
+        "settlement_policy": "|".join(policies) or None,
+    }
 
 
 def _fomc_decision_bucket_terms(text: str) -> dict[str, object] | None:
@@ -692,12 +776,16 @@ def _cpi_level_terms(
     upper: Decimal | None,
     operator: str | None,
 ) -> tuple[Decimal | None, Decimal | None, str | None]:
-    """Threshold phrasings specific to published CPI level buckets.
+    """Threshold phrasings specific to published one-decimal level buckets.
 
-    Polymarket phrases its tails postfix ("3.1% or less", "4.2% or more") and its
-    interior buckets as exact one-decimal levels ("be 3.4% in July"), none of which
-    the generic prefix patterns in ``_threshold_terms`` can read. The exact-level
-    branch only fires when the generic pass found no operator, so Kalshi's strict
+    Polymarket phrases its tails postfix ("3.1% or less", "4.2% or more"), with
+    symbols ("be ≤3.9%", "be ≥4.7%"), or spelled out ("less than or equal to
+    3.9%", "greater than or equal to 4.3%"), and its interior buckets as exact
+    one-decimal levels ("be 3.4% in July", "be exactly 4.0%"), none of which the
+    generic prefix patterns in ``_threshold_terms`` can read (they require a
+    digit immediately after "greater than"/"less than", so the spelled-out
+    "or equal to" forms fall through to here). The bare exact-level branch
+    only fires when the generic pass found no operator, so Kalshi's strict
     "above 3.1%" phrasing keeps its ``>`` reading.
     """
     value = r"(-?[0-9]+(?:\.[0-9]+)?)"
@@ -705,6 +793,16 @@ def _cpi_level_terms(
         return _number(match.group(1)), None, "<="
     if match := re.search(value + r"\s*%\s*or\s+(?:more|higher)\b", text):
         return _number(match.group(1)), None, ">="
+    if match := re.search(r"\bless than or equal to\s+" + value + r"\s*%", text):
+        return _number(match.group(1)), None, "<="
+    if match := re.search(r"\bgreater than or equal to\s+" + value + r"\s*%", text):
+        return _number(match.group(1)), None, ">="
+    if match := re.search(r"\bbe\s*≤\s*" + value + r"\s*%", text):
+        return _number(match.group(1)), None, "<="
+    if match := re.search(r"\bbe\s*≥\s*" + value + r"\s*%", text):
+        return _number(match.group(1)), None, ">="
+    if match := re.search(r"\bbe\s+exactly\s+" + value + r"\s*%", text):
+        return _number(match.group(1)), None, "="
     if operator is None and (match := re.search(r"\bbe\s+" + value + r"\s*%", text)):
         return _number(match.group(1)), None, "="
     return threshold, upper, operator

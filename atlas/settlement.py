@@ -44,6 +44,12 @@ def assess_settlement_guarantee(
             "reason_codes": ["COMPLETE_CPI_RELEASE_AND_MISSING_DATA_POLICY"],
         }
 
+    if _complete_unemployment_release_policy(fingerprint):
+        return {
+            "status": GuaranteeStatus.GUARANTEED.value,
+            "reason_codes": ["COMPLETE_UNEMPLOYMENT_RELEASE_POLICY"],
+        }
+
     if _complete_fomc_decision_policy(fingerprint):
         return {
             "status": GuaranteeStatus.GUARANTEED.value,
@@ -71,7 +77,7 @@ def assess_settlement_guarantee(
         }
 
     specialized_scope = str(fingerprint.contract_scope or "")
-    if specialized_scope.startswith("cpi_") or specialized_scope in {
+    if specialized_scope.startswith(("cpi_", "unemployment_rate")) or specialized_scope in {
         "fomc_rate_change_bucket",
         "fed_funds_upper_bound_level",
     }:
@@ -159,6 +165,32 @@ def _complete_fed_funds_level_policy(fingerprint: ContractFingerprint) -> bool:
     if fingerprint.measurement_period.startswith("meeting:"):
         return "no_decision=year_end_rate_snapshot" in policies
     return False
+
+
+def _complete_unemployment_release_policy(fingerprint: ContractFingerprint) -> bool:
+    """A U-3 unemployment leg is deterministic only when the venue publishes the
+    complete release policy: the first-release revision freeze, the terminal
+    last-available-month fallback, and the one-decimal precision clause, all on
+    the published seasonally-adjusted U-3 basis anchored to the BLS Employment
+    Situation Report. Polymarket's current template publishes all three; Kalshi's
+    KXU3 rules publish none (and pre-fallback Polymarket templates lack the
+    terminal branch), so those legs stay honestly UNKNOWN."""
+    if (
+        fingerprint.market_type != "economic"
+        or fingerprint.contract_scope != "unemployment_rate_u3_seasonally_adjusted"
+        or fingerprint.resolution_source != "us_bls_employment_situation"
+        or fingerprint.threshold is None
+        or fingerprint.threshold_operator is None
+        or fingerprint.threshold_unit != "percent"
+        or not fingerprint.measurement_period
+        or not fingerprint.settlement_policy
+    ):
+        return False
+    return {
+        "revision=first_official_release",
+        "missing=last_available_month_at_next_release",
+        "precision=bls_one_decimal",
+    } <= set(fingerprint.settlement_policy.split("|"))
 
 
 def _complete_cpi_release_policy(fingerprint: ContractFingerprint) -> bool:
