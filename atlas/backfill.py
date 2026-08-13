@@ -95,6 +95,7 @@ async def backfill_historical_validation(
     target_labels: int = 50,
     kalshi_event_pages: int = 100,
     kalshi_series_tickers: tuple[str, ...] | None = None,
+    kalshi_event_ticker_filter: str | None = None,
     polymarket_pages: int = 20,
     additional_polymarket_venues: dict[str, object] | None = None,
     additional_polymarket_pages: int = 20,
@@ -156,14 +157,27 @@ async def backfill_historical_validation(
         # phrasings ("Fed decision in July?" vs "increase interest rates by 25 bps
         # after the July 2026 meeting") share too few tokens to co-occur lexically.
         # Deterministic verification still decides every pair; caps still bound work.
-        series_candidates = [
-            (event, final_polymarket)
+        series_events = [
+            event
             for event in events
             if any(
                 _event_ticker_in_series(str(event.get("event_ticker") or ""), series_ticker)
                 for series_ticker in kalshi_series_tickers
             )
         ]
+        if kalshi_event_ticker_filter:
+            # Explicit-harvest scoping only: narrow the requested-series prepend
+            # (e.g. "12$" keeps just the noon-ET hourly crypto events that overlap
+            # Polymarket's daily markets) so the bounded candidate budget is not
+            # consumed by the 23 non-overlapping hours. Never applied to the
+            # general recent scan or its lexical candidates.
+            ticker_pattern = re.compile(kalshi_event_ticker_filter)
+            series_events = [
+                event
+                for event in series_events
+                if ticker_pattern.search(str(event.get("event_ticker") or ""))
+            ]
+        series_candidates = [(event, final_polymarket) for event in series_events]
         series_event_tickers = {
             str(event.get("event_ticker") or "") for event, _ in series_candidates
         }
@@ -334,6 +348,7 @@ async def backfill_historical_validation(
         "kalshi_events_scanned": len(events),
         "kalshi_series_tickers": list(kalshi_series_tickers or ()),
         "kalshi_series_event_counts": series_event_counts,
+        "kalshi_event_ticker_filter": kalshi_event_ticker_filter,
         "cross_venue_event_candidates": len(event_candidates),
         "historical_candidate_events": len(event_candidates),
         "historical_candidate_events_found": candidate_events_found,
