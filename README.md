@@ -20,7 +20,7 @@ This is an intentional safety invariant, not a temporary UI setting:
 - `atlas.shadow` and `atlas.live_monitor` observe live markets but never submit orders.
 - Relayer and execution credentials are not used by v0.1.
 - Model or semantic proposals cannot bypass catalog-ID validation or deterministic verification.
-- `REVIEW_REQUIRED`, inconclusive, unknown, or non-guaranteed pairs cannot become trusted labels.
+- `REVIEW_REQUIRED`, inconclusive, unknown, or non-guaranteed pairs cannot become trusted approval labels. Evidence-backed `REJECTED` labels may derive only from same-canonical-subject review pairs whose terminal settled outcomes diverge on both venues (owner-signed decision, 2026-08-13).
 - Public venue requests use bounded retry budgets so a stalled catalog cannot block the monitor indefinitely.
 - The continuous monitor catches read-only venue failures, reports `NEVER_EXECUTED`, and retries on the next interval.
 
@@ -32,10 +32,10 @@ Last verified: **2026-08-13**.
 
 - **Milestone achieved 2026-08-13: the first real trusted settled pairs.** Three `APPROVED_EQUIVALENT` labels from the settled July 2026 FOMC meeting (maintain, >25bps hike tail, >25bps cut tail), approved by the human-signed-off rounding preimage-equality rule (`docs/decisions/2026-08-12-fed-rounding-preimage-equality.md`) with both legs `GUARANTEED` and consistent terminal outcomes on both venues. Every FOMC meeting (~8/year) can now mint more.
 - API: serving locally (`/health` reports `trading_enabled=false`).
-- Test suite: `266 passed, 1 warning` at the latest full run; `ruff check .` reports zero issues.
+- Test suite: `271 passed, 1 warning` at the latest full run; `ruff check .` reports zero issues.
 - A paper-only gap radar (`atlas gaps scan --live`) now measures live cross-venue price gaps on twin-shaped candidate pairs at executable top-of-book prices, and the dashboard's "$2k paper meter" answers the original bankroll question with recorded assumptions instead of hope. First clean scan: 10 twin-shaped pairs, 2 executable gaps of 2 cents each, paper bankroll $2001.50.
-- Trusted settlement labels: `3` (`APPROVED_EQUIVALENT`). The learning loop remains correctly blocked until the dataset is balanced (50+ labels including `REJECTED` examples).
-- Latest learning readiness check: `training_ready=False`, `labels=3`, `observations=322`.
+- Trusted settlement labels: `8` — 3 `APPROVED_EQUIVALENT` + 5 evidence-backed `REJECTED` (owner-signed decision 2026-08-13). **The label-mix requirement is satisfied**; the learning loop now waits only on volume (50+ labels).
+- Latest learning readiness check: `training_ready=False`, `labels=8`, `observations=323`.
 - Current queue: 12 persisted settlement candidates; all are `BLOCKED`. Discretionary fair-price pairs now carry the terminal gate `STRUCTURALLY_UNREACHABLE_DISCRETIONARY_SETTLEMENT` and sort below every reachable candidate, so the queue surfaces where a first trusted label is possible.
 - Scheduled bounded backfills default to guarantee-reachable Polymarket Global tags (`144` Elections, `487` House, `100196` Fed Rates, `101701` CPI) plus explicit Kalshi series scans (`KXFEDDECISION`, `KXFED`, `KXCPIYOY`, `KXCPI`, `KXCPICORE`), all verified against live catalog probes; the latest bounded batch completed with `paper_only=true` and 0 trusted labels.
 - The US CPI family covers all four published variants (headline/core x YoY/MoM) with signed thresholds from published wording only. Every monthly BLS release yields at least two settled exact-complement pairs (headline YoY tail, core MoM tail), each blocked only on the same two venue-text gaps: the divergent missing-data fallback and Kalshi's absent terminal fallback.

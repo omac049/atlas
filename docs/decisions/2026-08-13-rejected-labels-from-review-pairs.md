@@ -1,7 +1,14 @@
 # PENDING DECISION — evidence-backed REJECTED labels from same-subject review pairs
 
-Status: **awaiting explicit human sign-off. No label-creation change may land from this memo
-until the decision below is recorded.**
+Status: **SIGNED OFF by the project owner on 2026-08-13** ("yes, proceed"). Implemented the
+same day: invariant wording amended in AGENTS.md/README, `_historical_label` extended with the
+same-subject/divergent-terminal gate, approved-first + complement-first labeling priority, and
+the 5-per-event cap (`REVIEW_REJECTIONS_PER_EVENT`). The prior review-pairs-stay-inconclusive
+test was rewritten as the named semantic flip. Outcome: the settled July 2026 CPI event minted
+the first five evidence-backed `REJECTED` labels (K `>4.6`..`>5.0` settled `no` × PM `3.4%`
+settled `Yes`, cap enforced). Trusted labels: 3 `APPROVED_EQUIVALENT` + 5 `REJECTED` — the
+label-mix requirement is satisfied and the backfill reports `MILESTONE_COMPLETE`; only volume
+(50+) remains before learning readiness.
 
 ## Why this decision exists
 

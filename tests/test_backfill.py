@@ -164,7 +164,12 @@ async def test_requested_series_events_bypass_the_lexical_candidate_gate(tmp_pat
     assert "NO_CROSS_VENUE_SETTLED_EVENT_OVERLAP" not in report["blockers"]
 
 
-def test_historical_label_keeps_review_pairs_inconclusive():
+def test_historical_label_review_pairs_reject_on_divergence_only():
+    """SEMANTIC FLIP, named in the owner-signed 2026-08-13 decision
+    (docs/decisions/2026-08-13-rejected-labels-from-review-pairs.md): a
+    same-subject review pair with divergent terminal outcomes now mints an
+    evidence-backed REJECTED label; agreement still proves nothing, and review
+    pairs still can never approve."""
     markets = fixture_markets()
     pair = verify_equivalence(
         markets["kalshi"][0].model_copy(update={"threshold": Decimal(50)}),
@@ -172,7 +177,8 @@ def test_historical_label_keeps_review_pairs_inconclusive():
     )
 
     assert pair.status is MatchStatus.REVIEW_REQUIRED
-    assert _historical_label(pair, "yes", "no") == (None, "INCONCLUSIVE")
+    assert _historical_label(pair, "yes", "no") == ("REJECTED", "DIVERGED")
+    assert _historical_label(pair, "no", "no") == (None, "INCONCLUSIVE")
 
 
 def test_historical_event_candidates_require_strong_identity_overlap():

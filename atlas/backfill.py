@@ -14,6 +14,11 @@ from atlas.storage import AtlasStore
 from atlas.validation import market_evidence_snapshot
 from atlas.verification import verify_equivalence
 
+# Evidence-backed review-pair rejections are bounded per shared canonical event
+# so one settled CPI month cannot flood the label set with near-duplicate
+# negatives (owner-signed decision 2026-08-13).
+REVIEW_REJECTIONS_PER_EVENT = 5
+
 _STOPWORDS = {
     "will",
     "the",
@@ -213,6 +218,8 @@ async def backfill_historical_validation(
     new_labels = 0
     resolved_pairs = 0
     inconclusive_pairs = 0
+    review_rejections_by_event: dict[str, int] = {}
+    market_pairs = sorted(market_pairs, key=_label_priority)
     for pair in market_pairs:
         if resolved_pairs >= max_resolved_pairs:
             blockers["HISTORICAL_RESOLVED_PAIR_CAP_APPLIED"] += 1
@@ -225,6 +232,14 @@ async def backfill_historical_validation(
         if label is None:
             inconclusive_pairs += 1
             continue
+        if label == "REJECTED" and pair.status is MatchStatus.REVIEW_REQUIRED:
+            subject = str(pair.decision.fingerprint_a.event_subject or "") if pair.decision else ""
+            taken = review_rejections_by_event.get(subject, 0)
+            if taken >= REVIEW_REJECTIONS_PER_EVENT:
+                inconclusive_pairs += 1
+                blockers["REVIEW_REJECTION_EVENT_CAP_APPLIED"] += 1
+                continue
+            review_rejections_by_event[subject] = taken + 1
         resolved_pairs += 1
         guarantee_a = str(assess_settlement_guarantee(pair.market_a)["status"])
         guarantee_b = str(assess_settlement_guarantee(pair.market_b)["status"])
@@ -467,17 +482,49 @@ def _identity_dates(value: str) -> set[str]:
 
 def _historical_label(pair: ContractPair, outcome_a: str, outcome_b: str) -> tuple[str | None, str]:
     inverse = pair.status is MatchStatus.APPROVED_INVERSE
-    if pair.status not in {
-        MatchStatus.APPROVED_EQUIVALENT,
-        MatchStatus.APPROVED_INVERSE,
-    }:
-        return None, "INCONCLUSIVE"
     agrees = outcome_a != outcome_b if inverse else outcome_a == outcome_b
     if pair.status in {
         MatchStatus.APPROVED_EQUIVALENT,
         MatchStatus.APPROVED_INVERSE,
     }:
         return ("APPROVED_EQUIVALENT", "CONFIRMED") if agrees else ("REJECTED", "DIVERGED")
-    if not agrees:
+    if pair.status is MatchStatus.REVIEW_REQUIRED and not agrees and _same_subject_review(pair):
+        # Evidence-backed rejection (owner-signed decision 2026-08-13,
+        # docs/decisions/2026-08-13-rejected-labels-from-review-pairs.md):
+        # terminal settled outcomes diverged on both venues for the same
+        # canonical measurement event — settlement disproved equivalence.
+        # Agreement never proves anything; review pairs still cannot approve.
         return "REJECTED", "DIVERGED"
     return None, "INCONCLUSIVE"
+
+
+def _same_subject_review(pair: ContractPair) -> bool:
+    decision = pair.decision
+    if decision is None:
+        return False
+    left, right = decision.fingerprint_a, decision.fingerprint_b
+    subject = left.event_subject or ""
+    return (
+        "|" in subject
+        and subject == (right.event_subject or "")
+        and left.threshold_unit == right.threshold_unit
+    )
+
+
+_COMPLEMENT_OPERATOR_PAIRS = {(">", "<="), ("<=", ">"), (">=", "<"), ("<", ">=")}
+
+
+def _label_priority(pair: ContractPair) -> int:
+    """Approved pairs first, complement-shaped review pairs next, so the
+    resolved-pair and per-event caps never crowd out the most informative
+    labels."""
+    if pair.status in {MatchStatus.APPROVED_EQUIVALENT, MatchStatus.APPROVED_INVERSE}:
+        return 0
+    if pair.status is MatchStatus.REVIEW_REQUIRED and pair.decision is not None:
+        left, right = pair.decision.fingerprint_a, pair.decision.fingerprint_b
+        if (
+            left.threshold_operator,
+            right.threshold_operator,
+        ) in _COMPLEMENT_OPERATOR_PAIRS and left.threshold == right.threshold:
+            return 1
+    return 2

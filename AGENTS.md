@@ -12,7 +12,7 @@ Paper-only cross-market prediction-market research system. Watches Kalshi and Po
 
 - `ATLAS_TRADING_ENABLED` stays disabled; health endpoint must report `trading_enabled=false`.
 - Any future execution capability requires a separate module, explicit promotion gate, default-off flag, and human authorization — do not build it casually or "for later".
-- `REVIEW_REQUIRED`, inconclusive, unknown, or non-guaranteed pairs must never become trusted labels.
+- `REVIEW_REQUIRED`, inconclusive, unknown, or non-guaranteed pairs must never become trusted approval labels (`APPROVED_EQUIVALENT`/`APPROVED_INVERSE`). Evidence-backed `REJECTED` labels may derive only from same-canonical-subject review pairs whose terminal settled outcomes diverge on both venues, bounded per event (owner-signed decision: `docs/decisions/2026-08-13-rejected-labels-from-review-pairs.md`).
 - Never bypass catalog-ID validation or deterministic verification from model/semantic proposals.
 - Never read or print `keys/`, `.env`, or credential values.
 
