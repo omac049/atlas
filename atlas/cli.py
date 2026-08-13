@@ -306,6 +306,17 @@ async def scan_pairs(live: bool) -> list:
     kalshi_venue = KalshiVenue(fixture=not live)
     polymarket_venue = PolymarketUSVenue(fixture=not live)
     kalshi_markets = await kalshi_venue.list_markets()
+    if live:
+        # The recent-first open catalog drowns low-frequency macro series under
+        # sports markets — the same reach gap the settled-event scan had. Merge
+        # the bounded series scan so open FOMC/CPI markets enter the queue.
+        series_markets = await kalshi_venue.list_open_series_markets(
+            BATCH_DEFAULT_KALSHI_SERIES_TICKERS
+        )
+        seen_ids = {market.market_id for market in kalshi_markets}
+        kalshi_markets.extend(
+            market for market in series_markets if market.market_id not in seen_ids
+        )
     polymarket_markets = await polymarket_venue.list_markets()
     global_open_markets = await _safe_global_open_markets() if live else []
     store = AtlasStore()
