@@ -60,6 +60,11 @@ MAX_GLOBAL_TAG_IDS = 20
 BATCH_DEFAULT_GLOBAL_TAG_IDS = ("144", "487", "100196", "101701")
 MAX_KALSHI_SERIES_TICKERS = 10
 _KALSHI_SERIES_TICKER_PATTERN = re.compile(r"[A-Z][A-Z0-9]{1,39}")
+# Explicit-harvest tool only: settled Polymarket US macro events (e.g. resolved
+# CPI ladders) sit under ~400k closed rows, unreachable by the recent-id sweep.
+# Operators pass known event slugs; this is never part of scheduled defaults.
+MAX_POLYMARKET_US_EVENT_SLUGS = 10
+_POLYMARKET_US_EVENT_SLUG_PATTERN = re.compile(r"[a-z0-9][a-z0-9-]{1,119}")
 # Kalshi's recent-first settled-event paging never reaches low-frequency macro
 # events (the July 2026 FOMC decision sits below thousands of daily sports and
 # hourly settlements), so scheduled batches also scan these series directly.
@@ -173,6 +178,30 @@ def _parse_kalshi_event_ticker_filter(raw_value: str | None) -> str | None:
     except re.error as exc:
         raise ValueError(f"invalid --kalshi-event-ticker-filter regex: {exc}") from None
     return value
+
+
+def _parse_polymarket_us_event_slugs(raw_values: list[str] | None) -> tuple[str, ...]:
+    """Parse a bounded Polymarket US event-slug list; empty means no slug harvest."""
+    if not raw_values:
+        return ()
+
+    slugs: list[str] = []
+    for raw_value in raw_values:
+        for value in raw_value.split(","):
+            slug = value.strip().lower()
+            if not slug:
+                raise ValueError("--polymarket-us-event-slugs cannot contain empty slugs")
+            if not _POLYMARKET_US_EVENT_SLUG_PATTERN.fullmatch(slug):
+                raise ValueError(f"invalid Polymarket US event slug: {slug!r}")
+            if slug not in slugs:
+                slugs.append(slug)
+
+    if len(slugs) > MAX_POLYMARKET_US_EVENT_SLUGS:
+        raise ValueError(
+            "--polymarket-us-event-slugs accepts at most "
+            f"{MAX_POLYMARKET_US_EVENT_SLUGS} unique slugs"
+        )
+    return tuple(slugs)
 
 
 def _validate_batch_limits(
@@ -726,6 +755,7 @@ async def _run_learning_backfill(
     global_tag_ids: tuple[str, ...] | None = None,
     kalshi_series_tickers: tuple[str, ...] | None = None,
     kalshi_event_ticker_filter: str | None = None,
+    polymarket_us_event_slugs: tuple[str, ...] = (),
 ) -> dict[str, object]:
     if not live:
         raise ValueError("historical backfill requires --live public venue data")
@@ -738,6 +768,7 @@ async def _run_learning_backfill(
         kalshi_series_tickers=kalshi_series_tickers,
         kalshi_event_ticker_filter=kalshi_event_ticker_filter,
         polymarket_pages=polymarket_pages,
+        polymarket_us_event_slugs=polymarket_us_event_slugs,
         additional_polymarket_venues={
             "polymarket_global": PolymarketGlobalHistoricalVenue(
                 tag_ids=global_tag_ids or TARGETED_GLOBAL_TAG_IDS
@@ -771,6 +802,10 @@ def _print_historical_backfill_report(report: dict[str, object]) -> None:
     ticker_filter = report.get("kalshi_event_ticker_filter")
     if ticker_filter:
         print(f"  kalshi_event_ticker_filter: {ticker_filter}")
+    slug_counts = report.get("polymarket_us_event_slug_markets") or {}
+    if slug_counts:
+        joined = " ".join(f"{slug}={count}" for slug, count in slug_counts.items())
+        print(f"  polymarket_us_event_slugs: {joined}")
     for blocker, count in report["blockers"].items():
         print(f"  BLOCKED: {blocker} x{count}")
 
@@ -787,6 +822,7 @@ async def learning_backfill(
     global_tag_ids: tuple[str, ...] | None = None,
     kalshi_series_tickers: tuple[str, ...] | None = None,
     kalshi_event_ticker_filter: str | None = None,
+    polymarket_us_event_slugs: tuple[str, ...] = (),
 ) -> dict[str, object]:
     report = await _run_learning_backfill(
         live,
@@ -800,6 +836,7 @@ async def learning_backfill(
         global_tag_ids,
         kalshi_series_tickers=kalshi_series_tickers,
         kalshi_event_ticker_filter=kalshi_event_ticker_filter,
+        polymarket_us_event_slugs=polymarket_us_event_slugs,
     )
     _print_historical_backfill_report(report)
     return report
@@ -1113,6 +1150,17 @@ def main() -> None:
             "applied to the general recent scan"
         ),
     )
+    backfill.add_argument(
+        "--polymarket-us-event-slugs",
+        action="append",
+        metavar="SLUG[,SLUG...]",
+        help=(
+            "explicit-harvest tool: bounded Polymarket US event-slug lookups "
+            "(e.g. uscpi-july-yoy-2026-08-12) so settled macro ladders buried "
+            "under the ~400k-row closed sweep reach the final-binary pool; "
+            "never part of scheduled defaults; repeat or comma-separate values"
+        ),
+    )
     backfill.add_argument("--candidate-events", type=int, default=100)
     backfill.add_argument("--market-pairs", type=int, default=2_000)
     backfill.add_argument("--resolved-pairs", type=int, default=250)
@@ -1201,6 +1249,9 @@ def main() -> None:
             kalshi_event_ticker_filter = _parse_kalshi_event_ticker_filter(
                 args.kalshi_event_ticker_filter
             )
+            polymarket_us_event_slugs = _parse_polymarket_us_event_slugs(
+                args.polymarket_us_event_slugs
+            )
         except ValueError as exc:
             parser.error(str(exc))
         asyncio.run(
@@ -1216,6 +1267,7 @@ def main() -> None:
                 global_tag_ids,
                 kalshi_series_tickers,
                 kalshi_event_ticker_filter=kalshi_event_ticker_filter,
+                polymarket_us_event_slugs=polymarket_us_event_slugs,
             )
         )
     elif args.command == "learning" and args.action == "backfill-batch":

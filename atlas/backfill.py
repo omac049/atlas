@@ -97,6 +97,7 @@ async def backfill_historical_validation(
     kalshi_series_tickers: tuple[str, ...] | None = None,
     kalshi_event_ticker_filter: str | None = None,
     polymarket_pages: int = 20,
+    polymarket_us_event_slugs: tuple[str, ...] = (),
     additional_polymarket_venues: dict[str, object] | None = None,
     additional_polymarket_pages: int = 20,
     max_candidate_events: int = 100,
@@ -119,8 +120,14 @@ async def backfill_historical_validation(
     venue_coverage: dict[str, dict[str, int]] = {}
     closed: list[Market] = []
     final_polymarket: list[Market] = []
+    event_slug_market_counts: dict[str, int] = {}
     for source_name, source_venue, page_limit in source_specs:
         source_closed = await source_venue.list_closed_markets(max_pages=page_limit)
+        if source_name == "polymarket_us" and polymarket_us_event_slugs:
+            harvested = await _harvest_event_slug_markets(
+                source_venue, polymarket_us_event_slugs, event_slug_market_counts, blockers
+            )
+            source_closed = _dedup_markets_by_id([*source_closed, *harvested])
         source_final = await _finalize_polymarket_markets(source_closed, source_venue, concurrency)
         venue_coverage[source_name] = {
             "closed_markets": len(source_closed),
@@ -344,6 +351,8 @@ async def backfill_historical_validation(
         "rejected_labels": rejected_count,
         "polymarket_closed_markets": len(closed),
         "polymarket_final_binary_markets": len(final_polymarket),
+        "polymarket_us_event_slugs": list(polymarket_us_event_slugs),
+        "polymarket_us_event_slug_markets": event_slug_market_counts,
         "venue_coverage": venue_coverage,
         "kalshi_events_scanned": len(events),
         "kalshi_series_tickers": list(kalshi_series_tickers or ()),
@@ -367,6 +376,37 @@ async def backfill_historical_validation(
     )
     await store.save_historical_backfill(report)
     return report
+
+
+async def _harvest_event_slug_markets(
+    venue: object,
+    event_slugs: tuple[str, ...],
+    counts: dict[str, int],
+    blockers: Counter[str],
+) -> list[Market]:
+    """Targeted event-slug door for settled US-venue macro ladders the
+    recent-id closed sweep cannot reach. Every harvested market still passes
+    the same terminal final-binary evidence filter as swept markets."""
+    harvested: list[Market] = []
+    for event_slug in event_slugs:
+        try:
+            slug_markets = await venue.list_event_markets(event_slug)
+        except (httpx.HTTPError, KeyError, TypeError, ValueError):
+            counts[event_slug] = 0
+            blockers["POLYMARKET_US_EVENT_SLUG_FETCH_FAILED"] += 1
+            continue
+        counts[event_slug] = len(slug_markets)
+        if not slug_markets:
+            blockers["POLYMARKET_US_EVENT_SLUG_EMPTY"] += 1
+        harvested.extend(slug_markets)
+    return harvested
+
+
+def _dedup_markets_by_id(markets: list[Market]) -> list[Market]:
+    unique: dict[str, Market] = {}
+    for market in markets:
+        unique.setdefault(market.market_id, market)
+    return list(unique.values())
 
 
 async def _finalize_polymarket_markets(
