@@ -148,6 +148,33 @@ def _parse_batch_series_tickers(raw_values: list[str] | None) -> tuple[str, ...]
     return _parse_kalshi_series_tickers(raw_values)
 
 
+MAX_KALSHI_EVENT_TICKER_FILTER_LENGTH = 80
+
+
+def _parse_kalshi_event_ticker_filter(raw_value: str | None) -> str | None:
+    """Validate the explicit-harvest event-ticker regex; None means no filter.
+
+    Only `learning backfill` accepts this flag — it scopes an explicitly
+    requested series scan (e.g. '12$' keeps the noon-ET hourly crypto events)
+    and is deliberately absent from batch and scheduled defaults.
+    """
+    if raw_value is None:
+        return None
+    value = raw_value.strip()
+    if not value:
+        raise ValueError("--kalshi-event-ticker-filter cannot be empty")
+    if len(value) > MAX_KALSHI_EVENT_TICKER_FILTER_LENGTH:
+        raise ValueError(
+            "--kalshi-event-ticker-filter accepts at most "
+            f"{MAX_KALSHI_EVENT_TICKER_FILTER_LENGTH} characters"
+        )
+    try:
+        re.compile(value)
+    except re.error as exc:
+        raise ValueError(f"invalid --kalshi-event-ticker-filter regex: {exc}") from None
+    return value
+
+
 def _validate_batch_limits(
     *,
     target: int,
@@ -698,6 +725,7 @@ async def _run_learning_backfill(
     resolved_pairs: int = 250,
     global_tag_ids: tuple[str, ...] | None = None,
     kalshi_series_tickers: tuple[str, ...] | None = None,
+    kalshi_event_ticker_filter: str | None = None,
 ) -> dict[str, object]:
     if not live:
         raise ValueError("historical backfill requires --live public venue data")
@@ -708,6 +736,7 @@ async def _run_learning_backfill(
         target_labels=target,
         kalshi_event_pages=kalshi_event_pages,
         kalshi_series_tickers=kalshi_series_tickers,
+        kalshi_event_ticker_filter=kalshi_event_ticker_filter,
         polymarket_pages=polymarket_pages,
         additional_polymarket_venues={
             "polymarket_global": PolymarketGlobalHistoricalVenue(
@@ -739,6 +768,9 @@ def _print_historical_backfill_report(report: dict[str, object]) -> None:
     if series_counts:
         joined = " ".join(f"{ticker}={count}" for ticker, count in series_counts.items())
         print(f"  kalshi_series_events: {joined}")
+    ticker_filter = report.get("kalshi_event_ticker_filter")
+    if ticker_filter:
+        print(f"  kalshi_event_ticker_filter: {ticker_filter}")
     for blocker, count in report["blockers"].items():
         print(f"  BLOCKED: {blocker} x{count}")
 
@@ -754,6 +786,7 @@ async def learning_backfill(
     resolved_pairs: int = 250,
     global_tag_ids: tuple[str, ...] | None = None,
     kalshi_series_tickers: tuple[str, ...] | None = None,
+    kalshi_event_ticker_filter: str | None = None,
 ) -> dict[str, object]:
     report = await _run_learning_backfill(
         live,
@@ -766,6 +799,7 @@ async def learning_backfill(
         resolved_pairs,
         global_tag_ids,
         kalshi_series_tickers=kalshi_series_tickers,
+        kalshi_event_ticker_filter=kalshi_event_ticker_filter,
     )
     _print_historical_backfill_report(report)
     return report
@@ -1069,6 +1103,16 @@ def main() -> None:
             "events beyond recent-first paging reach the candidate pool"
         ),
     )
+    backfill.add_argument(
+        "--kalshi-event-ticker-filter",
+        metavar="REGEX",
+        help=(
+            "explicit-harvest re.search filter applied only to the requested "
+            "--kalshi-series-tickers events before they join the candidate pool "
+            "(e.g. '12$' keeps just the noon-ET hourly crypto events); never "
+            "applied to the general recent scan"
+        ),
+    )
     backfill.add_argument("--candidate-events", type=int, default=100)
     backfill.add_argument("--market-pairs", type=int, default=2_000)
     backfill.add_argument("--resolved-pairs", type=int, default=250)
@@ -1154,6 +1198,9 @@ def main() -> None:
         try:
             global_tag_ids = _parse_global_tag_ids(args.global_tag_ids)
             kalshi_series_tickers = _parse_kalshi_series_tickers(args.kalshi_series_tickers)
+            kalshi_event_ticker_filter = _parse_kalshi_event_ticker_filter(
+                args.kalshi_event_ticker_filter
+            )
         except ValueError as exc:
             parser.error(str(exc))
         asyncio.run(
@@ -1168,6 +1215,7 @@ def main() -> None:
                 max(args.resolved_pairs, 1),
                 global_tag_ids,
                 kalshi_series_tickers,
+                kalshi_event_ticker_filter=kalshi_event_ticker_filter,
             )
         )
     elif args.command == "learning" and args.action == "backfill-batch":
