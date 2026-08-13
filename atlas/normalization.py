@@ -392,12 +392,20 @@ def _crypto_terms(market: Market) -> dict[str, object] | None:
     any_point = "at any point" in text or "trimmed mean crosses" in text
     direction = "simple average" in text and "at least the simple average" in text
     action = "price_direction" if direction else "price_crossed" if any_point else "price_at"
-    period = _deadline(text) if any_point else _exact_timestamp(text) or market.measurement_period
+    period = (
+        _deadline(text)
+        if any_point
+        else _exact_timestamp(text)
+        or _candle_anchor_timestamp(text, market.venue_market_id)
+        or market.measurement_period
+    )
     method = (
         "60s_trimmed_mean_20pct"
         if "excluding the top 20% and bottom 20%" in text
         else "60s_simple_average"
         if "sixty seconds" in text or "60 rti prices" in text
+        else "1m_candle_close"
+        if "1 minute candle" in text and "close" in text
         else "unknown_method"
     )
     return {
@@ -837,7 +845,51 @@ def _crypto_source(text: str) -> str | None:
             return source
     if "cf benchmarks" in text:
         return "cf_benchmarks_unknown_index"
+    # Polymarket publishes per-pair exchange candles or Chainlink streams; these
+    # are genuinely different indices from CF Benchmarks, so distinct source
+    # tokens keep cross-venue crypto pairs honestly non-equivalent forever.
+    if "binance" in text:
+        if "btc/usdt" in text:
+            return "binance_btcusdt_1m_close"
+        if "eth/usdt" in text:
+            return "binance_ethusdt_1m_close"
+        return "binance_unknown_pair"
+    if "chainlink" in text:
+        if "btc/usd" in text:
+            return "chainlink_btcusd_stream"
+        if "eth/usd" in text:
+            return "chainlink_ethusd_stream"
+        return "chainlink_unknown_stream"
     return None
+
+
+def _candle_anchor_timestamp(text: str, identifier: str = "") -> str | None:
+    """Polymarket's candle anchor: '…1 minute candle for BTC/USDT 12:00 in the
+    ET timezone (noon) on the date specified in the title…' with the calendar
+    date carried by the title ('… on August 14?'); year from an explicit year
+    in text or from the venue identifier/slug."""
+    clock = re.search(
+        r"1 minute candle for \w+/\w+\s+(\d{1,2}):(\d{2}) in the et timezone", text
+    )
+    if not clock:
+        return None
+    date = re.search(rf"\bon\s+({'|'.join(MONTHS)})\.?\s+(\d{{1,2}})(?:,\s*(20\d{{2}}))?", text)
+    if not date:
+        return None
+    year = date.group(3)
+    if not year:
+        year_match = re.search(r"\b(20\d{2})\b", text) or re.search(
+            r"(20\d{2})", identifier.lower()
+        )
+        year = year_match.group(1) if year_match else None
+    if not year:
+        return None
+    local = _parse_date_text(f"{date.group(1)} {date.group(2)}, {year}").replace(
+        hour=int(clock.group(1)) % 24,
+        minute=int(clock.group(2)),
+        tzinfo=ZoneInfo("America/New_York"),
+    )
+    return local.astimezone(ZoneInfo("UTC")).isoformat().replace("+00:00", "Z")
 
 
 def _election_office(text: str, identifier: str) -> tuple[str | None, str | None]:

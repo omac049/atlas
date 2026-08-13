@@ -18,6 +18,9 @@ from atlas.verification import verify_equivalence
 # so one settled CPI month cannot flood the label set with near-duplicate
 # negatives (owner-signed decision 2026-08-13).
 REVIEW_REJECTIONS_PER_EVENT = 5
+# Hourly crypto events would otherwise dominate the negative class outright
+# (~60 shared settled events/month); bound the whole family per run.
+CRYPTO_REVIEW_REJECTIONS_PER_RUN = 10
 
 _STOPWORDS = {
     "will",
@@ -239,6 +242,13 @@ async def backfill_historical_validation(
                 inconclusive_pairs += 1
                 blockers["REVIEW_REJECTION_EVENT_CAP_APPLIED"] += 1
                 continue
+            if subject.startswith("crypto_price|"):
+                crypto_taken = review_rejections_by_event.get("__crypto_family__", 0)
+                if crypto_taken >= CRYPTO_REVIEW_REJECTIONS_PER_RUN:
+                    inconclusive_pairs += 1
+                    blockers["CRYPTO_REJECTION_RUN_CAP_APPLIED"] += 1
+                    continue
+                review_rejections_by_event["__crypto_family__"] = crypto_taken + 1
             review_rejections_by_event[subject] = taken + 1
         resolved_pairs += 1
         guarantee_a = str(assess_settlement_guarantee(pair.market_a)["status"])

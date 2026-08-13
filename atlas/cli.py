@@ -576,6 +576,12 @@ async def watch_pairs(live: bool, interval: int, backfill_interval: int = 86_400
                     )
                 except (httpx.HTTPError, OSError, ValueError) as exc:
                     print(f"scheduled_backfill_failed={type(exc).__name__}")
+            # Gap-radar evidence accrues on the same cadence as the scan so the
+            # executable-gap question answers itself while the monitor runs.
+            try:
+                await gaps_scan(live=True)
+            except (httpx.HTTPError, OSError, ValueError) as exc:
+                print(f"gap_radar_scan_failed={type(exc).__name__} retry_on_next_interval=true")
         await asyncio.sleep(interval)
 
 
