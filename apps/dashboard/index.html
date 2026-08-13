@@ -6,9 +6,9 @@
     <meta name="description" content="Atlas — paper-only cross-market prediction research. One event, two markets, priced apart." />
     <title>Atlas — Cross-Market Intelligence</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/dashboard.css?v=20260812-overhaul" />
-    <link rel="stylesheet" href="/dashboard-research.css?v=20260812-overhaul" />
-    <link rel="stylesheet" href="/dashboard-agent.css?v=20260812-overhaul" />
+    <link rel="stylesheet" href="/dashboard.css?v=20260813-terminal" />
+    <link rel="stylesheet" href="/dashboard-research.css?v=20260813-terminal" />
+    <link rel="stylesheet" href="/dashboard-agent.css?v=20260813-terminal" />
   </head>
   <body>
     <main class="shell" id="top">
@@ -22,6 +22,7 @@
           <a href="#opportunities">Opportunities</a>
           <a href="#agent">Agent</a>
           <a href="#settlement">Settlement</a>
+          <a href="#terminal">Terminal</a>
           <a href="#normalization">Normalization</a>
           <a href="#validation">Validation</a>
         </nav>
@@ -141,6 +142,30 @@
         <div id="settlement-rankings" class="settlement-rankings"><div class="empty">No settlement ranking recorded yet.</div></div>
       </section>
 
+      <section class="grid" id="terminal">
+        <div class="panel col-7 certified-panel">
+          <div class="certified-head">
+            <div>
+              <span class="section-label">Certified twins · settlement-verified labels · paper only</span>
+              <h2 id="certified-status">Waiting for the first certified pair</h2>
+              <p id="certified-detail">Every label below is backed by final settlement evidence from both venues — approvals and rejections alike.</p>
+            </div>
+            <div class="certified-metric metric-grid">
+              <div><span title="Settlement-verified labels shown, newest first">Recent labels</span><strong id="certified-count">—</strong></div>
+            </div>
+          </div>
+          <div id="certified-twins" class="certified-twins"><div class="empty">No settlement-verified labels recorded yet.</div></div>
+        </div>
+        <div class="panel col-5 alert-feed-panel">
+          <div>
+            <span class="section-label">Alert feed · gaps + queue transitions · paper only</span>
+            <h2 id="alert-feed-status">Waiting for radar and queue activity</h2>
+            <p>Executable gap sightings and settlement-queue transitions in one chronological strip. Candidates only — not proven twins, never executed.</p>
+          </div>
+          <div id="alert-feed" class="alert-feed"><div class="empty">No alerts recorded yet.</div></div>
+        </div>
+      </section>
+
       <section class="normalization-panel panel" id="normalization">
         <div class="normalization-head">
           <div>
@@ -255,6 +280,6 @@
 
       <footer><span>ATLAS / research instrument</span><span>no execution module installed</span></footer>
     </main>
-    <script src="/dashboard.js?v=20260812-overhaul"></script>
+    <script src="/dashboard.js?v=20260813-terminal"></script>
   </body>
 </html>

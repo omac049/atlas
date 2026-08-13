@@ -23,6 +23,20 @@ def test_dashboard_and_overview_are_available():
     assert "trusted_labels" in overview.json()["validation"]
 
 
+def test_overview_exposes_compact_recent_trusted_labels():
+    overview = TestClient(app).get("/api/overview")
+    assert overview.status_code == 200
+    recent = overview.json()["trusted_labels_recent"]
+    assert isinstance(recent, list)
+    assert len(recent) <= 20
+    for row in recent:
+        assert row["label"] != "UNLABELED"
+        assert {"pair_id", "label", "created_at"} <= set(row)
+        # compact summaries only — never the stored payload or raw market blobs
+        for oversized in ("market_a", "market_b", "payload", "payload_json", "raw_market_json"):
+            assert oversized not in row
+
+
 def test_overview_exposes_recent_historical_backfill_runs():
     overview = TestClient(app).get("/api/overview")
     assert overview.status_code == 200

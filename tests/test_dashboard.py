@@ -91,6 +91,30 @@ def test_dashboard_renders_guarantee_reason_codes_beside_guarantee_pills():
     assert ".settlement-guarantee-reason" in styles
 
 
+def test_dashboard_surfaces_certified_twins_and_alert_feed():
+    html = (ROOT / "apps" / "dashboard" / "index.html").read_text()
+    script = (ROOT / "apps" / "dashboard" / "dashboard.js").read_text()
+    styles = (ROOT / "apps" / "dashboard" / "dashboard-research.css").read_text()
+
+    for element_id in (
+        "certified-twins",
+        "certified-status",
+        "certified-detail",
+        "certified-count",
+        "alert-feed",
+        "alert-feed-status",
+    ):
+        assert f'id="{element_id}"' in html
+    assert "Certified twins" in html
+    assert "Alert feed" in html
+    for field in ("trusted_labels_recent", "relationship_status", "source_kind"):
+        assert field in script
+    assert "EXECUTABLE GAP" in script
+    assert "DETERMINISTIC RULE GATE CLEARED" in script
+    for selector in (".certified-row", ".certified-twins", ".alert-feed", ".alert-item"):
+        assert selector in styles
+
+
 def test_dashboard_keeps_paper_only_safety_messaging_visible():
     html = (ROOT / "apps" / "dashboard" / "index.html").read_text()
 

@@ -308,6 +308,46 @@ function render(data) {
   const gapRows = gapRadar.recent || [];
   const gapMarkup = gapRows.length ? gapRows.map((row) => `<div class="backfill-run"><b>${safe(row.executable_gap ? 'GAP' : 'NO GAP')}</b><span>${safe(String(row.best_gap ?? '—'))} · ${safe(String(row.shape || ''))} · ${safe(String(row.verification_status || ''))}</span><small>${safe(String(row.event_subject || ''))}</small></div>`).join('') : '<div class="empty">No gap observations recorded yet.</div>';
   $('gap-recent').innerHTML = `<span class="section-label">RECENT GAP RADAR · PAPER ONLY</span>${gapMarkup}`;
+  const trustedRecent = data.trusted_labels_recent || [];
+  const approvedRecent = trustedRecent.filter((row) => row.label === 'APPROVED_EQUIVALENT').length;
+  $('certified-count').textContent = fmt(trustedRecent.length);
+  $('certified-status').textContent = trustedRecent.length
+    ? `${fmt(approvedRecent)} certified twin(s) · ${fmt(trustedRecent.length - approvedRecent)} certified rejection(s)`
+    : 'Waiting for the first certified pair';
+  $('certified-detail').textContent = trustedRecent.length
+    ? 'Settlement-verified labels, newest first. Approvals are proven twins; rejections are proven non-twins.'
+    : 'Every label requires both venues to publish final settlement evidence first.';
+  $('certified-twins').innerHTML = trustedRecent.length ? trustedRecent.map((row) => {
+    const labelClass = String(row.label || '').toLowerCase();
+    const outcomes = row.outcome_a || row.outcome_b
+      ? `settled ${row.outcome_a || '—'} / ${row.outcome_b || '—'}`
+      : 'outcomes unpublished';
+    const provenance = `${String(row.source_kind || 'UNKNOWN SOURCE').replaceAll('_', ' ')} · ${String(row.relationship_status || 'UNRESOLVED').replaceAll('_', ' ')}`;
+    const when = row.created_at ? age(row.created_at) : '—';
+    return `<div class="certified-row"><em class="${safe(labelClass)}">${safe(String(row.label || 'UNKNOWN').replaceAll('_', ' '))}</em><div><strong>${safe(row.title_a || row.pair_id)}</strong><span>↔ ${safe(row.title_b || 'counterpart unavailable')}</span><small>${safe(String(row.venue_a || 'venue a'))} ↔ ${safe(String(row.venue_b || 'venue b'))} · ${safe(outcomes)} · ${safe(provenance)}</small></div><span class="certified-when">${safe(when)}</span></div>`;
+  }).join('') : '<div class="empty">No settlement-verified labels recorded yet.</div>';
+  const feedItems = [
+    ...milestoneAlerts.map((alert) => ({
+      at: alert.observed_at || '',
+      kind: alert.transition_kind === 'DETERMINISTIC_RULE_GATE' ? 'GATE' : 'QUEUE',
+      headline: alert.transition_kind === 'DETERMINISTIC_RULE_GATE'
+        ? 'DETERMINISTIC RULE GATE CLEARED'
+        : `QUEUE → ${String(alert.queue_status || 'TRANSITION').replaceAll('_', ' ')}`,
+      detail: String(alert.candidate_id || ''),
+    })),
+    ...gapRows.map((row) => ({
+      at: row.observed_at || '',
+      kind: row.executable_gap ? 'GAP' : 'SCAN',
+      headline: row.executable_gap
+        ? `EXECUTABLE GAP · ${String(row.best_gap ?? '—')}`
+        : `RADAR SCAN · ${String(row.best_gap ?? '—')}`,
+      detail: `${String(row.event_subject || '')} · ${String(row.shape || '')} · ${String(row.verification_status || '')}`,
+    })),
+  ].filter((item) => item.at).sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 10);
+  $('alert-feed-status').textContent = feedItems.length
+    ? `${fmt(feedItems.length)} recent signal(s) · candidates only`
+    : 'Waiting for radar and queue activity';
+  $('alert-feed').innerHTML = feedItems.length ? feedItems.map((item) => `<div class="alert-item"><b class="alert-kind ${safe(item.kind.toLowerCase())}">${safe(item.kind)}</b><div><span>${safe(item.headline)}</span><small>${safe(item.detail)}</small></div><span class="alert-when">${safe(age(item.at))}</span></div>`).join('') : '<div class="empty">No alerts recorded yet.</div>';
   $('backfill-polymarket').textContent = coverageSummary || `${Number(backfill.polymarket_final_binary_markets || 0)} / ${Number(backfill.polymarket_closed_markets || 0)}`;
   $('backfill-shared').textContent = fmt(backfill.historical_candidate_events ?? backfill.cross_venue_event_candidates ?? 0);
   $('backfill-remaining').textContent = fmt(backfill.labels_remaining ?? labelsRemaining);

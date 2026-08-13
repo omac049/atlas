@@ -59,6 +59,7 @@ async def overview() -> dict:
     latest_scan = await store.latest_discovery_scan()
     candidates = await store.latest_candidate_proposals()
     learning = await store.learning_counts()
+    trusted_labels_recent = await store.recent_trusted_labels(limit=8)
     catalog = await store.latest_catalog_report()
     settlement_candidates = await store.latest_settlement_candidates()
     milestone_alerts = await store.latest_milestone_alerts()
@@ -126,6 +127,7 @@ async def overview() -> dict:
         "discovery_scan": latest_scan,
         "candidate_proposals": candidates,
         "learning": learning,
+        "trusted_labels_recent": trusted_labels_recent,
         "training_readiness": training_readiness,
         "catalog_compatibility": catalog,
         "settlement_candidates": settlement_candidates,

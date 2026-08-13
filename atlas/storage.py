@@ -432,6 +432,43 @@ class AtlasStore:
             if example["payload"].get("evidence", {}).get("settlement_verified") is True
         ]
 
+    async def recent_trusted_labels(self, limit: int = 8) -> list[dict[str, object]]:
+        """Compact, newest-first view of trusted labels (never UNLABELED observations)."""
+        await self.initialize()
+        limit = max(1, min(int(limit), 20))
+        async with aiosqlite.connect(self.path) as db:
+            rows = await (
+                await db.execute(
+                    """SELECT example_id, label, created_at, payload_json
+                    FROM learning_examples WHERE label != 'UNLABELED'
+                    ORDER BY created_at DESC LIMIT ?""",
+                    (limit,),
+                )
+            ).fetchall()
+        summaries: list[dict[str, object]] = []
+        for example_id, label, created_at, payload_json in rows:
+            payload = json.loads(payload_json)
+            market_a = payload.get("market_a") or {}
+            market_b = payload.get("market_b") or {}
+            evidence = payload.get("evidence") or {}
+            summaries.append(
+                {
+                    "pair_id": payload.get("pair_id") or example_id,
+                    "label": label,
+                    "created_at": created_at,
+                    "title_a": market_a.get("title"),
+                    "venue_a": market_a.get("venue"),
+                    "title_b": market_b.get("title"),
+                    "venue_b": market_b.get("venue"),
+                    "source_kind": evidence.get("source_kind"),
+                    "relationship_status": evidence.get("relationship_status"),
+                    "outcome_a": evidence.get("outcome_a"),
+                    "outcome_b": evidence.get("outcome_b"),
+                    "settlement_verified": evidence.get("settlement_verified") is True,
+                }
+            )
+        return summaries
+
     async def learning_counts(self) -> dict[str, int]:
         await self.initialize()
         async with aiosqlite.connect(self.path) as db:

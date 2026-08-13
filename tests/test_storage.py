@@ -1,3 +1,6 @@
+import json
+
+import aiosqlite
 import pytest
 
 from atlas.storage import AtlasStore
@@ -261,6 +264,85 @@ async def test_shadow_validation_summary_aggregates_pairs_and_edges(tmp_path):
     assert summary["unique_pairs"] == 2
     assert summary["positive_edge_count"] == 1
     assert summary["positive_edge_rate"] == "0.5"
+
+
+@pytest.mark.asyncio
+async def test_recent_trusted_labels_are_compact_and_newest_first(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await store.save_learning_example(
+        "observation", "UNLABELED", {"market_a": {}, "market_b": {}}
+    )
+    rows = [
+        (
+            "pair-old:REJECTED",
+            "REJECTED",
+            "2026-08-10T00:00:00+00:00",
+            json.dumps(
+                {
+                    "pair_id": "pair-old",
+                    "market_a": {"title": "Kalshi CPI >4.1%", "venue": "kalshi"},
+                    "market_b": {"title": "PM inflation <b>", "venue": "polymarket_global"},
+                    "evidence": {
+                        "settlement_verified": True,
+                        "source_kind": "HISTORICAL_BACKFILL",
+                        "relationship_status": "DIVERGED",
+                        "outcome_a": "no",
+                        "outcome_b": "yes",
+                    },
+                }
+            ),
+        ),
+        (
+            "pair-new:APPROVED",
+            "APPROVED_EQUIVALENT",
+            "2026-08-11T00:00:00+00:00",
+            json.dumps(
+                {
+                    "pair_id": "pair-new",
+                    "market_a": {"title": "Kalshi Fed cut", "venue": "kalshi"},
+                    "market_b": {"title": "PM Fed cut", "venue": "polymarket_global"},
+                    "evidence": {
+                        "settlement_verified": True,
+                        "source_kind": "HISTORICAL_BACKFILL",
+                        "relationship_status": "CONFIRMED",
+                        "outcome_a": "no",
+                        "outcome_b": "no",
+                    },
+                }
+            ),
+        ),
+    ]
+    async with aiosqlite.connect(tmp_path / "atlas.sqlite3") as db:
+        await db.executemany(
+            "INSERT OR REPLACE INTO learning_examples VALUES (?, ?, ?, ?)", rows
+        )
+        await db.commit()
+
+    recent = await store.recent_trusted_labels(limit=5)
+
+    assert [row["pair_id"] for row in recent] == ["pair-new", "pair-old"]
+    assert recent[0]["label"] == "APPROVED_EQUIVALENT"
+    assert recent[0]["relationship_status"] == "CONFIRMED"
+    assert recent[1]["outcome_b"] == "yes"
+    assert recent[1]["title_b"] == "PM inflation <b>"
+    assert all(row["settlement_verified"] is True for row in recent)
+    for row in recent:
+        assert "UNLABELED" != row["label"]
+        assert "market_a" not in row and "market_b" not in row
+        assert "payload" not in row and "payload_json" not in row
+
+
+@pytest.mark.asyncio
+async def test_recent_trusted_labels_bound_the_requested_limit(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await store.save_learning_example(
+        "one", "REJECTED", {"pair_id": "pair-1", "evidence": {"settlement_verified": True}}
+    )
+    assert len(await store.recent_trusted_labels(limit=0)) == 1
+    assert len(await store.recent_trusted_labels(limit=500)) == 1
+    fallback = (await store.recent_trusted_labels(limit=1))[0]
+    assert fallback["pair_id"] == "pair-1"
+    assert fallback["title_a"] is None
 
 
 @pytest.mark.asyncio
