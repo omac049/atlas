@@ -183,8 +183,16 @@ def _fomc_decision_bucket_terms(text: str) -> dict[str, object] | None:
         r"(>?)(\d+(?:\.\d+)?)(\+?)\s*bps",
         text,
     )
+    no_change = None
     if not bucket:
-        return None
+        # Polymarket's zero bucket carries no bps phrase at all: "Will there be
+        # no change in Fed interest rates after the September 2026 meeting?"
+        no_change = re.search(
+            r"\bno change in (?:the )?fed(?:eral reserve)?(?:['’]s)?\s+(?:interest\s+)?rates?\b",
+            text,
+        )
+        if not no_change:
+            return None
     meeting = re.search(
         r"(?:at their|after the|for their|at the)\s+"
         rf"({'|'.join(MONTHS)})\.?\s+(20\d{{2}})\s+meeting",
@@ -197,11 +205,16 @@ def _fomc_decision_bucket_terms(text: str) -> dict[str, object] | None:
     if not meeting:
         return None
     period = f"{meeting.group(2)}-{MONTHS[meeting.group(1)]:02d}"
-    magnitude = Decimal(bucket.group(3))
-    direction = {"hike": "increase", "cut": "decrease"}.get(bucket.group(1), bucket.group(1))
-    if magnitude == 0:
+    if no_change:
+        magnitude = Decimal(0)
         direction = "maintain"
-    operator = ">" if bucket.group(2) else ">=" if bucket.group(4) else "="
+        operator = "="
+    else:
+        magnitude = Decimal(bucket.group(3))
+        direction = {"hike": "increase", "cut": "decrease"}.get(bucket.group(1), bucket.group(1))
+        if magnitude == 0:
+            direction = "maintain"
+        operator = ">" if bucket.group(2) else ">=" if bucket.group(4) else "="
     # Only outcome-determining policies become tokens; structural notes like
     # "mutually exclusive" are already encoded by the exact-match operator.
     policies = []

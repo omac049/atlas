@@ -28,13 +28,14 @@ Do not add a live order client casually. Any future execution capability must be
 
 ## Where we stand
 
-Last verified: **2026-08-12**.
+Last verified: **2026-08-13**.
 
+- **Milestone achieved 2026-08-13: the first real trusted settled pairs.** Three `APPROVED_EQUIVALENT` labels from the settled July 2026 FOMC meeting (maintain, >25bps hike tail, >25bps cut tail), approved by the human-signed-off rounding preimage-equality rule (`docs/decisions/2026-08-12-fed-rounding-preimage-equality.md`) with both legs `GUARANTEED` and consistent terminal outcomes on both venues. Every FOMC meeting (~8/year) can now mint more.
 - API: serving locally (`/health` reports `trading_enabled=false`).
-- Test suite: `259 passed, 1 warning` at the latest full run; `ruff check .` reports zero issues.
+- Test suite: `266 passed, 1 warning` at the latest full run; `ruff check .` reports zero issues.
 - A paper-only gap radar (`atlas gaps scan --live`) now measures live cross-venue price gaps on twin-shaped candidate pairs at executable top-of-book prices, and the dashboard's "$2k paper meter" answers the original bankroll question with recorded assumptions instead of hope. First clean scan: 10 twin-shaped pairs, 2 executable gaps of 2 cents each, paper bankroll $2001.50.
-- Trusted settlement labels: `0`.
-- Latest learning readiness check: `training_ready=False`, `labels=0`, `observations=290`.
+- Trusted settlement labels: `3` (`APPROVED_EQUIVALENT`). The learning loop remains correctly blocked until the dataset is balanced (50+ labels including `REJECTED` examples).
+- Latest learning readiness check: `training_ready=False`, `labels=3`, `observations=322`.
 - Current queue: 12 persisted settlement candidates; all are `BLOCKED`. Discretionary fair-price pairs now carry the terminal gate `STRUCTURALLY_UNREACHABLE_DISCRETIONARY_SETTLEMENT` and sort below every reachable candidate, so the queue surfaces where a first trusted label is possible.
 - Scheduled bounded backfills default to guarantee-reachable Polymarket Global tags (`144` Elections, `487` House, `100196` Fed Rates, `101701` CPI) plus explicit Kalshi series scans (`KXFEDDECISION`, `KXFED`, `KXCPIYOY`, `KXCPI`, `KXCPICORE`), all verified against live catalog probes; the latest bounded batch completed with `paper_only=true` and 0 trusted labels.
 - The US CPI family covers all four published variants (headline/core x YoY/MoM) with signed thresholds from published wording only. Every monthly BLS release yields at least two settled exact-complement pairs (headline YoY tail, core MoM tail), each blocked only on the same two venue-text gaps: the divergent missing-data fallback and Kalshi's absent terminal fallback.
@@ -45,7 +46,7 @@ Last verified: **2026-08-12**.
 - Milestone alerts: none yet, because no candidate has cleared the deterministic gate.
 - Learning is intentionally blocked until trusted labels include both approved and rejected outcomes and the minimum label count is met.
 
-The active milestone is **the first real trusted settled pair**. It is not complete until one pair:
+The first-trusted-pair milestone was completed on 2026-08-13. The active milestone is now **the balanced trusted dataset** (50+ labels spanning both approved and rejected classes). A milestone pair required that it:
 
 1. passes deterministic verification as `APPROVED_EQUIVALENT` or `APPROVED_INVERSE`;
 2. has complete rule and settlement-source evidence for both venues;

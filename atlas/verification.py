@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from atlas.fingerprints import build_fingerprint
 from atlas.models import ContractPair, EquivalenceDecision, Market, MatchStatus
 from atlas.settlement import GuaranteeStatus, assess_settlement_guarantee
@@ -45,6 +47,12 @@ def verify_equivalence(market_a: Market, market_b: Market, pair_id: str = "pair-
     ):
         status = MatchStatus.APPROVED_INVERSE
         relationship_codes = ["THRESHOLD_OPERATOR_COMPLEMENT"]
+        differences = []
+    elif guarantee_code is None and _is_fomc_preimage_equivalent(
+        fingerprint_a, fingerprint_b, differences
+    ):
+        status = MatchStatus.APPROVED_EQUIVALENT
+        relationship_codes = ["FOMC_ROUNDING_PREIMAGE_EQUALITY"]
         differences = []
     else:
         status = MatchStatus.REVIEW_REQUIRED
@@ -123,6 +131,84 @@ def _is_threshold_complement(left: object, right: object, differences: list[str]
         (">=", "<"),
         ("<", ">="),
     }
+
+
+def _is_fomc_preimage_equivalent(left: object, right: object, differences: list[str]) -> bool:
+    """FOMC decision buckets whose Yes-sets over the raw rate change are
+    identical under each leg's OWN published rounding policy.
+
+    Gated verifier rule, signed off by the project owner 2026-08-13 under the
+    ceiling-in-magnitude reading of Polymarket's published "rounded up to the
+    nearest 25" clause (decision record:
+    docs/decisions/2026-08-12-fed-rounding-preimage-equality.md). Each leg's
+    preimage uses only that leg's published ``rounding=`` token — identity when
+    none is published; nothing is inferred. Fires only for the per-meeting
+    decision-bucket scope with every non-rounding term (including the
+    no-meeting fallback token) already equal and both legs GUARANTEED; the
+    exact-±25 buckets and the whole level family remain refused because their
+    preimages genuinely differ.
+    """
+    allowed = {"THRESHOLD_MISMATCH", "THRESHOLD_OPERATOR_MISMATCH", "SETTLEMENT_POLICY_MISMATCH"}
+    if not differences or not set(differences) <= allowed:
+        return False
+    if (
+        left.contract_scope != "fomc_rate_change_bucket"
+        or right.contract_scope != "fomc_rate_change_bucket"
+    ):
+        return False
+    if _non_rounding_policies(left) != _non_rounding_policies(right):
+        return False
+    preimage = _fomc_preimage(left)
+    return preimage is not None and preimage == _fomc_preimage(right)
+
+
+def _non_rounding_policies(fingerprint: object) -> frozenset[str]:
+    tokens = str(fingerprint.settlement_policy or "").split("|")
+    return frozenset(token for token in tokens if token and not token.startswith("rounding="))
+
+
+def _fomc_preimage(fingerprint: object) -> tuple | None:
+    """Canonical Yes-set over the raw signed change (bps) for one decision leg.
+
+    With the published round-up policy, any nonzero change rounds up in
+    magnitude to the next 25bp multiple; without one the predicate applies to
+    the raw change directly. Thresholds must sit on the 25bp grid — anything
+    else is outside the proven table and returns None (no approval).
+    """
+    direction = fingerprint.affirmative_outcome
+    threshold = fingerprint.threshold
+    operator = fingerprint.threshold_operator
+    if (
+        fingerprint.threshold_upper is not None
+        or threshold is None
+        or operator is None
+        or fingerprint.threshold_unit != "bps"
+        or threshold % 25 != 0
+    ):
+        return None
+    rounded = "rounding=up_nearest_25bps" in str(fingerprint.settlement_policy or "")
+    if direction == "maintain":
+        # round-up maps no nonzero change to zero, so the preimage is {0} either way
+        return ("point", Decimal(0)) if threshold == 0 and operator == "=" else None
+    if direction not in ("increase", "decrease"):
+        return None
+    sign = 1 if direction == "increase" else -1
+    if operator == "=":
+        if threshold == 0:
+            return None
+        if rounded:
+            # (T-25, T] in magnitude, signed
+            return ("magnitude_halfopen", sign, threshold - 25, threshold)
+        return ("point", sign * threshold)
+    if operator == ">":
+        # on the 25bp grid, r(|d|) > T  <=>  |d| > T, so both cases coincide
+        return ("magnitude_ray_open", sign, threshold)
+    if operator == ">=":
+        if rounded:
+            # r(|d|) >= T  <=>  |d| > T - 25
+            return ("magnitude_ray_open", sign, threshold - 25)
+        return ("magnitude_ray_closed", sign, threshold)
+    return None
 
 
 def _guarantee_blocker(

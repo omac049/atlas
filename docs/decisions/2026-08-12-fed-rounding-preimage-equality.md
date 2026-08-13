@@ -1,7 +1,12 @@
 # PENDING DECISION — published vs. unpublished rounding on the fed-funds families
 
-Status: **awaiting explicit human sign-off. No verifier or normalizer change may land from this
-memo until the decision below is recorded.** (AGENTS.md / TODO.md Step 5 review gate.)
+Status: **SIGNED OFF by the project owner on 2026-08-13** ("yes on the rounding" — ceiling-in-
+magnitude reading adopted). Implemented the same day: PM no-change bucket capture
+(`atlas/normalization.py`), `_is_fomc_preimage_equivalent` (`atlas/verification.py`), the named
+semantic-flip test rewrite, and the counterexample/quirk pins (`tests/test_fomc_preimage.py`).
+Outcome: the settled July 2026 meeting produced the project's first three trusted labels
+(`APPROVED_EQUIVALENT`: H0×no-change, H26×50+, C26×−50+), completing the first-trusted-pair
+milestone. The exact-±25 buckets and the level family remain refused, as this memo requires.
 
 Prepared 2026-08-12 by a read-only analysis agent; all quotes verified live against
 `external-api.kalshi.com/trade-api/v2` and `gamma-api.polymarket.com` the same day.

@@ -98,7 +98,13 @@ def test_fomc_bucket_without_fallback_policy_stays_unknown():
     assert assessment["status"] == GuaranteeStatus.UNKNOWN
 
 
-def test_open_ended_bucket_operators_do_not_cross_match():
+def test_open_ended_bucket_operators_parse_distinctly_and_approve_via_preimage():
+    """SEMANTIC FLIP, named in the 2026-08-13 gated review sign-off: this pair
+    previously pinned REVIEW_REQUIRED. Under the approved preimage-equality
+    rule (docs/decisions/2026-08-12-fed-rounding-preimage-equality.md), K ">25"
+    unrounded and PM "50+" rounded-up share the exact Yes-set (25, inf) and now
+    approve. The raw operator/threshold parses stay distinct — the approval
+    comes from the preimage computation, not from blurring the parse."""
     kalshi = _market(
         "kalshi",
         "Will the Federal Reserve Hike rates by >25bps at their July 2026 meeting?",
@@ -112,7 +118,7 @@ def test_open_ended_bucket_operators_do_not_cross_match():
     kalshi_fp, polymarket_fp = build_fingerprint(kalshi), build_fingerprint(polymarket)
     assert (kalshi_fp.threshold, kalshi_fp.threshold_operator) == (Decimal(25), ">")
     assert (polymarket_fp.threshold, polymarket_fp.threshold_operator) == (Decimal(50), ">=")
-    assert verify_equivalence(kalshi, polymarket).status is MatchStatus.REVIEW_REQUIRED
+    assert verify_equivalence(kalshi, polymarket).status is MatchStatus.APPROVED_EQUIVALENT
 
 
 def test_zero_bps_bucket_canonicalizes_as_maintain():
