@@ -56,6 +56,12 @@ def assess_settlement_guarantee(
             "reason_codes": ["COMPLETE_FED_FUNDS_LEVEL_POLICY"],
         }
 
+    if _complete_ism_release_policy(fingerprint):
+        return {
+            "status": GuaranteeStatus.GUARANTEED.value,
+            "reason_codes": ["COMPLETE_ISM_RELEASE_AND_MISSING_DATA_POLICY"],
+        }
+
     if fingerprint.market_type == "weather":
         evidence = parse_market_policy_evidence(market)
         if evidence.complete:
@@ -74,6 +80,8 @@ def assess_settlement_guarantee(
     if specialized_scope.startswith("cpi_") or specialized_scope in {
         "fomc_rate_change_bucket",
         "fed_funds_upper_bound_level",
+        "ism_manufacturing_pmi",
+        "ism_services_pmi",
     }:
         # Specialized macro families may earn GUARANTEED only through their own
         # complete-policy path above. The generic yes/no-fallback grant below
@@ -159,6 +167,30 @@ def _complete_fed_funds_level_policy(fingerprint: ContractFingerprint) -> bool:
     if fingerprint.measurement_period.startswith("meeting:"):
         return "no_decision=year_end_rate_snapshot" in policies
     return False
+
+
+def _complete_ism_release_policy(fingerprint: ContractFingerprint) -> bool:
+    """An ISM PMI leg is deterministic only when its published terms cover every
+    branch: the ISM Report On Business named as source, the published one-decimal
+    precision, and a terminal missing-release fallback (previous month's figures).
+    Kalshi's manufacturing rules publish source and precision but no fallback, and
+    its services rules publish none of the three — both honestly stay UNKNOWN."""
+    if (
+        fingerprint.market_type != "economic"
+        or fingerprint.contract_scope not in {"ism_manufacturing_pmi", "ism_services_pmi"}
+        or fingerprint.resolution_source != "ism_report_on_business"
+        or fingerprint.threshold is None
+        or fingerprint.threshold_operator is None
+        or fingerprint.threshold_unit != "index_points"
+        or not fingerprint.measurement_period
+        or not fingerprint.settlement_policy
+    ):
+        return False
+    policies = set(fingerprint.settlement_policy.split("|"))
+    return {
+        "missing=previous_month_figures_at_next_release",
+        "precision=ism_one_decimal",
+    } <= policies
 
 
 def _complete_cpi_release_policy(fingerprint: ContractFingerprint) -> bool:

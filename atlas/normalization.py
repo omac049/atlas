@@ -140,6 +140,8 @@ def _economic_terms(market: Market) -> dict[str, object] | None:
         return fomc
     if level := _fed_funds_level_terms(text):
         return level
+    if ism := _ism_pmi_terms(market, text, market_source, period):
+        return ism
     # CPI runs after the more specific macro families so a fed/unemployment
     # contract whose commentary merely mentions CPI cannot be captured here.
     if cpi := _cpi_family_terms(
@@ -324,6 +326,130 @@ def _fed_funds_level_terms(text: str) -> dict[str, object] | None:
         "resolution_source": "federal_reserve" if "federal reserve" in text else None,
         "settlement_policy": "|".join(policies) or None,
     }
+
+
+# The index name must appear as one published phrase ("ISM Manufacturing PMI",
+# "US ISM services PMI", "ISM Manufacturing Purchasing Managers' Index") — mere
+# co-occurrence of "ism" and "pmi" elsewhere in a description must not trigger.
+_ISM_PMI_INDEX = re.compile(
+    r"\bism\s+(manufacturing|services)\s+(?:pmi\b|purchasing managers['’]?s?\s+index)"
+)
+
+# Sentinel: a comparison phrasing was present but not modeled — the caller must
+# refuse the threshold rather than fall through to shared boilerplate text.
+_UNMODELED_BUCKET: tuple = ("UNMODELED_BUCKET",)
+
+_ISM_BUCKET_VALUE = r"([0-9]{1,3}(?:\.[0-9])?)"
+
+
+def _ism_pmi_terms(
+    market: Market, text: str, market_source: str, period: str | None
+) -> dict[str, object] | None:
+    """US ISM PMI family (manufacturing + services), from published wording only.
+
+    Kalshi's manufacturing series (KXISMPMI) publishes "at least X" integer
+    strikes and names both the source and precision inline ("as published by
+    ISM (one decimal place)") but NO missing-release fallback; its services
+    series (KXUSISMSERV) is an older template ("is above 54") that publishes no
+    source, precision, or fallback in the rules at all — the event-level
+    settlement source is Trading Economics, not ISM. Polymarket lists
+    one-decimal brackets ("between 49.0 and 49.9") with "below X" / "at least
+    X" tails and publishes the ISM Report On Business source, one-decimal
+    precision, and a terminal previous-month missing-release fallback. Each of
+    those absences stays visible as a fingerprint difference rather than being
+    inferred away.
+
+    Thresholds are parsed from the market's OWN bucket texts only (title, then
+    Kalshi's strike subtitle, then rules) — never from the generic prefix pass,
+    whose patterns would read Polymarket's shared "a reading above 50 indicates
+    expansion" boilerplate as a strike — and an unmodeled comparison phrasing
+    refuses the threshold outright so the leg can never look
+    guarantee-complete. Manufacturing and services carry distinct subjects and
+    scopes; a text naming both indices is ambiguous and is not captured.
+    """
+    indices = set(_ISM_PMI_INDEX.findall(text))
+    if len(indices) != 1 or not period:
+        return None
+    index = indices.pop()
+    bucket = None
+    for candidate in (
+        (market.title or "").lower(),
+        str(market.raw_market_json.get("yes_sub_title") or "").lower(),
+        (market.raw_rules_text or "").lower(),
+    ):
+        bucket = _ism_bucket_terms(candidate)
+        if bucket is not None:
+            break
+    if bucket is None or bucket is _UNMODELED_BUCKET:
+        threshold, upper, operator = None, None, None
+    else:
+        threshold, upper, operator = bucket
+    source = (
+        # Both venues that resolve off ISM name the "Report On Business" in
+        # their published rules; Kalshi's services rules name nothing, so the
+        # venue-level Trading Economics settlement source stays visible.
+        "ism_report_on_business"
+        if "report on business" in text or "as published by ism" in text
+        else "trading_economics"
+        if "trading economics" in text or "trading economics" in market_source
+        else None
+    )
+    policies = []
+    if "most recent previous month" in text and "not released" in text:
+        policies.append("missing=previous_month_figures_at_next_release")
+    if re.search(r"one decimal (?:place|point)", text):
+        policies.append("precision=ism_one_decimal")
+    return {
+        "event_subject": f"us_ism_{index}_pmi|{period}",
+        "event_date": period,
+        "event_action": "published_value",
+        "market_type": "economic",
+        "contract_scope": f"ism_{index}_pmi",
+        "affirmative_outcome": "predicate_true",
+        "threshold": threshold,
+        "threshold_upper": upper,
+        "threshold_operator": operator,
+        "threshold_unit": "index_points",
+        "measurement_period": period,
+        "geography": "us",
+        "resolution_source": source,
+        "settlement_policy": "|".join(policies) or None,
+    }
+
+
+def _ism_bucket_terms(text: str) -> tuple | None:
+    """Published PMI bucket phrasings for one candidate text, or a refusal.
+
+    Returns ``None`` when the text carries no comparison at all (the caller
+    tries the next candidate text), a ``(threshold, upper, operator)`` tuple
+    for a modeled phrasing, and ``_UNMODELED_BUCKET`` when a comparison phrase
+    is present but unmodeled — the caller then drops the threshold entirely
+    instead of falling through to later texts. The ``indicates`` lookaheads
+    keep Polymarket's shared expansion/contraction explainer ("a reading above
+    50 indicates expansion... below 50 indicates contraction") from ever being
+    read as a strike should rules text be reached.
+    """
+    if not text:
+        return None
+    if match := re.search(
+        rf"\bbetween\s+{_ISM_BUCKET_VALUE}\s+and\s+{_ISM_BUCKET_VALUE}\b", text
+    ):
+        return _number(match.group(1)), _number(match.group(2)), "between_inclusive"
+    for operator, pattern in (
+        (">=", rf"\bat least\s+{_ISM_BUCKET_VALUE}\b"),
+        (">=", rf"\b{_ISM_BUCKET_VALUE}\s*\+"),
+        ("<", rf"(?:\bbelow\s+|\bless than\s+|<\s*){_ISM_BUCKET_VALUE}\b(?!\s*indicates)"),
+        (">", rf"(?:\babove\s+|\bgreater than\s+){_ISM_BUCKET_VALUE}\b(?!\s*indicates)"),
+    ):
+        if match := re.search(pattern, text):
+            return _number(match.group(1)), None, operator
+    if re.search(
+        r"\b(?:at least|at most|above|below|between|greater than|less than"
+        r"|or more|or less|or higher|or lower)\b",
+        text,
+    ) and re.search(r"[0-9]", text):
+        return _UNMODELED_BUCKET
+    return None
 
 
 def _weather_terms(market: Market) -> dict[str, object] | None:
