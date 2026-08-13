@@ -105,6 +105,25 @@ class PolymarketUSVenue(PredictionVenue):
                 continue
         return markets
 
+    async def list_event_markets(self, event_slug: str) -> list[Market]:
+        """Targeted event-slug lookup (plural ``/v1/events/slug/{slug}``) — the
+        door to settled macro ladders buried under the ~400k-row closed sweep
+        (e.g. resolved CPI months whose market ids sit far below the recent-id
+        horizon). Returns the event's nested markets; an unknown slug yields an
+        empty list. Bounded by the shared ``get_json`` retry/timeout budget —
+        no additional retries here."""
+        if self.fixture:
+            return []
+        try:
+            payload = await self._get(f"/v1/events/slug/{event_slug}")
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code == 404:
+                return []
+            raise
+        event = payload.get("event", payload) if isinstance(payload, dict) else {}
+        items = event.get("markets", []) if isinstance(event, dict) else []
+        return [self._normalize_market(item) for item in items if isinstance(item, dict)]
+
     async def get_market(self, market_id: str) -> Market:
         if self.fixture:
             return next(
