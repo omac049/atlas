@@ -45,13 +45,22 @@ class PolymarketUSVenue(PredictionVenue):
                 if slug not in seen:
                     seen.add(slug)
                     markets.append(self._normalize_market(item))
-            if len(events) < limit:
+            # Short pages occur mid-stream on this gateway (verified 2026-08-13),
+            # so only an EMPTY page terminates the sweep; max_pages stays the
+            # hard bound either way.
+            if not events:
                 return markets
             offset += limit
         return markets
 
     async def list_closed_markets(self, max_pages: int = 20) -> list[Market]:
-        """List closed public markets for settlement-verified research."""
+        """List closed public markets for settlement-verified research.
+
+        On this gateway ``active`` means "not manually deactivated" — resolved
+        markets keep ``active: true`` — so the filter must be ``closed`` only.
+        ``orderDirection`` is silently ignored unless ``orderBy`` is also sent
+        (both verified live 2026-08-13).
+        """
         if self.fixture:
             return await self.list_markets()
         markets: list[Market] = []
@@ -61,10 +70,10 @@ class PolymarketUSVenue(PredictionVenue):
             payload = await self._get(
                 "/v1/markets",
                 params={
-                    "active": False,
                     "closed": True,
                     "limit": limit,
                     "offset": page * limit,
+                    "orderBy": "id",
                     "orderDirection": "desc",
                 },
             )
@@ -74,8 +83,26 @@ class PolymarketUSVenue(PredictionVenue):
                 if slug not in seen:
                     seen.add(slug)
                     markets.append(self._normalize_market(item))
-            if len(items) < limit:
+            if not items:
                 break
+        return markets
+
+    async def list_markets_by_slugs(self, slugs: list[str]) -> list[Market]:
+        """Targeted slug lookups — the efficient path to macro markets buried
+        under the ~400k-market closed sweep. Missing slugs are skipped."""
+        if self.fixture:
+            wanted = set(slugs)
+            return [
+                market
+                for market in await self.list_markets()
+                if market.venue_market_id in wanted
+            ]
+        markets: list[Market] = []
+        for slug in slugs:
+            try:
+                markets.append(await self.get_market(slug))
+            except httpx.HTTPError:
+                continue
         return markets
 
     async def get_market(self, market_id: str) -> Market:

@@ -643,3 +643,56 @@ def test_compatibility_report_reuses_precomputed_exact_keys(monkeypatch):
     monkeypatch.setattr("atlas.discovery.scan_market_pairs", duplicate_scan)
     report = compatibility_report(markets["kalshi"], markets["polymarket_us"])
     assert report["event_compatible"] is True
+
+
+@pytest.mark.asyncio
+async def test_polymarket_us_closed_sweep_uses_correct_gateway_semantics(monkeypatch):
+    """Census 2026-08-13: on gateway.polymarket.us, ``active`` means "not
+    manually deactivated" (resolved markets keep active=true), ``orderDirection``
+    is silently ignored without ``orderBy``, and short pages occur mid-stream.
+    The closed sweep must therefore send closed-only + orderBy=id and terminate
+    only on an EMPTY page — the old active=false filter saw 90 deactivated
+    sports markets instead of the ~400k real closed catalog."""
+    venue = PolymarketUSVenue(fixture=False)
+    calls: list[dict] = []
+
+    async def fake_get(path, params=None):
+        calls.append(dict(params or {}))
+        page = len(calls)
+        if page == 1:
+            return {"markets": [{"slug": f"m-{i}", "title": f"M{i}"} for i in range(100)]}
+        if page == 2:
+            # short-but-nonempty page mid-stream must NOT terminate the sweep
+            return {"markets": [{"slug": "m-short", "title": "Short"}]}
+        return {"markets": []}
+
+    monkeypatch.setattr(venue, "_get", fake_get)
+    markets = await venue.list_closed_markets(max_pages=5)
+
+    assert len(markets) == 101
+    assert len(calls) == 3
+    for params in calls:
+        assert "active" not in params
+        assert params["closed"] is True
+        assert params["orderBy"] == "id"
+        assert params["orderDirection"] == "desc"
+
+
+@pytest.mark.asyncio
+async def test_polymarket_us_targeted_slug_lookups_skip_missing(monkeypatch):
+    venue = PolymarketUSVenue(fixture=False)
+
+    async def fake_get_market(slug):
+        if slug == "missing-market":
+            raise httpx.HTTPStatusError(
+                "missing",
+                request=httpx.Request("GET", "https://example.test"),
+                response=httpx.Response(404),
+            )
+        return PolymarketUSVenue._normalize_market({"slug": slug, "title": slug})
+
+    monkeypatch.setattr(venue, "get_market", fake_get_market)
+    markets = await venue.list_markets_by_slugs(
+        ["rdc-usfed-fomc-2026-07-29-nochng", "missing-market"]
+    )
+    assert [m.venue_market_id for m in markets] == ["rdc-usfed-fomc-2026-07-29-nochng"]
