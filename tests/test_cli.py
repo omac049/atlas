@@ -102,6 +102,32 @@ def test_batch_series_tickers_reuse_override_validation():
     assert _parse_batch_series_tickers(["KXCPIYOY"]) == ("KXCPIYOY",)
 
 
+def test_gap_radar_scope_covers_every_normalized_family_and_no_spread_tags():
+    """The radar watches every family with a canonical normalizer on both venues
+    (that is the precondition for a twin shape to form) and is decoupled from the
+    scheduled-batch defaults so widening it never changes label-harvest scope.
+    Elections/House margin spreads are excluded: they cannot form twin shapes."""
+    from atlas.cli import GAP_RADAR_GLOBAL_TAG_IDS, GAP_RADAR_KALSHI_SERIES_TICKERS
+
+    assert GAP_RADAR_KALSHI_SERIES_TICKERS == BATCH_DEFAULT_KALSHI_SERIES_TICKERS + (
+        "KXU3",
+        "KXISMPMI",
+        "KXUSISMSERV",
+    )
+    assert GAP_RADAR_GLOBAL_TAG_IDS == (
+        "100196",
+        "101701",
+        "702",
+        "993",
+        "1624",
+        "370",
+        "105113",
+        "105533",
+    )
+    assert "144" not in GAP_RADAR_GLOBAL_TAG_IDS
+    assert "487" not in GAP_RADAR_GLOBAL_TAG_IDS
+
+
 @pytest.mark.asyncio
 async def test_learning_backfill_passes_global_tag_override(monkeypatch):
     captured = {}

@@ -97,6 +97,32 @@ BATCH_MAX_TAG_SECONDS = 120
 # catalog report only — never shadow, approval, or paper-trading paths.
 LIVE_GLOBAL_TAG_IDS = BATCH_DEFAULT_GLOBAL_TAG_IDS
 LIVE_GLOBAL_OPEN_PAGES = 2
+# Gap-radar-only scan scope: every family with a canonical normalizer on both
+# venues, so twin shapes can actually form. Radar breadth is deliberately
+# decoupled from the scheduled-batch defaults above (label harvesting keeps
+# its reviewed scope). All entries verified against the live catalogs
+# 2026-08-14: KXU3 4 open events, KXISMPMI 1 (KXUSISMSERV is listed in the
+# series catalog with its September event not yet open — a scan of it is one
+# bounded empty request until it opens); every Gamma tag below returned open
+# markets in the intended family (jobs 993 carries the monthly
+# unemployment-rate buckets alongside JOLTS; GDP 370 is mostly foreign-
+# jurisdiction contracts, which the normalizers jurisdiction-gate away).
+# Elections/House stay out: margin-of-victory spreads produce no twin shapes.
+GAP_RADAR_KALSHI_SERIES_TICKERS = BATCH_DEFAULT_KALSHI_SERIES_TICKERS + (
+    "KXU3",
+    "KXISMPMI",
+    "KXUSISMSERV",
+)
+GAP_RADAR_GLOBAL_TAG_IDS = (
+    "100196",  # Fed Rates
+    "101701",  # CPI
+    "702",  # Inflation
+    "993",  # jobs
+    "1624",  # unemployment
+    "370",  # GDP
+    "105113",  # ISM manufacturing + services
+    "105533",  # Core PCE
+)
 
 
 def _parse_global_tag_ids(raw_values: list[str] | None) -> tuple[str, ...]:
@@ -651,7 +677,40 @@ async def watch_pairs(live: bool, interval: int, backfill_interval: int = 86_400
                 await gaps_scan(live=True)
             except (httpx.HTTPError, OSError, ValueError) as exc:
                 print(f"gap_radar_scan_failed={type(exc).__name__} retry_on_next_interval=true")
-        await asyncio.sleep(interval)
+            await _burst_aware_sleep(interval)
+        else:
+            await asyncio.sleep(interval)
+
+
+async def _burst_aware_sleep(interval: int) -> None:
+    """Sleep out one monitor interval, running extra read-only radar scans on
+    the burst cadence while a scheduled-release window is open.
+
+    Only the bounded gap radar accelerates; the full pair scan, backfills, and
+    everything else stay on the monitor's base interval. Sleeping in short
+    slices lets the loop notice a window that opens mid-interval.
+    """
+    from atlas.release_calendar import radar_delay_seconds
+
+    slept = 0
+    in_burst = False
+    while slept < interval:
+        delay, release = radar_delay_seconds(datetime.now(UTC), interval)
+        if release is None:
+            in_burst = False
+            chunk = min(60, interval - slept)
+            await asyncio.sleep(chunk)
+            slept += chunk
+            continue
+        if not in_burst:
+            print(f"release_burst: window={release} radar_interval={delay}s")
+            in_burst = True
+        await asyncio.sleep(delay)
+        slept += delay
+        try:
+            await gaps_scan(live=True)
+        except (httpx.HTTPError, OSError, ValueError) as exc:
+            print(f"gap_radar_scan_failed={type(exc).__name__} retry_on_next_interval=true")
 
 
 async def _historical_backfill_due(store: AtlasStore, interval: int) -> bool:
@@ -1036,8 +1095,8 @@ async def gaps_scan(live: bool) -> None:
     from atlas.gap_radar import match_twin_shapes, observe_pair, paper_bankroll_summary
 
     kalshi = KalshiVenue(fixture=not live)
-    globalpm = PolymarketGlobalHistoricalVenue(tag_ids=LIVE_GLOBAL_TAG_IDS)
-    kalshi_markets = await kalshi.list_open_series_markets(BATCH_DEFAULT_KALSHI_SERIES_TICKERS)
+    globalpm = PolymarketGlobalHistoricalVenue(tag_ids=GAP_RADAR_GLOBAL_TAG_IDS)
+    kalshi_markets = await kalshi.list_open_series_markets(GAP_RADAR_KALSHI_SERIES_TICKERS)
     polymarket_markets = await globalpm.list_open_markets() if live else []
     pairs = match_twin_shapes(kalshi_markets, polymarket_markets)
     store = AtlasStore()

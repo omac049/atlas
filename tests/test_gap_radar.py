@@ -23,6 +23,7 @@ from atlas.gap_radar import (
     GAP_FEE_BUFFER,
     INVERSE_SHAPE,
     PAIR_KIND,
+    STAKE_FRACTION,
     kalshi_quotes,
     match_twin_shapes,
     observe_pair,
@@ -178,8 +179,8 @@ def test_bankroll_dedupes_same_pair_same_day_and_applies_caps():
         _observation("2026-08-13", "0.05", "0.95", "20"),  # size-capped: 20*0.95=19
     ]
     summary = paper_bankroll_summary(observations)
-    # day 1: stake 100 -> profit 100/0.90*0.08 = 8.888...
-    # day 2: stake 19 -> profit 19/0.95*0.05 = 1.0
+    # day 1: stake 5% of 2000 = 100 -> profit 100/0.90*0.08 = 8.888...
+    # day 2: stake min(5% of 2008.89, 19) = 19 -> profit 19/0.95*0.05 = 1.0
     expected = (
         BANKROLL_START
         + Decimal(100) / Decimal("0.90") * Decimal("0.08")
@@ -187,6 +188,27 @@ def test_bankroll_dedupes_same_pair_same_day_and_applies_caps():
     ).quantize(Decimal("0.01"))
     assert summary["paper_bankroll"] == str(expected)
     assert summary["distinct_executable_opportunities"] == 2
+
+
+def test_bankroll_stake_compounds_as_a_fraction_of_bankroll():
+    """The stake is a bankroll fraction, not a flat cap: after a win, the next
+    uncapped opportunity stakes more, so identical gaps yield growing profits.
+    A flat-$100 meter would add the same profit both days."""
+    observations = [
+        _observation("2026-08-12", "0.48", "0.50", None),
+        _observation("2026-08-13", "0.48", "0.50", None),
+    ]
+    stake_one = BANKROLL_START * STAKE_FRACTION
+    profit_one = stake_one / Decimal("0.50") * Decimal("0.48")
+    stake_two = (BANKROLL_START + profit_one) * STAKE_FRACTION
+    profit_two = stake_two / Decimal("0.50") * Decimal("0.48")
+    assert stake_two > stake_one
+    assert profit_two > profit_one
+    summary = paper_bankroll_summary(observations)
+    expected = (BANKROLL_START + profit_one + profit_two).quantize(Decimal("0.01"))
+    assert summary["paper_bankroll"] == str(expected)
+    assert summary["assumptions"]["stake_fraction_of_bankroll"] == str(STAKE_FRACTION)
+    assert summary["assumptions"]["stake_capped_by_kalshi_displayed_size"] is True
 
 
 async def test_gap_observations_storage_round_trip(tmp_path):

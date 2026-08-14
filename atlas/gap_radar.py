@@ -32,8 +32,12 @@ INVERSE_SHAPE = "inverse_shape"
 _COMPLEMENT_OPERATORS = {(">", "<="), ("<=", ">"), (">=", "<"), ("<", ">=")}
 
 BANKROLL_START = Decimal(2000)
-# Conservative stake cap per distinct opportunity; thin books cannot absorb more.
-PER_OPPORTUNITY_CAP = Decimal(100)
+# Stake a fixed fraction of the current bankroll per opportunity so the meter
+# measures compounding, not arithmetic accumulation. 5% of the $2,000 start is
+# exactly the old flat $100 cap, so the meter's recorded history reads the
+# same at the starting bankroll. The Kalshi displayed size still caps every
+# stake: a growing bankroll cannot pretend thin books absorb more contracts.
+STAKE_FRACTION = Decimal("0.05")
 # Flat per-basket fee/slippage buffer; recorded on every observation so the
 # assumption stays visible instead of being baked in silently.
 GAP_FEE_BUFFER = Decimal("0.02")
@@ -208,9 +212,9 @@ def paper_bankroll_summary(observations: list[dict]) -> dict:
     distinct executable gap had been paper-taken under recorded assumptions.
 
     One opportunity per pair per UTC day (a persistent gap re-observed across
-    scans is one opportunity, not many). Stake per opportunity is capped by
-    ``PER_OPPORTUNITY_CAP``, the remaining bankroll, and — when the Kalshi
-    displayed size is known — the cost of the displayed contracts.
+    scans is one opportunity, not many). Stake per opportunity is
+    ``STAKE_FRACTION`` of the current bankroll, further capped — when the
+    Kalshi displayed size is known — by the cost of the displayed contracts.
     """
     bankroll = BANKROLL_START
     taken: set[tuple[str, str, str]] = set()
@@ -239,7 +243,7 @@ def paper_bankroll_summary(observations: list[dict]) -> dict:
         cost = _decimal(best.get("cost"))
         if cost is None or cost <= 0:
             continue
-        stake = min(PER_OPPORTUNITY_CAP, bankroll)
+        stake = min(bankroll * STAKE_FRACTION, bankroll)
         size = _decimal(best.get("kalshi_size"))
         if size is not None:
             stake = min(stake, size * cost)
@@ -254,7 +258,8 @@ def paper_bankroll_summary(observations: list[dict]) -> dict:
         "distinct_executable_opportunities": opportunities,
         "observations_reviewed": len(observations),
         "assumptions": {
-            "per_opportunity_cap": str(PER_OPPORTUNITY_CAP),
+            "stake_fraction_of_bankroll": str(STAKE_FRACTION),
+            "stake_capped_by_kalshi_displayed_size": True,
             "fee_buffer_per_basket": str(GAP_FEE_BUFFER),
             "polymarket_fill_assumed_at_quote": True,
             "dedup": "one opportunity per pair per UTC day",
