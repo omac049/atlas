@@ -186,7 +186,18 @@ def _fomc_preimage(fingerprint: object) -> tuple | None:
         or threshold % 25 != 0
     ):
         return None
-    rounded = "rounding=up_nearest_25bps" in str(fingerprint.settlement_policy or "")
+    rounding_tokens = {
+        token
+        for token in str(fingerprint.settlement_policy or "").split("|")
+        if token.startswith("rounding=")
+    }
+    if rounding_tokens - {"rounding=up_nearest_25bps"}:
+        # Only the owner-signed round-up reading has a proven preimage table.
+        # Any other published rounding scheme (e.g. Polymarket US's
+        # nearest-with-away-from-zero clause, captured 2026-08-14) must refuse
+        # rather than silently be treated as an unrounded leg.
+        return None
+    rounded = "rounding=up_nearest_25bps" in rounding_tokens
     if direction == "maintain":
         # round-up maps no nonzero change to zero, so the preimage is {0} either way
         return ("point", Decimal(0)) if threshold == 0 and operator == "=" else None

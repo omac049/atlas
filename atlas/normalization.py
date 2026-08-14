@@ -281,19 +281,36 @@ def _fomc_decision_bucket_terms(text: str) -> dict[str, object] | None:
         r"(>?)(\d+(?:\.\d+)?)(\+?)\s*bps",
         text,
     )
+    if not bucket:
+        # Polymarket US decision buckets phrase the change against the upper
+        # bound with "basis points" spelled out: "increases the upper bound of
+        # the target federal funds rate by 50 basis points or more at the July
+        # 2026 FOMC meeting" (captured live 2026-08-14).
+        bucket_us = re.search(
+            r"(increase|decrease)s? the upper bound of the target federal funds rate "
+            r"by (>?)(\d+(?:\.\d+)?)\s*basis points( or more)?",
+            text,
+        )
+        bucket = bucket_us
     no_change = None
     if not bucket:
-        # Polymarket's zero bucket carries no bps phrase at all: "Will there be
-        # no change in Fed interest rates after the September 2026 meeting?"
+        # Polymarket's zero bucket carries no bps phrase at all: Gamma's "no
+        # change in Fed interest rates after the September 2026 meeting" and
+        # PM-US's "does not change the upper bound of the target federal funds
+        # rate at the July 2026 FOMC meeting".
         no_change = re.search(
             r"\bno change in (?:the )?fed(?:eral reserve)?(?:['’]s)?\s+(?:interest\s+)?rates?\b",
+            text,
+        ) or re.search(
+            r"\bdoes not change the upper bound of the target federal funds rate\b",
             text,
         )
         if not no_change:
             return None
     meeting = re.search(
         r"(?:at their|after the|for their|at the)\s+"
-        rf"({'|'.join(MONTHS)})\.?\s+(20\d{{2}})\s+meeting",
+        rf"({'|'.join(MONTHS)})\.?\s+(20\d{{2}})\s+"
+        r"(?:federal open market committee\s*)?(?:\(?fomc\)?\s+)?meeting",
         text,
     ) or re.search(
         rf"(?:on|meeting scheduled for)\s+({'|'.join(MONTHS)})\.?\s+\d{{1,2}}"
@@ -322,6 +339,17 @@ def _fomc_decision_bucket_terms(text: str) -> dict[str, object] | None:
         policies.append("no_meeting=no_change_bucket")
     if re.search(r"rounded up to the nearest 25", text):
         policies.append("rounding=up_nearest_25bps")
+    elif re.search(
+        r"changes smaller than the smallest option of the same direction.{0,40}"
+        r"rounded to that smallest option.{0,160}rounded to the nearest displayed option"
+        r".{0,80}rounded away from zero",
+        text,
+    ):
+        # Polymarket US publishes a DIFFERENT scheme than Gamma's round-up
+        # clause (captured live 2026-08-14 on the Sep/Oct 2026 events; the
+        # settled July event publishes no rounding clause at all). The distinct
+        # token keeps the signed round-up preimage table from ever applying.
+        policies.append("rounding=nearest_bucket_away_from_zero")
     return {
         "event_subject": f"us_fomc_rate_decision|{period}",
         "event_date": period,
