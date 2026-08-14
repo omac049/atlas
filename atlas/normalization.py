@@ -119,6 +119,18 @@ def _economic_terms(market: Market) -> dict[str, object] | None:
         return level
     if ism := _ism_pmi_terms(market, text, market_source, period):
         return ism
+    if payrolls := _payrolls_terms(market, text, market_source):
+        return payrolls
+    # Core PCE must run before CPI: its texts publish "excluding food and
+    # energy" and "core inflation ... 12-month" wording that satisfies the CPI
+    # triggers, while its own trigger requires a published personal-consumption-
+    # expenditures reference that no CPI text carries.
+    if pce := _pce_core_terms(
+        (market.title or "").lower(), text, market_source, period, threshold, upper, operator
+    ):
+        return pce
+    if gdp := _gdp_growth_terms(market, text, market_source):
+        return gdp
     # CPI runs after the more specific macro families so a fed/unemployment
     # contract whose commentary merely mentions CPI cannot be captured here.
     if cpi := _cpi_family_terms(
@@ -536,6 +548,368 @@ def _ism_bucket_terms(text: str) -> tuple | None:
     return None
 
 
+# The published series phrase ("total non-farm payroll employment", "the change
+# in total U.S. nonfarm payroll employment", "nonfarm payrolls") — a market that
+# merely says "jobs" never triggers; the payroll series must be named.
+_PAYROLLS_SERIES = re.compile(r"\bnon-?farm payrolls?\b")
+
+# Raw job counts: comma thousands separators, ASCII or unicode minus, and the
+# venue "k" shorthand ("50k" on Polymarket-Global bucket titles).
+_PAYROLLS_NUM = r"([-−]?[0-9][0-9,]*)\s*(k\b)?"
+
+
+def _payrolls_number(value: str, suffix: str | None) -> Decimal:
+    number = _number(value.replace("−", "-"))
+    return number * 1000 if suffix else number
+
+
+def _payrolls_terms(
+    market: Market, text: str, market_source: str
+) -> dict[str, object] | None:
+    """US nonfarm-payrolls change contracts, from published wording only.
+
+    Kalshi's KXPAYROLLS rules publish a strict strike ("the increase in total
+    non-farm payroll employment is above 90000 as reported by the Bureau of
+    Labor Statistics Monthly Employment Situation Report for the month of July
+    2026") and NO revision, missing-data, or precision clauses — that absence
+    stays visible as an empty settlement policy. (Known metadata quirk: the
+    KXPAYROLLS series-level settlement-source URL points at the BLS PPI release
+    page; the rules text names the Employment Situation Report and that text is
+    what is tokenized here.) Polymarket-US publishes the same subject with
+    strict "Above X" outcomes on its July/August events but "At least X" (>=)
+    on its June event — the operator is read per event, never assumed — plus a
+    first-print revision exclusion and a terminal three-month previous-month
+    fallback. Polymarket-Global lists range buckets ("between 0 and 50k",
+    "lose jobs") whose boundary membership is determined only by its published
+    exact-boundary-to-higher-bracket rule, alongside a last-available-month
+    fallback and no revision clause. The reference month comes from the
+    published "for (the month of) July 2026" / "in July 2026" wording, never
+    from a release date alone; no venue here publishes a seasonal-adjustment
+    basis in its rules text (Polymarket-US only marks "sa" in the slug), so the
+    scope stays the bare series. Buckets are parsed title-first so sibling
+    enumerations can never re-strike a leg, and unmodeled directional
+    phrasings refuse the threshold outright.
+    """
+    if not _PAYROLLS_SERIES.search(text):
+        return None
+    bls_named = bool(
+        "bureau of labor statistics" in text
+        or re.search(r"\bbls\b", text)
+        or "bureau of labor statistics" in market_source
+    )
+    us_context = bls_named or bool(
+        # Dotted form only: the bare word "us" ("contact us") is not a marker.
+        re.search(r"\bu\.s\.?(?![a-z])|\bunited states\b", text)
+    )
+    if _CPI_FOREIGN_JURISDICTION.search(text) and not us_context:
+        return None
+    month_names = "|".join(MONTHS)
+    period_match = re.search(
+        rf"(?:for the month of|for|in)\s+({month_names})\s+(20\d{{2}})\b", text
+    )
+    if not period_match:
+        # The reference month must come from published text; the release date
+        # or the venue identifier alone must never supply it.
+        return None
+    period = f"{period_match.group(2)}-{MONTHS[period_match.group(1)]:02d}"
+    bucket = None
+    for candidate in (
+        (market.title or "").lower(),
+        str(market.raw_market_json.get("yes_sub_title") or "").lower(),
+        (market.subtitle or "").lower(),
+        (market.raw_rules_text or "").lower(),
+    ):
+        bucket = _payrolls_bucket_terms(candidate)
+        if bucket is not None:
+            break
+    # A range bucket's boundary membership exists only through the published
+    # exact-boundary rule ("falls exactly between two brackets ... higher range
+    # bracket" -> [L, U)); without that clause adjacent integer buckets share
+    # their endpoints ambiguously and the threshold is refused, not inferred.
+    boundary_rule = bool(
+        "falls exactly between two brackets" in text and "higher range bracket" in text
+    )
+    if bucket is None or bucket is _UNMODELED_BUCKET:
+        threshold, upper, operator = None, None, None
+    else:
+        threshold, upper, operator = bucket
+        if operator == "range":
+            if boundary_rule:
+                operator = "between_left_inclusive"
+            else:
+                threshold, upper, operator = None, None, None
+    source = (
+        "us_bls_employment_situation"
+        if bls_named and re.search(r"employment situation (?:report|summary)", text)
+        else "us_bls"
+        if bls_named
+        else _named_authority_source(market.resolution_source)
+    )
+    # Only published outcome-determining clauses become tokens; Kalshi's
+    # KXPAYROLLS rules publish none, so its legs keep an empty policy.
+    policies = []
+    if "subsequent revisions" in text and "not be considered" in text:
+        policies.append("revision=first_official_release")
+    if "released within three months" in text and "most recent previous month" in text:
+        policies.append("missing=previous_month_within_3m")
+    if re.search(
+        r"no data for the specified month is released by the date the next month", text
+    ) and "resolve based on data from the last available month" in text:
+        policies.append("missing=last_available_month_at_next_release")
+    if boundary_rule:
+        policies.append("boundary=exact_to_higher_bracket")
+    return {
+        "event_subject": f"us_nonfarm_payrolls|{period}",
+        "event_date": period,
+        "event_action": "published_value",
+        "market_type": "economic",
+        "contract_scope": "nonfarm_payrolls_seasonally_adjusted"
+        if "seasonally adjusted" in text
+        else "nonfarm_payrolls",
+        "affirmative_outcome": "predicate_true",
+        "threshold": threshold,
+        "threshold_upper": upper,
+        "threshold_operator": operator,
+        "threshold_unit": "jobs",
+        "measurement_period": period,
+        "geography": "us",
+        "resolution_source": source,
+        "revision_policy": (
+            "first_official_release"
+            if "revision=first_official_release" in policies
+            else None
+        ),
+        "settlement_policy": "|".join(policies) or None,
+    }
+
+
+def _payrolls_bucket_terms(text: str) -> tuple | None:
+    """Published payrolls bucket phrasings for one candidate text, or a refusal.
+
+    Returns ``None`` when the text carries no comparison at all (the caller
+    tries the next candidate text), a ``(threshold, upper, operator)`` tuple
+    for a modeled phrasing (ranges carry the sentinel operator ``"range"`` for
+    the caller to resolve against the published boundary rule), and
+    ``_UNMODELED_BUCKET`` when a directional or comparison phrase is present
+    but unmodeled — the caller then drops the threshold entirely instead of
+    falling through to later texts. "lose" phrasings carry the sign: "lose
+    more than 50k jobs" is a change below -50,000 and "lose between 0 and 50k
+    jobs" is the negated range.
+    """
+    if not text:
+        return None
+    if match := re.search(
+        rf"\blose\s+between\s+{_PAYROLLS_NUM}\s+and\s+{_PAYROLLS_NUM}\s+jobs\b", text
+    ):
+        low = _payrolls_number(match.group(1), match.group(2))
+        high = _payrolls_number(match.group(3), match.group(4))
+        return -high, -low, "range"
+    if match := re.search(rf"\bbetween\s+{_PAYROLLS_NUM}\s+and\s+{_PAYROLLS_NUM}\b", text):
+        return (
+            _payrolls_number(match.group(1), match.group(2)),
+            _payrolls_number(match.group(3), match.group(4)),
+            "range",
+        )
+    if match := re.search(rf"\blose\s+more\s+than\s+{_PAYROLLS_NUM}\s+jobs\b", text):
+        return -_payrolls_number(match.group(1), match.group(2)), None, "<"
+    if match := re.search(rf"\bat least\s+{_PAYROLLS_NUM}", text):
+        return _payrolls_number(match.group(1), match.group(2)), None, ">="
+    if match := re.search(rf"\babove\s+{_PAYROLLS_NUM}", text):
+        return _payrolls_number(match.group(1), match.group(2)), None, ">"
+    if re.search(r"\blose\s+jobs\b", text):
+        return Decimal(0), None, "<"
+    if re.search(
+        r"\b(?:at least|at most|above|below|between|more than|less than|fewer than"
+        r"|or more|or fewer|or less|lose|shed|drop|decline|fall)\b",
+        text,
+    ) and re.search(r"[0-9]", text):
+        return _UNMODELED_BUCKET
+    return None
+
+
+
+
+# The GDP reference must be a published index phrase ("real GDP", "GDP growth")
+# anchored to a quarterly period — mere co-occurrence of "gdp" and a quarter
+# elsewhere in a description must not trigger.
+_GDP_GROWTH_TRIGGER = re.compile(
+    r"\b(?:real gdp|gdp growth)\b.{0,120}?\bq[1-4]\s+(?:of\s+)?20\d{2}\b"
+)
+
+# A title naming a different published series is that market's own identity: a
+# payrolls/CPI/PCE contract whose commentary mentions GDP growth must keep its
+# family rather than being re-filed under the US GDP subject.
+_GDP_COMPETING_TITLE_SERIES = re.compile(
+    r"\b(?:payrolls?|cpi|consumer price|inflation|unemployment|pce|ism|pmi)\b"
+)
+
+_GDP_QUARTER = re.compile(r"\bq([1-4])\s+(?:of\s+)?(20\d{2})\b")
+
+_GDP_VALUE = r"(-?[0-9]+(?:\.[0-9]+)?)"
+
+
+def _gdp_growth_terms(
+    market: Market, text: str, market_source: str
+) -> dict[str, object] | None:
+    """US real GDP growth family (quarterly, BEA), from published wording only.
+
+    Kalshi's KXGDP series publishes strict "more than X" strikes against "the
+    BEA's seasonally adjusted and annualized Advance Estimate" plus a
+    one-decimal Expiration Value note, but NO revision clause and NO
+    missing-release fallback — those absences stay visible. Polymarket US
+    publishes ">= / above" outcomes ("At least 1.5%", "Above 1.5%") with an
+    explicit revision exclusion and a terminal three-month previous-quarter
+    fallback. Polymarket's Gamma events list half-open range buckets ("between
+    1.5% and 2.0%") whose published exact-boundary rule sends a value landing
+    exactly between two brackets to the higher bracket — that rule becomes a
+    settlement-policy token, never an inferred operator change. The published
+    estimate vintage (Advance/Second/Third) anchors the subject so different
+    vintages can never cross-match, and the seasonally-adjusted-annualized
+    basis enters the scope only when the text publishes it. Foreign GDP
+    contracts (UK, China, ...) are never filed under the US subject.
+    """
+    if not _GDP_GROWTH_TRIGGER.search(text):
+        return None
+    title = (market.title or "").lower()
+    if _GDP_COMPETING_TITLE_SERIES.search(title) and "gdp" not in title:
+        return None
+    quarter = _GDP_QUARTER.search(text)
+    if quarter is None:
+        return None
+    us_context = (
+        "bureau of economic analysis" in text
+        or re.search(r"\bbea\b", text)
+        or "bureau of economic analysis" in market_source
+        or re.search(r"\bu\.s\.?(?![a-z])|\bunited states\b|\bus gdp\b", text)
+    )
+    if not us_context or _CPI_FOREIGN_JURISDICTION.search(text):
+        return None
+    # Vintage anchor: only a published estimate name may anchor the subject.
+    # Advance is checked first because revision/fallback clauses on legs that
+    # settle off the Advance Estimate mention the Second/Third Estimates.
+    vintage = (
+        "advance"
+        if "advance estimate" in text
+        else "second"
+        if "second estimate" in text
+        else "third"
+        if "third estimate" in text
+        else None
+    )
+    period = f"{quarter.group(2)}-Q{quarter.group(1)}"
+    anchor = f"{period}:{vintage}" if vintage else period
+    scope = (
+        "real_gdp_growth_saar"
+        if "seasonally adjusted and annualized" in text
+        or "seasonally adjusted annualized" in text
+        else "real_gdp_growth"
+    )
+    # Title first: the title always states the market's OWN bucket, while
+    # descriptions may enumerate sibling buckets whose phrasings would match.
+    bucket = None
+    raw = market.raw_market_json
+    for candidate in (
+        title,
+        str(raw.get("yes_sub_title") or "").lower(),
+        str(raw.get("outcome_title") or "").lower(),
+        (market.subtitle or "").lower(),
+        (market.raw_rules_text or "").lower(),
+    ):
+        bucket = _gdp_bucket_terms(candidate)
+        if bucket is not None:
+            break
+    if bucket is None or bucket is _UNMODELED_BUCKET:
+        threshold, upper, operator = None, None, None
+    else:
+        threshold, upper, operator = bucket
+    source = (
+        "us_bea_gdp"
+        if "bureau of economic analysis" in text
+        or re.search(r"\bbea\b", text)
+        or "bureau of economic analysis" in market_source
+        else None
+    )
+    # Only published outcome-determining clauses become tokens; Kalshi's KXGDP
+    # rules publish no revision or missing-data branch, so those stay absent.
+    policies = []
+    if re.search(
+        r"subsequent revisions to this figure.{0,80}?not be considered", text
+    ) or re.search(r"revisions to gdp report data.{0,80}?not be considered", text):
+        policies.append("revision=first_official_release")
+    if (
+        re.search(r"no qualifying (?:gdp )?figure.{0,60}?within three months", text)
+        and "most recent previous quarter" in text
+    ):
+        policies.append("missing=first_within_3m_else_previous_quarter")
+    elif (
+        "no official estimate is released by the date the next quarter" in text
+        and "most recent previous figure" in text
+    ):
+        policies.append("missing=first_else_most_recent_at_next_release")
+    if "falls exactly between two brackets" in text and "higher range bracket" in text:
+        policies.append("boundary=exact_value_to_higher_bracket")
+    if "expiration value is the one-decimal value published by the bea" in text:
+        policies.append("precision=bea_one_decimal")
+    return {
+        "event_subject": f"us_real_gdp_growth|{anchor}",
+        "event_date": anchor,
+        "event_action": "published_value",
+        "market_type": "economic",
+        "contract_scope": scope,
+        "affirmative_outcome": "predicate_true",
+        "threshold": threshold,
+        "threshold_upper": upper,
+        "threshold_operator": operator,
+        "threshold_unit": "percent",
+        "measurement_period": anchor,
+        "geography": "us",
+        "resolution_source": source,
+        "revision_policy": (
+            "first_official_release"
+            if "revision=first_official_release" in policies
+            else None
+        ),
+        "settlement_policy": "|".join(policies) or None,
+    }
+
+
+def _gdp_bucket_terms(text: str) -> tuple | None:
+    """Published GDP bucket phrasings for one candidate text, or a refusal.
+
+    Returns ``None`` when the text carries no comparison at all (the caller
+    tries the next candidate text), a ``(threshold, upper, operator)`` tuple
+    for a modeled phrasing, and ``_UNMODELED_BUCKET`` when a comparison phrase
+    is present but unmodeled — the caller then drops the threshold entirely so
+    the leg can never look guarantee-complete. Every modeled pattern requires
+    the percent sign, so Kalshi's bare "increases by more than 4.0" rules
+    clause (reached only when no earlier candidate carried the bucket) and
+    boilerplate numbers can never be read as a strike. Range buckets keep the
+    distinct "between" operator: with Gamma's published exact-boundary rule
+    they are half-open intervals, not the inclusive-both-ends buckets other
+    families publish on a one-decimal grid.
+    """
+    if not text:
+        return None
+    if match := re.search(
+        rf"\bbetween\s+{_GDP_VALUE}\s*%?\s+and\s+{_GDP_VALUE}\s*%", text
+    ):
+        return _number(match.group(1)), _number(match.group(2)), "between"
+    for operator, pattern in (
+        (">=", rf"\bat least\s+{_GDP_VALUE}\s*%"),
+        (">", rf"\b(?:above|more than|greater than)\s+{_GDP_VALUE}\s*%"),
+        ("<", rf"\b(?:below|less than)\s+{_GDP_VALUE}\s*%"),
+    ):
+        if match := re.search(pattern, text):
+            return _number(match.group(1)), None, operator
+    if re.search(
+        r"\b(?:at least|at most|above|below|between|greater than|less than"
+        r"|more than|or more|or less|or higher|or lower|exactly)\b",
+        text,
+    ) and re.search(r"[0-9]", text):
+        return _UNMODELED_BUCKET
+    return None
+
+
 def _weather_terms(market: Market) -> dict[str, object] | None:
     text = _text(market)
     if not (
@@ -730,6 +1104,127 @@ _CPI_YOY_TRIGGER = re.compile(
     r"\b(?:cpi yoy|consumer price index|inflation).{0,100}"
     r"\b(?:12[- ]month|yoy|twelve months|year ending)\b"
 )
+
+# Core PCE triggers. Both venues publish "excluding food and energy" exactly
+# like core CPI, so PCE capture requires the published Personal Consumption
+# Expenditures index name adjacent to its change window (or the venue's own
+# "Core PCE MoM/YoY" market naming). A CPI contract whose commentary merely
+# mentions the PCE index has no such adjacency and keeps its CPI subject; a
+# PCE text is kept out of the CPI family purely by dispatch order.
+_PCE_INDEX = r"personal consumption expenditures price index"
+_PCE_YOY_TRIGGER = re.compile(
+    rf"\bcore pce yoy\b"
+    rf"|\b{_PCE_INDEX}\b.{{0,120}}\b(?:12[- ]month|yoy|twelve months|year ending)\b"
+    rf"|\b(?:12[- ]month|twelve months)\b.{{0,120}}\b{_PCE_INDEX}\b"
+)
+_PCE_MOM_TRIGGER = re.compile(
+    rf"\bcore pce mom\b"
+    rf"|\bmonth-over-month percent(?:age)? change\b.{{0,60}}\b{_PCE_INDEX}\b"
+    rf"|\b{_PCE_INDEX}\b.{{0,120}}\b(?:1-month|one-month)\b"
+)
+
+
+def _pce_core_terms(
+    title: str,
+    text: str,
+    market_source: str,
+    period: str | None,
+    threshold: Decimal | None,
+    upper: Decimal | None,
+    operator: str | None,
+) -> dict[str, object] | None:
+    """US core PCE (MoM and YoY), from published wording only.
+
+    Kalshi's KXPCECORE rules publish a strict "above X%" ladder on the
+    "(single-decimal) month-over-month percent change in the Personal
+    Consumption Expenditures Price Index excluding food and energy ...
+    according to the Bureau of Economic Analysis" with NO revision clause, NO
+    missing-data fallback, and NO adjustment basis — each absence stays
+    visible rather than being inferred. Polymarket's Gamma template publishes
+    exact one-decimal grid buckets with "or less"/"or more" tails, names the
+    BEA Personal Income and Outlays report, "seasonally adjusted", the
+    one-decimal precision clause, and a terminal previous-month missing-data
+    fallback (and no revision clause). The YoY events exist only on Gamma; the
+    window markers keep MoM and YoY subjects from ever cross-matching. Only
+    core contracts are modeled — no venue lists a headline-PCE market, so a
+    text without the published core phrasing is not captured here.
+    """
+    yoy = _PCE_YOY_TRIGGER.search(text)
+    mom = None if yoy else _PCE_MOM_TRIGGER.search(text)
+    if not (yoy or mom) or not period:
+        return None
+    core = bool(
+        "less food and energy" in text
+        or "excluding food and energy" in text
+        or re.search(r"\bcore pce\b|\bpce core\b", text)
+    )
+    if not core:
+        return None
+    us_context = (
+        "bureau of economic analysis" in text
+        or re.search(r"\bbea\b", text)
+        or "bureau of economic analysis" in market_source
+        # Dotted form only: the bare word "us" ("contact us") is not a marker.
+        or re.search(r"\bu\.s\.?(?![a-z])|\bunited states\b", text)
+    )
+    if _CPI_FOREIGN_JURISDICTION.search(text) and not us_context:
+        return None
+    subject_base = "us_pce_core_yoy" if yoy else "us_pce_core_mom"
+    scope = ("pce_core_yoy" if yoy else "pce_core_mom") + (
+        # Basis enters the scope only when published: Gamma names "seasonally
+        # adjusted"; Kalshi's rules state no basis and keep the bare scope.
+        "_seasonally_adjusted" if "seasonally adjusted" in text else ""
+    )
+    # Title first: the title always states the market's OWN bucket, while
+    # descriptions may enumerate sibling buckets whose phrasings would match.
+    signed_change = _cpi_change_terms(title)
+    if signed_change is None:
+        signed_change = _cpi_change_terms(text)
+    if signed_change is _UNPARSEABLE_CHANGE:
+        # A directional phrasing we do not model: refuse a threshold rather
+        # than risk reading it unsigned. No threshold means the leg can never
+        # be guarantee-complete, so the pair can never approve.
+        threshold, upper, operator = None, None, None
+    elif signed_change is not None:
+        threshold, upper, operator = signed_change
+    else:
+        title_level = _cpi_level_terms(title, None, None, None)
+        if title_level[2] is not None:
+            threshold, upper, operator = title_level
+        else:
+            threshold, upper, operator = _cpi_level_terms(text, threshold, upper, operator)
+    # Only published outcome-determining clauses become tokens; Kalshi
+    # publishes only the single-decimal precision, so its legs carry that
+    # token alone and stay honestly incomplete.
+    policies = []
+    if "most recent previous month" in text and "not released" in text:
+        policies.append("missing=previous_month_figures_at_next_release")
+    if "single-decimal" in text or (
+        "one decimal point" in text and "level of precision" in text
+    ):
+        policies.append("precision=bea_one_decimal")
+    return {
+        "event_subject": f"{subject_base}|{period}",
+        "event_date": period,
+        "event_action": "published_value",
+        "market_type": "economic",
+        "contract_scope": scope,
+        "affirmative_outcome": "predicate_true",
+        "threshold": threshold,
+        "threshold_upper": upper,
+        "threshold_operator": operator,
+        "threshold_unit": "percent",
+        "measurement_period": period,
+        "geography": "us",
+        "resolution_source": (
+            "us_bea_pce"
+            if "bureau of economic analysis" in text
+            or re.search(r"\bbea\b", text)
+            or "bureau of economic analysis" in market_source
+            else None
+        ),
+        "settlement_policy": "|".join(policies) or None,
+    }
 
 
 def _cpi_family_terms(

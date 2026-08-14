@@ -68,6 +68,7 @@ def _fingerprint_signature(market: Market) -> tuple:
             "sportsMarketType",
             "sportsMarketTypeV2",
             "yes_sub_title",
+            "outcome_title",
             "marketSides",
             "event_ticker",
             "floor_strike",

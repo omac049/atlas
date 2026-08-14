@@ -44,10 +44,22 @@ def assess_settlement_guarantee(
             "reason_codes": ["COMPLETE_CPI_RELEASE_AND_MISSING_DATA_POLICY"],
         }
 
+    if _complete_pce_release_policy(fingerprint):
+        return {
+            "status": GuaranteeStatus.GUARANTEED.value,
+            "reason_codes": ["COMPLETE_PCE_RELEASE_AND_MISSING_DATA_POLICY"],
+        }
+
     if _complete_unemployment_release_policy(fingerprint):
         return {
             "status": GuaranteeStatus.GUARANTEED.value,
             "reason_codes": ["COMPLETE_UNEMPLOYMENT_RELEASE_POLICY"],
+        }
+
+    if _complete_payrolls_release_policy(fingerprint):
+        return {
+            "status": GuaranteeStatus.GUARANTEED.value,
+            "reason_codes": ["COMPLETE_PAYROLLS_RELEASE_POLICY"],
         }
 
     if _complete_fomc_decision_policy(fingerprint):
@@ -68,6 +80,12 @@ def assess_settlement_guarantee(
             "reason_codes": ["COMPLETE_ISM_RELEASE_AND_MISSING_DATA_POLICY"],
         }
 
+    if _complete_gdp_release_policy(fingerprint):
+        return {
+            "status": GuaranteeStatus.GUARANTEED.value,
+            "reason_codes": ["COMPLETE_GDP_RELEASE_AND_MISSING_DATA_POLICY"],
+        }
+
     if fingerprint.market_type == "weather":
         evidence = parse_market_policy_evidence(market)
         if evidence.complete:
@@ -83,7 +101,9 @@ def assess_settlement_guarantee(
         }
 
     specialized_scope = str(fingerprint.contract_scope or "")
-    if specialized_scope.startswith(("cpi_", "unemployment_rate")) or specialized_scope in {
+    if specialized_scope.startswith(
+        ("cpi_", "pce_", "unemployment_rate", "real_gdp_growth", "nonfarm_payrolls")
+    ) or specialized_scope in {
         "fomc_rate_change_bucket",
         "fed_funds_upper_bound_level",
         "ism_manufacturing_pmi",
@@ -175,6 +195,32 @@ def _complete_fed_funds_level_policy(fingerprint: ContractFingerprint) -> bool:
     return False
 
 
+def _complete_pce_release_policy(fingerprint: ContractFingerprint) -> bool:
+    """A core-PCE leg is deterministic only when the venue publishes every
+    outcome-determining branch it has: the BEA source, the published
+    seasonally-adjusted basis, the one-decimal precision clause, and the
+    terminal previous-month missing-release fallback. Gamma's template
+    publishes all of those (and no revision clause — there is no revision
+    branch to satisfy); Kalshi's KXPCECORE rules publish only the
+    single-decimal precision and no basis, so its legs stay honestly UNKNOWN."""
+    if (
+        fingerprint.market_type != "economic"
+        or fingerprint.contract_scope
+        not in {"pce_core_mom_seasonally_adjusted", "pce_core_yoy_seasonally_adjusted"}
+        or fingerprint.resolution_source != "us_bea_pce"
+        or fingerprint.threshold is None
+        or fingerprint.threshold_operator is None
+        or fingerprint.threshold_unit != "percent"
+        or not fingerprint.measurement_period
+        or not fingerprint.settlement_policy
+    ):
+        return False
+    return {
+        "missing=previous_month_figures_at_next_release",
+        "precision=bea_one_decimal",
+    } <= set(fingerprint.settlement_policy.split("|"))
+
+
 def _complete_unemployment_release_policy(fingerprint: ContractFingerprint) -> bool:
     """A U-3 unemployment leg is deterministic only when the venue publishes the
     complete release policy: the first-release revision freeze, the terminal
@@ -201,6 +247,33 @@ def _complete_unemployment_release_policy(fingerprint: ContractFingerprint) -> b
     } <= set(fingerprint.settlement_policy.split("|"))
 
 
+def _complete_payrolls_release_policy(fingerprint: ContractFingerprint) -> bool:
+    """A nonfarm-payrolls leg is deterministic only when the venue publishes both
+    outcome-determining branches: the first-print revision exclusion and the
+    terminal three-month previous-month fallback (Polymarket-US's current
+    template publishes both). Kalshi's KXPAYROLLS rules publish neither, and
+    Polymarket-Global's bucket template publishes a last-available-month
+    fallback but no revision clause — those legs stay honestly UNKNOWN. No
+    payrolls venue publishes a precision clause (the underlying is a raw job
+    count, not a rounded rate), so none exists to require — nothing is
+    inferred."""
+    if (
+        fingerprint.market_type != "economic"
+        or not str(fingerprint.contract_scope or "").startswith("nonfarm_payrolls")
+        or fingerprint.resolution_source != "us_bls_employment_situation"
+        or fingerprint.threshold is None
+        or fingerprint.threshold_operator is None
+        or fingerprint.threshold_unit != "jobs"
+        or not fingerprint.measurement_period
+        or not fingerprint.settlement_policy
+    ):
+        return False
+    return {
+        "revision=first_official_release",
+        "missing=previous_month_within_3m",
+    } <= set(fingerprint.settlement_policy.split("|"))
+
+
 def _complete_ism_release_policy(fingerprint: ContractFingerprint) -> bool:
     """An ISM PMI leg is deterministic only when its published terms cover every
     branch: the ISM Report On Business named as source, the published one-decimal
@@ -223,6 +296,47 @@ def _complete_ism_release_policy(fingerprint: ContractFingerprint) -> bool:
         "missing=previous_month_figures_at_next_release",
         "precision=ism_one_decimal",
     } <= policies
+
+
+def _complete_gdp_release_policy(fingerprint: ContractFingerprint) -> bool:
+    """A US real-GDP-growth leg is deterministic only when its published terms
+    cover every branch: the seasonally-adjusted-annualized basis and the BEA
+    named in the rules, a published estimate-vintage anchor (":advance" etc.),
+    the revision freeze, and a terminal missing-release fallback (Polymarket
+    US's three-month previous-quarter branch or Gamma's most-recent-figure
+    branch). A range bucket additionally needs the published exact-boundary
+    rule, without which its edge outcomes are undetermined. Kalshi's KXGDP
+    rules publish the basis and one-decimal precision but no revision or
+    missing-data branch — those legs honestly stay UNKNOWN."""
+    if (
+        fingerprint.market_type != "economic"
+        or fingerprint.contract_scope != "real_gdp_growth_saar"
+        or fingerprint.resolution_source != "us_bea_gdp"
+        or fingerprint.threshold is None
+        or fingerprint.threshold_operator is None
+        or fingerprint.threshold_unit != "percent"
+        or not fingerprint.measurement_period
+        # The published estimate vintage must anchor the measurement; a leg
+        # whose venue never names the estimate cannot be guarantee-complete.
+        or ":" not in fingerprint.measurement_period
+        or not fingerprint.settlement_policy
+    ):
+        return False
+    policies = set(fingerprint.settlement_policy.split("|"))
+    if "revision=first_official_release" not in policies:
+        return False
+    if (
+        fingerprint.threshold_upper is not None
+        and "boundary=exact_value_to_higher_bracket" not in policies
+    ):
+        return False
+    return bool(
+        policies
+        & {
+            "missing=first_within_3m_else_previous_quarter",
+            "missing=first_else_most_recent_at_next_release",
+        }
+    )
 
 
 def _complete_cpi_release_policy(fingerprint: ContractFingerprint) -> bool:
