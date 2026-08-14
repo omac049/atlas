@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.atlas.api</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/ocorral/Library/Group Containers/UBF8T346G9.OneDriveStandaloneSuite/OneDrive-UAGC (2026-08-07 18:30:06 +0000).noindex/OneDrive-UAGC (2026-08-07 18:30:06 +0000)/Documents/Atlas/.venv/bin/python</string>
+        <string>-m</string>
+        <string>uvicorn</string>
+        <string>apps.api.main:app</string>
+        <string>--port</string>
+        <string>8010</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/ocorral/Library/Group Containers/UBF8T346G9.OneDriveStandaloneSuite/OneDrive-UAGC (2026-08-07 18:30:06 +0000).noindex/OneDrive-UAGC (2026-08-07 18:30:06 +0000)/Documents/Atlas</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Users/ocorral/Library/Logs/atlas-api.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/ocorral/Library/Logs/atlas-api.log</string>
+</dict>
+</plist>
