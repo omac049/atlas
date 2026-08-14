@@ -485,6 +485,28 @@ class AtlasStore:
             counts[label] = counts.get(label, 0) + 1
         return counts
 
+    async def review_rejection_counts_by_subject(self) -> dict[str, int]:
+        """Persisted review-pair rejection counts per canonical event subject.
+
+        The owner-signed 5-per-event bound (2026-08-13 decision) must hold across
+        runs, so the backfill seeds its per-event counter from these counts
+        instead of starting every run at zero.
+        """
+        await self.initialize()
+        async with aiosqlite.connect(self.path) as db:
+            rows = await (
+                await db.execute(
+                    """SELECT json_extract(vc.payload_json,
+                        '$.pair.decision.fingerprint_a.event_subject'), COUNT(*)
+                    FROM validation_outcomes vo
+                    JOIN validation_cases vc ON vo.pair_id = vc.pair_id
+                    WHERE vo.trusted_label = 'REJECTED'
+                      AND vc.decision_status = 'REVIEW_REQUIRED'
+                    GROUP BY 1"""
+                )
+            ).fetchall()
+        return {str(subject or ""): int(count) for subject, count in rows}
+
     async def save_market_evidence_snapshots(
         self, snapshots: list[dict[str, object]]
     ) -> dict[str, int]:

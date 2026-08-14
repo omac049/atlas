@@ -83,7 +83,8 @@ def test_kalshi_series_tickers_are_bounded():
 
 def test_batch_series_tickers_default_to_macro_series_beyond_recent_paging():
     """The scheduled default must reach the macro pairs that recent-first settled-event
-    paging misses: the FOMC decision/level series and the CPI YoY series."""
+    paging misses: the FOMC decision/level series and the monthly/quarterly release
+    families (CPI, payrolls, core PCE, GDP)."""
     assert _parse_batch_series_tickers(None) == BATCH_DEFAULT_KALSHI_SERIES_TICKERS
     assert BATCH_DEFAULT_KALSHI_SERIES_TICKERS == (
         "KXFEDDECISION",
@@ -91,6 +92,9 @@ def test_batch_series_tickers_default_to_macro_series_beyond_recent_paging():
         "KXCPIYOY",
         "KXCPI",
         "KXCPICORE",
+        "KXPAYROLLS",
+        "KXPCECORE",
+        "KXGDP",
     )
 
 

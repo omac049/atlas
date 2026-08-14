@@ -164,6 +164,194 @@ async def test_requested_series_events_bypass_the_lexical_candidate_gate(tmp_pat
     assert "NO_CROSS_VENUE_SETTLED_EVENT_OVERLAP" not in report["blockers"]
 
 
+@pytest.mark.asyncio
+async def test_market_pair_cap_keeps_priority_pairs_not_arrival_order(tmp_path):
+    """Verification runs on every constructed pair before the cap, so the cap
+    must truncate the PRIORITY-sorted list: with the old arrival-order cut, one
+    venue's ladder could crowd every labelable pair out of the reviewed window
+    (observed live 2026-08-14: 3000/3000 inconclusive on the payrolls/GDP
+    harvest while the slug-targeted twin pairs sat beyond the cap)."""
+    markets = fixture_markets()
+    exact = markets["kalshi"][0].model_copy(deep=True)
+    exact.status = MarketStatus.SETTLED
+    exact.raw_market_json["result"] = "yes"
+    exact.raw_market_json["event_ticker"] = "KXFED-SEP26"
+
+    review_only = markets["polymarket_us"][0].model_copy(deep=True)
+    review_only.status = MarketStatus.CLOSED
+    review_only.market_id = "polymarket_us:review-only"
+    review_only.venue_market_id = "review-only"
+    review_only.threshold = Decimal(50)
+    review_only.raw_market_json["question"] = review_only.title
+
+    matching = markets["polymarket_us"][0].model_copy(deep=True)
+    matching.status = MarketStatus.CLOSED
+    matching.raw_market_json["question"] = matching.title
+
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    report = await backfill_historical_validation(
+        store,
+        HistoricalKalshiVenue([exact]),
+        # Arrival order puts the review-shaped pair first; the cap of 1 must
+        # keep the approvable pair anyway.
+        HistoricalPolymarketVenue([review_only, matching]),
+        target_labels=1,
+        max_market_pairs=1,
+    )
+
+    assert report["blockers"]["HISTORICAL_MARKET_PAIR_CAP_APPLIED"] == 1
+    assert report["approved_labels"] == 1
+
+
+async def _seed_persisted_rejections(store, subject, count, start=0):
+    for index in range(start, start + count):
+        pair_id = f"historical:seed-{index}"
+        await store.save_validation_case(
+            {
+                "pair_id": pair_id,
+                "source_kind": "HISTORICAL_BACKFILL",
+                "decision_status": "REVIEW_REQUIRED",
+                "guarantee_a": "UNKNOWN",
+                "guarantee_b": "UNKNOWN",
+                "tracking_status": "RESOLVED",
+                "payload": {
+                    "pair": {"decision": {"fingerprint_a": {"event_subject": subject}}}
+                },
+            }
+        )
+        await store.save_validation_outcome(
+            {
+                "pair_id": pair_id,
+                "resolved_at": "2026-08-13T00:00:00+00:00",
+                "relationship_status": "DIVERGED",
+                "outcome_a": "yes",
+                "outcome_b": "no",
+                "trusted_label": "REJECTED",
+            }
+        )
+
+
+@pytest.mark.asyncio
+async def test_review_rejection_event_cap_holds_across_runs(tmp_path):
+    """The owner-signed 5-per-event bound is cross-run: a fresh backfill run must
+    count the rejections an event already holds in the store, not restart at zero
+    (the July 2026 CPI event reached 6 through exactly this leak)."""
+    markets = fixture_markets()
+    mismatch = markets["kalshi"][0].model_copy(deep=True)
+    mismatch.threshold = Decimal(50)
+    mismatch.status = MarketStatus.SETTLED
+    mismatch.market_id = "kalshi:KXFED-SEP26-T50"
+    mismatch.venue_market_id = "KXFED-SEP26-T50"
+    mismatch.raw_market_json["result"] = "no"
+    mismatch.raw_market_json["event_ticker"] = "KXFED-SEP26"
+
+    polymarket = markets["polymarket_us"][0].model_copy(deep=True)
+    polymarket.status = MarketStatus.CLOSED
+    polymarket.raw_market_json["question"] = polymarket.title
+
+    review_pair = verify_equivalence(mismatch, polymarket)
+    assert review_pair.status is MatchStatus.REVIEW_REQUIRED
+    subject = str(review_pair.decision.fingerprint_a.event_subject)
+
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await _seed_persisted_rejections(store, subject, 5)
+    assert await store.review_rejection_counts_by_subject() == {subject: 5}
+
+    report = await backfill_historical_validation(
+        store,
+        HistoricalKalshiVenue([mismatch]),
+        HistoricalPolymarketVenue([polymarket]),
+        target_labels=50,
+    )
+
+    assert report["rejected_labels"] == 0
+    assert report["new_labels"] == 0
+    assert report["blockers"]["REVIEW_REJECTION_EVENT_CAP_APPLIED"] == 1
+
+
+@pytest.mark.asyncio
+async def test_review_rejection_event_cap_allows_room_below_the_bound(tmp_path):
+    """Seeding must not over-block: an event holding fewer than five persisted
+    rejections still accepts new ones up to the bound."""
+    markets = fixture_markets()
+    mismatch = markets["kalshi"][0].model_copy(deep=True)
+    mismatch.threshold = Decimal(50)
+    mismatch.status = MarketStatus.SETTLED
+    mismatch.market_id = "kalshi:KXFED-SEP26-T50"
+    mismatch.venue_market_id = "KXFED-SEP26-T50"
+    mismatch.raw_market_json["result"] = "no"
+    mismatch.raw_market_json["event_ticker"] = "KXFED-SEP26"
+
+    polymarket = markets["polymarket_us"][0].model_copy(deep=True)
+    polymarket.status = MarketStatus.CLOSED
+    polymarket.raw_market_json["question"] = polymarket.title
+
+    review_pair = verify_equivalence(mismatch, polymarket)
+    subject = str(review_pair.decision.fingerprint_a.event_subject)
+
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await _seed_persisted_rejections(store, subject, 4)
+
+    report = await backfill_historical_validation(
+        store,
+        HistoricalKalshiVenue([mismatch]),
+        HistoricalPolymarketVenue([polymarket]),
+        target_labels=50,
+    )
+
+    assert report["rejected_labels"] == 1
+    assert "REVIEW_REJECTION_EVENT_CAP_APPLIED" not in report["blockers"]
+
+
+@pytest.mark.asyncio
+async def test_global_event_slug_harvest_reaches_the_final_pool(tmp_path):
+    """The Gamma event-slug door mirrors the US one: slug-fetched markets join
+    the global source's closed pool (deduped) and the report records the
+    requested slugs, so tag-less settled ladders (June core PCE) are reachable
+    before Kalshi's pruning window closes."""
+    slug_market = fixture_markets()["polymarket_us"][0].model_copy(deep=True)
+    slug_market.status = MarketStatus.CLOSED
+    slug_market.market_id = "polymarket_global:slug-market"
+    slug_market.venue_market_id = "slug-market"
+    slug_market.raw_market_json["question"] = slug_market.title
+
+    class SlugGlobalVenue:
+        catalog_scope = "tagged:none"
+
+        def __init__(self):
+            self.requested: list[str] = []
+
+        async def list_closed_markets(self, max_pages=20):
+            return []
+
+        async def list_event_markets(self, event_slug):
+            self.requested.append(event_slug)
+            return [slug_market]
+
+        async def get_terminal_settlement_evidence(self, market_id):
+            return {
+                "source": "terminal_market_book",
+                "settlement": "1",
+                "state": "MARKET_STATE_EXPIRED",
+            }
+
+    venue = SlugGlobalVenue()
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    report = await backfill_historical_validation(
+        store,
+        HistoricalKalshiVenue([]),
+        HistoricalPolymarketVenue([]),
+        target_labels=1,
+        polymarket_global_event_slugs=("core-pce-mom-june-2026",),
+        additional_polymarket_venues={"polymarket_global": venue},
+    )
+
+    assert venue.requested == ["core-pce-mom-june-2026"]
+    assert report["polymarket_global_event_slugs"] == ["core-pce-mom-june-2026"]
+    assert report["polymarket_us_event_slug_markets"] == {"core-pce-mom-june-2026": 1}
+    assert report["venue_coverage"]["polymarket_global"]["closed_markets"] == 1
+
+
 def test_historical_label_review_pairs_reject_on_divergence_only():
     """SEMANTIC FLIP, named in the owner-signed 2026-08-13 decision
     (docs/decisions/2026-08-13-rejected-labels-from-review-pairs.md): a

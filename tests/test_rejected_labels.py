@@ -69,9 +69,26 @@ def test_review_pairs_still_can_never_approve():
         assert label != "APPROVED_EQUIVALENT"
 
 
-def test_label_priority_orders_approved_then_complement_shaped_review():
+def test_label_priority_orders_approved_then_complement_then_same_subject():
     review_complement = _cpi_tail_pair()
     assert _label_priority(review_complement) == 1
+    # Same canonical subject without complement-shaped operators: the only
+    # other shape able to mint an evidence-backed REJECTED, so it must outrank
+    # unrelated pairs before the market-pair cap truncates (a venue ladder
+    # crowded exactly these out of the 2026-08-14 GDP harvest window).
+    same_subject = verify_equivalence(
+        _market("kalshi", KALSHI_T31_TITLE, KALSHI_T31_RULES),
+        _market(
+            "polymarket_us",
+            "Will inflation be 3.4% in July?",
+            POLYMARKET_CPI_RULES.replace("3.1% or less", "be 3.4%"),
+        ),
+    )
+    fa = same_subject.decision.fingerprint_a
+    fb = same_subject.decision.fingerprint_b
+    assert fa.event_subject == fb.event_subject
+    assert same_subject.status is MatchStatus.REVIEW_REQUIRED
+    assert _label_priority(same_subject) == 2
     left = _market("kalshi", "Will something happen?", "Some rules.")
     right = _market("polymarket_us", "Will something else happen?", "Other rules.")
     # Distinct identities: the shared fixture base would otherwise hand both
@@ -79,4 +96,4 @@ def test_label_priority_orders_approved_then_complement_shaped_review():
     left.event_action = "one thing"
     right.event_action = "another thing"
     unrelated = verify_equivalence(left, right)
-    assert _label_priority(unrelated) == 2
+    assert _label_priority(unrelated) == 3

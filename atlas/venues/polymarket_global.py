@@ -93,6 +93,29 @@ class PolymarketGlobalHistoricalVenue:
                     break
         return markets
 
+    async def list_event_markets(self, event_slug: str) -> list[Market]:
+        """Targeted event-slug lookup (``/events?slug=``) — the door to settled
+        Gamma macro ladders with no known tag ID (e.g. the June 2026 core-PCE
+        events), mirroring the Polymarket US ``list_event_markets`` path. The
+        payload nests markets inside the event without an ``events`` back-link,
+        so the parent event (sans its market list) is reattached for
+        normalization. Bounded by the shared ``get_json`` retry/timeout budget;
+        an unknown slug yields an empty list."""
+        payload = await self._get("/events", params={"slug": event_slug})
+        event = next(iter(payload), {}) if isinstance(payload, list) else {}
+        if not isinstance(event, dict):
+            return []
+        items = [item for item in event.get("markets") or [] if isinstance(item, dict)]
+        parent = {key: value for key, value in event.items() if key != "markets"}
+        markets: list[Market] = []
+        for item in items:
+            enriched = {**item, "events": [parent]}
+            market_id = str(enriched.get("id") or "")
+            if market_id:
+                self._closed_markets[market_id] = enriched
+            markets.append(self._normalize_market(enriched))
+        return markets
+
     async def get_terminal_settlement_evidence(self, market_id: str) -> dict:
         item = self._closed_markets.get(str(market_id))
         if item is None:

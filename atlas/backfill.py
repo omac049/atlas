@@ -98,6 +98,7 @@ async def backfill_historical_validation(
     kalshi_event_ticker_filter: str | None = None,
     polymarket_pages: int = 20,
     polymarket_us_event_slugs: tuple[str, ...] = (),
+    polymarket_global_event_slugs: tuple[str, ...] = (),
     additional_polymarket_venues: dict[str, object] | None = None,
     additional_polymarket_pages: int = 20,
     max_candidate_events: int = 100,
@@ -121,11 +122,15 @@ async def backfill_historical_validation(
     closed: list[Market] = []
     final_polymarket: list[Market] = []
     event_slug_market_counts: dict[str, int] = {}
+    slug_requests = {
+        "polymarket_us": polymarket_us_event_slugs,
+        "polymarket_global": polymarket_global_event_slugs,
+    }
     for source_name, source_venue, page_limit in source_specs:
         source_closed = await source_venue.list_closed_markets(max_pages=page_limit)
-        if source_name == "polymarket_us" and polymarket_us_event_slugs:
+        if source_slugs := slug_requests.get(source_name):
             harvested = await _harvest_event_slug_markets(
-                source_venue, polymarket_us_event_slugs, event_slug_market_counts, blockers
+                source_venue, source_slugs, event_slug_market_counts, blockers, source_name
             )
             source_closed = _dedup_markets_by_id([*source_closed, *harvested])
         source_final = await _finalize_polymarket_markets(source_closed, source_venue, concurrency)
@@ -235,6 +240,10 @@ async def backfill_historical_validation(
             blockers["KALSHI_FINAL_BINARY_EVIDENCE_UNAVAILABLE"] += missing_final
         if fetch_failed:
             blockers["KALSHI_EVENT_MARKET_FETCH_FAILED"] += 1
+    # Verification already ran on every pair above, so the priority sort must
+    # come BEFORE the cap: truncating first let one venue ladder crowd
+    # approval/complement-shaped pairs out of the reviewed window entirely.
+    market_pairs = sorted(market_pairs, key=_label_priority)
     if len(market_pairs) > max_market_pairs:
         blockers["HISTORICAL_MARKET_PAIR_CAP_APPLIED"] += 1
         market_pairs = market_pairs[:max_market_pairs]
@@ -242,8 +251,9 @@ async def backfill_historical_validation(
     new_labels = 0
     resolved_pairs = 0
     inconclusive_pairs = 0
-    review_rejections_by_event: dict[str, int] = {}
-    market_pairs = sorted(market_pairs, key=_label_priority)
+    # Seeded from persisted labels so the per-event bound holds across runs;
+    # the crypto per-run counter below intentionally still starts at zero.
+    review_rejections_by_event = await store.review_rejection_counts_by_subject()
     for pair in market_pairs:
         if resolved_pairs >= max_resolved_pairs:
             blockers["HISTORICAL_RESOLVED_PAIR_CAP_APPLIED"] += 1
@@ -352,6 +362,7 @@ async def backfill_historical_validation(
         "polymarket_closed_markets": len(closed),
         "polymarket_final_binary_markets": len(final_polymarket),
         "polymarket_us_event_slugs": list(polymarket_us_event_slugs),
+        "polymarket_global_event_slugs": list(polymarket_global_event_slugs),
         "polymarket_us_event_slug_markets": event_slug_market_counts,
         "venue_coverage": venue_coverage,
         "kalshi_events_scanned": len(events),
@@ -383,21 +394,23 @@ async def _harvest_event_slug_markets(
     event_slugs: tuple[str, ...],
     counts: dict[str, int],
     blockers: Counter[str],
+    source_name: str = "polymarket_us",
 ) -> list[Market]:
-    """Targeted event-slug door for settled US-venue macro ladders the
-    recent-id closed sweep cannot reach. Every harvested market still passes
-    the same terminal final-binary evidence filter as swept markets."""
+    """Targeted event-slug door for settled macro ladders the recent-id (US)
+    or tag-scoped (Global) closed sweeps cannot reach. Every harvested market
+    still passes the same terminal final-binary evidence filter as swept
+    markets."""
     harvested: list[Market] = []
     for event_slug in event_slugs:
         try:
             slug_markets = await venue.list_event_markets(event_slug)
         except (httpx.HTTPError, KeyError, TypeError, ValueError):
             counts[event_slug] = 0
-            blockers["POLYMARKET_US_EVENT_SLUG_FETCH_FAILED"] += 1
+            blockers[f"{source_name.upper()}_EVENT_SLUG_FETCH_FAILED"] += 1
             continue
         counts[event_slug] = len(slug_markets)
         if not slug_markets:
-            blockers["POLYMARKET_US_EVENT_SLUG_EMPTY"] += 1
+            blockers[f"{source_name.upper()}_EVENT_SLUG_EMPTY"] += 1
         harvested.extend(slug_markets)
     return harvested
 
@@ -580,9 +593,10 @@ _COMPLEMENT_OPERATOR_PAIRS = {(">", "<="), ("<=", ">"), (">=", "<"), ("<", ">=")
 
 
 def _label_priority(pair: ContractPair) -> int:
-    """Approved pairs first, complement-shaped review pairs next, so the
-    resolved-pair and per-event caps never crowd out the most informative
-    labels."""
+    """Approved pairs first, complement-shaped review pairs next, then any
+    same-canonical-subject review pair (the only other shape that can mint an
+    evidence-backed REJECTED), so the market-pair, resolved-pair, and per-event
+    caps never crowd out the labelable pairs behind unrelated ladder floods."""
     if pair.status in {MatchStatus.APPROVED_EQUIVALENT, MatchStatus.APPROVED_INVERSE}:
         return 0
     if pair.status is MatchStatus.REVIEW_REQUIRED and pair.decision is not None:
@@ -592,4 +606,6 @@ def _label_priority(pair: ContractPair) -> int:
             right.threshold_operator,
         ) in _COMPLEMENT_OPERATOR_PAIRS and left.threshold == right.threshold:
             return 1
-    return 2
+        if left.event_subject and left.event_subject == right.event_subject:
+            return 2
+    return 3
