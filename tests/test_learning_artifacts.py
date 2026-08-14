@@ -3,7 +3,7 @@ import json
 import pytest
 
 from atlas.backfill import backfill_historical_validation
-from atlas.learning import export_training_bundle
+from atlas.learning import example_family, export_training_bundle
 from atlas.models import MarketStatus
 from atlas.storage import AtlasStore
 from atlas.venues.fixtures import fixture_markets
@@ -70,8 +70,44 @@ async def test_completed_backfill_exports_provenance_bundle_without_live_io(tmp_
     assert manifest["label_mix"]["APPROVED_EQUIVALENT"] == 1
     assert manifest["counts"]["trusted_labels"] == 1
     assert manifest["trust_policy"]["review_and_inconclusive_exported"] is False
+    # The fixture pair is a generic binary (market_type "binary"), so its
+    # honest family is "other"; real macro rows carry "economic".
+    assert manifest["label_families"] == {"other": {"APPROVED_EQUIVALENT": 1}}
     assert (tmp_path / "training" / "atlas.jsonl").exists()
     assert (tmp_path / "training" / "atlas-eval.jsonl").exists()
+    exported_rows = [
+        json.loads(line)
+        for path in ("atlas.jsonl", "atlas-eval.jsonl")
+        for line in (tmp_path / "training" / path).read_text().splitlines()
+    ]
+    assert all(row["family"] == "other" for row in exported_rows)
+
+
+def test_example_family_slices_hard_negative_families():
+    """Sports/crypto rejections are curriculum families, not discards: the
+    family tag is derived only from the recorded fingerprint so exports can be
+    weighted and evaluated per family (the 2026-08-14 tennis rejections are
+    hard negatives — same-subject pairs the candidate matcher itself chose)."""
+
+    def example(market_type, subject):
+        return {
+            "label": "REJECTED",
+            "payload": {
+                "decision": {
+                    "fingerprint_a": {"market_type": market_type, "event_subject": subject}
+                }
+            },
+        }
+
+    assert example_family(example("economic", "us_cpi_yoy|2026-07")) == "economic"
+    assert (
+        example_family(example("spread", "alexander shevchenko|botic van de zandschulp|2026-08-14"))
+        == "sports"
+    )
+    assert example_family(example(None, "crypto_price|btc|2026-08-13T16:00Z")) == "crypto"
+    assert example_family(example("weather", "ksfo_high_temp|2026-08-14")) == "weather"
+    assert example_family(example(None, "something else")) == "other"
+    assert example_family({"label": "REJECTED", "payload": {}}) == "other"
 
 
 @pytest.mark.asyncio

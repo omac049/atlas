@@ -109,6 +109,12 @@ async def export_training_bundle(
         if unverified:
             excluded_rows_by_label[f"{label}:UNVERIFIED"] = unverified
     loop = await learning_loop_status(store)
+    family_mix: dict[str, dict[str, int]] = {}
+    for example in await _trusted_export_examples(store):
+        family = example_family(example)
+        label = str(example["label"])
+        family_mix.setdefault(family, {})
+        family_mix[family][label] = family_mix[family].get(label, 0) + 1
     manifest = {
         "schema_version": 1,
         "artifact": "atlas-learning-export",
@@ -140,6 +146,10 @@ async def export_training_bundle(
             "APPROVED_EQUIVALENT": trusted_counts.get("APPROVED_EQUIVALENT", 0),
             "REJECTED": trusted_counts.get("REJECTED", 0),
         },
+        # Per-family curriculum mix so training experiments can weight or
+        # stratify hard-negative families (sports/crypto) against the sparse
+        # macro classes instead of discarding them.
+        "label_families": family_mix,
         "excluded_rows_by_label": excluded_rows_by_label,
         "trust_policy": {
             "trusted_labels_only": True,
@@ -193,6 +203,37 @@ async def _trusted_export_examples(store: AtlasStore) -> list[dict[str, object]]
     return trusted
 
 
+# Sports book structures (spreads, moneylines, totals) share a family: they are
+# abundant, evidence-backed HARD negatives (the candidate matcher selected them
+# as lexically similar), but they must stay a controllable slice of the training
+# mix so they cannot drown the sparse macro lessons.
+_SPORTS_MARKET_TYPES = {"spread", "moneyline", "total", "sports"}
+
+
+def example_family(example: dict[str, object]) -> str:
+    """Deterministic curriculum family for one labeled example.
+
+    Derived from the recorded fingerprint only — never re-inferred from text —
+    so exports can be sliced, weighted, and evaluated per family without
+    changing which labels exist.
+    """
+    payload = example.get("payload")
+    decision = payload.get("decision") if isinstance(payload, dict) else None
+    fingerprint = decision.get("fingerprint_a") if isinstance(decision, dict) else None
+    fingerprint = fingerprint if isinstance(fingerprint, dict) else {}
+    subject = str(fingerprint.get("event_subject") or "")
+    market_type = str(fingerprint.get("market_type") or "")
+    if subject.startswith("crypto_price|"):
+        return "crypto"
+    if market_type == "economic":
+        return "economic"
+    if market_type in _SPORTS_MARKET_TYPES:
+        return "sports"
+    if market_type in {"election", "weather"}:
+        return market_type
+    return "other"
+
+
 def _write_examples(examples: list[dict[str, object]], path: str) -> None:
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -202,6 +243,7 @@ def _write_examples(examples: list[dict[str, object]], path: str) -> None:
             handle.write(
                 json.dumps(
                     {
+                        "family": example_family(example),
                         "messages": [
                             {
                                 "role": "system",
