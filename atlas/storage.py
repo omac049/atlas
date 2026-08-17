@@ -77,6 +77,8 @@ CREATE TABLE IF NOT EXISTS validation_cases (
   pair_id TEXT PRIMARY KEY, source_kind TEXT NOT NULL, decision_status TEXT NOT NULL,
   guarantee_a TEXT NOT NULL, guarantee_b TEXT NOT NULL, tracking_status TEXT NOT NULL,
   created_at TEXT NOT NULL, updated_at TEXT NOT NULL, last_checked_at TEXT,
+  pending_reason TEXT, next_poll_at TEXT, retry_count INTEGER NOT NULL DEFAULT 0,
+  max_retries INTEGER NOT NULL DEFAULT 5, last_retry_at TEXT,
   payload_json TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS validation_outcomes (
@@ -98,6 +100,24 @@ class AtlasStore:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         async with aiosqlite.connect(self.path) as db:
             await db.executescript(SCHEMA)
+            columns = {
+                row[1]
+                for row in await (await db.execute("PRAGMA table_info(validation_cases)")).fetchall()
+            }
+            migrations = {
+                "pending_reason": "ALTER TABLE validation_cases ADD COLUMN pending_reason TEXT",
+                "next_poll_at": "ALTER TABLE validation_cases ADD COLUMN next_poll_at TEXT",
+                "retry_count": (
+                    "ALTER TABLE validation_cases ADD COLUMN retry_count INTEGER NOT NULL DEFAULT 0"
+                ),
+                "max_retries": (
+                    "ALTER TABLE validation_cases ADD COLUMN max_retries INTEGER NOT NULL DEFAULT 5"
+                ),
+                "last_retry_at": "ALTER TABLE validation_cases ADD COLUMN last_retry_at TEXT",
+            }
+            for column, statement in migrations.items():
+                if column not in columns:
+                    await db.execute(statement)
             await db.commit()
 
     async def save_markets(self, markets: list[Market]) -> None:
@@ -554,8 +574,10 @@ class AtlasStore:
             cursor = await db.execute(
                 """INSERT OR IGNORE INTO validation_cases
                 (pair_id, source_kind, decision_status, guarantee_a, guarantee_b,
-                 tracking_status, created_at, updated_at, last_checked_at, payload_json)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)""",
+                 tracking_status, created_at, updated_at, last_checked_at,
+                 pending_reason, next_poll_at, retry_count, max_retries, last_retry_at,
+                 payload_json)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?)""",
                 (
                     case["pair_id"],
                     case["source_kind"],
@@ -565,6 +587,11 @@ class AtlasStore:
                     case.get("tracking_status", "AWAITING_SETTLEMENT"),
                     now,
                     now,
+                    case.get("pending_reason"),
+                    case.get("next_poll_at"),
+                    max(0, int(case.get("retry_count", 0))),
+                    max(1, min(int(case.get("max_retries", 5)), 100)),
+                    case.get("last_retry_at"),
                     json.dumps(case["payload"]),
                 ),
             )
@@ -572,17 +599,23 @@ class AtlasStore:
         return cursor.rowcount > 0
 
     async def pending_validation_cases(
-        self, limit: int = 20
+        self, limit: int = 20, *, due_only: bool = False, now: datetime | None = None
     ) -> list[dict[str, object]]:
         await self.initialize()
+        now_iso = (now or datetime.now(UTC)).isoformat()
         async with aiosqlite.connect(self.path) as db:
+            due_clause = "AND (next_poll_at IS NULL OR next_poll_at <= ?)" if due_only else ""
+            params: tuple[object, ...] = (now_iso, limit) if due_only else (limit,)
             rows = await (
                 await db.execute(
-                    """SELECT pair_id, source_kind, decision_status, guarantee_a,
-                    guarantee_b, tracking_status, last_checked_at, payload_json
+                    f"""SELECT pair_id, source_kind, decision_status, guarantee_a,
+                    guarantee_b, tracking_status, last_checked_at, pending_reason,
+                    next_poll_at, retry_count, max_retries, last_retry_at, payload_json
                     FROM validation_cases WHERE tracking_status = 'AWAITING_SETTLEMENT'
-                    ORDER BY created_at LIMIT ?""",
-                    (limit,),
+                    {due_clause}
+                    ORDER BY CASE WHEN next_poll_at IS NULL THEN 0 ELSE 1 END,
+                             next_poll_at, created_at LIMIT ?""",
+                    params,
                 )
             ).fetchall()
         return [
@@ -594,21 +627,70 @@ class AtlasStore:
                 "guarantee_b": row[4],
                 "tracking_status": row[5],
                 "last_checked_at": row[6],
-                "payload": json.loads(row[7]),
+                "pending_reason": row[7],
+                "next_poll_at": row[8],
+                "retry_count": int(row[9] or 0),
+                "max_retries": int(row[10] or 5),
+                "last_retry_at": row[11],
+                "poll_eligible": row[8] is None or row[8] <= now_iso,
+                "payload": json.loads(row[12]),
             }
             for row in rows
         ]
 
     async def mark_validation_checked(
-        self, pair_id: str, tracking_status: str = "AWAITING_SETTLEMENT"
+        self,
+        pair_id: str,
+        tracking_status: str = "AWAITING_SETTLEMENT",
+        *,
+        pending_reason: str | None = None,
+        next_poll_at: str | None = None,
+        retry_count: int | None = None,
+        max_retries: int | None = None,
     ) -> None:
         await self.initialize()
         now = datetime.now(UTC).isoformat()
         async with aiosqlite.connect(self.path) as db:
             await db.execute(
                 """UPDATE validation_cases SET tracking_status = ?, updated_at = ?,
-                last_checked_at = ? WHERE pair_id = ?""",
-                (tracking_status, now, now, pair_id),
+                last_checked_at = ?, pending_reason = COALESCE(?, pending_reason),
+                next_poll_at = COALESCE(?, next_poll_at),
+                retry_count = CASE WHEN ? IS NULL THEN MIN(retry_count + 1, max_retries)
+                                   ELSE MIN(?, max_retries) END,
+                max_retries = CASE WHEN ? IS NULL THEN max_retries
+                                   ELSE MAX(1, MIN(?, 100)) END,
+                last_retry_at = ? WHERE pair_id = ?""",
+                (
+                    tracking_status,
+                    now,
+                    now,
+                    pending_reason,
+                    next_poll_at,
+                    retry_count,
+                    max(0, int(retry_count)) if retry_count is not None else None,
+                    max_retries,
+                    max(1, min(int(max_retries), 100)) if max_retries is not None else None,
+                    now,
+                    pair_id,
+                ),
+            )
+            await db.commit()
+
+    async def update_validation_pending(
+        self,
+        pair_id: str,
+        *,
+        pending_reason: str,
+        next_poll_at: str,
+    ) -> None:
+        """Record why a case was deferred without pretending it was polled."""
+        await self.initialize()
+        now = datetime.now(UTC).isoformat()
+        async with aiosqlite.connect(self.path) as db:
+            await db.execute(
+                """UPDATE validation_cases SET updated_at = ?, pending_reason = ?,
+                next_poll_at = ? WHERE pair_id = ?""",
+                (now, pending_reason, next_poll_at, pair_id),
             )
             await db.commit()
 
@@ -686,7 +768,12 @@ class AtlasStore:
                 await db.execute(
                     """SELECT COUNT(*),
                     SUM(CASE WHEN tracking_status = 'AWAITING_SETTLEMENT' THEN 1 ELSE 0 END),
-                    SUM(CASE WHEN tracking_status = 'RESOLVED' THEN 1 ELSE 0 END)
+                    SUM(CASE WHEN tracking_status = 'RESOLVED' THEN 1 ELSE 0 END),
+                    SUM(CASE WHEN tracking_status = 'AWAITING_SETTLEMENT'
+                              AND (next_poll_at IS NULL OR next_poll_at <= datetime('now'))
+                             THEN 1 ELSE 0 END),
+                    SUM(CASE WHEN tracking_status = 'AWAITING_SETTLEMENT'
+                              AND retry_count >= max_retries THEN 1 ELSE 0 END)
                     FROM validation_cases"""
                 )
             ).fetchone()
@@ -708,6 +795,8 @@ class AtlasStore:
             "cases": int(cases[0] or 0),
             "awaiting_settlement": int(cases[1] or 0),
             "resolved_cases": int(cases[2] or 0),
+            "poll_eligible": int(cases[3] or 0),
+            "retry_exhausted": int(cases[4] or 0),
             "confirmed": int(outcomes[0] or 0),
             "diverged": int(outcomes[1] or 0),
             "inconclusive": int(outcomes[2] or 0),
@@ -820,15 +909,33 @@ class AtlasStore:
         return [json.loads(row[0]) for row in rows]
 
     async def all_gap_observations(self, limit: int = 50000) -> list[dict[str, object]]:
+        """Gap observations oldest-first, keeping the NEWEST `limit` rows.
+
+        Callers need ascending order (the bankroll meter compounds chronologically),
+        but a plain `ORDER BY created_at ASC LIMIT n` keeps the *oldest* n and drops
+        everything after it. At the observed ~1.7k rows/day that would have silently
+        frozen the watch board on month-old data while it still read as live. Select
+        the newest rows first, then restore ascending order.
+        """
         await self.initialize()
         async with aiosqlite.connect(self.path) as db:
             rows = await (
                 await db.execute(
-                    "SELECT payload_json FROM gap_observations ORDER BY created_at ASC LIMIT ?",
+                    """SELECT payload_json FROM (
+                           SELECT payload_json, created_at FROM gap_observations
+                           ORDER BY created_at DESC LIMIT ?
+                       ) ORDER BY created_at ASC""",
                     (limit,),
                 )
             ).fetchall()
         return [json.loads(row[0]) for row in rows]
+
+    async def gap_observation_count(self) -> int:
+        """Total recorded observations, so a truncated load can say so."""
+        await self.initialize()
+        async with aiosqlite.connect(self.path) as db:
+            row = await (await db.execute("SELECT COUNT(*) FROM gap_observations")).fetchone()
+        return int(row[0]) if row else 0
 
     async def save_shadow_observation(self, observation: dict[str, object]) -> None:
         await self.initialize()

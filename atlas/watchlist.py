@@ -233,9 +233,19 @@ def _sort_key(row: dict[str, object]) -> tuple:
 
 
 def build_watchlist(
-    observations: list[dict], *, limit: int = 100, now: datetime | None = None
+    observations: list[dict],
+    *,
+    limit: int = 100,
+    now: datetime | None = None,
+    total_observations: int | None = None,
 ) -> dict[str, object]:
-    """One row per event subject, widest live gap first."""
+    """One row per event subject, widest live gap first.
+
+    `total_observations` is how many exist in storage. When the caller loaded
+    fewer, the all-time figures below are computed from a window rather than the
+    whole record, and the report says so instead of quietly relabelling a partial
+    range as all-time.
+    """
     now = now or datetime.now(UTC)
     grouped: dict[str, list[dict]] = {}
     for observation in observations:
@@ -259,6 +269,12 @@ def build_watchlist(
         "executable_now": len(executable),
         "widest_gap": str(widest) if widest is not None else None,
         "observations_reviewed": len(observations),
+        "observations_recorded": total_observations
+        if total_observations is not None
+        else len(observations),
+        "history_truncated": bool(
+            total_observations is not None and total_observations > len(observations)
+        ),
         "history_points": HISTORY_POINTS,
         "windows": [name for name, _ in WINDOWS],
         "default_window": DEFAULT_WINDOW,

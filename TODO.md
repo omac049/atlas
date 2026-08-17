@@ -1,6 +1,8 @@
 # Atlas continuation checklist
 
-Last updated: 2026-08-17 (408 tests green; **the scheduled tag backfill ran to `BATCH_COMPLETE` for the first time ever** — it had timed out on every tag since it shipped because each tag re-fetched a ~110s tag-independent catalog inside its own 120s budget; the batch now fetches that catalog once and shares it, and the first working run took the vault from 62 to 72 trusted labels)
+Last updated: 2026-08-17 (adaptive settlement polling is integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, and bounded retry metadata; 450 tests green)
+
+Current handoff note (2026-08-17): the runtime has 72 trusted labels (8 approved, 64 rejected), learning readiness is `READY`, and the next product milestone is frozen-holdout evaluation plus evidence-frontier improvement. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
 
@@ -11,6 +13,12 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
 - [x] Continuous live monitor is running with `pairs watch --live`.
 - [x] Polymarket US and tagged Polymarket Global historical catalogs are connected.
 - [x] Historical settlement evidence is required before creating trusted labels.
+- [x] Validation reconciliation refreshes both legs through `get_terminal_settlement_evidence` when available, with the legacy settlement endpoint as a bounded compatibility fallback.
+- [x] Kalshi resolved-market terminal results are normalized into structured evidence and persisted beside Polymarket terminal evidence.
+- [x] Validation outcomes persist per-leg terminal evidence sources for auditability.
+- [x] Settlement polling prioritizes expected readiness and suppresses checks before close/resolution timing.
+- [x] Pending settlement cases persist reason codes, next eligible poll time, and bounded retry metadata.
+- [x] API overview exposes settlement polling state for operator-visible diagnosis.
 - [x] `REVIEW_REQUIRED` pairs remain inconclusive and cannot become training labels.
 - [x] Historical scans are bounded by candidate-event, market-pair, and resolved-pair caps.
 - [x] Latest bounded probe: 50 candidate events, 500 pairs, 0 approved, 0 rejected, 500 inconclusive.
@@ -38,9 +46,10 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
 
 ## Current blockers
 
-- No trusted settled cross-venue pair has been found yet; the latest batch produced 0 approved and 0 rejected labels.
-- The learning loop remains intentionally blocked at `LABEL_MIX_BLOCKED` because it has 0 trusted labels and 279 unlabeled observations at the latest check.
-- The catalog evidence currently shows no cross-venue settled overlap for Crypto or Weather, and capped inconclusive review for Commodities.
+- Reachable candidates remain blocked by published venue-text gaps, especially Kalshi terminal fallback/revision language for CPI and Polymarket rounding/fallback language for FOMC.
+- No candidate is execution-ready; paper-only and never-executed safeguards remain mandatory.
+- The next learning decision is evaluation quality, not label accumulation: define family-balanced holdout metrics before training or changing normalization rules.
+- Polling is now adaptive, but venue policy gaps remain external evidence blockers; do not convert retryable/pending states into approvals.
 
 ## Active milestone status
 
@@ -48,7 +57,8 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
 - [x] Automated live discovery, settlement evidence capture, reconciliation, and paper-only safeguards are operating.
 - [x] **First real trusted pairs achieved 2026-08-13 — three `APPROVED_EQUIVALENT` labels** from the settled July 2026 FOMC meeting (`KXFEDDECISION-26JUL-H0` × PM no-change, `-H26` × PM 50+, `-C26` × PM −50+), minted by the signed-off preimage-equality rule on the real bounded backfill (`MILESTONE_IN_PROGRESS`, `new_labels=3`, `trusted_settlement_labels=APPROVED_EQUIVALENT=3`). Both legs `GUARANTEED`, terminal outcomes consistent on both venues, full provenance persisted.
 - [x] Current queue is observable: 12 ranked candidates, all `BLOCKED`; none are yet guarantee-complete.
-- [x] Milestone closed: three real pairs passed deterministic verification with terminal outcomes published on both venues. Next milestone: the balanced trusted dataset (50+ labels, both approved and rejected classes) — the learning loop stays correctly blocked until then.
+- [x] Milestone closed: three real pairs passed deterministic verification with terminal outcomes published on both venues.
+- [x] Balanced trusted dataset milestone closed: 72 trusted labels (8 approved, 64 rejected), with `training_ready=True`.
 
 ## Current engineering target — source completeness and transition observability
 
@@ -222,8 +232,22 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   toward one event and stop short of meeting — the unclosed apex is the gap. Split crossbar repeats
   the spread; radar sweep is the monitor scanning both catalogs. Inline SVG themed off the existing
   CSS tokens, `prefers-reduced-motion` respected, favicon redrawn to match at 16px.
-- [ ] Not started: persist a daily open/close per pair so the board can show a true session change
-  across monitor restarts, rather than recomputing windows from the full observation history.
+- [x] **Dated latent bug found and fixed while planning the next step: the watch board would have
+  silently frozen in ~25 days.** `AtlasStore.all_gap_observations` selected
+  `ORDER BY created_at ASC LIMIT 50000`, which keeps the **oldest** 50,000 rows and drops
+  everything after. Callers need ascending order (the bankroll meter compounds chronologically),
+  so the ASC was deliberate — but combined with the cap it means that once the table passes 50k the
+  board stops seeing new observations entirely while still rendering as live. At the measured
+  ~1,660 observations/day (8,302 recorded over five days) that lands around 2026-09-11. Now selects
+  the newest rows first and restores ascending order; pinned by a regression test that fails against
+  the old query.
+- [x] **A capped load now reports itself.** `build_watchlist(..., total_observations=...)` sets
+  `history_truncated` when fewer rows were loaded than exist, and the board replaces its footer with
+  an explicit warning — otherwise the ALL window and every all-time high/low would be computed from
+  a slice and labelled all-time. Currently `false` (8,302 of 8,302).
+- [ ] Still open: per-pair daily rollups so the ALL window need not load the full table on every
+  request (`/api/overview` measured at ~1.1s, polled every 15s). Deferred deliberately — it touches
+  `atlas/storage.py`, which a concurrent session is actively editing (settlement polling).
 
 ## 2026-08-17 — approval-frontier watch (`atlas pairs frontier`)
 
@@ -306,7 +330,7 @@ training run. The result argues against running one yet, and the reason is struc
 
 - [ ] Label mix is now 8 approved / 64 rejected. The negative class grows automatically on every release while approvals stay gated on venue-text alignment — check the `label_families` mix before any training run, and prefer approval-frontier work (venue-text watches) over more rejection volume.
 
-## Next milestone: first trusted positive label
+## Historical milestone notes (superseded by the current handoff at the top)
 
 The next milestone is one settled cross-venue pair that passes deterministic verification as either:
 

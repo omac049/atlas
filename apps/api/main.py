@@ -69,8 +69,29 @@ async def overview() -> dict:
     shadow = await store.latest_shadow_observation()
     shadow_validation = await store.shadow_validation_summary()
     validation = await store.validation_summary()
+    pending_validation_cases = await store.pending_validation_cases(limit=20)
+    validation["pending_cases"] = [
+        {
+            key: case[key]
+            for key in (
+                "pair_id",
+                "source_kind",
+                "decision_status",
+                "tracking_status",
+                "pending_reason",
+                "next_poll_at",
+                "retry_count",
+                "max_retries",
+                "last_retry_at",
+                "last_checked_at",
+                "poll_eligible",
+            )
+        }
+        for case in pending_validation_cases
+    ]
     historical_backfill = await store.latest_historical_backfill()
     gap_observations = await store.all_gap_observations()
+    gap_observation_total = await store.gap_observation_count()
     recent_gaps = await store.recent_gap_observations(6)
     recent_backfills = await store.recent_historical_backfills(limit=6)
     training_readiness = await learning_readiness(store)
@@ -142,7 +163,11 @@ async def overview() -> dict:
         "historical_backfill": historical_backfill,
         "historical_backfill_runs": [_backfill_run_summary(run) for run in recent_backfills],
         # Same observation list the bankroll summary already consumes — no extra I/O.
-        "watchlist": build_watchlist(gap_observations),
+        # The recorded count comes along so a capped load reports itself instead of
+        # presenting a partial window as the full history.
+        "watchlist": build_watchlist(
+            gap_observations, total_observations=gap_observation_total
+        ),
         "gap_radar": {
             "summary": paper_bankroll_summary(gap_observations),
             "recent": [

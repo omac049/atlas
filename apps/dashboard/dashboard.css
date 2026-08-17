@@ -362,6 +362,7 @@ span[title] {
 .spark--up polyline { stroke: var(--ok); }
 .spark--down polyline { stroke: var(--danger); }
 .spark--empty { color: var(--faint); }
+.board-note.is-warning { color: var(--warn); border-top-color: var(--warn-line); }
 .board-note {
   margin-top: var(--s4);
   padding-top: var(--s3);

@@ -197,6 +197,12 @@ function renderWatchboard(data, trainingLabels, trainingTarget) {
   $('tape-rules-moved').textContent = fmt(frontier.rules_changed_recently || 0);
   const latest = watchState.rows.map((row) => row.last_observed_at).sort().pop();
   $('tape-scan').textContent = latest ? age(latest).toUpperCase() : '—';
+  // A truncated load must never present itself as the full record: the "all"
+  // window and every all-time high/low would be computed from a slice.
+  $('watch-note').textContent = watchlist.history_truncated
+    ? `HISTORY TRUNCATED — showing the newest ${fmt(watchlist.observations_reviewed)} of ${fmt(watchlist.observations_recorded)} observations; ALL-window figures cover that slice only. Candidates only — never executed.`
+    : 'Candidates only — never executed. A positive gap is a research signal, not a trade.';
+  $('watch-note').classList.toggle('is-warning', Boolean(watchlist.history_truncated));
   $('board-detail').textContent = watchlist.tracked_subjects
     ? `${fmt(watchlist.tracked_subjects)} shape-matched candidates across ${fmt(watchlist.observations_reviewed || 0)} radar observations. Gap is the latest reading; Δ, range, and trend follow the selected window. Click any row for its verdict codes and full history — candidates only, not proven twins.`
     : 'Waiting for the first radar scan.';

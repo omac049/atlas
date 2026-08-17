@@ -301,3 +301,28 @@ def test_watchlist_reports_no_episodes_for_a_pair_that_never_became_executable()
     assert row["crossings_total"] == 0
     assert row["crossings"] == []
     assert row["last_crossing_at"] is None
+
+
+def test_watchlist_reports_a_truncated_load_instead_of_relabelling_it_all_time():
+    """If the caller loaded fewer rows than exist, the ALL window covers a slice.
+    Presenting that as all-time would quietly understate every range."""
+    watchlist = build_watchlist(
+        [_at(1, "-0.01"), _at(0.5, "-0.02")], now=NOW, total_observations=50_000
+    )
+
+    assert watchlist["observations_reviewed"] == 2
+    assert watchlist["observations_recorded"] == 50_000
+    assert watchlist["history_truncated"] is True
+
+
+def test_watchlist_is_not_truncated_when_the_full_record_was_loaded():
+    watchlist = build_watchlist([_at(1, "-0.01")], now=NOW, total_observations=1)
+
+    assert watchlist["history_truncated"] is False
+
+
+def test_watchlist_defaults_to_untruncated_when_no_total_is_supplied():
+    watchlist = build_watchlist([_at(1, "-0.01")], now=NOW)
+
+    assert watchlist["history_truncated"] is False
+    assert watchlist["observations_recorded"] == 1

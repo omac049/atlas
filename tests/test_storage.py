@@ -369,3 +369,28 @@ async def test_recent_historical_backfills_bound_the_requested_limit(tmp_path):
     await store.save_historical_backfill({"status": "NO_NEW_TRUSTED_LABELS"})
     assert len(await store.recent_historical_backfills(limit=0)) == 1
     assert len(await store.recent_historical_backfills(limit=500)) == 1
+
+
+@pytest.mark.asyncio
+async def test_all_gap_observations_keeps_the_newest_rows_under_the_cap(tmp_path):
+    """A plain `ORDER BY created_at ASC LIMIT n` keeps the OLDEST n and drops
+    everything after, which would have silently frozen the watch board on stale
+    data once the cap was reached (~25 days out at the observed rate)."""
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    for index in range(5):
+        await store.save_gap_observation(
+            {
+                "observation_id": f"obs-{index}",
+                "observed_at": f"2026-08-{10 + index:02d}T00:00:00+00:00",
+                "best_gap": f"-0.0{index}",
+            }
+        )
+
+    loaded = await store.all_gap_observations(limit=3)
+
+    assert [row["observation_id"] for row in loaded] == ["obs-2", "obs-3", "obs-4"]
+    # Still ascending: the bankroll meter compounds chronologically.
+    assert [row["observed_at"] for row in loaded] == sorted(
+        row["observed_at"] for row in loaded
+    )
+    assert await store.gap_observation_count() == 5
