@@ -34,6 +34,18 @@ WINDOWS: tuple[tuple[str, int | None], ...] = (
 )
 DEFAULT_WINDOW = "24h"
 
+# A pair turning executable is the only genuinely time-sensitive event on the
+# board — a gap that survives depth right now, and usually will not for long.
+CROSSINGS_PER_ROW = 8
+RECENT_CROSSING_HOURS = 24
+RECENT_CROSSINGS_SHOWN = 12
+
+# Live pairs flicker across the executable threshold on almost every scan (one
+# observed pair produced 155 rising edges in five days, always at the same gap).
+# Alerting on every edge would bury the next real one, so consecutive edges are
+# folded into a single episode until the pair has been quiet for this long.
+CROSSING_COOLDOWN_MINUTES = 30
+
 
 def _decimal(raw: object) -> Decimal | None:
     if raw is None:
@@ -73,6 +85,53 @@ def _direction(delta: Decimal | None) -> str:
     if delta < -FLAT_GAP_DELTA:
         return "NARROWING"
     return "FLAT"
+
+
+def _crossings(observations: list[dict]) -> list[dict[str, object]]:
+    """Episodes where a pair became executable, not every threshold flicker.
+
+    A pair that dips out of executable for one scan and back in has not produced
+    two opportunities — it produced one that is still running. Each episode
+    reports when it opened, when it was last seen, and the best gap reached
+    inside it, so the strip says "since 20:09, peak +3.0¢" rather than repeating
+    the same alert every few minutes.
+    """
+    episodes: list[dict[str, object]] = []
+    cooldown = timedelta(minutes=CROSSING_COOLDOWN_MINUTES)
+    current: dict[str, object] | None = None
+    last_executable_at: datetime | None = None
+
+    for observation in observations:
+        if not observation.get("executable_gap"):
+            continue
+        observed = _parse_timestamp(observation.get("observed_at"))
+        gap = _decimal(observation.get("best_gap"))
+        continues = (
+            current is not None
+            and observed is not None
+            and last_executable_at is not None
+            and observed - last_executable_at <= cooldown
+        )
+        if continues and current is not None:
+            current["observations"] = int(current["observations"]) + 1
+            current["last_executable_at"] = str(observation.get("observed_at") or "")
+            peak = _decimal(current["peak_gap"])
+            if gap is not None and (peak is None or gap > peak):
+                current["peak_gap"] = str(gap)
+        else:
+            current = {
+                "observed_at": str(observation.get("observed_at") or ""),
+                "last_executable_at": str(observation.get("observed_at") or ""),
+                "best_gap": str(observation.get("best_gap") or ""),
+                "peak_gap": str(gap) if gap is not None else None,
+                "best_basket": str(observation.get("best_basket") or ""),
+                "verification_status": str(observation.get("verification_status") or ""),
+                "observations": 1,
+            }
+            episodes.append(current)
+        if observed is not None:
+            last_executable_at = observed
+    return episodes
 
 
 def _window_stats(observations: list[dict], hours: int | None, now: datetime) -> dict[str, object]:
@@ -117,6 +176,7 @@ def _window_stats(observations: list[dict], hours: int | None, now: datetime) ->
 def _row(subject: str, observations: list[dict], now: datetime) -> dict[str, object]:
     """Collapse one subject's ordered observations into a single board row."""
     latest = observations[-1]
+    crossings = _crossings(observations)
     gaps = [gap for gap in (_decimal(o.get("best_gap")) for o in observations) if gap is not None]
     latest_gap = _decimal(latest.get("best_gap"))
     previous_gap = gaps[-2] if len(gaps) > 1 else None
@@ -155,6 +215,9 @@ def _row(subject: str, observations: list[dict], now: datetime) -> dict[str, obj
         "windows": {
             name: _window_stats(observations, hours, now) for name, hours in WINDOWS
         },
+        "crossings_total": len(crossings),
+        "crossings": crossings[-CROSSINGS_PER_ROW:],
+        "last_crossing_at": crossings[-1]["observed_at"] if crossings else None,
     }
 
 
@@ -200,5 +263,33 @@ def build_watchlist(
         "windows": [name for name, _ in WINDOWS],
         "default_window": DEFAULT_WINDOW,
         "generated_at": now.isoformat(),
+        "recent_crossings": _recent_crossings(rows, now),
+        "crossing_window_hours": RECENT_CROSSING_HOURS,
         "rows": rows[:limit],
     }
+
+
+def _recent_crossings(rows: list[dict[str, object]], now: datetime) -> list[dict[str, object]]:
+    """Newest-first feed of pairs that turned executable inside the alert window."""
+    cutoff = now - timedelta(hours=RECENT_CROSSING_HOURS)
+    events: list[dict[str, object]] = []
+    for row in rows:
+        for crossing in row.get("crossings", []):
+            # Filter on last activity, not on when the episode opened: a pair that
+            # has been executable since yesterday is the most current alert there
+            # is, and filtering by start time would hide exactly that case.
+            observed = _parse_timestamp(crossing.get("last_executable_at"))
+            if observed is None or observed < cutoff:
+                continue
+            events.append(
+                {
+                    "event_subject": row["event_subject"],
+                    # Carried through so an alert can never read as an approval.
+                    "verification_status": crossing.get("verification_status")
+                    or row["verification_status"],
+                    "still_executable": row["executable_now"],
+                    **crossing,
+                }
+            )
+    events.sort(key=lambda event: str(event["last_executable_at"]), reverse=True)
+    return events[:RECENT_CROSSINGS_SHOWN]

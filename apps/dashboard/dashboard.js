@@ -51,7 +51,7 @@ function sparkline(history = []) {
   return `<svg class="spark ${rising ? 'spark--up' : 'spark--down'}" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${path}" /></svg>`;
 }
 
-let watchState = {rows: [], filter: 'all', sort: 'best_gap', direction: 'desc', window: '24h'};
+let watchState = {rows: [], filter: 'all', sort: 'best_gap', direction: 'desc', window: '24h', expanded: null};
 
 // The selected window supplies change, range, and trend. `best_gap` is always the
 // latest reading regardless of window — a price is a price.
@@ -76,6 +76,55 @@ function watchRowsForDisplay() {
   return sorted;
 }
 
+// Drill-down: the verdict codes are the answer to "why is this not tradeable?",
+// and burying them one level down keeps the board readable without hiding them.
+function detailRow(row) {
+  const codes = (row.mismatch_codes || []).length
+    ? row.mismatch_codes.map((code) => `<span class="detail-code">${safe(code.replaceAll('_', ' '))}</span>`).join('')
+    : '<span class="detail-code detail-code--ok">NO RULE MISMATCHES RECORDED</span>';
+  const windows = ['1h', '24h', '7d', 'all'].map((name) => {
+    const win = (row.windows || {})[name] || {};
+    return `<tr><th scope="row">${name.toUpperCase()}</th>
+      <td class="num">${cents(win.open)}</td>
+      <td class="num">${cents(win.change)}</td>
+      <td class="num">${cents(win.low)}</td>
+      <td class="num">${cents(win.high)}</td>
+      <td class="num">${fmt(win.observations || 0)}</td>
+      <td class="num">${fmt(win.executable_observations || 0)}</td></tr>`;
+  }).join('');
+  const episodes = (row.crossings || []).length
+    ? [...row.crossings].reverse().map((episode) => `<li>
+        <strong>${safe(age(episode.observed_at))}</strong>
+        <span>peak ${cents(episode.peak_gap)} · ${fmt(episode.observations)} scan(s) · last ${safe(age(episode.last_executable_at))}</span>
+      </li>`).join('')
+    : '<li><span>Never executable in the recorded history.</span></li>';
+  return `<tr class="board-detail-row"><td colspan="9">
+    <div class="detail-grid">
+      <div class="detail-block">
+        <span class="section-label">Contracts</span>
+        <p class="detail-contract"><b>Kalshi</b> ${safe(row.kalshi_title)}<small>${safe(row.kalshi_market_id)}</small></p>
+        <p class="detail-contract"><b>Polymarket</b> ${safe(row.polymarket_title)}<small>${safe(row.polymarket_market_id)}</small></p>
+      </div>
+      <div class="detail-block">
+        <span class="section-label">Why this verdict — ${safe(row.verification_status.replaceAll('_', ' '))}</span>
+        <div class="detail-codes">${codes}</div>
+        <p class="detail-note">${safe(row.pair_kind.replaceAll('_', ' '))} · best basket ${safe(row.best_basket.replaceAll('_', ' '))}</p>
+      </div>
+      <div class="detail-block detail-block--wide">
+        <span class="section-label">Per-window history</span>
+        <table class="detail-table">
+          <thead><tr><th scope="col">Window</th><th scope="col" class="num">Open</th><th scope="col" class="num">Change</th><th scope="col" class="num">Low</th><th scope="col" class="num">High</th><th scope="col" class="num">Scans</th><th scope="col" class="num">Exec</th></tr></thead>
+          <tbody>${windows}</tbody>
+        </table>
+      </div>
+      <div class="detail-block">
+        <span class="section-label">Executable episodes · ${fmt(row.crossings_total || 0)} recorded</span>
+        <ul class="detail-episodes">${episodes}</ul>
+      </div>
+    </div>
+  </td></tr>`;
+}
+
 function paintWatchRows() {
   const rows = watchRowsForDisplay();
   const body = $('watch-rows');
@@ -94,7 +143,8 @@ function paintWatchRows() {
     // An executable gap on a REVIEW_REQUIRED pair is a research signal, never a
     // trade, so the row is marked but never styled as an approval.
     const statusClass = row.verification_status.startsWith('APPROVED') ? 'ok' : 'warn';
-    return `<tr class="${row.executable_now ? 'is-executable' : ''}">
+    const expanded = watchState.expanded === row.event_subject;
+    return `<tr class="board-row ${row.executable_now ? 'is-executable' : ''} ${expanded ? 'is-expanded' : ''}" data-watch-row="${safe(row.event_subject)}" tabindex="0" role="button" aria-expanded="${expanded}">
       <th scope="row"><strong>${safe(row.event_subject)}</strong><small>${safe(row.best_basket.replaceAll('_', ' '))}</small></th>
       <td class="board-contracts"><span>${safe(row.kalshi_title)}</span><span>${safe(row.polymarket_title)}</span></td>
       <td><span class="tag">${safe(row.shape.replace('_shape', ''))}</span></td>
@@ -104,8 +154,33 @@ function paintWatchRows() {
       <td class="board-trend">${sparkline(win.history)}<small>${fmt(win.observations || 0)} obs</small></td>
       <td><span class="badge badge--dot badge--${statusClass}">${safe(row.verification_status.replaceAll('_', ' '))}</span></td>
       <td class="num board-age">${safe(age(row.last_observed_at))}</td>
-    </tr>`;
+    </tr>${expanded ? detailRow(row) : ''}`;
   }).join('');
+}
+
+function toggleWatchRow(subject) {
+  watchState.expanded = watchState.expanded === subject ? null : subject;
+  paintWatchRows();
+}
+
+function renderCrossings(watchlist) {
+  const events = watchlist.recent_crossings || [];
+  const live = events.filter((event) => event.still_executable).length;
+  const hours = watchlist.crossing_window_hours || 24;
+  $('crossings-status').textContent = events.length
+    ? `${fmt(events.length)} episode(s) in ${hours}h · ${fmt(live)} still executable`
+    : `No crossings in the last ${hours}h`;
+  $('crossings-strip').innerHTML = events.length ? events.map((event) => `
+    <article class="crossing ${event.still_executable ? 'is-live' : ''}">
+      <div class="crossing-top">
+        <span class="badge badge--dot ${event.still_executable ? 'badge--ok' : 'badge--warn'}">${event.still_executable ? 'STILL EXECUTABLE' : 'CLOSED'}</span>
+        <strong>${cents(event.peak_gap)}<small>peak</small></strong>
+      </div>
+      <p class="crossing-subject">${safe(event.event_subject)}</p>
+      <p class="crossing-meta">opened ${safe(age(event.observed_at))} · last seen ${safe(age(event.last_executable_at))} · ${fmt(event.observations)} scan(s)</p>
+      <p class="crossing-verdict">${safe(String(event.verification_status || '').replaceAll('_', ' '))} — research signal, not a trade</p>
+    </article>`).join('')
+    : '<div class="empty">Nothing has crossed into executable inside the alert window.</div>';
 }
 
 function renderWatchboard(data, trainingLabels, trainingTarget) {
@@ -123,8 +198,9 @@ function renderWatchboard(data, trainingLabels, trainingTarget) {
   const latest = watchState.rows.map((row) => row.last_observed_at).sort().pop();
   $('tape-scan').textContent = latest ? age(latest).toUpperCase() : '—';
   $('board-detail').textContent = watchlist.tracked_subjects
-    ? `${fmt(watchlist.tracked_subjects)} shape-matched candidates across ${fmt(watchlist.observations_reviewed || 0)} radar observations. Gap is the latest reading; Δ, range, and trend follow the selected window — candidates only, not proven twins.`
+    ? `${fmt(watchlist.tracked_subjects)} shape-matched candidates across ${fmt(watchlist.observations_reviewed || 0)} radar observations. Gap is the latest reading; Δ, range, and trend follow the selected window. Click any row for its verdict codes and full history — candidates only, not proven twins.`
     : 'Waiting for the first radar scan.';
+  renderCrossings(watchlist);
   paintWatchRows();
 }
 
@@ -541,6 +617,19 @@ async function refresh() {
     $('updated').textContent = lastGoodUpdate ? `SHOWING DATA FROM ${age(lastGoodUpdate).toUpperCase()}` : 'NO DATA RECEIVED YET';
   }
 }
+// Delegated so it survives the 15s re-render, and keyboard-operable because the
+// verdict codes behind a row are the most useful thing on the board.
+$('watch-rows').addEventListener('click', (event) => {
+  const row = event.target.closest('[data-watch-row]');
+  if (row) toggleWatchRow(row.dataset.watchRow);
+});
+$('watch-rows').addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter' && event.key !== ' ') return;
+  const row = event.target.closest('[data-watch-row]');
+  if (!row) return;
+  event.preventDefault();
+  toggleWatchRow(row.dataset.watchRow);
+});
 document.querySelectorAll('[data-watch-window]').forEach((button) => {
   button.addEventListener('click', () => {
     watchState.window = button.dataset.watchWindow;

@@ -1,6 +1,11 @@
 from datetime import UTC, datetime, timedelta
 
-from atlas.watchlist import DEFAULT_WINDOW, HISTORY_POINTS, build_watchlist
+from atlas.watchlist import (
+    DEFAULT_WINDOW,
+    HISTORY_POINTS,
+    RECENT_CROSSING_HOURS,
+    build_watchlist,
+)
 
 
 def _observation(subject, observed_at, best_gap, *, executable=False, **extra):
@@ -222,3 +227,77 @@ def test_watchlist_advertises_its_windows_and_default():
     assert watchlist["windows"] == ["1h", "24h", "7d", "all"]
     assert watchlist["default_window"] == DEFAULT_WINDOW
     assert watchlist["generated_at"] == NOW.isoformat()
+
+
+def test_watchlist_folds_threshold_flicker_into_one_episode():
+    """Live pairs flicker across the executable line on almost every scan. One
+    observed pair produced 155 rising edges in five days, always at the same gap
+    — alerting per edge would bury the next real one."""
+    observations = [
+        _at(3.0, "0.02", executable=True),
+        _at(2.9, "0.01", executable=False),
+        _at(2.8, "0.03", executable=True),
+        _at(2.7, "0.01", executable=False),
+        _at(2.6, "0.02", executable=True),
+    ]
+
+    row = build_watchlist(observations, now=NOW)["rows"][0]
+
+    assert row["crossings_total"] == 1
+    episode = row["crossings"][0]
+    assert episode["observations"] == 3
+    # The peak inside the episode, not merely the gap at the moment it opened.
+    assert episode["peak_gap"] == "0.03"
+
+
+def test_watchlist_starts_a_new_episode_after_the_cooldown():
+    observations = [
+        _at(30, "0.02", executable=True),
+        _at(2, "0.04", executable=True),
+    ]
+
+    row = build_watchlist(observations, now=NOW)["rows"][0]
+
+    assert row["crossings_total"] == 2
+    assert [episode["peak_gap"] for episode in row["crossings"]] == ["0.02", "0.04"]
+
+
+def test_watchlist_recent_crossings_follow_last_activity_not_episode_start():
+    """A pair executable since yesterday is the most current alert there is;
+    filtering on when the episode opened would hide exactly that case."""
+    observations = [
+        _at(hours, "0.03", executable=True) for hours in (40, 39.5, 39, 2, 1.5, 1)
+    ]
+
+    watchlist = build_watchlist(observations, now=NOW)
+
+    # Two episodes exist (the 40h-ago run and the recent one), but only the one
+    # with activity inside the window is alerted on.
+    assert watchlist["rows"][0]["crossings_total"] == 2
+    assert len(watchlist["recent_crossings"]) == 1
+    event = watchlist["recent_crossings"][0]
+    assert event["event_subject"] == "a|2026-08"
+    # Reflects the pair's latest reading, which was executable.
+    assert event["still_executable"] is True
+    assert watchlist["crossing_window_hours"] == RECENT_CROSSING_HOURS
+
+
+def test_watchlist_drops_episodes_whose_activity_left_the_window():
+    watchlist = build_watchlist([_at(40, "0.03", executable=True)], now=NOW)
+
+    assert watchlist["recent_crossings"] == []
+    assert watchlist["rows"][0]["crossings_total"] == 1
+
+
+def test_watchlist_crossing_carries_the_verdict_so_it_cannot_read_as_approval():
+    watchlist = build_watchlist([_at(1, "0.03", executable=True)], now=NOW)
+
+    assert watchlist["recent_crossings"][0]["verification_status"] == "REVIEW_REQUIRED"
+
+
+def test_watchlist_reports_no_episodes_for_a_pair_that_never_became_executable():
+    row = build_watchlist([_at(1, "-0.05"), _at(0.5, "-0.04")], now=NOW)["rows"][0]
+
+    assert row["crossings_total"] == 0
+    assert row["crossings"] == []
+    assert row["last_crossing_at"] is None

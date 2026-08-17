@@ -6,16 +6,59 @@
     <meta name="description" content="Atlas — paper-only cross-market prediction research. One event, two markets, priced apart." />
     <title>Atlas — Cross-Market Intelligence</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/dashboard.css?v=20260817-windows" />
-    <link rel="stylesheet" href="/dashboard-research.css?v=20260817-windows" />
-    <link rel="stylesheet" href="/dashboard-agent.css?v=20260817-windows" />
+    <link rel="stylesheet" href="/dashboard.css?v=20260817-alerts" />
+    <link rel="stylesheet" href="/dashboard-research.css?v=20260817-alerts" />
+    <link rel="stylesheet" href="/dashboard-agent.css?v=20260817-alerts" />
   </head>
   <body>
     <main class="shell" id="top">
       <header class="topbar">
-        <a class="brand" href="#top">
-          <span class="brand-mark">A</span>
-          <span><strong>ATLAS</strong><small>Cross-market intelligence</small></span>
+        <a class="brand" href="#top" aria-label="Atlas — cross-market intelligence">
+          <span class="brand-mark">
+            <!-- The mark is the thesis: two venue legs rise toward the same event
+                 and stop short of meeting. That unclosed apex is the price gap.
+                 The sweep is the monitor scanning both catalogs. -->
+            <svg viewBox="0 0 64 64" role="img" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="atlas-kalshi" x1="0" y1="1" x2="1" y2="0">
+                  <stop offset="0%" stop-color="var(--ok)" stop-opacity="0.55" />
+                  <stop offset="100%" stop-color="var(--ok)" />
+                </linearGradient>
+                <linearGradient id="atlas-poly" x1="1" y1="1" x2="0" y2="0">
+                  <stop offset="0%" stop-color="var(--info)" stop-opacity="0.55" />
+                  <stop offset="100%" stop-color="var(--info)" />
+                </linearGradient>
+                <linearGradient id="atlas-sweep" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="var(--ok)" stop-opacity="0.45" />
+                  <stop offset="100%" stop-color="var(--ok)" stop-opacity="0" />
+                </linearGradient>
+                <radialGradient id="atlas-core">
+                  <stop offset="0%" stop-color="var(--ok)" stop-opacity="0.9" />
+                  <stop offset="100%" stop-color="var(--ok)" stop-opacity="0" />
+                </radialGradient>
+                <clipPath id="atlas-disc"><circle cx="32" cy="32" r="29" /></clipPath>
+              </defs>
+
+              <circle class="atlas-field" cx="32" cy="32" r="29" />
+              <g clip-path="url(#atlas-disc)">
+                <path class="atlas-sweep" d="M32 32 L32 0 A32 32 0 0 1 60 16 Z" fill="url(#atlas-sweep)" />
+                <!-- Meridians: Atlas holds a world, and the subject is global markets. -->
+                <ellipse class="atlas-meridian" cx="32" cy="32" rx="13" ry="29" />
+                <line class="atlas-meridian" x1="3" y1="32" x2="61" y2="32" />
+              </g>
+
+              <!-- Left leg: Kalshi. Right leg: Polymarket. They never touch. -->
+              <path class="atlas-leg" d="M17 49 L29.2 18" stroke="url(#atlas-kalshi)" />
+              <path class="atlas-leg" d="M47 49 L34.8 18" stroke="url(#atlas-poly)" />
+              <!-- The crossbar is split too: the same spread, lower down the ladder. -->
+              <path class="atlas-bar" d="M23.5 38 L29.5 38" stroke="var(--ok)" />
+              <path class="atlas-bar" d="M34.5 38 L40.5 38" stroke="var(--info)" />
+
+              <circle class="atlas-core" cx="32" cy="15" r="9" fill="url(#atlas-core)" />
+              <line class="atlas-gap" x1="32" y1="12.5" x2="32" y2="19.5" />
+            </svg>
+          </span>
+          <span class="brand-word"><strong>ATLAS</strong><small>Cross-market intelligence</small></span>
         </a>
         <nav class="topnav" aria-label="Sections">
           <a href="#watch">Watch</a>
@@ -42,6 +85,14 @@
         <div class="tape-item"><span title="Candidate pairs blocked by deterministic rule mismatches">Blocked</span><strong id="tape-frontier">—</strong></div>
         <div class="tape-item"><span title="Blocked pairs whose published venue rules changed in the last 14 days">Rules moved</span><strong id="tape-rules-moved">—</strong></div>
         <div class="tape-item"><span>Last scan</span><strong id="tape-scan">—</strong></div>
+      </section>
+
+      <section class="crossings" id="crossings" aria-live="polite" aria-label="Executable crossings">
+        <div class="crossings-head">
+          <span class="section-label">Crossings · pairs that turned executable</span>
+          <strong id="crossings-status">No crossings in the last 24h</strong>
+        </div>
+        <div id="crossings-strip" class="crossings-strip"><div class="empty">Nothing has crossed into executable inside the alert window.</div></div>
       </section>
 
       <section class="board panel" id="watch" aria-labelledby="board-title">
@@ -336,6 +387,6 @@
 
       <footer><span>ATLAS / research instrument</span><span>no execution module installed</span></footer>
     </main>
-    <script src="/dashboard.js?v=20260817-windows"></script>
+    <script src="/dashboard.js?v=20260817-alerts"></script>
   </body>
 </html>

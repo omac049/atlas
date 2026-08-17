@@ -202,8 +202,28 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
 - [x] Verified live in-browser: window switching (ranges widen correctly with the window), both
   filter groups, both sort directions, no console errors. Suite **433 passing**, lint clean,
   dashboard `node --check` passes.
-- [ ] Next dashboard ideas, not started: per-pair drill-down (full history + the mismatch codes
-  behind the verdict), and an alert strip for pairs that cross from non-executable to executable.
+- [x] **Per-pair drill-down shipped:** clicking (or keyboard-activating) a row expands both full
+  contract titles + market IDs, the mismatch codes behind the verdict, a per-window open/change/
+  low/high/scans/exec table, and the pair's executable episodes. Delegated handlers so it survives
+  the 15s re-render; `aria-expanded` and Enter/Space support because the verdict codes are the most
+  useful thing on the board and should not be mouse-only.
+- [x] **Crossing alerts shipped — as episodes, not threshold edges.** First implementation counted
+  every rising edge and immediately proved itself unusable: live pairs flicker across the
+  executable line on nearly every scan (`us_fomc_rate_decision|2027-01` produced **155 rising
+  edges in five days, always at the same gap**), so the strip would have fired 8 identical alerts
+  in 24h and buried the next real one. Edges within `CROSSING_COOLDOWN_MINUTES = 30` now fold into
+  one episode reporting when it opened, when it was last seen, its peak gap, and its scan count.
+  155 edges → 5 episodes for that pair; the strip currently shows **1** live episode.
+  The window filter keys on *last activity*, not episode start — a pair executable since yesterday
+  is the most current alert there is, and filtering on start time hid exactly that case (caught in
+  review: the first version showed 0 alerts while a pair was executable). Every alert carries the
+  deterministic verdict and the words "research signal, not a trade".
+- [x] **Logomark rebuilt as the thesis:** two venue legs (Kalshi green, Polymarket blue) rise
+  toward one event and stop short of meeting — the unclosed apex is the gap. Split crossbar repeats
+  the spread; radar sweep is the monitor scanning both catalogs. Inline SVG themed off the existing
+  CSS tokens, `prefers-reduced-motion` respected, favicon redrawn to match at 16px.
+- [ ] Not started: persist a daily open/close per pair so the board can show a true session change
+  across monitor restarts, rather than recomputing windows from the full observation history.
 
 ## 2026-08-17 — approval-frontier watch (`atlas pairs frontier`)
 

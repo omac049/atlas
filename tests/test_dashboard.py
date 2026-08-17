@@ -198,3 +198,34 @@ def test_dashboard_surfaces_the_approval_frontier():
     # "no change" identically to one that is genuinely being watched.
     assert "NO BASELINE" in script
     assert ".frontier-code--hard" in styles
+
+
+def test_dashboard_alerts_on_executable_crossings():
+    html = (ROOT / "apps" / "dashboard" / "index.html").read_text()
+    script = (ROOT / "apps" / "dashboard" / "dashboard.js").read_text()
+    styles = (ROOT / "apps" / "dashboard" / "dashboard.css").read_text()
+
+    assert 'id="crossings-strip"' in html
+    assert 'id="crossings-status"' in html
+    for field in ("recent_crossings", "still_executable", "peak_gap", "last_executable_at"):
+        assert field in script
+    # An alert must carry the verdict, or a crossing reads as an approval.
+    assert "research signal, not a trade" in script
+    assert ".crossing" in styles
+
+
+def test_dashboard_rows_drill_down_to_the_verdict_codes():
+    """The mismatch codes answer "why is this not tradeable?" — the most useful
+    thing on the board, and the reason a row is clickable at all."""
+    script = (ROOT / "apps" / "dashboard" / "dashboard.js").read_text()
+    styles = (ROOT / "apps" / "dashboard" / "dashboard.css").read_text()
+
+    assert "detailRow" in script
+    assert "mismatch_codes" in script
+    assert "toggleWatchRow" in script
+    assert 'data-watch-row' in script
+    # Keyboard-operable, not mouse-only.
+    assert "keydown" in script
+    assert 'aria-expanded' in script
+    for selector in (".board-detail-row", ".detail-code", ".detail-episodes"):
+        assert selector in styles

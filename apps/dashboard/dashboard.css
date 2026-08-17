@@ -120,18 +120,68 @@ span[title] {
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
+/* ======================================================== brand / logomark
+   Two venue legs rise toward one event and stop short of meeting; the unclosed
+   apex is the gap the whole system exists to measure. Motion is decorative
+   only — the mark reads identically frozen. */
 .brand { display: flex; align-items: center; gap: var(--s3); text-decoration: none; }
-.brand-mark {
-  width: 34px; height: 34px;
-  display: grid; place-items: center;
-  border: 1px solid var(--ok-line);
-  border-radius: 9px;
-  color: var(--ok);
-  font-weight: 800;
-  font-size: 15px;
-  background: linear-gradient(150deg, var(--ok-soft), transparent 70%);
+.brand-mark { width: 38px; height: 38px; display: block; flex: none; }
+.brand-mark svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+.atlas-field {
+  fill: var(--surface-2);
+  stroke: var(--ok-line);
+  stroke-width: 1.5;
+  transition: stroke var(--slow);
 }
-.brand strong { display: block; letter-spacing: 0.22em; font-size: 13px; }
+.atlas-meridian { fill: none; stroke: var(--ok); stroke-width: 1; opacity: 0.16; }
+.atlas-sweep { transform-origin: 32px 32px; animation: atlas-sweep 5.5s linear infinite; }
+.atlas-leg {
+  fill: none;
+  stroke-width: 5.5;
+  stroke-linecap: round;
+  /* Drawn on load so the legs visibly rise toward the event. */
+  stroke-dasharray: 34;
+  animation: atlas-draw 1.1s ease-out both;
+}
+.atlas-leg:nth-of-type(2) { animation-delay: 0.12s; }
+.atlas-bar { stroke-width: 3.5; stroke-linecap: round; opacity: 0.85; }
+.atlas-core { opacity: 0.55; transform-origin: 32px 15px; animation: atlas-breathe 3.2s ease-in-out infinite; }
+.atlas-gap {
+  stroke: var(--text);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  animation: atlas-spark 3.2s ease-in-out infinite;
+}
+
+@keyframes atlas-sweep { to { transform: rotate(360deg); } }
+@keyframes atlas-draw { from { stroke-dashoffset: 34; } to { stroke-dashoffset: 0; } }
+@keyframes atlas-breathe { 0%, 100% { opacity: 0.35; transform: scale(0.82); } 50% { opacity: 0.7; transform: scale(1.06); } }
+@keyframes atlas-spark { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+
+/* Hover: the legs lean in as if the gap were about to close — it never does. */
+.brand:hover .atlas-leg { transform: translateY(-0.5px); }
+.brand:hover .atlas-field { stroke: var(--ok); }
+.brand:hover .atlas-gap { stroke: var(--ok); }
+.atlas-leg, .atlas-gap { transition: transform var(--slow), stroke var(--slow); }
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-sweep, .atlas-core, .atlas-gap, .atlas-leg { animation: none; }
+  .atlas-leg { stroke-dasharray: none; }
+  .atlas-sweep { opacity: 0.5; }
+}
+
+.brand-word { display: block; }
+.brand strong {
+  display: block;
+  letter-spacing: 0.26em;
+  font-size: 14px;
+  font-weight: 800;
+  background: linear-gradient(92deg, var(--text) 30%, var(--ok));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 .brand small { display: block; color: var(--muted); font: 400 10px var(--mono); margin-top: 2px; letter-spacing: 0.05em; }
 .topnav { display: flex; gap: 2px; }
 .topnav a {
@@ -320,6 +370,76 @@ span[title] {
   font: var(--label);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+/* =============================================================== crossings
+   The one time-sensitive event on the board. Episodes, not raw threshold
+   edges — a pair that flickers across the line every scan is one opportunity,
+   and alerting per edge would bury the next real one. */
+.crossings { margin-bottom: var(--s5); }
+.crossings-head { display: flex; align-items: baseline; gap: var(--s3); margin-bottom: var(--s3); flex-wrap: wrap; }
+.crossings-head strong { font: var(--data-sm); color: var(--ok); letter-spacing: 0.06em; text-transform: uppercase; }
+.crossings-strip { display: flex; gap: var(--s3); overflow-x: auto; padding-bottom: var(--s2); }
+.crossings-strip .empty { flex: 1; }
+.crossing {
+  flex: none;
+  width: 268px;
+  padding: var(--s3) var(--s4);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+.crossing.is-live { border-color: var(--ok-line); background: var(--ok-soft); }
+.crossing-top { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); }
+.crossing-top strong { font: var(--value); color: var(--ok); font-variant-numeric: tabular-nums; }
+.crossing-top small { display: block; font: var(--label); color: var(--faint); text-transform: uppercase; letter-spacing: 0.1em; text-align: right; }
+.crossing-subject { margin: var(--s3) 0 var(--s1); color: var(--text); font: var(--data-sm); overflow-wrap: anywhere; }
+.crossing-meta { margin: 0; color: var(--muted); font-size: 10.5px; line-height: 1.6; }
+.crossing-verdict { margin: var(--s2) 0 0; color: var(--faint); font: var(--label); letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* ============================================================== drill-down */
+.board-row { cursor: pointer; }
+.board-row:focus-visible { outline: 2px solid var(--ok); outline-offset: -2px; }
+.board-row.is-expanded { background: var(--surface-3); }
+.board-row.is-expanded th strong { color: var(--ok); }
+.board-detail-row > td { padding: 0; background: var(--surface-2); border-bottom: 1px solid var(--line); }
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: var(--s5);
+  padding: var(--s5);
+}
+.detail-block--wide { grid-column: span 2; }
+.detail-block .section-label { display: block; margin-bottom: var(--s3); }
+.detail-contract { margin: 0 0 var(--s3); color: var(--body); font: var(--data-sm); line-height: 1.6; }
+.detail-contract b { display: block; color: var(--faint); font: var(--label); letter-spacing: 0.1em; text-transform: uppercase; }
+.detail-contract small { display: block; color: var(--faint); font-size: 10px; margin-top: 2px; overflow-wrap: anywhere; }
+.detail-codes { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.detail-code {
+  padding: 3px var(--s2);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--warn-line);
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.detail-code--ok { border-color: var(--ok-line); background: var(--ok-soft); color: var(--ok); }
+.detail-note { margin: var(--s3) 0 0; color: var(--faint); font: var(--label); letter-spacing: 0.06em; text-transform: uppercase; }
+.detail-table { width: 100%; border-collapse: collapse; }
+.detail-table th, .detail-table td { padding: var(--s2); font: var(--data-sm); color: var(--body); text-align: left; }
+.detail-table thead th { color: var(--faint); font: var(--label); letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1px solid var(--line); }
+.detail-table tbody th { color: var(--muted); }
+.detail-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.detail-table tbody tr + tr { border-top: 1px solid var(--line-soft); }
+.detail-episodes { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); }
+.detail-episodes li { padding: var(--s2) 0; border-bottom: 1px solid var(--line-soft); }
+.detail-episodes strong { display: block; color: var(--text); font: var(--data-sm); }
+.detail-episodes span { color: var(--faint); font-size: 10.5px; }
+
+@media (max-width: 900px) {
+  .detail-block--wide { grid-column: span 1; }
 }
 
 /* ================================================================ frontier */
