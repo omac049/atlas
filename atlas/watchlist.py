@@ -13,6 +13,7 @@ verbatim from the deterministic verifier, and every row stays labelled a
 candidate rather than a proven twin.
 """
 
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
 # Enough points to read a shape without bloating the payload; the radar samples
@@ -23,6 +24,16 @@ HISTORY_POINTS = 24
 # board shows it as flat rather than implying a move that is not really there.
 FLAT_GAP_DELTA = Decimal("0.0005")
 
+# Change is measured against the open of a window, the way a market board reads,
+# rather than only against the previous scan. `None` means "everything recorded".
+WINDOWS: tuple[tuple[str, int | None], ...] = (
+    ("1h", 1),
+    ("24h", 24),
+    ("7d", 168),
+    ("all", None),
+)
+DEFAULT_WINDOW = "24h"
+
 
 def _decimal(raw: object) -> Decimal | None:
     if raw is None:
@@ -31,6 +42,27 @@ def _decimal(raw: object) -> Decimal | None:
         return Decimal(str(raw))
     except (InvalidOperation, TypeError, ValueError):
         return None
+
+
+def _parse_timestamp(raw: object) -> datetime | None:
+    try:
+        parsed = datetime.fromisoformat(str(raw))
+    except (TypeError, ValueError):
+        return None
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=UTC)
+
+
+def _downsample(points: list[Decimal], limit: int = HISTORY_POINTS) -> list[str]:
+    """Evenly spaced samples that always keep the first and last point.
+
+    Truncating to the newest N would silently redraw a long window as a short
+    one; a 7-day sparkline must actually span seven days.
+    """
+    if len(points) <= limit:
+        return [str(point) for point in points]
+    step = (len(points) - 1) / (limit - 1)
+    sampled = [points[round(index * step)] for index in range(limit)]
+    return [str(point) for point in sampled]
 
 
 def _direction(delta: Decimal | None) -> str:
@@ -43,7 +75,46 @@ def _direction(delta: Decimal | None) -> str:
     return "FLAT"
 
 
-def _row(subject: str, observations: list[dict]) -> dict[str, object]:
+def _window_stats(observations: list[dict], hours: int | None, now: datetime) -> dict[str, object]:
+    """Open/change/high/low/history for one subject inside one time window."""
+    if hours is None:
+        scoped = observations
+    else:
+        cutoff = now - timedelta(hours=hours)
+        scoped = [
+            observation
+            for observation in observations
+            if (parsed := _parse_timestamp(observation.get("observed_at"))) is not None
+            and parsed >= cutoff
+        ]
+    gaps = [gap for gap in (_decimal(o.get("best_gap")) for o in scoped) if gap is not None]
+    if not gaps:
+        # A window with no readings reports emptiness instead of borrowing numbers
+        # from outside it, which would make a stale pair look freshly observed.
+        return {
+            "observations": len(scoped),
+            "open": None,
+            "change": None,
+            "direction": "NO_DATA",
+            "high": None,
+            "low": None,
+            "executable_observations": 0,
+            "history": [],
+        }
+    change = gaps[-1] - gaps[0]
+    return {
+        "observations": len(scoped),
+        "open": str(gaps[0]),
+        "change": str(change),
+        "direction": _direction(change) if len(gaps) > 1 else "NEW",
+        "high": str(max(gaps)),
+        "low": str(min(gaps)),
+        "executable_observations": sum(1 for o in scoped if o.get("executable_gap")),
+        "history": _downsample(gaps),
+    }
+
+
+def _row(subject: str, observations: list[dict], now: datetime) -> dict[str, object]:
     """Collapse one subject's ordered observations into a single board row."""
     latest = observations[-1]
     gaps = [gap for gap in (_decimal(o.get("best_gap")) for o in observations) if gap is not None]
@@ -78,7 +149,12 @@ def _row(subject: str, observations: list[dict]) -> dict[str, object]:
         "first_observed_at": str(observations[0].get("observed_at") or ""),
         "last_observed_at": str(latest.get("observed_at") or ""),
         # Oldest-to-newest, for a sparkline.
-        "history": [str(gap) for gap in gaps[-HISTORY_POINTS:]],
+        "history": _downsample(gaps),
+        # Per-window open/change/high/low so the board can show change against a
+        # window open — the market-board convention — not only the previous scan.
+        "windows": {
+            name: _window_stats(observations, hours, now) for name, hours in WINDOWS
+        },
     }
 
 
@@ -94,9 +170,10 @@ def _sort_key(row: dict[str, object]) -> tuple:
 
 
 def build_watchlist(
-    observations: list[dict], *, limit: int = 100
+    observations: list[dict], *, limit: int = 100, now: datetime | None = None
 ) -> dict[str, object]:
     """One row per event subject, widest live gap first."""
+    now = now or datetime.now(UTC)
     grouped: dict[str, list[dict]] = {}
     for observation in observations:
         subject = str(observation.get("event_subject") or "")
@@ -106,7 +183,7 @@ def build_watchlist(
     for entries in grouped.values():
         entries.sort(key=lambda item: str(item.get("observed_at") or ""))
 
-    rows = sorted((_row(subject, obs) for subject, obs in grouped.items()), key=_sort_key)
+    rows = sorted((_row(subject, obs, now) for subject, obs in grouped.items()), key=_sort_key)
     executable = [row for row in rows if row["executable_now"]]
     widest = max(
         (gap for gap in (_decimal(row.get("best_gap")) for row in rows) if gap is not None),
@@ -120,5 +197,8 @@ def build_watchlist(
         "widest_gap": str(widest) if widest is not None else None,
         "observations_reviewed": len(observations),
         "history_points": HISTORY_POINTS,
+        "windows": [name for name, _ in WINDOWS],
+        "default_window": DEFAULT_WINDOW,
+        "generated_at": now.isoformat(),
         "rows": rows[:limit],
     }

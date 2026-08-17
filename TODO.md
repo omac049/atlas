@@ -177,6 +177,34 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
 - [x] **Guards, because this path is sensitive:** the shared catalog pins the Kalshi scope it was scanned under and **refuses** a run requesting a different series set rather than silently mismatching evidence. Event-slug harvests always bypass the shared sweep and fetch for themselves — the targeted door reaches markets the plain sweep cannot, so it must never layer onto a cached list. 5 new tests (`tests/test_backfill.py`, `tests/test_cli.py`) cover reuse, scope refusal, slug bypass, single-fetch-per-batch, and failure degradation.
 - [x] **New `tests/conftest.py` autouse guard:** the prefetch added a live network seam that the existing batch tests did not stub, and the suite silently started making real venue calls (3.9s → 142.8s). The guard refuses live catalog fetches in tests; suite is back to **408 passed in 3.6s**, lint clean.
 - [x] **First working live run (2026-08-17):** `BATCH_COMPLETE`, all four tags green, shared catalog = 1447 PM-US final binaries + 20,309 Kalshi settled events. Minted **10 evidence-backed `REJECTED`** labels (62 → 72) — same-canonical-subject CPI review pairs with divergent terminal outcomes on both venues, `us_cpi_mom|2026-06` and `us_cpi_mom|2026-07` each landing exactly at the signed 5-per-event bound. Verified no event exceeds the cap; the known pre-existing `us_cpi_yoy|2026-07: 6` leak was untouched. Monitor restarted on the fixed code (single instance, nohup); `trading_enabled=false` throughout.
+## 2026-08-17 — dashboard leads with a market-watch board
+
+- [x] **The data was already there; nothing surfaced it.** 7,900+ recorded gap observations across
+  9 candidate pairs were reduced to a one-line bankroll note and a few recent rows, behind a
+  marketing hero. `atlas/watchlist.py` reshapes them into one row per event subject — latest gap,
+  change, window high/low, sparkline history — as a pure function over the same observation list
+  the bankroll summary already fetches, so the API does no extra I/O.
+- [x] **Time windows (`1h / 24h / 7d / all`), because a single delta lies by omission.** Change is
+  measured against each window's open, the market-board convention. Live proof it matters:
+  `us_fomc_rate_decision|2026-12` reads WIDENING on 1h and 24h but NARROWING over 7d. Sub-noise
+  movement reports `FLAT` so quote timing does not fake activity, and a window with no readings
+  reports `NO_DATA` rather than borrowing numbers from outside it, which would make a stale pair
+  look freshly observed.
+- [x] **History is downsampled, not truncated** — keeping the newest N would silently redraw a
+  7-day sparkline as a 2-hour one. Both ends of the window are always preserved.
+- [x] **Safety framing held through the redesign:** every row carries the deterministic verdict
+  verbatim and stays labelled a candidate. An executable gap on a `REVIEW_REQUIRED` pair is a
+  research signal, not a trade — a board that looked like a trading screen would be the easiest
+  way to forget that. Pinned by `test_dashboard_watch_board_never_presents_candidates_as_tradeable`.
+- [x] **Dashboard shell now served `no-store`.** The shell carries the asset version query strings,
+  so a cached copy pinned the browser to stale CSS/JS and the page silently stopped matching the
+  code — which is exactly what happened mid-verification. Assets stay cacheable.
+- [x] Verified live in-browser: window switching (ranges widen correctly with the window), both
+  filter groups, both sort directions, no console errors. Suite **433 passing**, lint clean,
+  dashboard `node --check` passes.
+- [ ] Next dashboard ideas, not started: per-pair drill-down (full history + the mismatch codes
+  behind the verdict), and an alert strip for pairs that cross from non-executable to executable.
+
 ## 2026-08-17 — approval-frontier watch (`atlas pairs frontier`)
 
 Every blocked pair is waiting for a venue to publish terms it does not publish today, and the

@@ -138,14 +138,31 @@ def test_dashboard_leads_with_a_live_market_watch_board():
         "tape-scan",
     ):
         assert f'id="{element_id}"' in html
-    # Sorting and filtering are driven off data attributes, not hard-coded order.
+    # Sorting, filtering, and the time window are driven off data attributes.
     assert 'data-watch-sort="best_gap"' in html
     assert 'data-watch-filter="executable"' in html
-    for field in ("watchlist", "best_gap", "gap_delta", "executable_now", "history"):
+    for field in ("watchlist", "best_gap", "executable_now", "history"):
         assert field in script
     assert "sparkline" in script
     for selector in (".board-table", ".tape", ".spark", ".is-executable"):
         assert selector in styles
+
+
+def test_dashboard_board_reads_change_and_trend_from_the_selected_window():
+    """Change against a window open is the market-board convention; change since
+    the last scan alone cannot tell widening-on-the-hour from narrowing-on-the-week."""
+    html = (ROOT / "apps" / "dashboard" / "index.html").read_text()
+    script = (ROOT / "apps" / "dashboard" / "dashboard.js").read_text()
+
+    for window in ("1h", "24h", "7d", "all"):
+        assert f'data-watch-window="{window}"' in html
+    assert 'id="watch-window-delta"' in html
+    assert "windowOf" in script
+    assert "watchState.window" in script
+    # Range and trend must follow the window too, not stay stuck on all-time.
+    assert "win.low" in script
+    assert "win.high" in script
+    assert "win.history" in script
 
 
 def test_dashboard_watch_board_never_presents_candidates_as_tradeable():

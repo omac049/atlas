@@ -1,4 +1,6 @@
-from atlas.watchlist import HISTORY_POINTS, build_watchlist
+from datetime import UTC, datetime, timedelta
+
+from atlas.watchlist import DEFAULT_WINDOW, HISTORY_POINTS, build_watchlist
 
 
 def _observation(subject, observed_at, best_gap, *, executable=False, **extra):
@@ -91,7 +93,9 @@ def test_watchlist_puts_executable_rows_first_then_widest_gap():
     assert watchlist["widest_gap"] == "0.05"
 
 
-def test_watchlist_history_is_bounded_and_oldest_first():
+def test_watchlist_history_is_bounded_and_spans_the_whole_series():
+    """Downsampled, not truncated: keeping only the newest N would silently redraw
+    a long window as a short one."""
     observations = [
         _observation("a|2026-08", f"2026-08-01T00:{index:02d}:00+00:00", f"-0.{index:02d}")
         for index in range(40)
@@ -100,7 +104,7 @@ def test_watchlist_history_is_bounded_and_oldest_first():
     row = build_watchlist(observations)["rows"][0]
 
     assert len(row["history"]) == HISTORY_POINTS
-    assert row["history"][0] == "-0.16"
+    assert row["history"][0] == "-0.00"
     assert row["history"][-1] == "-0.39"
 
 
@@ -141,3 +145,80 @@ def test_watchlist_tolerates_unparseable_gaps():
     assert row["best_gap"] is None
     assert row["history"] == []
     assert watchlist["widest_gap"] is None
+
+
+NOW = datetime(2026, 8, 17, 12, 0, tzinfo=UTC)
+
+
+def _at(hours_ago, gap, subject="a|2026-08", **extra):
+    stamp = (NOW - timedelta(hours=hours_ago)).isoformat()
+    return _observation(subject, stamp, gap, **extra)
+
+
+def test_watchlist_measures_change_against_each_window_open():
+    """The whole point of windows: a pair can be widening on the hour and
+    narrowing on the week, and the board must be able to say which."""
+    watchlist = build_watchlist(
+        [
+            _at(100, "0.05"),
+            _at(20, "-0.04"),
+            _at(0.5, "-0.06"),
+            _at(0.1, "-0.02"),
+        ],
+        now=NOW,
+    )
+    windows = watchlist["rows"][0]["windows"]
+
+    assert windows["1h"]["open"] == "-0.06"
+    assert windows["1h"]["change"] == "0.04"
+    assert windows["1h"]["direction"] == "WIDENING"
+    assert windows["24h"]["open"] == "-0.04"
+    assert windows["24h"]["change"] == "0.02"
+    assert windows["7d"]["open"] == "0.05"
+    assert windows["7d"]["change"] == "-0.07"
+    assert windows["7d"]["direction"] == "NARROWING"
+
+
+def test_watchlist_window_reports_no_data_instead_of_borrowing_older_readings():
+    """A window with no readings must not reuse numbers from outside it, which
+    would make a stale pair look freshly observed."""
+    watchlist = build_watchlist([_at(50, "-0.03")], now=NOW)
+    windows = watchlist["rows"][0]["windows"]
+
+    assert windows["1h"]["observations"] == 0
+    assert windows["1h"]["open"] is None
+    assert windows["1h"]["change"] is None
+    assert windows["1h"]["direction"] == "NO_DATA"
+    assert windows["1h"]["history"] == []
+    assert windows["7d"]["observations"] == 1
+
+
+def test_watchlist_window_high_low_are_scoped_to_the_window():
+    watchlist = build_watchlist(
+        [_at(100, "0.30"), _at(100, "-0.30"), _at(0.2, "-0.01"), _at(0.1, "-0.02")],
+        now=NOW,
+    )
+    windows = watchlist["rows"][0]["windows"]
+
+    assert windows["1h"]["high"] == "-0.01"
+    assert windows["1h"]["low"] == "-0.02"
+    assert windows["all"]["high"] == "0.30"
+    assert windows["all"]["low"] == "-0.30"
+
+
+def test_watchlist_window_history_keeps_both_ends_of_the_window():
+    observations = [_at(20 - (index * 0.5), f"-0.{index:02d}") for index in range(40)]
+
+    history = build_watchlist(observations, now=NOW)["rows"][0]["windows"]["24h"]["history"]
+
+    assert len(history) == HISTORY_POINTS
+    assert history[0] == "-0.00"
+    assert history[-1] == "-0.39"
+
+
+def test_watchlist_advertises_its_windows_and_default():
+    watchlist = build_watchlist([_at(1, "-0.01")], now=NOW)
+
+    assert watchlist["windows"] == ["1h", "24h", "7d", "all"]
+    assert watchlist["default_window"] == DEFAULT_WINDOW
+    assert watchlist["generated_at"] == NOW.isoformat()

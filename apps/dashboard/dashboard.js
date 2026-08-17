@@ -51,7 +51,11 @@ function sparkline(history = []) {
   return `<svg class="spark ${rising ? 'spark--up' : 'spark--down'}" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${path}" /></svg>`;
 }
 
-let watchState = {rows: [], filter: 'all', sort: 'best_gap', direction: 'desc'};
+let watchState = {rows: [], filter: 'all', sort: 'best_gap', direction: 'desc', window: '24h'};
+
+// The selected window supplies change, range, and trend. `best_gap` is always the
+// latest reading regardless of window — a price is a price.
+const windowOf = (row) => (row.windows || {})[watchState.window] || {};
 
 function watchRowsForDisplay() {
   const filtered = watchState.rows.filter((row) => {
@@ -60,10 +64,11 @@ function watchRowsForDisplay() {
     return true;
   });
   const key = watchState.sort;
-  const numeric = key === 'best_gap' || key === 'gap_delta';
+  const numeric = key === 'best_gap' || key === 'window_change';
+  const valueOf = (row) => (key === 'window_change' ? windowOf(row).change : row[key]);
   const sorted = [...filtered].sort((a, b) => {
-    const left = numeric ? Number(a[key] ?? -999) : String(a[key] ?? '');
-    const right = numeric ? Number(b[key] ?? -999) : String(b[key] ?? '');
+    const left = numeric ? Number(valueOf(a) ?? -999) : String(valueOf(a) ?? '');
+    const right = numeric ? Number(valueOf(b) ?? -999) : String(valueOf(b) ?? '');
     if (left < right) return watchState.direction === 'asc' ? -1 : 1;
     if (left > right) return watchState.direction === 'asc' ? 1 : -1;
     return 0;
@@ -79,9 +84,10 @@ function paintWatchRows() {
     return;
   }
   body.innerHTML = rows.map((row) => {
+    const win = windowOf(row);
     const gapValue = Number(row.best_gap);
     const gapClass = Number.isFinite(gapValue) && gapValue > 0 ? 'is-positive' : 'is-negative';
-    const deltaValue = Number(row.gap_delta);
+    const deltaValue = Number(win.change);
     const deltaClass = !Number.isFinite(deltaValue) || deltaValue === 0
       ? 'is-flat'
       : deltaValue > 0 ? 'is-positive' : 'is-negative';
@@ -93,9 +99,9 @@ function paintWatchRows() {
       <td class="board-contracts"><span>${safe(row.kalshi_title)}</span><span>${safe(row.polymarket_title)}</span></td>
       <td><span class="tag">${safe(row.shape.replace('_shape', ''))}</span></td>
       <td class="num ${gapClass}"><strong>${cents(row.best_gap)}</strong>${row.executable_now ? '<em class="exec-flag">EXECUTABLE</em>' : ''}</td>
-      <td class="num ${deltaClass}">${cents(row.gap_delta)}<small>${safe(row.direction)}</small></td>
-      <td class="num board-range">${cents(row.narrowest_gap)}<span>…</span>${cents(row.widest_gap)}</td>
-      <td class="board-trend">${sparkline(row.history)}<small>${fmt(row.observations)} obs</small></td>
+      <td class="num ${deltaClass}">${cents(win.change)}<small>${safe(win.direction || 'NO DATA')}</small></td>
+      <td class="num board-range">${cents(win.low)}<span>…</span>${cents(win.high)}</td>
+      <td class="board-trend">${sparkline(win.history)}<small>${fmt(win.observations || 0)} obs</small></td>
       <td><span class="badge badge--dot badge--${statusClass}">${safe(row.verification_status.replaceAll('_', ' '))}</span></td>
       <td class="num board-age">${safe(age(row.last_observed_at))}</td>
     </tr>`;
@@ -117,7 +123,7 @@ function renderWatchboard(data, trainingLabels, trainingTarget) {
   const latest = watchState.rows.map((row) => row.last_observed_at).sort().pop();
   $('tape-scan').textContent = latest ? age(latest).toUpperCase() : '—';
   $('board-detail').textContent = watchlist.tracked_subjects
-    ? `${fmt(watchlist.tracked_subjects)} shape-matched candidates across ${fmt(watchlist.observations_reviewed || 0)} radar observations. Gap is what survives the fee buffer when buying both hedged sides at executable prices — candidates only, not proven twins.`
+    ? `${fmt(watchlist.tracked_subjects)} shape-matched candidates across ${fmt(watchlist.observations_reviewed || 0)} radar observations. Gap is the latest reading; Δ, range, and trend follow the selected window — candidates only, not proven twins.`
     : 'Waiting for the first radar scan.';
   paintWatchRows();
 }
@@ -535,6 +541,14 @@ async function refresh() {
     $('updated').textContent = lastGoodUpdate ? `SHOWING DATA FROM ${age(lastGoodUpdate).toUpperCase()}` : 'NO DATA RECEIVED YET';
   }
 }
+document.querySelectorAll('[data-watch-window]').forEach((button) => {
+  button.addEventListener('click', () => {
+    watchState.window = button.dataset.watchWindow;
+    document.querySelectorAll('[data-watch-window]').forEach((other) => other.classList.toggle('is-active', other === button));
+    $('watch-window-delta').textContent = button.textContent;
+    paintWatchRows();
+  });
+});
 document.querySelectorAll('[data-watch-filter]').forEach((button) => {
   button.addEventListener('click', () => {
     watchState.filter = button.dataset.watchFilter;

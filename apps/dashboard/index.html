@@ -6,9 +6,9 @@
     <meta name="description" content="Atlas — paper-only cross-market prediction research. One event, two markets, priced apart." />
     <title>Atlas — Cross-Market Intelligence</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/dashboard.css?v=20260817-watchboard" />
-    <link rel="stylesheet" href="/dashboard-research.css?v=20260817-watchboard" />
-    <link rel="stylesheet" href="/dashboard-agent.css?v=20260817-watchboard" />
+    <link rel="stylesheet" href="/dashboard.css?v=20260817-windows" />
+    <link rel="stylesheet" href="/dashboard-research.css?v=20260817-windows" />
+    <link rel="stylesheet" href="/dashboard-agent.css?v=20260817-windows" />
   </head>
   <body>
     <main class="shell" id="top">
@@ -52,6 +52,12 @@
             <p id="board-detail">Every row is a shape-matched candidate, not a proven twin. Gap is the edge left after the fee buffer when buying both hedged sides at executable prices.</p>
           </div>
           <div class="board-controls">
+            <div class="board-filters" role="group" aria-label="Time window">
+              <button type="button" class="chip" data-watch-window="1h">1H</button>
+              <button type="button" class="chip is-active" data-watch-window="24h">24H</button>
+              <button type="button" class="chip" data-watch-window="7d">7D</button>
+              <button type="button" class="chip" data-watch-window="all">All</button>
+            </div>
             <div class="board-filters" role="group" aria-label="Filter rows">
               <button type="button" class="chip is-active" data-watch-filter="all">All</button>
               <button type="button" class="chip" data-watch-filter="executable">Executable</button>
@@ -68,9 +74,9 @@
                 <th scope="col">Contracts K ↔ P</th>
                 <th scope="col" data-watch-sort="shape">Shape</th>
                 <th scope="col" class="num" data-watch-sort="best_gap" title="Payout minus combined cost minus fee buffer, at executable prices">Gap</th>
-                <th scope="col" class="num" data-watch-sort="gap_delta" title="Change since the previous radar observation">Δ</th>
-                <th scope="col" class="num" title="Narrowest and widest gap ever recorded for this pair">Range</th>
-                <th scope="col" title="Recent gap history, oldest to newest">Trend</th>
+                <th scope="col" class="num" data-watch-sort="window_change" title="Change since the open of the selected window">Δ <span id="watch-window-delta">24H</span></th>
+                <th scope="col" class="num" title="Low and high gap inside the selected window">Range</th>
+                <th scope="col" title="Gap history across the selected window, oldest to newest">Trend</th>
                 <th scope="col" data-watch-sort="verification_status" title="Deterministic verdict — a gap on a non-approved pair is not an arbitrage">Rule status</th>
                 <th scope="col" class="num" data-watch-sort="last_observed_at">Last seen</th>
               </tr>
@@ -330,6 +336,6 @@
 
       <footer><span>ATLAS / research instrument</span><span>no execution module installed</span></footer>
     </main>
-    <script src="/dashboard.js?v=20260817-watchboard"></script>
+    <script src="/dashboard.js?v=20260817-windows"></script>
   </body>
 </html>
