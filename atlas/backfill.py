@@ -1,6 +1,7 @@
 import asyncio
 import re
 from collections import Counter
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from decimal import Decimal, InvalidOperation
 
@@ -87,6 +88,54 @@ _STOPWORDS = {
 }
 
 
+@dataclass(frozen=True)
+class SharedBackfillCatalog:
+    """Venue reads that are identical for every tag in one batch.
+
+    The Polymarket US closed sweep (plus its terminal-evidence finalization) and
+    the Kalshi settled-event scan do not depend on the Global tag under probe, so
+    a per-tag batch re-fetched ~110s of identical catalog for every tag and blew
+    the per-tag budget before any pair was compared. Only the Global tag catalog
+    genuinely differs per tag, and it is cheap.
+
+    `kalshi_scope` pins the parameters the events were fetched under so a caller
+    cannot silently reuse a catalog scanned for a different series set.
+    """
+
+    polymarket_us_closed: list[Market] = field(default_factory=list)
+    polymarket_us_final: list[Market] = field(default_factory=list)
+    kalshi_events: list[dict] = field(default_factory=list)
+    kalshi_scope: tuple[int, tuple[str, ...]] = (0, ())
+    fetched_at: str = ""
+
+
+async def prefetch_shared_backfill_catalog(
+    kalshi_venue: object,
+    polymarket_venue: object,
+    *,
+    kalshi_event_pages: int = 100,
+    kalshi_series_tickers: tuple[str, ...] | None = None,
+    polymarket_pages: int = 20,
+    concurrency: int = 10,
+) -> SharedBackfillCatalog:
+    """Fetch the tag-independent catalog once for a whole batch (read-only)."""
+    closed = await polymarket_venue.list_closed_markets(max_pages=polymarket_pages)
+    final = await _finalize_polymarket_markets(closed, polymarket_venue, concurrency)
+    if kalshi_series_tickers:
+        events = await kalshi_venue.list_settled_events(
+            max_pages=kalshi_event_pages, series_tickers=kalshi_series_tickers
+        )
+    else:
+        events = await kalshi_venue.list_settled_events(max_pages=kalshi_event_pages)
+    return SharedBackfillCatalog(
+        polymarket_us_closed=list(closed),
+        polymarket_us_final=list(final),
+        kalshi_events=list(events),
+        kalshi_scope=(kalshi_event_pages, tuple(kalshi_series_tickers or ())),
+        fetched_at=datetime.now(UTC).isoformat(),
+    )
+
+
 async def backfill_historical_validation(
     store: AtlasStore,
     kalshi_venue: object,
@@ -106,9 +155,17 @@ async def backfill_historical_validation(
     max_resolved_pairs: int = 250,
     training_output_dir: str | None = None,
     concurrency: int = 10,
+    shared_catalog: SharedBackfillCatalog | None = None,
 ) -> dict[str, object]:
     """Create labels only from explicit final outcomes on both public venues."""
     started_at = datetime.now(UTC).isoformat()
+    if shared_catalog is not None:
+        expected_scope = (kalshi_event_pages, tuple(kalshi_series_tickers or ()))
+        if shared_catalog.kalshi_scope != expected_scope:
+            raise ValueError(
+                "shared catalog was scanned under a different Kalshi scope "
+                f"{shared_catalog.kalshi_scope!r}; this run requires {expected_scope!r}"
+            )
     counts_before = await store.trusted_learning_counts()
     labels_before = sum(counts_before.values())
     blockers: Counter[str] = Counter()
@@ -127,13 +184,26 @@ async def backfill_historical_validation(
         "polymarket_global": polymarket_global_event_slugs,
     }
     for source_name, source_venue, page_limit in source_specs:
-        source_closed = await source_venue.list_closed_markets(max_pages=page_limit)
-        if source_slugs := slug_requests.get(source_name):
-            harvested = await _harvest_event_slug_markets(
-                source_venue, source_slugs, event_slug_market_counts, blockers, source_name
+        source_slugs = slug_requests.get(source_name)
+        # The shared catalog covers only the plain US sweep. A slug request is a
+        # targeted door onto markets the sweep cannot reach, so it always re-fetches
+        # and finalizes for itself rather than layering onto a cached list.
+        reuse_shared = (
+            shared_catalog is not None and source_name == "polymarket_us" and not source_slugs
+        )
+        if reuse_shared:
+            source_closed = list(shared_catalog.polymarket_us_closed)
+            source_final = list(shared_catalog.polymarket_us_final)
+        else:
+            source_closed = await source_venue.list_closed_markets(max_pages=page_limit)
+            if source_slugs:
+                harvested = await _harvest_event_slug_markets(
+                    source_venue, source_slugs, event_slug_market_counts, blockers, source_name
+                )
+                source_closed = _dedup_markets_by_id([*source_closed, *harvested])
+            source_final = await _finalize_polymarket_markets(
+                source_closed, source_venue, concurrency
             )
-            source_closed = _dedup_markets_by_id([*source_closed, *harvested])
-        source_final = await _finalize_polymarket_markets(source_closed, source_venue, concurrency)
         venue_coverage[source_name] = {
             "closed_markets": len(source_closed),
             "final_binary_markets": len(source_final),
@@ -146,7 +216,9 @@ async def backfill_historical_validation(
         if not source_final:
             blockers[f"{source_name.upper()}_FINAL_BINARY_EVIDENCE_UNAVAILABLE"] += 1
 
-    if kalshi_series_tickers:
+    if shared_catalog is not None:
+        events = list(shared_catalog.kalshi_events)
+    elif kalshi_series_tickers:
         events = await kalshi_venue.list_settled_events(
             max_pages=kalshi_event_pages, series_tickers=kalshi_series_tickers
         )
@@ -361,6 +433,7 @@ async def backfill_historical_validation(
         "rejected_labels": rejected_count,
         "polymarket_closed_markets": len(closed),
         "polymarket_final_binary_markets": len(final_polymarket),
+        "shared_catalog_fetched_at": shared_catalog.fetched_at if shared_catalog else None,
         "polymarket_us_event_slugs": list(polymarket_us_event_slugs),
         "polymarket_global_event_slugs": list(polymarket_global_event_slugs),
         "polymarket_us_event_slug_markets": event_slug_market_counts,

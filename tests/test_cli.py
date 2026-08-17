@@ -3,6 +3,7 @@ import asyncio
 import httpx
 import pytest
 
+from atlas.backfill import SharedBackfillCatalog
 from atlas.cli import (
     BATCH_DEFAULT_GLOBAL_TAG_IDS,
     BATCH_DEFAULT_KALSHI_SERIES_TICKERS,
@@ -308,6 +309,76 @@ async def test_learning_backfill_batch_times_out_one_tag_and_continues(monkeypat
     assert report["status"] == "BATCH_PARTIAL_FAILURE"
     assert report["failed_tags"] == ["21"]
     assert report["runs"][0]["status"] == "TIMED_OUT"
+
+
+@pytest.mark.asyncio
+async def test_learning_backfill_batch_fetches_shared_catalog_once_for_every_tag(monkeypatch):
+    """The tag-independent catalog measured ~110s live; re-fetching it per tag
+    consumed the whole per-tag budget and timed out every tag before any pair
+    was compared."""
+    fetches = []
+    catalog = SharedBackfillCatalog(kalshi_scope=(1, ()), fetched_at="2026-08-17T00:00:00+00:00")
+    received = []
+
+    async def fake_prefetch(**kwargs):
+        fetches.append(kwargs)
+        return catalog
+
+    async def fake_backfill(*args, **kwargs):
+        received.append(kwargs.get("shared_catalog"))
+        return {"status": "NO_NEW_TRUSTED_LABELS", "paper_only": True}
+
+    monkeypatch.setattr("atlas.cli._prefetch_batch_catalog", fake_prefetch)
+    monkeypatch.setattr("atlas.cli._run_learning_backfill", fake_backfill)
+
+    report = await learning_backfill_batch(
+        True,
+        target=1,
+        kalshi_event_pages=1,
+        polymarket_pages=1,
+        global_pages=1,
+        candidate_events=1,
+        market_pairs=1,
+        resolved_pairs=1,
+        global_tag_ids=("21", "84", "144"),
+    )
+
+    assert len(fetches) == 1
+    assert received == [catalog, catalog, catalog]
+    assert report["status"] == "BATCH_COMPLETE"
+    assert report["shared_catalog"]["status"] == "SHARED"
+
+
+@pytest.mark.asyncio
+async def test_learning_backfill_batch_degrades_when_shared_catalog_fetch_fails(monkeypatch):
+    received = []
+
+    async def failed_prefetch(**_kwargs):
+        raise httpx.ReadTimeout("gamma stalled")
+
+    async def fake_backfill(*args, **kwargs):
+        received.append(kwargs.get("shared_catalog"))
+        return {"status": "NO_NEW_TRUSTED_LABELS", "paper_only": True}
+
+    monkeypatch.setattr("atlas.cli._prefetch_batch_catalog", failed_prefetch)
+    monkeypatch.setattr("atlas.cli._run_learning_backfill", fake_backfill)
+
+    report = await learning_backfill_batch(
+        True,
+        target=1,
+        kalshi_event_pages=1,
+        polymarket_pages=1,
+        global_pages=1,
+        candidate_events=1,
+        market_pairs=1,
+        resolved_pairs=1,
+        global_tag_ids=("21",),
+    )
+
+    # Every tag still runs; it just pays for its own catalog, as before the fix.
+    assert received == [None]
+    assert report["shared_catalog"]["status"] == "FAILED"
+    assert "ReadTimeout" in report["shared_catalog"]["error"]
 
 
 @pytest.mark.asyncio
