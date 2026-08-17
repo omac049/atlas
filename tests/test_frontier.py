@@ -3,6 +3,7 @@ from datetime import UTC, datetime, timedelta
 import pytest
 
 from atlas.frontier import RULES_CHANGE_RECENT_DAYS, approval_frontier
+from atlas.models import VenueName
 from atlas.storage import AtlasStore
 
 NOW = datetime(2026, 8, 17, 12, 0, tzinfo=UTC)
@@ -166,3 +167,82 @@ async def test_frontier_surfaces_legs_with_no_rules_baseline_as_blind_spots(tmp_
     assert entry["unmonitored_legs"] == ["polymarket"]
     assert entry["rules_fully_monitored"] is False
     assert report["unmonitored_pairs"] == 1
+
+
+@pytest.mark.asyncio
+async def test_frontier_capture_records_a_baseline_for_blocked_legs(tmp_path):
+    """Blocked legs are exactly what the validation universe skips: a pair is
+    blocked because a leg's guarantee is unknown, and Global legs never reach it."""
+    from atlas.frontier import capture_frontier_rules_evidence
+    from atlas.venues.fixtures import fixture_markets
+
+    markets = fixture_markets()
+    kalshi = markets[VenueName.KALSHI][0]
+    polymarket = markets[VenueName.POLYMARKET_US][0]
+    candidates = [
+        {
+            **_candidate("blocked|2026-08", codes=["SETTLEMENT_GUARANTEE_UNKNOWN"]),
+            "kalshi_market_id": kalshi.market_id,
+            "polymarket_market_id": polymarket.market_id,
+        },
+        {
+            **_candidate("settling|2026-09", codes=[], queue_status="AWAITING_SETTLEMENT"),
+            "kalshi_market_id": kalshi.market_id,
+            "polymarket_market_id": polymarket.market_id,
+        },
+    ]
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+
+    captured = await capture_frontier_rules_evidence(
+        store, candidates, [kalshi, polymarket]
+    )
+
+    assert captured["frontier_legs_observed"] == 2
+    assert captured["frontier_new_versions"] == 2
+    assert captured["frontier_legs_unavailable"] == 0
+
+    history = await store.rules_version_history([kalshi.market_id, polymarket.market_id])
+    assert set(history) == {kalshi.market_id, polymarket.market_id}
+
+
+@pytest.mark.asyncio
+async def test_frontier_capture_counts_legs_missing_from_the_scan(tmp_path):
+    from atlas.frontier import capture_frontier_rules_evidence
+
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+
+    captured = await capture_frontier_rules_evidence(
+        store,
+        [_candidate("blocked|2026-08", codes=["SETTLEMENT_GUARANTEE_UNKNOWN"])],
+        [],
+    )
+
+    # Never silently dropped: an unfetched leg is reported so the blind spot stays visible.
+    assert captured["frontier_legs_unavailable"] == 2
+    assert captured["frontier_legs_observed"] == 0
+
+
+@pytest.mark.asyncio
+async def test_frontier_capture_clears_the_unmonitored_blind_spot(tmp_path):
+    from atlas.frontier import capture_frontier_rules_evidence
+    from atlas.venues.fixtures import fixture_markets
+
+    markets = fixture_markets()
+    kalshi = markets[VenueName.KALSHI][0]
+    polymarket = markets[VenueName.POLYMARKET_US][0]
+    candidate = {
+        **_candidate("blocked|2026-08", codes=["SETTLEMENT_GUARANTEE_UNKNOWN"]),
+        "kalshi_market_id": kalshi.market_id,
+        "polymarket_market_id": polymarket.market_id,
+    }
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await store.save_settlement_candidates([candidate])
+
+    before = await approval_frontier(store, now=NOW)
+    assert before["unmonitored_pairs"] == 1
+
+    await capture_frontier_rules_evidence(store, [candidate], [kalshi, polymarket])
+
+    after = await approval_frontier(store, now=NOW)
+    assert after["unmonitored_pairs"] == 0
+    assert after["entries"][0]["rules_fully_monitored"] is True

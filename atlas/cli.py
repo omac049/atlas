@@ -25,7 +25,7 @@ from atlas.discovery import (
     structured_identity_candidates,
 )
 from atlas.enrichment import enrich_shared_rules, enrich_weather_rules
-from atlas.frontier import approval_frontier
+from atlas.frontier import approval_frontier, capture_frontier_rules_evidence
 from atlas.learning import export_learning_splits, export_training_jsonl
 from atlas.live_monitor import run_pair
 from atlas.monitor import run_once
@@ -489,8 +489,21 @@ async def scan_pairs(live: bool) -> list:
     if shared_rule_enrichment is not None:
         catalog_report["shared_rule_enrichment"] = shared_rule_enrichment
     await store.save_catalog_report(catalog_report)
-    await store.save_settlement_candidates(
-        catalog_report.get("settlement_discovery", {}).get("rankings", [])
+    settlement_rankings = catalog_report.get("settlement_discovery", {}).get("rankings", [])
+    await store.save_settlement_candidates(settlement_rankings)
+    # Blocked frontier legs are precisely the markets the validation universe skips
+    # (guarantee unknown, or a Global leg it never receives), so without this pass
+    # the pairs we are waiting on have no rules baseline to detect a change against.
+    frontier_evidence = await capture_frontier_rules_evidence(
+        store,
+        settlement_rankings,
+        [*kalshi_markets, *polymarket_markets, *global_open_markets],
+    )
+    print(
+        "frontier_evidence: "
+        f"legs={frontier_evidence['frontier_legs_observed']} "
+        f"new_versions={frontier_evidence['frontier_new_versions']} "
+        f"unavailable={frontier_evidence['frontier_legs_unavailable']}"
     )
     reviews = review_market_pairs(kalshi_markets, polymarket_markets)
     identity_candidates = structured_identity_candidates(kalshi_markets, polymarket_markets)

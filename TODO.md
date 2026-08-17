@@ -197,13 +197,34 @@ settled overlap aged out of the catalog.
 - [x] **First live report: 8 blocked, 6 blocked on venue text alone, 0 rules changes in the last
   14 days** — so nothing on the frontier has moved, which is now a measured fact instead of an
   assumption.
-- [ ] **Blind spot the report surfaced: 3 of the 8 blocked pairs have a leg with NO recorded rules
-  baseline** (`us_nonfarm_payrolls|2026-08` Kalshi leg; both `us_cpi_*|2026-08` pairs on both legs)
-  — precisely the high-value macro frontier. With no baseline there is nothing to diff, so a text
-  change on those legs would never be detected and "we're watching for alignment" is not true for
-  them today. Fix by extending the monitor's evidence-snapshot pass to cover blocked frontier legs,
-  not just the markets it already tracks. `unmonitored_pairs` in the report is the metric to drive
-  to zero.
+- [x] **Blind spot the report surfaced, and then closed the same day: 3 of the 8 blocked pairs had a
+  leg with NO recorded rules baseline** (`us_nonfarm_payrolls|2026-08` Kalshi leg; both
+  `us_cpi_*|2026-08` pairs on both legs) — precisely the high-value macro frontier. With no baseline
+  there is nothing to diff, so a text change on those legs would never have been detected, and
+  "we're watching for alignment" was not true for them.
+  **Root cause:** `capture_validation_universe` only snapshots markets that are already `GUARANTEED`
+  or that appear in a review pair, and it is never handed the Polymarket Global catalog at all.
+  Blocked frontier pairs fail both tests by construction — a pair is blocked *because* a leg's
+  guarantee is unknown — so the exact markets the project most wants to watch were the ones it was
+  not watching.
+  **Fix:** `capture_frontier_rules_evidence` (`atlas/frontier.py`) snapshots both legs of every
+  blocked candidate regardless of guarantee status, wired into the monitor's scan right after the
+  settlement rankings are saved, where the Global catalog is in scope. Legs absent from the current
+  scan are counted as `frontier_legs_unavailable` rather than silently dropped. Observation only —
+  a snapshot grants no guarantee and changes no verdict.
+  **Verified live:** `frontier_evidence: legs=16 unavailable=0`, and the frontier report now reports
+  `unmonitored=0`. Every blocked pair has a baseline on both legs, so the next venue text revision
+  on any of them will register as a rules-version change.
+- [x] **Monitor log was block-buffered — found while verifying the above, and worth its own entry.**
+  The monitor writes stdout to `data/atlas-monitor.log`, which Python block-buffers when it is a
+  file. A restarted monitor ran **~19 minutes of completed cycles (2:56 of CPU) while writing zero
+  bytes**, so the log showed only the previous process's output and looked as if the new code were
+  not running. Nothing was wrong with the monitor; the log simply lagged reality by many minutes.
+  That directly undermines the frontier watch — a `PUBLISHED RULES CHANGED` line is worthless
+  sitting in an unflushed buffer. Restarted with `PYTHONUNBUFFERED=1` and the line appeared within
+  one cycle (~3.7 min). `deploy/com.atlas.monitor.plist` now defines the monitor durably with that
+  variable set (file added; loading it into launchd is a separate owner action). **Always start the
+  monitor with `PYTHONUNBUFFERED=1`.**
 
 ## 2026-08-17 — holdout baseline: `training_ready=true` is measuring volume, not signal
 

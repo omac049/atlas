@@ -15,7 +15,9 @@ thing that decides truth.
 
 from datetime import UTC, datetime, timedelta
 
+from atlas.models import Market
 from atlas.storage import AtlasStore
+from atlas.validation import market_evidence_snapshot
 
 # A venue republishing its terms is the only event that can clear a text blocker, so
 # recent changes are surfaced first. The window is a review prompt, not a rule.
@@ -119,6 +121,54 @@ def _frontier_rank(entry: dict[str, object]) -> tuple:
         len(entry["blocking_codes"]),
         entry["event_subject"],
     )
+
+
+async def capture_frontier_rules_evidence(
+    store: AtlasStore,
+    candidates: list[dict[str, object]],
+    markets: list[Market],
+) -> dict[str, int]:
+    """Record a rules baseline for both legs of every blocked candidate.
+
+    The validation universe only snapshots markets that are already `GUARANTEED`
+    or that appear in a review pair, and it never sees Polymarket Global legs at
+    all. Blocked frontier pairs are exactly the markets that fail those tests —
+    a pair is blocked *because* a leg's guarantee is unknown — so the pairs the
+    project most wants to watch for text alignment were the ones with no baseline
+    to diff against. Snapshotting is observation only; it changes no verdict and
+    grants no guarantee.
+    """
+    by_id: dict[str, Market] = {}
+    for market in markets:
+        for identifier in (market.market_id, market.venue_market_id):
+            if identifier:
+                by_id.setdefault(str(identifier), market)
+
+    tracked: dict[str, Market] = {}
+    missing = 0
+    for candidate in candidates:
+        if str(candidate.get("queue_status")) != "BLOCKED":
+            continue
+        for key in ("kalshi_market_id", "polymarket_market_id"):
+            identifier = str(candidate.get(key) or "")
+            if not identifier:
+                continue
+            market = by_id.get(identifier)
+            if market is None:
+                # The leg is not in this scan's catalogs (e.g. a Global market on a
+                # cycle that did not fetch it). Counted, never silently dropped.
+                missing += 1
+                continue
+            tracked[market.market_id] = market
+
+    evidence = await store.save_market_evidence_snapshots(
+        [market_evidence_snapshot(market, "APPROVAL_FRONTIER") for market in tracked.values()]
+    )
+    return {
+        "frontier_legs_observed": evidence["observed"],
+        "frontier_new_versions": evidence["new_versions"],
+        "frontier_legs_unavailable": missing,
+    }
 
 
 async def approval_frontier(

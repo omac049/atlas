@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.atlas.monitor</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/ocorral/Library/Group Containers/UBF8T346G9.OneDriveStandaloneSuite/OneDrive-UAGC (2026-08-07 18:30:06 +0000).noindex/OneDrive-UAGC (2026-08-07 18:30:06 +0000)/Documents/Atlas/.venv/bin/atlas</string>
+        <string>pairs</string>
+        <string>watch</string>
+        <string>--live</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <!-- Without this, stdout to a file is block-buffered: the monitor runs
+             correctly but its log lags reality by many minutes, so a frontier
+             "PUBLISHED RULES CHANGED" line can sit unflushed while the log looks
+             idle. Observed 2026-08-17: ~19 minutes of completed cycles with zero
+             bytes written. -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+    <key>WorkingDirectory</key>
+    <string>/Users/ocorral/Library/Group Containers/UBF8T346G9.OneDriveStandaloneSuite/OneDrive-UAGC (2026-08-07 18:30:06 +0000).noindex/OneDrive-UAGC (2026-08-07 18:30:06 +0000)/Documents/Atlas</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <!-- One monitor only, per the one-monitor rule. -->
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Users/ocorral/Library/Group Containers/UBF8T346G9.OneDriveStandaloneSuite/OneDrive-UAGC (2026-08-07 18:30:06 +0000).noindex/OneDrive-UAGC (2026-08-07 18:30:06 +0000)/Documents/Atlas/data/atlas-monitor.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/ocorral/Library/Group Containers/UBF8T346G9.OneDriveStandaloneSuite/OneDrive-UAGC (2026-08-07 18:30:06 +0000).noindex/OneDrive-UAGC (2026-08-07 18:30:06 +0000)/Documents/Atlas/data/atlas-monitor.log</string>
+</dict>
+</plist>
