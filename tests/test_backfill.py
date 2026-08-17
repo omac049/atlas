@@ -6,6 +6,7 @@ from atlas.backfill import (
     _historical_label,
     backfill_historical_validation,
     historical_event_candidates,
+    prefetch_shared_backfill_catalog,
 )
 from atlas.cli import _historical_backfill_due
 from atlas.models import MarketStatus, MatchStatus
@@ -471,3 +472,127 @@ async def test_recent_historical_backfill_is_not_due(tmp_path):
     )
 
     assert await _historical_backfill_due(store, 86_400) is False
+
+
+class CountingKalshiVenue(HistoricalKalshiVenue):
+    """Counts catalog scans so a shared catalog can be proven to skip them."""
+
+    def __init__(self, markets):
+        super().__init__(markets)
+        self.settled_event_scans = 0
+
+    async def list_settled_events(self, max_pages=100, series_tickers=None):
+        self.settled_event_scans += 1
+        return await super().list_settled_events(max_pages=max_pages)
+
+
+class CountingPolymarketVenue(HistoricalPolymarketVenue):
+    def __init__(self, markets):
+        super().__init__(markets)
+        self.closed_sweeps = 0
+        self.evidence_fetches = 0
+
+    async def list_closed_markets(self, max_pages=20):
+        self.closed_sweeps += 1
+        return await super().list_closed_markets(max_pages=max_pages)
+
+    async def get_terminal_settlement_evidence(self, market_id):
+        self.evidence_fetches += 1
+        return await super().get_terminal_settlement_evidence(market_id)
+
+
+def _settled_backfill_markets():
+    markets = fixture_markets()
+    kalshi = markets["kalshi"][0].model_copy(deep=True)
+    kalshi.status = MarketStatus.SETTLED
+    kalshi.raw_market_json["result"] = "yes"
+    kalshi.raw_market_json["event_ticker"] = "KXFED-SEP26"
+    polymarket = markets["polymarket_us"][0].model_copy(deep=True)
+    polymarket.status = MarketStatus.CLOSED
+    polymarket.raw_market_json["question"] = polymarket.title
+    return kalshi, polymarket
+
+
+@pytest.mark.asyncio
+async def test_prefetched_catalog_replaces_the_per_run_venue_scans(tmp_path):
+    kalshi_market, polymarket_market = _settled_backfill_markets()
+    kalshi = CountingKalshiVenue([kalshi_market])
+    polymarket = CountingPolymarketVenue([polymarket_market])
+
+    catalog = await prefetch_shared_backfill_catalog(
+        kalshi, polymarket, kalshi_event_pages=100, polymarket_pages=20
+    )
+    assert kalshi.settled_event_scans == 1
+    assert polymarket.closed_sweeps == 1
+
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    report = await backfill_historical_validation(
+        store,
+        kalshi,
+        polymarket,
+        target_labels=1,
+        shared_catalog=catalog,
+    )
+
+    # The run consumed the prefetched catalog instead of re-scanning either venue.
+    assert kalshi.settled_event_scans == 1
+    assert polymarket.closed_sweeps == 1
+    assert report["kalshi_events_scanned"] == 1
+    assert report["venue_coverage"]["polymarket_us"]["final_binary_markets"] == 1
+    assert report["shared_catalog_fetched_at"] == catalog.fetched_at
+    assert report["new_labels"] == 1
+
+
+@pytest.mark.asyncio
+async def test_shared_catalog_refuses_a_run_with_a_different_kalshi_scope(tmp_path):
+    kalshi_market, polymarket_market = _settled_backfill_markets()
+    kalshi = CountingKalshiVenue([kalshi_market])
+    polymarket = CountingPolymarketVenue([polymarket_market])
+    catalog = await prefetch_shared_backfill_catalog(
+        kalshi,
+        polymarket,
+        kalshi_event_pages=100,
+        kalshi_series_tickers=("KXFED",),
+        polymarket_pages=20,
+    )
+
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    with pytest.raises(ValueError, match="different Kalshi scope"):
+        await backfill_historical_validation(
+            store,
+            kalshi,
+            polymarket,
+            target_labels=1,
+            kalshi_series_tickers=("KXCPIYOY",),
+            shared_catalog=catalog,
+        )
+
+
+@pytest.mark.asyncio
+async def test_event_slug_harvest_bypasses_the_shared_catalog(tmp_path):
+    """The slug door reaches markets the plain sweep cannot, so it must always
+    fetch for itself rather than trusting the shared sweep."""
+    kalshi_market, polymarket_market = _settled_backfill_markets()
+    kalshi = CountingKalshiVenue([kalshi_market])
+    polymarket = CountingPolymarketVenue([polymarket_market])
+
+    async def list_event_markets(_event_slug):
+        return []
+
+    polymarket.list_event_markets = list_event_markets
+    catalog = await prefetch_shared_backfill_catalog(
+        kalshi, polymarket, kalshi_event_pages=100, polymarket_pages=20
+    )
+    sweeps_after_prefetch = polymarket.closed_sweeps
+
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await backfill_historical_validation(
+        store,
+        kalshi,
+        polymarket,
+        target_labels=1,
+        polymarket_us_event_slugs=("some-settled-event",),
+        shared_catalog=catalog,
+    )
+
+    assert polymarket.closed_sweeps == sweeps_after_prefetch + 1

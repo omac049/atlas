@@ -9,7 +9,11 @@ import httpx
 
 from atlas.agent import AtlasAgent
 from atlas.arbitrage import calculate_opportunity
-from atlas.backfill import backfill_historical_validation
+from atlas.backfill import (
+    SharedBackfillCatalog,
+    backfill_historical_validation,
+    prefetch_shared_backfill_catalog,
+)
 from atlas.discovery import (
     compatibility_report,
     filter_live_markets,
@@ -91,6 +95,11 @@ BATCH_MAX_CANDIDATE_EVENTS = 50
 BATCH_MAX_MARKET_PAIRS = 500
 BATCH_MAX_RESOLVED_PAIRS = 100
 BATCH_MAX_TAG_SECONDS = 120
+# The tag-independent catalog (Polymarket US closed sweep + terminal-evidence
+# finalization, Kalshi settled-event scan) is fetched once per batch and shared by
+# every tag. Measured live 2026-08-17 at ~110s, which is why folding it into the
+# per-tag budget timed out every tag before a single pair was compared.
+BATCH_MAX_CATALOG_SECONDS = 300
 # Live settlement-candidate discovery also watches the tag-scoped Polymarket Global
 # open catalog (e.g. the end-of-2026 fed-funds level event has no US-gateway
 # counterpart). Global markets have no order books, so they feed the queue and
@@ -829,6 +838,7 @@ async def _run_learning_backfill(
     kalshi_event_ticker_filter: str | None = None,
     polymarket_us_event_slugs: tuple[str, ...] = (),
     polymarket_global_event_slugs: tuple[str, ...] = (),
+    shared_catalog: SharedBackfillCatalog | None = None,
 ) -> dict[str, object]:
     if not live:
         raise ValueError("historical backfill requires --live public venue data")
@@ -852,6 +862,7 @@ async def _run_learning_backfill(
         max_candidate_events=candidate_events,
         max_market_pairs=market_pairs,
         max_resolved_pairs=resolved_pairs,
+        shared_catalog=shared_catalog,
     )
 
 
@@ -922,6 +933,22 @@ async def learning_backfill(
     return report
 
 
+async def _prefetch_batch_catalog(
+    *,
+    kalshi_event_pages: int,
+    kalshi_series_tickers: tuple[str, ...],
+    polymarket_pages: int,
+) -> SharedBackfillCatalog:
+    """Live read-only seam for the batch's shared catalog fetch (patchable in tests)."""
+    return await prefetch_shared_backfill_catalog(
+        KalshiVenue(fixture=False),
+        PolymarketUSVenue(fixture=False),
+        kalshi_event_pages=kalshi_event_pages,
+        kalshi_series_tickers=kalshi_series_tickers,
+        polymarket_pages=polymarket_pages,
+    )
+
+
 async def learning_backfill_batch(
     live: bool,
     target: int = 1,
@@ -951,6 +978,28 @@ async def learning_backfill_batch(
         list(kalshi_series_tickers) if kalshi_series_tickers else None
     )
 
+    # Fetch the tag-independent catalog once. Previously every tag re-fetched it
+    # inside its own 120s budget, and the fetch alone measured ~110s live, so no
+    # tag ever reached its first comparison.
+    shared_catalog: SharedBackfillCatalog | None = None
+    catalog_status = "SHARED"
+    catalog_error: str | None = None
+    try:
+        shared_catalog = await asyncio.wait_for(
+            _prefetch_batch_catalog(
+                kalshi_event_pages=kalshi_event_pages,
+                kalshi_series_tickers=series_tickers,
+                polymarket_pages=polymarket_pages,
+            ),
+            timeout=BATCH_MAX_CATALOG_SECONDS,
+        )
+    except TimeoutError:
+        catalog_status = "TIMED_OUT"
+        catalog_error = f"shared catalog fetch exceeded {BATCH_MAX_CATALOG_SECONDS}s"
+    except (httpx.HTTPError, OSError, ValueError) as exc:
+        catalog_status = "FAILED"
+        catalog_error = f"{type(exc).__name__}: {exc}"
+
     per_tag: list[dict[str, object]] = []
     for tag_id in tag_ids:
         try:
@@ -966,6 +1015,7 @@ async def learning_backfill_batch(
                     resolved_pairs,
                     (tag_id,),
                     kalshi_series_tickers=series_tickers,
+                    shared_catalog=shared_catalog,
                 ),
                 timeout=BATCH_MAX_TAG_SECONDS,
             )
@@ -1014,10 +1064,20 @@ async def learning_backfill_batch(
         )
 
     failed = [result for result in per_tag if result["status"] in {"FAILED", "TIMED_OUT"}]
+    shared_catalog_report: dict[str, object] = {
+        "status": catalog_status,
+        "error": catalog_error,
+        "fetched_at": shared_catalog.fetched_at if shared_catalog else None,
+        "polymarket_us_final_binary_markets": (
+            len(shared_catalog.polymarket_us_final) if shared_catalog else 0
+        ),
+        "kalshi_events": len(shared_catalog.kalshi_events) if shared_catalog else 0,
+    }
     batch_report: dict[str, object] = {
         "status": "BATCH_PARTIAL_FAILURE" if failed else "BATCH_COMPLETE",
         "paper_only": True,
         "execution_enabled": False,
+        "shared_catalog": shared_catalog_report,
         "tag_ids": list(tag_ids),
         "kalshi_series_tickers": list(series_tickers),
         "completed_tags": [
@@ -1039,6 +1099,11 @@ async def learning_backfill_batch(
         "tag_batch: "
         f"tags={','.join(tag_ids)} runs={len(per_tag)} "
         "paper_only=True execution_enabled=False"
+    )
+    print(
+        f"  shared_catalog: status={catalog_status} "
+        f"pm_us_final={shared_catalog_report['polymarket_us_final_binary_markets']} "
+        f"kalshi_events={shared_catalog_report['kalshi_events']}"
     )
     for result in per_tag:
         if result["status"] in {"FAILED", "TIMED_OUT"}:
