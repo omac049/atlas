@@ -25,6 +25,7 @@ from atlas.discovery import (
     structured_identity_candidates,
 )
 from atlas.enrichment import enrich_shared_rules, enrich_weather_rules
+from atlas.frontier import approval_frontier
 from atlas.learning import export_learning_splits, export_training_jsonl
 from atlas.live_monitor import run_pair
 from atlas.monitor import run_once
@@ -761,6 +762,38 @@ async def _run_scheduled_backfill() -> dict[str, object]:
     )
 
 
+async def approval_frontier_report(limit: int) -> dict[str, object]:
+    """Print the read-only approval frontier: closest blocked pairs, moved text first."""
+    report = await approval_frontier(AtlasStore(), limit=limit)
+    print(
+        "approval_frontier: "
+        f"blocked={report['blocked_candidates']} "
+        f"text_only={report['blocked_only_on_venue_text']} "
+        f"rules_changed={report['rules_changed_recently']} "
+        f"unmonitored={report['unmonitored_pairs']} "
+        f"window_days={report['rules_change_window_days']} paper_only=true"
+    )
+    for entry in report["entries"]:
+        flag = " <- PUBLISHED RULES CHANGED" if entry["rules_changed_recently"] else ""
+        reach = "venue-text only" if entry["blocked_only_on_venue_text"] else "structural gap"
+        print(f"  {entry['event_subject']} (distance={entry['rule_distance']}, {reach}){flag}")
+        if entry["text_clearable_codes"]:
+            print(f"    could clear on text: {', '.join(entry['text_clearable_codes'])}")
+        if entry["structural_codes"]:
+            print(f"    not a text problem:  {', '.join(entry['structural_codes'])}")
+        if entry["unmonitored_legs"]:
+            print(
+                "    BLIND SPOT: no rules baseline recorded for "
+                f"{', '.join(entry['unmonitored_legs'])} — a text change here would "
+                "not be detected"
+            )
+        for leg in ("kalshi", "polymarket"):
+            state = entry[leg]
+            changed = state["rules_changed_at"] or "never"
+            print(f"    {leg:11s} versions={state['rules_versions']} last_change={changed}")
+    return report
+
+
 async def candidate_pairs(live: bool, limit: int) -> None:
     kalshi_markets = await KalshiVenue(fixture=not live).list_markets()
     polymarket_markets = await PolymarketUSVenue(fixture=not live).list_markets()
@@ -1250,6 +1283,11 @@ def main() -> None:
     candidates = pairs_sub.add_parser("candidates")
     candidates.add_argument("--live", action="store_true")
     candidates.add_argument("--limit", type=int, default=25)
+    frontier_parser = pairs_sub.add_parser(
+        "frontier",
+        help="rank blocked pairs by proximity to approval; flag moved venue text",
+    )
+    frontier_parser.add_argument("--limit", type=int, default=200)
     gaps = sub.add_parser("gaps", help="paper-only cross-venue price-gap radar")
     gaps_sub = gaps.add_subparsers(dest="action", required=True)
     gaps_scan_parser = gaps_sub.add_parser("scan")
@@ -1386,6 +1424,8 @@ def main() -> None:
         asyncio.run(shadow_watch(args.interval, args.limit))
     elif args.command == "pairs" and args.action == "candidates":
         asyncio.run(candidate_pairs(args.live, max(args.limit, 1)))
+    elif args.command == "pairs" and args.action == "frontier":
+        asyncio.run(approval_frontier_report(max(args.limit, 1)))
     elif args.command == "gaps" and args.action == "scan":
         asyncio.run(gaps_scan(args.live))
     elif args.command == "gaps" and args.action == "status":

@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
 from atlas import __version__
+from atlas.frontier import approval_frontier
 from atlas.gap_radar import paper_bankroll_summary
 
 app = FastAPI(title="Atlas", version=__version__)
@@ -62,6 +63,7 @@ async def overview() -> dict:
     trusted_labels_recent = await store.recent_trusted_labels(limit=8)
     catalog = await store.latest_catalog_report()
     settlement_candidates = await store.latest_settlement_candidates()
+    frontier = await approval_frontier(store)
     milestone_alerts = await store.latest_milestone_alerts()
     shadow = await store.latest_shadow_observation()
     shadow_validation = await store.shadow_validation_summary()
@@ -131,6 +133,7 @@ async def overview() -> dict:
         "training_readiness": training_readiness,
         "catalog_compatibility": catalog,
         "settlement_candidates": settlement_candidates,
+        "approval_frontier": frontier,
         "milestone_alerts": milestone_alerts,
         "shadow_observation": shadow,
         "shadow_validation": shadow_validation,

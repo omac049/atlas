@@ -177,6 +177,34 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
 - [x] **Guards, because this path is sensitive:** the shared catalog pins the Kalshi scope it was scanned under and **refuses** a run requesting a different series set rather than silently mismatching evidence. Event-slug harvests always bypass the shared sweep and fetch for themselves — the targeted door reaches markets the plain sweep cannot, so it must never layer onto a cached list. 5 new tests (`tests/test_backfill.py`, `tests/test_cli.py`) cover reuse, scope refusal, slug bypass, single-fetch-per-batch, and failure degradation.
 - [x] **New `tests/conftest.py` autouse guard:** the prefetch added a live network seam that the existing batch tests did not stub, and the suite silently started making real venue calls (3.9s → 142.8s). The guard refuses live catalog fetches in tests; suite is back to **408 passed in 3.6s**, lint clean.
 - [x] **First working live run (2026-08-17):** `BATCH_COMPLETE`, all four tags green, shared catalog = 1447 PM-US final binaries + 20,309 Kalshi settled events. Minted **10 evidence-backed `REJECTED`** labels (62 → 72) — same-canonical-subject CPI review pairs with divergent terminal outcomes on both venues, `us_cpi_mom|2026-06` and `us_cpi_mom|2026-07` each landing exactly at the signed 5-per-event bound. Verified no event exceeds the cap; the known pre-existing `us_cpi_yoy|2026-07: 6` leak was untouched. Monitor restarted on the fixed code (single instance, nohup); `trading_enabled=false` throughout.
+## 2026-08-17 — approval-frontier watch (`atlas pairs frontier`)
+
+Every blocked pair is waiting for a venue to publish terms it does not publish today, and the
+standing rule is to wait for that text rather than infer it. That waiting was **passive**: the
+store has recorded a `rules_hash` per evidence snapshot all along, but nothing ever said "a venue
+republished its terms — re-check this blocker", so a cleared blocker could go unnoticed until the
+settled overlap aged out of the catalog.
+
+- [x] **`atlas/frontier.py` + `atlas pairs frontier` + `approval_frontier` in `/api/overview`.**
+  Read-only reporting over evidence already in the store; it never approves, never relaxes a
+  mismatch, and never feeds a verdict. `AtlasStore.rules_version_history` returns the ordered
+  distinct published-rules versions per market.
+- [x] **Blockers are split into `text_clearable_codes` vs `structural_codes`** so the report never
+  implies a venue could fix a real divergence by publishing more text. A different strike
+  (`THRESHOLD_OPERATOR_MISMATCH`, `SIGNED_LINE_MISMATCH`, `CONTRACT_SCOPE_MISMATCH`) is simply not
+  the same bet, and no amount of waiting changes it. Ranking puts moved text first, then
+  text-only-blocked pairs, then fewest remaining mismatches.
+- [x] **First live report: 8 blocked, 6 blocked on venue text alone, 0 rules changes in the last
+  14 days** — so nothing on the frontier has moved, which is now a measured fact instead of an
+  assumption.
+- [ ] **Blind spot the report surfaced: 3 of the 8 blocked pairs have a leg with NO recorded rules
+  baseline** (`us_nonfarm_payrolls|2026-08` Kalshi leg; both `us_cpi_*|2026-08` pairs on both legs)
+  — precisely the high-value macro frontier. With no baseline there is nothing to diff, so a text
+  change on those legs would never be detected and "we're watching for alignment" is not true for
+  them today. Fix by extending the monitor's evidence-snapshot pass to cover blocked frontier legs,
+  not just the markets it already tracks. `unmonitored_pairs` in the report is the metric to drive
+  to zero.
+
 ## 2026-08-17 — holdout baseline: `training_ready=true` is measuring volume, not signal
 
 Ran the baseline characterization of the frozen holdout **before** spending anything on a

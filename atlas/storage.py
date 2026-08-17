@@ -636,6 +636,43 @@ class AtlasStore:
             )
             await db.commit()
 
+    async def rules_version_history(
+        self, market_ids: list[str]
+    ) -> dict[str, list[dict[str, object]]]:
+        """Ordered distinct published-rules versions per market, oldest first.
+
+        Read-only. Every blocked frontier pair is waiting on a venue to publish
+        different terms, so the arrival of a new `rules_hash` is the only honest
+        signal that a blocker is worth re-checking. Never used to change a verdict.
+        """
+        await self.initialize()
+        if not market_ids:
+            return {}
+        placeholders = ",".join("?" for _ in market_ids)
+        async with aiosqlite.connect(self.path) as db:
+            rows = await (
+                await db.execute(
+                    f"""SELECT market_id, rules_hash, MIN(observed_at), MAX(observed_at),
+                        COUNT(*)
+                        FROM market_evidence_snapshots
+                        WHERE market_id IN ({placeholders}) AND rules_hash IS NOT NULL
+                        GROUP BY market_id, rules_hash
+                        ORDER BY market_id, MIN(observed_at)""",
+                    market_ids,
+                )
+            ).fetchall()
+        history: dict[str, list[dict[str, object]]] = {}
+        for market_id, rules_hash, first_seen, last_seen, observations in rows:
+            history.setdefault(str(market_id), []).append(
+                {
+                    "rules_hash": str(rules_hash),
+                    "first_observed_at": str(first_seen),
+                    "last_observed_at": str(last_seen),
+                    "observations": int(observations),
+                }
+            )
+        return history
+
     async def validation_summary(self) -> dict[str, object]:
         await self.initialize()
         async with aiosqlite.connect(self.path) as db:
