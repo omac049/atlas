@@ -6,9 +6,9 @@
     <meta name="description" content="Atlas — paper-only cross-market prediction research. One event, two markets, priced apart." />
     <title>Atlas — Cross-Market Intelligence</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/dashboard.css?v=20260813-terminal" />
-    <link rel="stylesheet" href="/dashboard-research.css?v=20260813-terminal" />
-    <link rel="stylesheet" href="/dashboard-agent.css?v=20260813-terminal" />
+    <link rel="stylesheet" href="/dashboard.css?v=20260817-watchboard" />
+    <link rel="stylesheet" href="/dashboard-research.css?v=20260817-watchboard" />
+    <link rel="stylesheet" href="/dashboard-agent.css?v=20260817-watchboard" />
   </head>
   <body>
     <main class="shell" id="top">
@@ -18,12 +18,12 @@
           <span><strong>ATLAS</strong><small>Cross-market intelligence</small></span>
         </a>
         <nav class="topnav" aria-label="Sections">
+          <a href="#watch">Watch</a>
+          <a href="#frontier">Frontier</a>
           <a href="#pipeline">Pipeline</a>
           <a href="#opportunities">Opportunities</a>
-          <a href="#agent">Agent</a>
           <a href="#settlement">Settlement</a>
           <a href="#terminal">Terminal</a>
-          <a href="#normalization">Normalization</a>
           <a href="#validation">Validation</a>
         </nav>
         <div class="top-status">
@@ -33,18 +33,69 @@
         </div>
       </header>
 
-      <section class="intro">
-        <div class="intro-copy">
-          <p class="eyebrow">Paper-only research · v0.1</p>
-          <h1>One event. Two markets. Priced apart.</h1>
-          <p class="subhead">Atlas watches Kalshi and Polymarket for contracts settling on the same real-world event, proves they are economically identical with deterministic rules, and measures whether the price gap survives real order-book depth — entirely on paper.</p>
+      <section class="tape" aria-label="Live status tape">
+        <div class="tape-item"><span>Tracked pairs</span><strong id="tape-tracked">—</strong></div>
+        <div class="tape-item tape-item--accent"><span>Executable now</span><strong id="tape-executable">—</strong></div>
+        <div class="tape-item"><span>Widest gap</span><strong id="tape-widest">—</strong></div>
+        <div class="tape-item"><span>Paper bankroll</span><strong id="tape-bankroll">—</strong></div>
+        <div class="tape-item"><span>Trusted labels</span><strong id="tape-labels">—</strong></div>
+        <div class="tape-item"><span title="Candidate pairs blocked by deterministic rule mismatches">Blocked</span><strong id="tape-frontier">—</strong></div>
+        <div class="tape-item"><span title="Blocked pairs whose published venue rules changed in the last 14 days">Rules moved</span><strong id="tape-rules-moved">—</strong></div>
+        <div class="tape-item"><span>Last scan</span><strong id="tape-scan">—</strong></div>
+      </section>
+
+      <section class="board panel" id="watch" aria-labelledby="board-title">
+        <div class="board-head">
+          <div>
+            <span class="section-label">Market watch · candidate twin shapes · paper only</span>
+            <h1 id="board-title">Live cross-venue gap board</h1>
+            <p id="board-detail">Every row is a shape-matched candidate, not a proven twin. Gap is the edge left after the fee buffer when buying both hedged sides at executable prices.</p>
+          </div>
+          <div class="board-controls">
+            <div class="board-filters" role="group" aria-label="Filter rows">
+              <button type="button" class="chip is-active" data-watch-filter="all">All</button>
+              <button type="button" class="chip" data-watch-filter="executable">Executable</button>
+              <button type="button" class="chip" data-watch-filter="positive">Positive gap</button>
+            </div>
+            <button id="refresh">Refresh <span>↻</span></button>
+          </div>
         </div>
-        <div class="intro-stats" aria-label="Pipeline at a glance">
-          <div class="stat"><span>Contracts normalized</span><strong id="hero-normalized">—</strong></div>
-          <div class="stat"><span>Shared events</span><strong id="hero-shared">—</strong></div>
-          <div class="stat stat--accent"><span>Execution ready</span><strong id="hero-ready">—</strong></div>
-          <div class="stat"><span>Trusted labels</span><strong id="hero-labels">—</strong><div class="progress"><i id="hero-labels-bar"></i></div></div>
+        <div class="board-scroll">
+          <table class="board-table">
+            <thead>
+              <tr>
+                <th scope="col" data-watch-sort="event_subject" title="Canonical event both contracts settle on">Event</th>
+                <th scope="col">Contracts K ↔ P</th>
+                <th scope="col" data-watch-sort="shape">Shape</th>
+                <th scope="col" class="num" data-watch-sort="best_gap" title="Payout minus combined cost minus fee buffer, at executable prices">Gap</th>
+                <th scope="col" class="num" data-watch-sort="gap_delta" title="Change since the previous radar observation">Δ</th>
+                <th scope="col" class="num" title="Narrowest and widest gap ever recorded for this pair">Range</th>
+                <th scope="col" title="Recent gap history, oldest to newest">Trend</th>
+                <th scope="col" data-watch-sort="verification_status" title="Deterministic verdict — a gap on a non-approved pair is not an arbitrage">Rule status</th>
+                <th scope="col" class="num" data-watch-sort="last_observed_at">Last seen</th>
+              </tr>
+            </thead>
+            <tbody id="watch-rows"><tr><td colspan="9"><div class="empty">Waiting for the first radar scan.</div></td></tr></tbody>
+          </table>
         </div>
+        <p class="board-note" id="watch-note">Candidates only — never executed. A positive gap is a research signal, not a trade.</p>
+      </section>
+
+      <section class="frontier-panel panel" id="frontier">
+        <div class="frontier-head">
+          <div>
+            <span class="section-label">Approval frontier · what each blocked pair is waiting on</span>
+            <h2 id="frontier-status">Ranking blocked pairs</h2>
+            <p id="frontier-detail">Blocked pairs are waiting for a venue to publish terms it does not publish today. Text-clearable blockers can resolve on a venue revision; structural ones never can.</p>
+          </div>
+          <div class="frontier-metrics metric-grid">
+            <div><span title="Candidates blocked by deterministic rule mismatches">Blocked</span><strong id="frontier-blocked">—</strong></div>
+            <div><span title="Blocked only by clauses a venue could publish — no structural divergence">Venue text only</span><strong id="frontier-text-only">—</strong></div>
+            <div><span title="Pairs whose published rules text changed inside the watch window">Rules moved</span><strong id="frontier-moved">—</strong></div>
+            <div><span title="Pairs with a leg that has no recorded rules baseline — a text change there would go undetected">Unmonitored</span><strong id="frontier-unmonitored">—</strong></div>
+          </div>
+        </div>
+        <div id="frontier-rows" class="frontier-rows"><div class="empty">No blocked candidates recorded yet.</div></div>
       </section>
 
       <section class="evidence-banner" role="status">
@@ -78,7 +129,6 @@
         <div class="panel col-8 workspace">
           <div class="workspace-head">
             <div><span class="section-label">Live opportunities</span><h2>Approved equivalents</h2></div>
-            <button id="refresh">Refresh <span>↻</span></button>
           </div>
           <div id="opportunity" class="opportunity"><div class="skeleton"></div></div>
         </div>
@@ -280,6 +330,6 @@
 
       <footer><span>ATLAS / research instrument</span><span>no execution module installed</span></footer>
     </main>
-    <script src="/dashboard.js?v=20260813-terminal"></script>
+    <script src="/dashboard.js?v=20260817-watchboard"></script>
   </body>
 </html>

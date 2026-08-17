@@ -121,3 +121,63 @@ def test_dashboard_keeps_paper_only_safety_messaging_visible():
     assert "LIVE ORDERS DISABLED" in html
     assert "LIVE SHADOW TEST / NEVER EXECUTED" in html
     assert "no execution module installed" in html
+
+
+def test_dashboard_leads_with_a_live_market_watch_board():
+    html = (ROOT / "apps" / "dashboard" / "index.html").read_text()
+    script = (ROOT / "apps" / "dashboard" / "dashboard.js").read_text()
+    styles = (ROOT / "apps" / "dashboard" / "dashboard.css").read_text()
+
+    for element_id in (
+        "watch-rows",
+        "board-detail",
+        "tape-tracked",
+        "tape-executable",
+        "tape-widest",
+        "tape-bankroll",
+        "tape-scan",
+    ):
+        assert f'id="{element_id}"' in html
+    # Sorting and filtering are driven off data attributes, not hard-coded order.
+    assert 'data-watch-sort="best_gap"' in html
+    assert 'data-watch-filter="executable"' in html
+    for field in ("watchlist", "best_gap", "gap_delta", "executable_now", "history"):
+        assert field in script
+    assert "sparkline" in script
+    for selector in (".board-table", ".tape", ".spark", ".is-executable"):
+        assert selector in styles
+
+
+def test_dashboard_watch_board_never_presents_candidates_as_tradeable():
+    """A gap on a REVIEW_REQUIRED pair is a research signal, not an arbitrage."""
+    html = (ROOT / "apps" / "dashboard" / "index.html").read_text()
+
+    assert "not a proven twin" in html
+    assert "Candidates only — never executed" in html
+
+
+def test_dashboard_surfaces_the_approval_frontier():
+    html = (ROOT / "apps" / "dashboard" / "index.html").read_text()
+    script = (ROOT / "apps" / "dashboard" / "dashboard.js").read_text()
+    styles = (ROOT / "apps" / "dashboard" / "dashboard.css").read_text()
+
+    for element_id in (
+        "frontier-rows",
+        "frontier-blocked",
+        "frontier-text-only",
+        "frontier-moved",
+        "frontier-unmonitored",
+    ):
+        assert f'id="{element_id}"' in html
+    for field in (
+        "approval_frontier",
+        "text_clearable_codes",
+        "structural_codes",
+        "unmonitored_legs",
+        "rules_changed_recently",
+    ):
+        assert field in script
+    # The blind-spot warning must stay visible: a leg with no baseline reports
+    # "no change" identically to one that is genuinely being watched.
+    assert "NO BASELINE" in script
+    assert ".frontier-code--hard" in styles

@@ -7,6 +7,7 @@ from fastapi.responses import FileResponse
 from atlas import __version__
 from atlas.frontier import approval_frontier
 from atlas.gap_radar import paper_bankroll_summary
+from atlas.watchlist import build_watchlist
 
 app = FastAPI(title="Atlas", version=__version__)
 dashboard_path = Path(__file__).resolve().parents[2] / "apps" / "dashboard" / "index.html"
@@ -140,6 +141,8 @@ async def overview() -> dict:
         "validation": validation,
         "historical_backfill": historical_backfill,
         "historical_backfill_runs": [_backfill_run_summary(run) for run in recent_backfills],
+        # Same observation list the bankroll summary already consumes — no extra I/O.
+        "watchlist": build_watchlist(gap_observations),
         "gap_radar": {
             "summary": paper_bankroll_summary(gap_observations),
             "recent": [
@@ -166,9 +169,15 @@ async def overview() -> dict:
     }
 
 
+# The dashboard shell carries the asset version query strings, so a cached copy
+# pins the browser to old CSS/JS and the page silently stops matching the code.
+# Assets stay cacheable; only the shell must always be revalidated.
+_NO_STORE = {"Cache-Control": "no-store, must-revalidate"}
+
+
 @app.get("/", include_in_schema=False)
 def dashboard() -> FileResponse:
-    return FileResponse(dashboard_path)
+    return FileResponse(dashboard_path, headers=_NO_STORE)
 
 
 @app.get("/dashboard.css", include_in_schema=False)

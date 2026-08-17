@@ -21,6 +21,141 @@ function age(iso) {
 }
 function settlementTime(iso) { if (!iso) return 'not published'; const date = new Date(iso); return Number.isNaN(date.getTime()) ? 'not published' : `${date.toISOString().replace('T', ' ').slice(0, 16)}Z`; }
 let lastGoodUpdate = null;
+// Gaps are dollars per $1 hedged basket; cents is how an operator reads them.
+const cents = (value) => {
+  if (value === null || value === undefined || value === '') return '—';
+  const number = Number(value);
+  if (!Number.isFinite(number)) return '—';
+  const sign = number > 0 ? '+' : number < 0 ? '−' : '';
+  return `${sign}${Math.abs(number * 100).toFixed(1)}¢`;
+};
+
+// Inline sparkline: no library, no network, and it degrades to nothing when a
+// pair has too little history to have a shape.
+function sparkline(history = []) {
+  const points = history.map(Number).filter(Number.isFinite);
+  if (points.length < 2) return '<span class="spark spark--empty">—</span>';
+  const low = Math.min(...points);
+  const high = Math.max(...points);
+  const span = high - low || 1;
+  const width = 72;
+  const height = 22;
+  const path = points
+    .map((value, index) => {
+      const x = (index / (points.length - 1)) * width;
+      const y = height - ((value - low) / span) * (height - 4) - 2;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(' ');
+  const rising = points[points.length - 1] >= points[0];
+  return `<svg class="spark ${rising ? 'spark--up' : 'spark--down'}" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${path}" /></svg>`;
+}
+
+let watchState = {rows: [], filter: 'all', sort: 'best_gap', direction: 'desc'};
+
+function watchRowsForDisplay() {
+  const filtered = watchState.rows.filter((row) => {
+    if (watchState.filter === 'executable') return row.executable_now;
+    if (watchState.filter === 'positive') return Number(row.best_gap) > 0;
+    return true;
+  });
+  const key = watchState.sort;
+  const numeric = key === 'best_gap' || key === 'gap_delta';
+  const sorted = [...filtered].sort((a, b) => {
+    const left = numeric ? Number(a[key] ?? -999) : String(a[key] ?? '');
+    const right = numeric ? Number(b[key] ?? -999) : String(b[key] ?? '');
+    if (left < right) return watchState.direction === 'asc' ? -1 : 1;
+    if (left > right) return watchState.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+  return sorted;
+}
+
+function paintWatchRows() {
+  const rows = watchRowsForDisplay();
+  const body = $('watch-rows');
+  if (!rows.length) {
+    body.innerHTML = '<tr><td colspan="9"><div class="empty">No pairs match this filter.</div></td></tr>';
+    return;
+  }
+  body.innerHTML = rows.map((row) => {
+    const gapValue = Number(row.best_gap);
+    const gapClass = Number.isFinite(gapValue) && gapValue > 0 ? 'is-positive' : 'is-negative';
+    const deltaValue = Number(row.gap_delta);
+    const deltaClass = !Number.isFinite(deltaValue) || deltaValue === 0
+      ? 'is-flat'
+      : deltaValue > 0 ? 'is-positive' : 'is-negative';
+    // An executable gap on a REVIEW_REQUIRED pair is a research signal, never a
+    // trade, so the row is marked but never styled as an approval.
+    const statusClass = row.verification_status.startsWith('APPROVED') ? 'ok' : 'warn';
+    return `<tr class="${row.executable_now ? 'is-executable' : ''}">
+      <th scope="row"><strong>${safe(row.event_subject)}</strong><small>${safe(row.best_basket.replaceAll('_', ' '))}</small></th>
+      <td class="board-contracts"><span>${safe(row.kalshi_title)}</span><span>${safe(row.polymarket_title)}</span></td>
+      <td><span class="tag">${safe(row.shape.replace('_shape', ''))}</span></td>
+      <td class="num ${gapClass}"><strong>${cents(row.best_gap)}</strong>${row.executable_now ? '<em class="exec-flag">EXECUTABLE</em>' : ''}</td>
+      <td class="num ${deltaClass}">${cents(row.gap_delta)}<small>${safe(row.direction)}</small></td>
+      <td class="num board-range">${cents(row.narrowest_gap)}<span>…</span>${cents(row.widest_gap)}</td>
+      <td class="board-trend">${sparkline(row.history)}<small>${fmt(row.observations)} obs</small></td>
+      <td><span class="badge badge--dot badge--${statusClass}">${safe(row.verification_status.replaceAll('_', ' '))}</span></td>
+      <td class="num board-age">${safe(age(row.last_observed_at))}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderWatchboard(data, trainingLabels, trainingTarget) {
+  const watchlist = data.watchlist || {};
+  const radar = data.gap_radar?.summary || {};
+  const frontier = data.approval_frontier || {};
+  watchState.rows = watchlist.rows || [];
+  $('tape-tracked').textContent = fmt(watchlist.tracked_subjects || 0);
+  $('tape-executable').textContent = fmt(watchlist.executable_now || 0);
+  $('tape-widest').textContent = cents(watchlist.widest_gap);
+  $('tape-bankroll').textContent = radar.paper_bankroll ? money(radar.paper_bankroll) : '—';
+  $('tape-labels').textContent = `${fmt(trainingLabels)} / ${trainingTarget}`;
+  $('tape-frontier').textContent = fmt(frontier.blocked_candidates || 0);
+  $('tape-rules-moved').textContent = fmt(frontier.rules_changed_recently || 0);
+  const latest = watchState.rows.map((row) => row.last_observed_at).sort().pop();
+  $('tape-scan').textContent = latest ? age(latest).toUpperCase() : '—';
+  $('board-detail').textContent = watchlist.tracked_subjects
+    ? `${fmt(watchlist.tracked_subjects)} shape-matched candidates across ${fmt(watchlist.observations_reviewed || 0)} radar observations. Gap is what survives the fee buffer when buying both hedged sides at executable prices — candidates only, not proven twins.`
+    : 'Waiting for the first radar scan.';
+  paintWatchRows();
+}
+
+function renderFrontier(frontier) {
+  const entries = frontier.entries || [];
+  $('frontier-blocked').textContent = fmt(frontier.blocked_candidates || 0);
+  $('frontier-text-only').textContent = fmt(frontier.blocked_only_on_venue_text || 0);
+  $('frontier-moved').textContent = fmt(frontier.rules_changed_recently || 0);
+  $('frontier-unmonitored').textContent = fmt(frontier.unmonitored_pairs || 0);
+  $('frontier-status').textContent = entries.length
+    ? `${fmt(entries.length)} blocked · ${fmt(frontier.rules_changed_recently || 0)} with moved venue text`
+    : 'No blocked candidates recorded';
+  $('frontier-detail').textContent = frontier.unmonitored_pairs
+    ? `${fmt(frontier.unmonitored_pairs)} pair(s) have a leg with no recorded rules baseline — a text change there would not be detected.`
+    : 'Every blocked pair has a rules baseline on both legs, so the next venue revision registers as a change.';
+  $('frontier-rows').innerHTML = entries.length ? entries.map((entry) => {
+    const moved = entry.rules_changed_recently;
+    const clearable = (entry.text_clearable_codes || []).map((code) => code.replaceAll('_', ' ')).join(' · ');
+    const structural = (entry.structural_codes || []).map((code) => code.replaceAll('_', ' ')).join(' · ');
+    return `<div class="frontier-row ${moved ? 'is-moved' : ''}">
+      <div class="frontier-subject">
+        <strong>${safe(entry.event_subject)}</strong>
+        <small>distance ${fmt(entry.rule_distance)} · ${entry.blocked_only_on_venue_text ? 'venue text only' : 'structural gap'}</small>
+      </div>
+      <div class="frontier-codes">
+        ${clearable ? `<span class="frontier-code frontier-code--text" title="A venue could clear this by publishing more complete terms">${safe(clearable)}</span>` : ''}
+        ${structural ? `<span class="frontier-code frontier-code--hard" title="Not a text problem — these contracts are not the same bet">${safe(structural)}</span>` : ''}
+      </div>
+      <div class="frontier-watch">
+        ${moved ? '<span class="badge badge--dot badge--ok">RULES CHANGED · RECHECK</span>' : ''}
+        ${(entry.unmonitored_legs || []).length ? `<span class="badge badge--dot badge--warn">NO BASELINE: ${safe((entry.unmonitored_legs || []).join(', '))}</span>` : ''}
+        <small>K v${fmt(entry.kalshi?.rules_versions || 0)} · P v${fmt(entry.polymarket?.rules_versions || 0)}</small>
+      </div>
+    </div>`;
+  }).join('') : '<div class="empty">No blocked candidates recorded yet.</div>';
+}
+
 function render(data) {
   lastGoodUpdate = data.last_updated;
   $('connection').textContent = 'CONNECTED'; $('connection').classList.remove('offline');
@@ -165,11 +300,8 @@ function render(data) {
     : 'SAFETY STATE REQUIRES REVIEW';
   const trainingTarget = 50;
   const labelsRemaining = Math.max(0, trainingTarget - trainingLabels);
-  $('hero-normalized').textContent = fmt(normalizedTotal);
-  $('hero-shared').textContent = fmt(normalizedShared);
-  $('hero-ready').textContent = fmt(executionReady);
-  $('hero-labels').textContent = `${fmt(trainingLabels)} / ${trainingTarget}`;
-  $('hero-labels-bar').style.width = `${Math.min(100, (trainingLabels / trainingTarget) * 100)}%`;
+  renderWatchboard(data, trainingLabels, trainingTarget);
+  renderFrontier(data.approval_frontier || {});
   $('cohort-shared').textContent = fmt(structuredShared);
   $('cohort-ready').textContent = `${fmt(safeShared)} / ${fmt(executionReady)}`;
   $('cohort-blocker-count').textContent = fmt(unresolvedBlockers);
@@ -403,6 +535,25 @@ async function refresh() {
     $('updated').textContent = lastGoodUpdate ? `SHOWING DATA FROM ${age(lastGoodUpdate).toUpperCase()}` : 'NO DATA RECEIVED YET';
   }
 }
+document.querySelectorAll('[data-watch-filter]').forEach((button) => {
+  button.addEventListener('click', () => {
+    watchState.filter = button.dataset.watchFilter;
+    document.querySelectorAll('[data-watch-filter]').forEach((other) => other.classList.toggle('is-active', other === button));
+    paintWatchRows();
+  });
+});
+document.querySelectorAll('[data-watch-sort]').forEach((header) => {
+  header.addEventListener('click', () => {
+    const key = header.dataset.watchSort;
+    watchState.direction = watchState.sort === key && watchState.direction === 'desc' ? 'asc' : 'desc';
+    watchState.sort = key;
+    document.querySelectorAll('[data-watch-sort]').forEach((other) => {
+      other.classList.toggle('is-sorted', other === header);
+      other.dataset.sortDirection = other === header ? watchState.direction : '';
+    });
+    paintWatchRows();
+  });
+});
 $('refresh').addEventListener('click', refresh); refresh(); setInterval(refresh, 15000);
 setInterval(() => {
   if (lastGoodUpdate && !$('connection').classList.contains('offline')) {
