@@ -177,6 +177,36 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
 - [x] **Guards, because this path is sensitive:** the shared catalog pins the Kalshi scope it was scanned under and **refuses** a run requesting a different series set rather than silently mismatching evidence. Event-slug harvests always bypass the shared sweep and fetch for themselves — the targeted door reaches markets the plain sweep cannot, so it must never layer onto a cached list. 5 new tests (`tests/test_backfill.py`, `tests/test_cli.py`) cover reuse, scope refusal, slug bypass, single-fetch-per-batch, and failure degradation.
 - [x] **New `tests/conftest.py` autouse guard:** the prefetch added a live network seam that the existing batch tests did not stub, and the suite silently started making real venue calls (3.9s → 142.8s). The guard refuses live catalog fetches in tests; suite is back to **408 passed in 3.6s**, lint clean.
 - [x] **First working live run (2026-08-17):** `BATCH_COMPLETE`, all four tags green, shared catalog = 1447 PM-US final binaries + 20,309 Kalshi settled events. Minted **10 evidence-backed `REJECTED`** labels (62 → 72) — same-canonical-subject CPI review pairs with divergent terminal outcomes on both venues, `us_cpi_mom|2026-06` and `us_cpi_mom|2026-07` each landing exactly at the signed 5-per-event bound. Verified no event exceeds the cap; the known pre-existing `us_cpi_yoy|2026-07: 6` leak was untouched. Monitor restarted on the fixed code (single instance, nohup); `trading_enabled=false` throughout.
+## 2026-08-17 — holdout baseline: `training_ready=true` is measuring volume, not signal
+
+Ran the baseline characterization of the frozen holdout **before** spending anything on a
+training run. The result argues against running one yet, and the reason is structural.
+
+- [x] **The verifier/truth matrix is completely degenerate.** Across all 72 trusted labels there
+  is not one disagreement: `APPROVED_EQUIVALENT` verdict → `APPROVED_EQUIVALENT` truth (8/8), and
+  `REVIEW_REQUIRED` verdict → `REJECTED` truth (64/64). Three cells, zero off-diagonal. The label
+  is a **deterministic function of the verifier's own verdict**, because the labeling pipeline only
+  mints a label where the verifier has already decided. A model trained on this can learn exactly
+  one thing — to imitate the verifier — and nothing about where the verifier is wrong, since the
+  vault contains no such case by construction.
+- [x] **The holdout cannot measure the thing that matters.** 15 rows, **2** positives. Any approval
+  metric computed from it is noise. Majority-class baseline (answer `REJECTED` every time) scores
+  **86.7%** on the holdout and 89.5% on train, so a headline accuracy in the high 80s would mean
+  the model learned nothing.
+- [x] **The one number that is genuinely good: approval precision 8/8.** Every pair the verifier
+  approved settled consistently on both venues. Zero false approvals — the only error class that
+  could ever cost real money. That is a property of the deterministic rules, not of any model.
+- [ ] **Reframe before training.** The model's job was never to replace the verifier; it is to
+  triage which candidate pairs deserve bounded verification capacity (sports floods the live queue
+  daily — that is why the hard negatives were kept). Evaluate against *that* objective — junk
+  filtered per unit of verification spend, measured per family — not approve/reject accuracy. Until
+  the objective and metric are restated, more labels of the current shape add volume, not signal.
+- [ ] **What would add real signal:** labeled pairs where verdict and settlement truth *diverge*.
+  Honest catch — outcome agreement never proves equivalence (already noted for the July payrolls
+  identical-strike pairs), so those cannot be minted as trusted positives. The ceiling is real, not
+  a bug, and it is another reason the approval frontier (venue-text alignment) is the higher-value
+  work.
+
 - [ ] Label mix is now 8 approved / 64 rejected. The negative class grows automatically on every release while approvals stay gated on venue-text alignment — check the `label_families` mix before any training run, and prefer approval-frontier work (venue-text watches) over more rejection volume.
 
 ## Next milestone: first trusted positive label
