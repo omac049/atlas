@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.atlas.healthcheck</string>
+    <!-- Must run through the venv's python (a real Mach-O binary): launchd may
+         execute a binary from ~/Library/Group Containers but may NOT read a
+         shell script there ("Operation not permitted", exit 126). -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/ocorral/Atlas/.venv/bin/python</string>
+        <string>/Users/ocorral/Atlas/deploy/atlas_healthcheck.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/ocorral/Atlas</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <!-- Probe every 60s. This agent must NOT use KeepAlive: it is a periodic
+         one-shot check that exits, not a daemon. -->
+    <key>StartInterval</key>
+    <integer>60</integer>
+    <key>StandardOutPath</key>
+    <string>/Users/ocorral/Library/Logs/atlas-healthcheck-stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/ocorral/Library/Logs/atlas-healthcheck-stdout.log</string>
+</dict>
+</plist>

@@ -19,14 +19,24 @@ Paper-only cross-market prediction-market research system. Watches Kalshi and Po
 ## Commands
 
 ```bash
-uv run pytest                      # full suite (currently ~159 tests, all must pass)
+uv run pytest                      # full suite (currently ~458 tests, all must pass)
 uv run pytest tests/test_X.py -x   # targeted
 uv run ruff check .                # lint (line-length 100, py312)
-uv run uvicorn apps.api.main:app --port 8000   # API
 uv run atlas --help                # CLI entry point
 docker compose up -d               # postgres:5432 + redis:6379 (local only)
-curl -s http://127.0.0.1:8000/health           # expect trading_enabled=false
+curl -s http://127.0.0.1:8010/health           # expect trading_enabled=false
 ```
+
+## Runtime
+
+This checkout must live at `~/Atlas`, NOT under the OneDrive Group Container it
+previously occupied: macOS blocks launchd-managed services from reading that path,
+and `uv` fails there outright because it contains colons. See `deploy/README.md`.
+
+The API (port 8010), the continuous monitor, and a liveness watchdog run as launchd
+agents — do not start them by hand, or two monitors will race (`launchctl list |
+grep com.atlas`, then `launchctl kickstart -k gui/$(id -u)/com.atlas.<name>` to
+restart one). Logs are in `~/Library/Logs/atlas-*.log`.
 
 ## Layout
 

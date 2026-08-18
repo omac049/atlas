@@ -4,9 +4,15 @@
 <dict>
     <key>Label</key>
     <string>com.atlas.monitor</string>
+    <!-- Invoked as `python -m atlas.cli`, never via `.venv/bin/atlas`: that
+         console script is a text file, and launchd may execute a real binary
+         from ~/Library/Group Containers but may NOT read a script there (the
+         console-script form fails with "Operation not permitted", exit 78). -->
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/ocorral/Library/Group Containers/UBF8T346G9.OneDriveStandaloneSuite/OneDrive-UAGC (2026-08-07 18:30:06 +0000).noindex/OneDrive-UAGC (2026-08-07 18:30:06 +0000)/Documents/Atlas/.venv/bin/atlas</string>
+        <string>/Users/ocorral/Atlas/.venv/bin/python</string>
+        <string>-m</string>
+        <string>atlas.cli</string>
         <string>pairs</string>
         <string>watch</string>
         <string>--live</string>
@@ -22,15 +28,18 @@
         <string>1</string>
     </dict>
     <key>WorkingDirectory</key>
-    <string>/Users/ocorral/Library/Group Containers/UBF8T346G9.OneDriveStandaloneSuite/OneDrive-UAGC (2026-08-07 18:30:06 +0000).noindex/OneDrive-UAGC (2026-08-07 18:30:06 +0000)/Documents/Atlas</string>
+    <string>/Users/ocorral/Atlas</string>
     <key>RunAtLoad</key>
     <true/>
     <!-- One monitor only, per the one-monitor rule. -->
     <key>KeepAlive</key>
     <true/>
+    <!-- Log lives in ~/Library/Logs, not the repo's data/ dir: launchd opens
+         StandardOutPath itself before exec, and it may not create files under
+         ~/Library/Group Containers (config error, exit 78). -->
     <key>StandardOutPath</key>
-    <string>/Users/ocorral/Library/Group Containers/UBF8T346G9.OneDriveStandaloneSuite/OneDrive-UAGC (2026-08-07 18:30:06 +0000).noindex/OneDrive-UAGC (2026-08-07 18:30:06 +0000)/Documents/Atlas/data/atlas-monitor.log</string>
+    <string>/Users/ocorral/Library/Logs/atlas-monitor.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/ocorral/Library/Group Containers/UBF8T346G9.OneDriveStandaloneSuite/OneDrive-UAGC (2026-08-07 18:30:06 +0000).noindex/OneDrive-UAGC (2026-08-07 18:30:06 +0000)/Documents/Atlas/data/atlas-monitor.log</string>
+    <string>/Users/ocorral/Library/Logs/atlas-monitor.log</string>
 </dict>
 </plist>
