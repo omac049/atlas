@@ -92,6 +92,7 @@ async def overview() -> dict:
     historical_backfill = await store.latest_historical_backfill()
     gap_observations = await store.all_gap_observations()
     gap_observation_total = await store.gap_observation_count()
+    gap_subject_aggregates = await store.gap_subject_aggregates()
     recent_gaps = await store.recent_gap_observations(6)
     recent_backfills = await store.recent_historical_backfills(limit=6)
     training_readiness = await learning_readiness(store)
@@ -166,7 +167,9 @@ async def overview() -> dict:
         # The recorded count comes along so a capped load reports itself instead of
         # presenting a partial window as the full history.
         "watchlist": build_watchlist(
-            gap_observations, total_observations=gap_observation_total
+            gap_observations,
+            total_observations=gap_observation_total,
+            subject_aggregates=gap_subject_aggregates,
         ),
         "gap_radar": {
             "summary": paper_bankroll_summary(gap_observations),

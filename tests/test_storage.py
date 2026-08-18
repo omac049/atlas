@@ -394,3 +394,63 @@ async def test_all_gap_observations_keeps_the_newest_rows_under_the_cap(tmp_path
         row["observed_at"] for row in loaded
     )
     assert await store.gap_observation_count() == 5
+
+
+@pytest.mark.asyncio
+async def test_gap_subject_aggregates_cover_every_row_and_survive_the_load_cap(tmp_path):
+    """Aggregates read promoted columns over the whole table, so the ALL window
+    stays true even when all_gap_observations returns only its newest slice."""
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    for index in range(6):
+        await store.save_gap_observation(
+            {
+                "observation_id": f"obs-{index}",
+                "observed_at": f"2026-08-{10 + index:02d}T00:00:00+00:00",
+                "event_subject": "a|2026-08",
+                "best_gap": f"-0.0{index}",
+                "executable_gap": index == 0,
+            }
+        )
+
+    aggregates = await store.gap_subject_aggregates()
+
+    assert aggregates["a|2026-08"]["observations"] == 6
+    assert aggregates["a|2026-08"]["executable_observations"] == 1
+    assert aggregates["a|2026-08"]["high"] == 0.0
+    assert aggregates["a|2026-08"]["low"] == -0.05
+    # The capped load only sees the newest rows; the aggregate still sees all six.
+    assert len(await store.all_gap_observations(limit=2)) == 2
+
+
+@pytest.mark.asyncio
+async def test_gap_columns_backfill_from_existing_json_payloads(tmp_path):
+    """Rows written before the columns existed must become queryable, or the
+    aggregate would silently ignore all the history recorded so far."""
+    path = tmp_path / "atlas.sqlite3"
+    store = AtlasStore(str(path))
+    await store.initialize()
+    async with aiosqlite.connect(path) as db:
+        await db.execute("DROP INDEX IF EXISTS idx_gap_observations_subject")
+        await db.execute(
+            "INSERT INTO gap_observations (observation_id, created_at, payload_json) VALUES (?, ?, ?)",
+            (
+                "legacy-1",
+                "2026-08-01T00:00:00+00:00",
+                json.dumps(
+                    {
+                        "observation_id": "legacy-1",
+                        "event_subject": "legacy|2026-08",
+                        "best_gap": "-0.07",
+                        "executable_gap": True,
+                    }
+                ),
+            ),
+        )
+        await db.commit()
+
+    await store.initialize()
+    aggregates = await store.gap_subject_aggregates()
+
+    assert aggregates["legacy|2026-08"]["observations"] == 1
+    assert aggregates["legacy|2026-08"]["low"] == -0.07
+    assert aggregates["legacy|2026-08"]["executable_observations"] == 1

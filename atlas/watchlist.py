@@ -134,6 +134,36 @@ def _crossings(observations: list[dict]) -> list[dict[str, object]]:
     return episodes
 
 
+def _aggregate_value(aggregate: dict[str, object] | None, key: str, fallback) -> str | None:
+    """Prefer the uncapped store aggregate; fall back to the loaded slice."""
+    if aggregate and aggregate.get(key) is not None:
+        return str(aggregate[key])
+    return str(fallback) if fallback is not None else None
+
+
+def _all_window_stats(
+    observations: list[dict], aggregate: dict[str, object]
+) -> dict[str, object]:
+    """ALL-window stats sourced from the store aggregate rather than the load.
+
+    Open and change still come from the loaded rows: the aggregate records
+    extremes and counts, not the first reading, and inventing one would be worse
+    than reporting the slice's. Everything the aggregate does know wins.
+    """
+    gaps = [gap for gap in (_decimal(o.get("best_gap")) for o in observations) if gap is not None]
+    change = gaps[-1] - gaps[0] if len(gaps) > 1 else None
+    return {
+        "observations": int(aggregate["observations"]),
+        "open": str(gaps[0]) if gaps else None,
+        "change": str(change) if change is not None else None,
+        "direction": _direction(change) if change is not None else "NEW",
+        "high": _aggregate_value(aggregate, "high", max(gaps) if gaps else None),
+        "low": _aggregate_value(aggregate, "low", min(gaps) if gaps else None),
+        "executable_observations": int(aggregate.get("executable_observations") or 0),
+        "history": _downsample(gaps),
+    }
+
+
 def _window_stats(observations: list[dict], hours: int | None, now: datetime) -> dict[str, object]:
     """Open/change/high/low/history for one subject inside one time window."""
     if hours is None:
@@ -173,7 +203,12 @@ def _window_stats(observations: list[dict], hours: int | None, now: datetime) ->
     }
 
 
-def _row(subject: str, observations: list[dict], now: datetime) -> dict[str, object]:
+def _row(
+    subject: str,
+    observations: list[dict],
+    now: datetime,
+    aggregate: dict[str, object] | None = None,
+) -> dict[str, object]:
     """Collapse one subject's ordered observations into a single board row."""
     latest = observations[-1]
     crossings = _crossings(observations)
@@ -203,9 +238,9 @@ def _row(subject: str, observations: list[dict], now: datetime) -> dict[str, obj
         "direction": _direction(delta),
         "executable_now": bool(latest.get("executable_gap")),
         "executable_observations": sum(1 for flag in executable_history if flag),
-        "widest_gap": str(max(gaps)) if gaps else None,
-        "narrowest_gap": str(min(gaps)) if gaps else None,
-        "observations": len(observations),
+        "widest_gap": _aggregate_value(aggregate, "high", max(gaps) if gaps else None),
+        "narrowest_gap": _aggregate_value(aggregate, "low", min(gaps) if gaps else None),
+        "observations": int(aggregate["observations"]) if aggregate else len(observations),
         "first_observed_at": str(observations[0].get("observed_at") or ""),
         "last_observed_at": str(latest.get("observed_at") or ""),
         # Oldest-to-newest, for a sparkline.
@@ -213,7 +248,14 @@ def _row(subject: str, observations: list[dict], now: datetime) -> dict[str, obj
         # Per-window open/change/high/low so the board can show change against a
         # window open — the market-board convention — not only the previous scan.
         "windows": {
-            name: _window_stats(observations, hours, now) for name, hours in WINDOWS
+            name: (
+                # The ALL window comes from the uncapped store aggregate when one is
+                # supplied, so it cannot silently shrink to "the newest N loaded rows".
+                _all_window_stats(observations, aggregate)
+                if name == "all" and aggregate
+                else _window_stats(observations, hours, now)
+            )
+            for name, hours in WINDOWS
         },
         "crossings_total": len(crossings),
         "crossings": crossings[-CROSSINGS_PER_ROW:],
@@ -238,6 +280,7 @@ def build_watchlist(
     limit: int = 100,
     now: datetime | None = None,
     total_observations: int | None = None,
+    subject_aggregates: dict[str, dict[str, object]] | None = None,
 ) -> dict[str, object]:
     """One row per event subject, widest live gap first.
 
@@ -256,7 +299,11 @@ def build_watchlist(
     for entries in grouped.values():
         entries.sort(key=lambda item: str(item.get("observed_at") or ""))
 
-    rows = sorted((_row(subject, obs, now) for subject, obs in grouped.items()), key=_sort_key)
+    aggregates = subject_aggregates or {}
+    rows = sorted(
+        (_row(subject, obs, now, aggregates.get(subject)) for subject, obs in grouped.items()),
+        key=_sort_key,
+    )
     executable = [row for row in rows if row["executable_now"]]
     widest = max(
         (gap for gap in (_decimal(row.get("best_gap")) for row in rows) if gap is not None),

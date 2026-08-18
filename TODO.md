@@ -419,3 +419,27 @@ python3 -m atlas.cli learning export \
 - [ ] No review/inconclusive pairs are present in the trusted training set.
 - [x] The API, dashboard, and exported JSONL agree on the trusted-label counts: 0 trusted labels in each.
 - [x] Paper-only and never-executed safeguards remain true.
+
+## 2026-08-18 — gap observations queryable by column; ALL window no longer capped
+
+- [x] **Growth re-measured: ~3,280 observations/day, not the 1,660 estimated yesterday** (11,039
+  rows, latest 3 minutes old, monitor healthy). That moves the 50k load cap from ~25 days out to
+  **~12 days**, so the ALL window was about to quietly become "the newest 50k rows".
+- [x] **Promoted the queried fields out of JSON into columns** (`event_subject`, `best_gap`,
+  `executable`) with indexes on subject and `created_at`, migrated and backfilled in
+  `initialize()`. The payload stays the source of truth; the columns are a queryable projection.
+  Backfill runs once (0.170s over 11k rows); later startups pay 0.001s because the index turns the
+  "anything left?" probe into a seek. The positional `INSERT ... VALUES (?, ?, ?)` was rewritten
+  with an explicit column list — it would have broken the moment the columns were added.
+- [x] **`AtlasStore.gap_subject_aggregates()` reads all-time extremes over every row**, regardless
+  of any load cap: **0.015s vs 0.411s** for the same aggregate via `json_extract` (27×).
+- [x] **`build_watchlist(..., subject_aggregates=...)` sources the ALL window and row-level
+  widest/narrowest from that aggregate**, falling back to the loaded slice when none is supplied.
+  Open and change still come from loaded rows — the aggregate records extremes and counts, not the
+  first reading, and inventing one would be worse than reporting the slice's.
+- [x] Cross-checked against the live database: aggregates match a raw Decimal recomputation on
+  low/high/count/executable for all 9 subjects across 11,039 observations — **0 mismatches**.
+  Suite **458 passing**, lint clean, dashboard `node --check` passes.
+- [ ] Follow-up now unblocked: bound the raw load to a recent window (the bounded windows only need
+  ~7d) so `/api/overview` stops loading the full table. Measured 0.94s; the remaining cost is the
+  JSON parse of every loaded row.

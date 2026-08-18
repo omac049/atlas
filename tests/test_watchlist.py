@@ -326,3 +326,42 @@ def test_watchlist_defaults_to_untruncated_when_no_total_is_supplied():
 
     assert watchlist["history_truncated"] is False
     assert watchlist["observations_recorded"] == 1
+
+
+def test_all_window_uses_the_store_aggregate_not_the_loaded_slice():
+    """The ALL window must not shrink to "the newest N rows" once the load caps.
+    Extremes and counts come from the uncapped store aggregate."""
+    watchlist = build_watchlist(
+        [_at(2, "-0.02"), _at(1, "-0.01")],
+        now=NOW,
+        total_observations=50_000,
+        subject_aggregates={
+            "a|2026-08": {
+                "observations": 50_000,
+                "executable_observations": 120,
+                "low": -0.40,
+                "high": 0.30,
+            }
+        },
+    )
+    row = watchlist["rows"][0]
+
+    assert row["windows"]["all"]["high"] == "0.3"
+    assert row["windows"]["all"]["low"] == "-0.4"
+    assert row["windows"]["all"]["observations"] == 50_000
+    assert row["windows"]["all"]["executable_observations"] == 120
+    # Row-level all-time extremes follow the same source.
+    assert row["widest_gap"] == "0.3"
+    assert row["narrowest_gap"] == "-0.4"
+    assert row["observations"] == 50_000
+    # Bounded windows still come from the loaded rows.
+    assert row["windows"]["1h"]["high"] == "-0.01"
+
+
+def test_all_window_falls_back_to_the_loaded_slice_without_an_aggregate():
+    watchlist = build_watchlist([_at(2, "-0.02"), _at(1, "-0.01")], now=NOW)
+    row = watchlist["rows"][0]
+
+    assert row["windows"]["all"]["high"] == "-0.01"
+    assert row["windows"]["all"]["low"] == "-0.02"
+    assert row["observations"] == 2
