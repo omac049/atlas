@@ -4,8 +4,10 @@ import json
 import re
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from pathlib import Path
 
 import httpx
+from dotenv import load_dotenv
 
 from atlas.agent import AtlasAgent
 from atlas.arbitrage import calculate_opportunity
@@ -27,7 +29,7 @@ from atlas.discovery import (
 from atlas.enrichment import enrich_shared_rules, enrich_weather_rules
 from atlas.frontier import approval_frontier, capture_frontier_rules_evidence
 from atlas.learning import export_learning_splits, export_training_jsonl
-from atlas.live_monitor import run_pair
+from atlas.live_monitor import LiveStreamCredentialsMissing, run_pair
 from atlas.monitor import run_once
 from atlas.paper import PaperExecutor
 from atlas.registry import approve_pair
@@ -683,7 +685,13 @@ async def watch_pairs(live: bool, interval: int, backfill_interval: int = 86_400
         if live:
             for pair in approved:
                 if pair.pair_id not in monitors:
-                    monitors[pair.pair_id] = asyncio.create_task(run_pair(pair))
+                    task = asyncio.create_task(run_pair(pair))
+                    # Without this callback a failure inside the task is
+                    # swallowed and the pair silently never streams, which is
+                    # indistinguishable from "no opportunity was found" — the
+                    # exact shape of a missing-credential outage.
+                    task.add_done_callback(_report_pair_monitor_exit)
+                    monitors[pair.pair_id] = task
             if await _historical_backfill_due(store, backfill_interval):
                 try:
                     report = await _run_scheduled_backfill()
@@ -745,6 +753,19 @@ async def _historical_backfill_due(store: AtlasStore, interval: int) -> bool:
         return True
     completed = datetime.fromisoformat(str(completed_at))
     return datetime.now(UTC) - completed >= timedelta(seconds=max(interval, 60))
+
+
+def _report_pair_monitor_exit(task: asyncio.Task) -> None:
+    """Log why a live pair monitor stopped; never let it fail silently."""
+    if task.cancelled():
+        return
+    exc = task.exception()
+    if exc is None:
+        return
+    if isinstance(exc, LiveStreamCredentialsMissing):
+        print(f"live_pair_monitor_blocked=CREDENTIALS_MISSING detail={exc} paper_only=true")
+        return
+    print(f"live_pair_monitor_failed={type(exc).__name__} detail={exc}")
 
 
 async def _safe_scan_pairs(live: bool) -> list:
@@ -1253,6 +1274,15 @@ async def gaps_status() -> None:
 
 
 def main() -> None:
+    # The authenticated order-book streams read their credentials from the
+    # process environment; worker.py already does this, but the continuous
+    # monitor runs through this entry point, so without it a .env holding the
+    # venue credentials never reaches run_pair. The path is explicit rather
+    # than discovered: bare load_dotenv() resolves relative to the caller's
+    # stack/CWD, which is not something a launchd-managed service should
+    # depend on. Values are never logged.
+    load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+
     parser = argparse.ArgumentParser(prog="atlas")
     sub = parser.add_subparsers(dest="command", required=True)
     markets = sub.add_parser("markets")

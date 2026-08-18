@@ -13,12 +13,37 @@ from atlas.streams.kalshi import KalshiOrderBookStream
 from atlas.streams.polymarket_us import PolymarketUSMarketStream
 
 
+class LiveStreamCredentialsMissing(RuntimeError):
+    """Raised when the authenticated order-book streams cannot be opened.
+
+    Distinct from a venue/network error so the monitor can report a missing
+    credential as a configuration blocker rather than a transient failure.
+    """
+
+
 async def run_pair(pair: ContractPair, store: AtlasStore | None = None) -> None:
     if pair.approved_by is None or pair.status.value not in {
         "APPROVED_EQUIVALENT",
         "APPROVED_INVERSE",
     }:
         raise ValueError("live monitor requires an explicitly approved deterministic pair")
+    # Name every missing credential in one message. A bare KeyError here is
+    # invisible in practice: this coroutine is spawned with create_task by the
+    # continuous monitor, so the exception is swallowed and the pair simply
+    # never streams — indistinguishable from "no opportunity was found".
+    required = (
+        "KALSHI_API_KEY_ID",
+        "KALSHI_PRIVATE_KEY_PATH",
+        "POLYMARKET_US_API_KEY",
+        "POLYMARKET_US_API_SECRET",
+    )
+    missing = [name for name in required if not os.environ.get(name)]
+    if missing:
+        raise LiveStreamCredentialsMissing(
+            "live order-book streaming needs "
+            + ", ".join(missing)
+            + " (values are read from the environment or .env; never logged)"
+        )
     key_id, key_path = os.environ["KALSHI_API_KEY_ID"], os.environ["KALSHI_PRIVATE_KEY_PATH"]
     poly_key, poly_secret = (
         os.environ["POLYMARKET_US_API_KEY"],
