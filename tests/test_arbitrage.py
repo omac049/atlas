@@ -2,7 +2,12 @@ from datetime import UTC, datetime
 from decimal import Decimal
 
 from atlas.arbitrage import calculate_opportunity
-from atlas.discovery import compatibility_report, scan_market_pairs
+from atlas.discovery import (
+    _fingerprint_pairing_key,
+    _verification_key,
+    compatibility_report,
+    scan_market_pairs,
+)
 from atlas.fingerprints import build_fingerprint
 from atlas.models import MatchStatus
 from atlas.outcomes import OutcomeStatus, reconcile_pair
@@ -335,3 +340,53 @@ def test_rule_difference_blocks_arbitrage():
         )
         is None
     )
+
+
+def test_pairs_differing_on_verifier_fields_still_reach_the_verifier():
+    """REGRESSION (2026-08-18): the pairing gate bucketed on the full
+    verification key, so a pair had to already agree on settlement policy,
+    revision policy, and every threshold field before it was allowed to be
+    TESTED on those fields. Live scans reported comparisons=0 against 20k+
+    active markets per venue, and since approved pairs feed the live
+    paper-trade path, paper trading was unreachable rather than unprofitable."""
+    markets = fixture_markets()
+    left = markets["kalshi"][0].model_copy(deep=True)
+    right = markets["polymarket_us"][0].model_copy(deep=True)
+    # Same underlying question, different published rule terms — the real
+    # Kalshi/Polymarket situation, where only one venue publishes a revision
+    # clause. This pair is exactly what the old gate discarded unexamined.
+    right.threshold = Decimal(50)
+
+    assert build_fingerprint(left).event_subject == build_fingerprint(right).event_subject
+    assert _verification_key(left) != _verification_key(right)
+
+    pairs = scan_market_pairs([left], [right])
+
+    assert len(pairs) == 1, "pairs differing on verifier fields must still be judged"
+    assert pairs[0].status is MatchStatus.REVIEW_REQUIRED
+    assert "THRESHOLD_MISMATCH" in pairs[0].decision.mismatch_codes
+
+
+def test_pairing_gate_still_refuses_unrelated_subjects():
+    """Loosening the gate must not pair unrelated contracts: identity still
+    decides what is worth comparing."""
+    markets = fixture_markets()
+    left = markets["kalshi"][0].model_copy(deep=True)
+    right = markets["polymarket_us"][0].model_copy(deep=True)
+    right.title = "Will Crook Town AFC score first against Pickering Town?"
+    right.raw_market_json["question"] = right.title
+    right.event_action = "first goal"
+    right.event_subject = "crook-pickering-first-goal"
+
+    assert build_fingerprint(left).event_subject != build_fingerprint(right).event_subject
+    assert scan_market_pairs([left], [right]) == []
+
+
+def test_subjectless_fingerprints_are_dropped_not_bucketed_together():
+    """A contract with no canonical subject cannot be matched to anything, and
+    must not land in a shared empty-subject bucket that would pair everything
+    with everything."""
+    fingerprint = build_fingerprint(fixture_markets()["kalshi"][0]).model_copy(
+        update={"event_subject": ""}
+    )
+    assert _fingerprint_pairing_key(fingerprint) is None

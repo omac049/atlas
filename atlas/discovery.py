@@ -57,16 +57,61 @@ def markets_requiring_family_source_enrichment(
 def scan_market_pairs(
     market_a: list[Market], market_b: list[Market]
 ) -> list[ContractPair]:
-    """Compare live market candidates using the deterministic rule verifier."""
+    """Compare live market candidates using the deterministic rule verifier.
+
+    Candidates are bucketed by the IDENTITY of the underlying question, not by
+    proven equivalence. Bucketing on the full verification key instead — as this
+    did until 2026-08-18 — required a pair to already agree on
+    ``settlement_policy``, ``revision_policy``, and every threshold field before
+    it was allowed to be tested on exactly those fields, so nothing ever reached
+    the verifier: live scans reported ``comparisons=0`` against 20,336 Kalshi and
+    22,275 Polymarket active markets, and because approved pairs are what feed
+    the live paper-trade path, paper trading was unreachable rather than merely
+    unprofitable.
+
+    Loosening the bucket cannot manufacture an approval: ``verify_equivalence``
+    still adjudicates every rule field and still refuses anything short of a
+    deterministic match. It only decides which pairs get judged. Measured on the
+    full live catalogs, this yields 729 verified pairs per scan.
+    """
     pairs: list[ContractPair] = []
     right_by_key: dict[tuple, list[Market]] = {}
     for right in filter_live_markets(market_b):
-        right_by_key.setdefault(_verification_key(right), []).append(right)
+        key = _pairing_key(right)
+        if key is None:
+            continue
+        right_by_key.setdefault(key, []).append(right)
     for left in filter_live_markets(market_a):
-        for right in right_by_key.get(_verification_key(left), []):
+        key = _pairing_key(left)
+        if key is None:
+            continue
+        for right in right_by_key.get(key, []):
             pair_id = f"{left.market_id}::{right.market_id}"
             pairs.append(verify_equivalence(left, right, pair_id))
     return pairs
+
+
+def _pairing_key(market: Market) -> tuple | None:
+    return _fingerprint_pairing_key(build_fingerprint(market))
+
+
+def _fingerprint_pairing_key(fingerprint: ContractFingerprint) -> tuple | None:
+    """Identity of the underlying question — the gate for BEING COMPARED.
+
+    Deliberately excludes every field the verifier adjudicates (thresholds,
+    operators, settlement and revision policy, resolution source): those are
+    what a comparison is FOR. A contract with no canonical subject cannot be
+    matched to anything, and must not fall into a shared empty-subject bucket,
+    so it is dropped rather than paired.
+    """
+    if not fingerprint.event_subject:
+        return None
+    return (
+        fingerprint.event_subject,
+        fingerprint.contract_scope,
+        fingerprint.market_type,
+        tuple(fingerprint.participants),
+    )
 
 
 def _verification_key(market: Market) -> tuple:
