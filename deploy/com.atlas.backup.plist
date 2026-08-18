@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.atlas.backup</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/ocorral/Atlas/.venv/bin/python</string>
+        <string>/Users/ocorral/Atlas/deploy/atlas_backup.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/ocorral/Atlas</string>
+    <!-- Daily at 03:30. StartCalendarInterval (not StartInterval) so this runs
+         once a day at a quiet hour; if the Mac is asleep at 03:30, launchd runs
+         it at the next wake rather than skipping the day. -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>3</integer>
+        <key>Minute</key>
+        <integer>30</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/Users/ocorral/Library/Logs/atlas-backup-stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/ocorral/Library/Logs/atlas-backup-stdout.log</string>
+</dict>
+</plist>

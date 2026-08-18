@@ -1,13 +1,13 @@
 # deploy/ — always-on runtime
 
-Atlas runs as three launchd agents that start at login and restart themselves on
+Atlas runs as four launchd agents that start at login and restart themselves on
 failure. Verified working from `/Users/ocorral/Atlas` on 2026-08-18.
 
 ## Install
 
 ```bash
-cp deploy/com.atlas.api.plist deploy/com.atlas.monitor.plist deploy/com.atlas.healthcheck.plist ~/Library/LaunchAgents/
-for l in com.atlas.api com.atlas.monitor com.atlas.healthcheck; do
+cp deploy/com.atlas.*.plist ~/Library/LaunchAgents/
+for l in com.atlas.api com.atlas.monitor com.atlas.healthcheck com.atlas.backup; do
   launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/$l.plist
 done
 launchctl list | grep com.atlas   # third column 0 = healthy
@@ -24,6 +24,13 @@ reads the installed copy in `~/Library/LaunchAgents`, not the one in this repo.
   one-monitor rule. Sets `PYTHONUNBUFFERED=1`, which is required, not optional:
   without it Python block-buffers stdout to a file and the log lags reality by
   many minutes, so a healthy monitor looks dead.
+- **`com.atlas.backup.plist` + `atlas_backup.py`** — daily 03:30 snapshot via sqlite3's online
+  backup API (safe while the services hold the database open; a plain `cp` of a live
+  SQLite file can capture a torn write). Verifies each snapshot with `quick_check`
+  before rotating, keeps 3, and only rotates its own `atlas-auto-*` files so
+  hand-made checkpoints are never deleted. Labels are the irreplaceable asset:
+  Kalshi prunes settled market detail after ~6 weeks, so a lost database cannot
+  simply be re-harvested.
 - **`com.atlas.healthcheck.plist` + `atlas_healthcheck.py`** — a 60s liveness probe
   covering what `KeepAlive` cannot see: a process that is alive but wedged.
   Restarts the API when `/health` stops answering (after 2 consecutive misses, so a
