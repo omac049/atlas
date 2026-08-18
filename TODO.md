@@ -180,6 +180,37 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   - **Release-calendar burst mode**: new `atlas/release_calendar.py` (hardcoded UTC release instants for ISM/jobs/CPI/FOMC through Dec 2026, windows −10m/+50m) and `_burst_aware_sleep` in the monitor loop — inside a window the read-only radar scan runs every 30s instead of every 5m; the full pair scan and backfills stay on the base cadence. Cadence-only by construction (a stale entry changes scan frequency, nothing else); CPI entries beyond September must be added from the published BLS schedule. Tests in `tests/test_release_calendar.py`.
   - **Discovery note for the label pipeline**: Gamma tag `105533` (PCE) exists and carries the open core-PCE buckets — the "no Gamma tag ID is known for PCE" gap above is closed for future harvests; jobs tag `993` also carries the monthly unemployment-rate buckets.
 
+## 2026-08-18 — live pairing gate fixed (paper trading was structurally unreachable)
+
+- [x] **Root-caused why `paper_trades` is empty after 12k+ shadow observations.** Paper trades are
+  created only by `run_pair` (`atlas/live_monitor.py`), which the monitor spawns for the `approved`
+  pairs returned by `scan_pairs` — and the live scan reported `comparisons=0 approved=0 review=0`
+  against 20,336 active Kalshi and 22,275 active Polymarket markets. `scan_market_pairs` bucketed
+  candidates on the full 15-field verification key, so a pair had to already agree on
+  `settlement_policy`, `revision_policy`, and every threshold field before it was allowed to be
+  tested on exactly those fields. Paper trading was unreachable by construction, not unprofitable.
+- [x] **Fixed** (`atlas/discovery.py`): new `_fingerprint_pairing_key` buckets on the identity of the
+  underlying question (`event_subject`, `contract_scope`, `market_type`, `participants`) and drops
+  subjectless contracts so they cannot share an empty bucket. `_fingerprint_verification_key` is
+  untouched — it still means "identical on every field" for the `event_compatible` and
+  `exact_matches` report metrics. Loosening the bucket cannot manufacture an approval:
+  `verify_equivalence` still adjudicates every field. 3 regression tests in `tests/test_arbitrage.py`;
+  suite **461 passing**, lint clean.
+- [x] **Verified live through the managed monitor**: `comparisons=729 approved=0 review=729` (was
+  `0/0/0`), matching the offline measurement exactly. Trusted labels unchanged at 10 approved +
+  71 rejected, `trading_enabled=false`, no approvals leaked.
+- [ ] **The binding constraint is now venue text, not code.** All 729 live pairs refuse on
+  `SETTLEMENT_GUARANTEE_UNKNOWN` + `SETTLEMENT_POLICY_MISMATCH`; 31 sit at an identical strike AND
+  operator (e.g. Kalshi "Hike rates by 25bps" x PM-US "25 bps Increase", Sep 2026 FOMC) blocked
+  *only* by those two codes — Kalshi publishes no terminal fallback, Polymarket publishes rounding
+  terms Kalshi does not. These approve automatically if published text converges; no code change
+  needed.
+- [ ] **Latent, behind the above:** `run_pair` reads `KALSHI_API_KEY_ID`, `KALSHI_PRIVATE_KEY_PATH`,
+  `POLYMARKET_US_API_KEY`, `POLYMARKET_US_API_SECRET` via `os.environ[...]`, none of which are set
+  for the launchd monitor, and it is spawned with `asyncio.create_task` — so a `KeyError` would be
+  swallowed silently. Before a first live paper trade can be expected, either provide those
+  credentials to `com.atlas.monitor` or make the missing-credential path log an explicit blocker.
+
 ## 2026-08-17 — scheduled tag backfill fixed (it had never once succeeded)
 
 - [x] **Root cause, measured live, not guessed:** every scheduled `tag_batch` since the feature shipped reported `BATCH_PARTIAL_FAILURE` with all four tags `TIMED_OUT` — 178 runs, 702 tag scans, **zero** completions in the monitor log. Timing probe (2026-08-17): Polymarket US closed sweep 14.9s + terminal-evidence finalization 55.2s + Kalshi settled-event scan 38.7s = **~110s of catalog fetch before a single pair is compared**, against a `BATCH_MAX_TAG_SECONDS = 120` budget. None of that work depends on the Global tag under probe, yet every tag repeated all of it. The Global tag catalog — the only genuinely per-tag fetch — costs 1.9s.
