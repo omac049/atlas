@@ -2,7 +2,7 @@
 
 The radar is a paper-only measurement instrument over CANDIDATE pairs. These
 tests pin: deterministic shape matching on canonical terms, honest top-of-book
-quote extraction, locked-basket gap math with the recorded fee buffer, the
+quote extraction, locked-basket gap math with venue-published taker fees, the
 candidate/never-trusted labeling on every observation, and the bankroll
 summary's dedup and sizing assumptions.
 """
@@ -20,15 +20,16 @@ from test_cpi_yoy import (
 from apps.api.main import app
 from atlas.gap_radar import (
     BANKROLL_START,
-    GAP_FEE_BUFFER,
     INVERSE_SHAPE,
     PAIR_KIND,
     STAKE_FRACTION,
     kalshi_quotes,
+    kalshi_taker_fee_per_contract,
     match_twin_shapes,
     observe_pair,
     paper_bankroll_summary,
     polymarket_quotes,
+    polymarket_taker_fee_per_share,
 )
 from atlas.storage import AtlasStore
 from atlas.venues.fixtures import fixture_markets
@@ -132,7 +133,13 @@ def test_observation_records_candidate_caveats_and_gap_math():
     costs = {basket["legs"]: Decimal(basket["cost"]) for basket in observation["baskets"]}
     assert costs["kalshi_yes+polymarket_yes"] == Decimal("1.049")
     assert costs["kalshi_no+polymarket_no"] == Decimal("1.05")
-    assert Decimal(observation["best_gap"]) == Decimal(1) - Decimal("1.049") - GAP_FEE_BUFFER
+    # Per-leg fees flip the best basket: no+no's polymarket leg at 0.99 pays a
+    # near-zero quadratic fee, beating yes+yes despite its 0.001 cheaper cost.
+    assert observation["best_basket"] == "kalshi_no+polymarket_no"
+    expected_fees = kalshi_taker_fee_per_contract(Decimal("0.06")) + (
+        polymarket_taker_fee_per_share(Decimal("0.99"), {})[0]
+    )
+    assert Decimal(observation["best_gap"]) == Decimal(1) - Decimal("1.05") - expected_fees
     assert observation["executable_gap"] is False
 
 
@@ -144,10 +151,43 @@ def test_executable_gap_detected_when_basket_beats_fees():
     polymarket = _polymarket_tail({"bestAsk": "0.90", "bestBid": "0.955"})
     pairs = match_twin_shapes([kalshi], [polymarket])
     observation = observe_pair(pairs[0])
-    # no+no basket: 0.02 + (1 - 0.955) = 0.065 -> gap 0.915 after the 0.02 buffer
+    # no+no basket: 0.02 + (1 - 0.955) = 0.065; fees = ceil-cent Kalshi quadratic
+    # (0.01) + polymarket max-rate fallback (no schedule on the fixture payload)
     assert observation["best_basket"] == "kalshi_no+polymarket_no"
-    assert Decimal(observation["best_gap"]) == Decimal("0.915")
+    expected_fees = kalshi_taker_fee_per_contract(Decimal("0.02")) + (
+        polymarket_taker_fee_per_share(Decimal("0.045"), {})[0]
+    )
+    assert Decimal(observation["best_gap"]) == Decimal(1) - Decimal("0.065") - expected_fees
     assert observation["executable_gap"] is True
+
+
+def test_kalshi_fee_matches_the_published_schedule_examples():
+    """Kalshi's own schedule: 100 contracts at 50c cost $1.75 (1.75c each,
+    ceil-per-contract makes it 2c — conservative, never in our favor); at 10c
+    and 90c the published example is 63c per 100 (0.63c -> 1c ceiled)."""
+    assert kalshi_taker_fee_per_contract(Decimal("0.5")) == Decimal("0.02")
+    assert kalshi_taker_fee_per_contract(Decimal("0.10")) == Decimal("0.01")
+    assert kalshi_taker_fee_per_contract(Decimal("0.90")) == Decimal("0.01")
+
+
+def test_polymarket_fee_uses_the_published_per_market_schedule():
+    economics = {"feesEnabled": True, "feeSchedule": {"exponent": 1, "rate": 0.05}}
+    fee, basis = polymarket_taker_fee_per_share(Decimal("0.5"), economics)
+    assert fee == Decimal("0.0125")
+    assert basis == "venue_published_schedule"
+
+
+def test_polymarket_fee_disabled_market_is_free():
+    fee, basis = polymarket_taker_fee_per_share(Decimal("0.5"), {"feesEnabled": False})
+    assert fee == Decimal(0)
+    assert basis == "venue_fees_disabled"
+
+
+def test_polymarket_missing_schedule_takes_the_maximum_published_rate():
+    """An absent field must never flatter a gap: unknown schedule -> max rate."""
+    fee, basis = polymarket_taker_fee_per_share(Decimal("0.5"), {"feesEnabled": True})
+    assert fee == Decimal("0.0175")
+    assert basis == "schedule_missing_max_rate_applied"
 
 
 def _observation(day: str, gap: str, cost: str, size: str | None, pair: str = "p1") -> dict:

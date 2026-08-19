@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
-from decimal import Decimal
+from decimal import ROUND_CEILING, Decimal
 
 from atlas.fingerprints import build_fingerprint
 from atlas.models import Market
@@ -38,9 +38,46 @@ BANKROLL_START = Decimal(2000)
 # same at the starting bankroll. The Kalshi displayed size still caps every
 # stake: a growing bankroll cannot pretend thin books absorb more contracts.
 STAKE_FRACTION = Decimal("0.05")
-# Flat per-basket fee/slippage buffer; recorded on every observation so the
-# assumption stays visible instead of being baked in silently.
-GAP_FEE_BUFFER = Decimal("0.02")
+# Venue-published taker fee models, encoded from primary sources 2026-08-19.
+# The prior flat 2c/basket buffer understated fees exactly where gaps look
+# best: near 50c both venues charge their quadratic peak (~3c/basket combined).
+#
+# - Kalshi: taker = ceil(M x 0.07 x C x P x (1-P)); its /series endpoint
+#   publishes fee_type=quadratic, fee_multiplier=1 for every default macro
+#   series (verified live). The venue ceils per ORDER; this model ceils per
+#   CONTRACT, which can only overstate the fee — a profit meter must never
+#   round in its own favor.
+# - Polymarket: each Gamma market payload publishes its own feeSchedule
+#   ({rate, exponent, takerOnly}; economics rate 0.05, verified live on the
+#   tracked macro markets; makers pay nothing). feesEnabled=false markets are
+#   free; a fee-enabled market MISSING its schedule gets the maximum published
+#   category rate so an absent field can never flatter a gap.
+KALSHI_TAKER_RATE = Decimal("0.07")
+POLYMARKET_MAX_TAKER_RATE = Decimal("0.07")
+_CENT = Decimal("0.01")
+
+
+def kalshi_taker_fee_per_contract(price: Decimal) -> Decimal:
+    raw = KALSHI_TAKER_RATE * price * (Decimal(1) - price)
+    return raw.quantize(_CENT, rounding=ROUND_CEILING)
+
+
+def polymarket_taker_fee_per_share(
+    price: Decimal, raw_market: dict
+) -> tuple[Decimal, str]:
+    """Published-schedule taker fee for one share, with the basis recorded."""
+    if raw_market.get("feesEnabled") is False:
+        return Decimal(0), "venue_fees_disabled"
+    schedule = raw_market.get("feeSchedule") or {}
+    rate = _decimal(schedule.get("rate"))
+    base = price * (Decimal(1) - price)
+    if rate is None:
+        return POLYMARKET_MAX_TAKER_RATE * base, "schedule_missing_max_rate_applied"
+    try:
+        exponent = int(schedule.get("exponent") or 1)
+    except (TypeError, ValueError):
+        exponent = 1
+    return rate * base**exponent, "venue_published_schedule"
 
 PAIR_KIND = "CANDIDATE_TWIN_SHAPE_NOT_PROVEN"
 
@@ -140,7 +177,9 @@ def polymarket_quotes(market: Market) -> dict[str, Decimal | None] | None:
     return {"yes_ask": yes_ask, "no_ask": no_ask, "yes_size": None, "no_size": None}
 
 
-def _baskets(shape: str, kalshi: dict, polymarket: dict) -> list[dict]:
+def _baskets(
+    shape: str, kalshi: dict, polymarket: dict, polymarket_raw: dict
+) -> list[dict]:
     """Locked baskets: exactly one leg pays $1 at settlement IF the twin
     relationship holds (which is unproven — hence candidate-only)."""
     if shape == INVERSE_SHAPE:
@@ -158,12 +197,18 @@ def _baskets(shape: str, kalshi: dict, polymarket: dict) -> list[dict]:
         if k_price is None or p_price is None:
             continue
         cost = k_price + p_price
-        gap = Decimal(1) - cost - GAP_FEE_BUFFER
+        kalshi_fee = kalshi_taker_fee_per_contract(k_price)
+        polymarket_fee, polymarket_fee_basis = polymarket_taker_fee_per_share(
+            p_price, polymarket_raw
+        )
+        gap = Decimal(1) - cost - kalshi_fee - polymarket_fee
         baskets.append(
             {
                 "legs": legs,
                 "cost": str(cost),
-                "fee_buffer": str(GAP_FEE_BUFFER),
+                "kalshi_fee": str(kalshi_fee),
+                "polymarket_fee": str(polymarket_fee),
+                "polymarket_fee_basis": polymarket_fee_basis,
                 "gap": str(gap),
                 "kalshi_size": str(kalshi[size_key]) if kalshi[size_key] is not None else None,
             }
@@ -179,7 +224,9 @@ def observe_pair(pair: dict, observed_at: str | None = None) -> dict | None:
     polymarket = polymarket_quotes(polymarket_market)
     if kalshi is None or polymarket is None:
         return None
-    baskets = _baskets(pair["shape"], kalshi, polymarket)
+    baskets = _baskets(
+        pair["shape"], kalshi, polymarket, polymarket_market.raw_market_json
+    )
     if not baskets:
         return None
     verification = verify_equivalence(kalshi_market, polymarket_market, "gap-radar")
@@ -260,7 +307,18 @@ def paper_bankroll_summary(observations: list[dict]) -> dict:
         "assumptions": {
             "stake_fraction_of_bankroll": str(STAKE_FRACTION),
             "stake_capped_by_kalshi_displayed_size": True,
-            "fee_buffer_per_basket": str(GAP_FEE_BUFFER),
+            "fee_model": {
+                "kalshi": (
+                    "ceil_per_contract(0.07 x P x (1-P)) — venue schedule, "
+                    "fee_multiplier=1 verified per macro series 2026-08-19; "
+                    "per-contract ceil is conservative vs the venue's per-order ceil"
+                ),
+                "polymarket": (
+                    "per-market published feeSchedule rate x P x (1-P) "
+                    "(takerOnly; economics rate 0.05 verified live); "
+                    "fees-disabled markets free; missing schedule -> max rate 0.07"
+                ),
+            },
             "polymarket_fill_assumed_at_quote": True,
             "dedup": "one opportunity per pair per UTC day",
             "pairs_are_candidates_not_proven_twins": True,

@@ -180,6 +180,30 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   - **Release-calendar burst mode**: new `atlas/release_calendar.py` (hardcoded UTC release instants for ISM/jobs/CPI/FOMC through Dec 2026, windows −10m/+50m) and `_burst_aware_sleep` in the monitor loop — inside a window the read-only radar scan runs every 30s instead of every 5m; the full pair scan and backfills stay on the base cadence. Cadence-only by construction (a stale entry changes scan frequency, nothing else); CPI entries beyond September must be added from the published BLS schedule. Tests in `tests/test_release_calendar.py`.
   - **Discovery note for the label pipeline**: Gamma tag `105533` (PCE) exists and carries the open core-PCE buckets — the "no Gamma tag ID is known for PCE" gap above is closed for future harvests; jobs tag `993` also carries the monthly unemployment-rate buckets.
 
+## 2026-08-19 — gap radar fees are now venue-published, not a flat buffer
+
+- [x] **External viability review's fee critique verified and fixed.** The flat 2c/basket buffer
+  understated fees exactly where gaps look best: both venues charge quadratic taker fees peaking at
+  50c (Kalshi ceil(0.07 x C x P x (1-P)), its /series endpoint publishes fee_type=quadratic,
+  fee_multiplier=1 for every default macro series — verified live; Polymarket publishes a
+  per-market feeSchedule on the Gamma payload — economics rate 0.05, takerOnly, verified live on
+  the tracked macro markets, formula confirmed against the venue's help center). Real cost near
+  mids is ~3c/basket, not 2c; at tails it is well under 2c.
+- [x] Encoded in `atlas/gap_radar.py`: per-leg fees from the published schedules, recorded on every
+  basket (`kalshi_fee`, `polymarket_fee`, `polymarket_fee_basis`). Conservative-by-construction:
+  Kalshi ceil applied per CONTRACT (venue ceils per order — ours can only overstate), fees-disabled
+  Polymarket markets are free, and a fee-enabled market missing its schedule takes the maximum
+  published rate so an absent field can never flatter a gap. 4 fee pins + updated gap-math tests
+  (the per-leg model flips which basket is best when a leg trades near $1); suite **469 passing**.
+- [x] First live scan under real fees: 17 twin-shaped pairs, **3 executable gaps (2.2c, 4.4c,
+  4.0c)** on far-2027 FOMC and Q3-GDP tails — tail-priced legs pay near-zero quadratic fees, so the
+  honest model shows MORE edge there than the flat buffer did, while mid-priced "gaps" now clear a
+  higher, truthful bar. Historical observations keep the fee model they were recorded under.
+- [ ] Remaining fee-model caveats, recorded not hidden: Kalshi fee_multiplier is read as 1
+  (verified for the default macro series, not fetched per market at scan time); maker-side pricing
+  (both venues charge takers only on our tracked families) would apply if the radar ever modeled
+  resting orders; PM-US gateway fees are unmodeled because the radar prices Gamma quotes.
+
 ## 2026-08-18 — live pairing gate fixed (paper trading was structurally unreachable)
 
 - [x] **Root-caused why `paper_trades` is empty after 12k+ shadow observations.** Paper trades are
