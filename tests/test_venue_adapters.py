@@ -15,7 +15,7 @@ from atlas.discovery import (
 )
 from atlas.fingerprints import build_fingerprint, deterministic_settlement_blockers
 from atlas.models import MarketStatus, VenueName
-from atlas.venues.base import classify_terminal_error
+from atlas.venues.base import classify_terminal_error, normalize_settled_at
 from atlas.venues.fixtures import fixture_markets
 from atlas.venues.kalshi import SETTLED_SERIES_MAX_PAGES, KalshiVenue
 from atlas.venues.polymarket_global import PolymarketGlobalHistoricalVenue
@@ -171,6 +171,63 @@ async def test_kalshi_terminal_evidence_classifies_transient_failure(monkeypatch
     assert evidence["reason"] == "venue_server_error"
     assert evidence["retryable"] is True
     assert evidence["http_status"] == 503
+
+
+@pytest.mark.asyncio
+async def test_kalshi_terminal_evidence_normalizes_settlement_timestamp(monkeypatch):
+    venue = KalshiVenue(fixture=False)
+
+    async def fake_get(path, params=None):
+        return {
+            "market": {
+                "ticker": "KX-FINAL",
+                "status": "finalized",
+                "result": "yes",
+                "settlement_ts": "2026-07-29T18:07:36.155125Z",
+            }
+        }
+
+    monkeypatch.setattr(venue, "_get", fake_get)
+    evidence = await venue.get_terminal_settlement_evidence("KX-FINAL")
+
+    assert evidence["settlement_ts"] == "2026-07-29T18:07:36.155125Z"
+    assert evidence["settled_at"] == "2026-07-29T18:07:36.155125+00:00"
+
+
+@pytest.mark.asyncio
+async def test_kalshi_terminal_evidence_tolerates_missing_settlement_timestamp(monkeypatch):
+    venue = KalshiVenue(fixture=False)
+
+    async def fake_get(path, params=None):
+        return {"market": {"ticker": "KX-FINAL", "status": "finalized", "result": "no"}}
+
+    monkeypatch.setattr(venue, "_get", fake_get)
+    evidence = await venue.get_terminal_settlement_evidence("KX-FINAL")
+
+    assert evidence["status"] == "settled"
+    assert evidence["settled_at"] is None
+
+
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [
+        # Polymarket US publishes nanosecond precision, which datetime cannot hold.
+        ("2026-07-02T13:00:04.303014467Z", "2026-07-02T13:00:04.303014+00:00"),
+        ("2026-07-29T18:07:36.155125Z", "2026-07-29T18:07:36.155125+00:00"),
+        ("2026-10-01T00:00:00Z", "2026-10-01T00:00:00+00:00"),
+        # Gamma's closedTime is a space-separated offset stamp.
+        ("2026-10-01 12:30:00+00", "2026-10-01T12:30:00+00:00"),
+        # A naive stamp is read as UTC rather than discarded.
+        ("2026-10-01T12:30:00", "2026-10-01T12:30:00+00:00"),
+        ("2026-10-01T08:30:00-04:00", "2026-10-01T12:30:00+00:00"),
+        ("not a timestamp", None),
+        ("", None),
+        (None, None),
+        (0, None),
+    ],
+)
+def test_settlement_timestamp_normalization_handles_venue_shapes(raw, expected):
+    assert normalize_settled_at(raw) == expected
 
 
 def test_terminal_error_classification_does_not_retry_client_errors():
@@ -611,6 +668,140 @@ async def test_polymarket_us_settled_book_payload_is_compact_and_deterministic(m
 
 
 @pytest.mark.asyncio
+async def test_polymarket_us_settlement_endpoint_recovers_timestamp_from_book(monkeypatch):
+    """The settlement endpoint returns no timestamp, so the book supplies it."""
+    venue = PolymarketUSVenue(fixture=False)
+    requested = []
+
+    async def settled_endpoint(market_id):
+        return {"slug": market_id, "settlement": 1}
+
+    async def settled_book(path, params=None):
+        requested.append(path)
+        return {
+            "marketData": {
+                "state": "MARKET_STATE_EXPIRED",
+                "transactTime": "2026-07-02T13:00:04.303014467Z",
+                "stats": {"settlementSetTime": "2026-07-02T13:00:04.303014467Z"},
+            }
+        }
+
+    monkeypatch.setattr(venue, "get_settlement", settled_endpoint)
+    monkeypatch.setattr(venue, "_get", settled_book)
+
+    evidence = await venue.get_terminal_settlement_evidence("settled-market")
+
+    assert evidence["source"] == "settlement_endpoint"
+    assert evidence["status"] == "settled"
+    assert evidence["settlement"] == "1"
+    assert evidence["settled_at"] == "2026-07-02T13:00:04.303014+00:00"
+    assert requested == ["/v1/markets/settled-market/book"]
+
+
+@pytest.mark.asyncio
+async def test_polymarket_us_settlement_endpoint_falls_back_to_transact_time(monkeypatch):
+    venue = PolymarketUSVenue(fixture=False)
+
+    async def settled_endpoint(market_id):
+        return {"slug": market_id, "settlement": 0}
+
+    async def book_without_set_time(path, params=None):
+        return {
+            "marketData": {
+                "state": "MARKET_STATE_EXPIRED",
+                "transactTime": "2026-07-02T13:00:04.303014467Z",
+                "stats": {},
+            }
+        }
+
+    monkeypatch.setattr(venue, "get_settlement", settled_endpoint)
+    monkeypatch.setattr(venue, "_get", book_without_set_time)
+
+    evidence = await venue.get_terminal_settlement_evidence("settled-market")
+
+    assert evidence["settled_at"] == "2026-07-02T13:00:04.303014+00:00"
+
+
+@pytest.mark.asyncio
+async def test_polymarket_us_book_failure_never_downgrades_settled_evidence(monkeypatch):
+    """The timing lookup is observability only: losing it must not un-settle a
+    market the settlement endpoint already called final."""
+    venue = PolymarketUSVenue(fixture=False)
+
+    async def settled_endpoint(market_id):
+        return {"slug": market_id, "settlement": 1}
+
+    async def failing_book(path, params=None):
+        raise httpx.HTTPStatusError(
+            "busy",
+            request=httpx.Request("GET", "https://example.test/book"),
+            response=httpx.Response(500),
+        )
+
+    monkeypatch.setattr(venue, "get_settlement", settled_endpoint)
+    monkeypatch.setattr(venue, "_get", failing_book)
+
+    evidence = await venue.get_terminal_settlement_evidence("settled-market")
+
+    assert evidence["source"] == "settlement_endpoint"
+    assert evidence["status"] == "settled"
+    assert evidence["retryable"] is False
+    assert evidence["settlement"] == "1"
+    assert evidence["settled_at"] is None
+
+
+@pytest.mark.asyncio
+async def test_polymarket_us_terminal_book_records_settlement_timestamp(monkeypatch):
+    venue = PolymarketUSVenue(fixture=False)
+
+    async def no_endpoint(market_id):
+        raise httpx.HTTPStatusError(
+            "not found",
+            request=httpx.Request("GET", "https://example.test"),
+            response=httpx.Response(404),
+        )
+
+    async def terminal_book(path, params=None):
+        return {
+            "marketData": {
+                "state": "MARKET_STATE_EXPIRED",
+                "stats": {
+                    "settlementPx": {"value": "1", "currency": "USD"},
+                    "settlementPreliminaryFlag": False,
+                    "settlementSetTime": "2026-07-02T13:00:04.303014467Z",
+                },
+            }
+        }
+
+    monkeypatch.setattr(venue, "get_settlement", no_endpoint)
+    monkeypatch.setattr(venue, "_get", terminal_book)
+
+    evidence = await venue.get_terminal_settlement_evidence("settled-market")
+
+    assert evidence["settled_at"] == "2026-07-02T13:00:04.303014+00:00"
+    # The hashed payload subset stays compact: timing lives beside it, not in it.
+    assert "settled_at" not in evidence["payload"]
+
+
+@pytest.mark.asyncio
+async def test_global_polymarket_terminal_evidence_normalizes_closed_time():
+    venue = PolymarketGlobalHistoricalVenue()
+    venue._closed_markets["42"] = {
+        "id": "42",
+        "closed": True,
+        "closedTime": "2026-10-01 12:30:00+00",
+        "umaResolutionStatus": "resolved",
+        "outcomes": '["Yes", "No"]',
+        "outcomePrices": '["1", "0"]',
+    }
+
+    evidence = await venue.get_terminal_settlement_evidence("42")
+
+    assert evidence["closed_time"] == "2026-10-01 12:30:00+00"
+    assert evidence["settled_at"] == "2026-10-01T12:30:00+00:00"
+
+
+@pytest.mark.asyncio
 async def test_kalshi_fixture_terminal_evidence_settles_from_fixture_market(monkeypatch):
     venue = KalshiVenue(fixture=True)
     settled = fixture_markets()["kalshi"][0].model_copy(deep=True)
@@ -751,6 +942,37 @@ def test_election_fingerprint_normalizes_chamber_cycle_party_and_policy():
     assert fingerprint.resolution_source == "state_electoral_authorities+us_house"
     assert "tie=first_elected_speaker_party" in fingerprint.settlement_policy
     assert deterministic_settlement_blockers(_polymarket_house_control()) == []
+
+
+def test_live_kalshi_chamber_control_listing_classifies_without_election_wording():
+    """CONTROLH-2026 payload shape verified live 2026-08-19: no 'election' or
+    'midterm' anywhere in title or rules, so the cycle must come from the
+    bare 'in 2026' phrasing or the subject can never pair with Polymarket."""
+    market = KalshiVenue._normalize_market(
+        {
+            "ticker": "CONTROLH-2026-R",
+            "event_ticker": "CONTROLH-2026",
+            "title": "Will Republicans win the House in 2026?",
+            "yes_sub_title": "Republican Party",
+            "rules_primary": (
+                "If the Republican Party has won control of the House in 2026, "
+                "then the market resolves to Yes."
+            ),
+            "rules_secondary": (
+                "This market may be determined early based on a consensus of media "
+                "calls projecting control of the U.S. House. See full rules for "
+                "details. Otherwise, victory will be determined by the party "
+                "identification of the Speaker of the House on February 1, 2027."
+            ),
+            "close_time": "2027-02-01T15:00:00Z",
+            "status": "active",
+        }
+    )
+    fingerprint = build_fingerprint(market)
+    assert fingerprint.market_type == "election"
+    assert fingerprint.event_action == "party_control"
+    assert fingerprint.event_subject == "us_house_control|2026"
+    assert fingerprint.affirmative_outcome == "republican_party"
 
 
 def test_election_pair_requires_identical_deterministic_settlement_rules():

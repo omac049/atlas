@@ -22,6 +22,7 @@ from decimal import ROUND_CEILING, Decimal
 
 from atlas.fingerprints import build_fingerprint
 from atlas.models import Market
+from atlas.settlement_timing import settlement_timing_annotation
 from atlas.verification import verify_equivalence
 
 # K-YES pays exactly when PM-YES pays (same predicate).
@@ -217,7 +218,15 @@ def _baskets(
 
 
 def observe_pair(pair: dict, observed_at: str | None = None) -> dict | None:
-    """One radar observation for one twin-shaped pair; None when unquotable."""
+    """One radar observation for one twin-shaped pair; None when unquotable.
+
+    The ``settlement_timing`` field is a DESCRIPTIVE annotation only (see
+    ``atlas.settlement_timing``): it records whether one venue may settle
+    earlier than the other and how far out the basket's capital stays locked.
+    It never affects ``verification_status``, ``mismatch_codes``, the baskets,
+    the fees, or the gap — it exists so the study can ask whether an observed
+    gap is carry compensation or mispricing.
+    """
     kalshi_market: Market = pair["kalshi_market"]
     polymarket_market: Market = pair["polymarket_market"]
     kalshi = kalshi_quotes(kalshi_market)
@@ -232,9 +241,10 @@ def observe_pair(pair: dict, observed_at: str | None = None) -> dict | None:
     verification = verify_equivalence(kalshi_market, polymarket_market, "gap-radar")
     best = max(baskets, key=lambda basket: Decimal(basket["gap"]))
     best_gap = Decimal(best["gap"])
+    observed_at_value = observed_at or datetime.now(UTC).isoformat()
     return {
         "observation_id": str(uuid.uuid4()),
-        "observed_at": observed_at or datetime.now(UTC).isoformat(),
+        "observed_at": observed_at_value,
         "paper_only": True,
         "trusted": False,
         "pair_kind": PAIR_KIND,
@@ -251,6 +261,10 @@ def observe_pair(pair: dict, observed_at: str | None = None) -> dict | None:
         "best_basket": best["legs"],
         "executable_gap": best_gap > 0,
         "polymarket_fill_assumed_at_quote": True,
+        # Descriptive caution tag + lock-up horizon. Gates nothing.
+        "settlement_timing": settlement_timing_annotation(
+            kalshi_market, polymarket_market, observed_at=observed_at_value
+        ),
     }
 
 

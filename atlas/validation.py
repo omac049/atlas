@@ -17,6 +17,7 @@ from atlas.settlement_polling import (
     retry_delay,
 )
 from atlas.storage import AtlasStore
+from atlas.venues.base import normalize_settled_at
 from atlas.verification import verify_equivalence
 
 
@@ -244,6 +245,8 @@ async def reconcile_validation_cases(
             "polymarket_evidence": market_b.raw_market_json.get("settlement_evidence"),
             "resolved_at": resolved_at,
         }
+        lag = settlement_lag_observation(market_a, market_b)
+        evidence.update(lag)
         await store.mark_validation_checked(pair.pair_id, retry_count=0)
         await store.save_validation_outcome(
             {
@@ -254,6 +257,7 @@ async def reconcile_validation_cases(
                 "outcome_b": outcome_b,
                 "trusted_label": trusted_label,
                 "evidence": evidence,
+                **lag,
             }
         )
         if trusted_label:
@@ -263,6 +267,64 @@ async def reconcile_validation_cases(
             summary["labeled"] += 1
         summary["resolved"] += 1
     return summary
+
+
+def _leg_settled_at(market: Market) -> str | None:
+    """Best available settlement timestamp for one settled leg, or ``None``.
+
+    Prefers the cross-venue ``settled_at`` key the adapters now normalize, and
+    falls back to the venue-specific raw fields so evidence recorded before
+    that key existed still yields a timestamp.
+    """
+    evidence = market.raw_market_json.get("settlement_evidence")
+    candidates: list[object] = []
+    if isinstance(evidence, dict):
+        candidates.extend(
+            evidence.get(key) for key in ("settled_at", "settlement_ts", "closed_time")
+        )
+    candidates.append(market.raw_market_json.get("settlement_ts"))
+    for candidate in candidates:
+        normalized = normalize_settled_at(candidate)
+        if normalized:
+            return normalized
+    return None
+
+
+def settlement_lag_observation(market_a: Market, market_b: Market) -> dict[str, object]:
+    """Measure the settlement-timing asymmetry between two settled legs.
+
+    Sign convention: ``settlement_lag_seconds`` is
+    ``market_b.settled_at - market_a.settled_at``. It is POSITIVE when the
+    FIRST leg settled EARLIER — the reconciler always passes the Kalshi leg
+    first, so a positive lag means Kalshi settled ahead of Polymarket (the
+    early media-consensus direction). It is negative when Polymarket settled
+    first, and ``None`` when either timestamp is missing or unparseable.
+
+    Observability only: nothing here participates in the relationship status
+    or the trusted-label decision, and a missing timestamp never raises.
+    """
+    left, right = _leg_settled_at(market_a), _leg_settled_at(market_b)
+    observation: dict[str, object] = {
+        "kalshi_settled_at": left,
+        "polymarket_settled_at": right,
+        "settlement_lag_seconds": None,
+        "first_settled_venue": None,
+        "settled_same_day": None,
+    }
+    if left is None or right is None:
+        return observation
+    try:
+        parsed_a, parsed_b = datetime.fromisoformat(left), datetime.fromisoformat(right)
+    except ValueError:
+        return observation
+    lag = (parsed_b - parsed_a).total_seconds()
+    observation["settlement_lag_seconds"] = lag
+    observation["settled_same_day"] = parsed_a.date() == parsed_b.date()
+    if lag > 0:
+        observation["first_settled_venue"] = market_a.venue.value
+    elif lag < 0:
+        observation["first_settled_venue"] = market_b.venue.value
+    return observation
 
 
 async def _apply_terminal_settlement(market: Market, venue: object) -> Market:

@@ -539,6 +539,118 @@ async def test_evidence_exhausted_status_leaves_pending_pool_and_summary_counts_
     assert summary["awaiting_settlement"] == 0
 
 
+async def _save_lag_outcome(store, pair_id, lag_seconds, left, right, first_venue=None):
+    await store.save_validation_outcome(
+        {
+            "pair_id": pair_id,
+            "resolved_at": "2026-12-01T00:00:00+00:00",
+            "relationship_status": "CONFIRMED",
+            "outcome_a": "yes",
+            "outcome_b": "yes",
+            "trusted_label": None,
+            "kalshi_settled_at": left,
+            "polymarket_settled_at": right,
+            "settlement_lag_seconds": lag_seconds,
+            "first_settled_venue": first_venue,
+            "settled_same_day": None if left is None or right is None else left[:10] == right[:10],
+        }
+    )
+
+
+@pytest.mark.asyncio
+async def test_settlement_lag_stats_aggregate_median_max_and_different_days(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    # Two same-day lags and one multi-day lag, plus a Polymarket-first negative.
+    await _save_lag_outcome(
+        store, "lag-1", 3600.0,
+        "2026-11-04T02:00:00+00:00", "2026-11-04T03:00:00+00:00", "kalshi",
+    )
+    await _save_lag_outcome(
+        store, "lag-2", 7200.0,
+        "2026-11-04T02:00:00+00:00", "2026-11-04T04:00:00+00:00", "kalshi",
+    )
+    await _save_lag_outcome(
+        store, "lag-3", 1355400.0,
+        "2026-11-04T02:00:00+00:00", "2026-11-19T18:30:00+00:00", "kalshi",
+    )
+    await _save_lag_outcome(
+        store, "lag-4", -86400.0,
+        "2026-11-05T02:00:00+00:00", "2026-11-04T02:00:00+00:00", "polymarket_us",
+    )
+
+    stats = await store.settlement_lag_stats()
+
+    assert stats["pairs_with_lag"] == 4
+    # Signed median of (-86400, 3600, 7200, 1355400).
+    assert stats["median_lag_seconds"] == 5400.0
+    # Magnitude, so the 15-day Kalshi-first gap wins over the 1-day negative.
+    assert stats["max_lag_seconds"] == 1355400.0
+    assert stats["different_day_pairs"] == 2
+    assert stats["first_settled_venue_counts"] == {"kalshi": 3, "polymarket_us": 1}
+
+
+@pytest.mark.asyncio
+async def test_settlement_lag_stats_skip_outcomes_without_a_computable_lag(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await _save_lag_outcome(store, "no-lag", None, None, "2026-11-04T03:00:00+00:00")
+    await _save_lag_outcome(
+        store, "has-lag", 60.0,
+        "2026-11-04T02:00:00+00:00", "2026-11-04T02:01:00+00:00", "kalshi",
+    )
+
+    stats = await store.settlement_lag_stats()
+
+    assert stats["pairs_with_lag"] == 1
+    assert stats["median_lag_seconds"] == 60.0
+    assert stats["max_lag_seconds"] == 60.0
+    assert stats["different_day_pairs"] == 0
+
+
+@pytest.mark.asyncio
+async def test_validation_summary_keeps_existing_keys_and_adds_settlement_lag(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+
+    summary = await store.validation_summary()
+
+    pinned = {
+        "evidence_versions", "markets_tracked", "rule_changes", "cases",
+        "awaiting_settlement", "resolved_cases", "poll_eligible", "retry_exhausted",
+        "confirmed", "diverged", "inconclusive", "trusted_labels",
+    }
+    assert pinned <= set(summary)
+    assert summary["settlement_lag"] == {
+        "pairs_with_lag": 0,
+        "median_lag_seconds": None,
+        "max_lag_seconds": None,
+        "different_day_pairs": 0,
+        "first_settled_venue_counts": {},
+    }
+
+
+@pytest.mark.asyncio
+async def test_settlement_lag_stats_read_legacy_outcomes_without_same_day_flag(tmp_path):
+    """Outcomes stored before the flag existed still carry both timestamps."""
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await store.save_validation_outcome(
+        {
+            "pair_id": "legacy",
+            "resolved_at": "2026-12-01T00:00:00+00:00",
+            "relationship_status": "CONFIRMED",
+            "outcome_a": "yes",
+            "outcome_b": "yes",
+            "trusted_label": None,
+            "kalshi_settled_at": "2026-11-04T02:00:00+00:00",
+            "polymarket_settled_at": "2026-11-19T18:30:00+00:00",
+            "settlement_lag_seconds": 1355400.0,
+        }
+    )
+
+    stats = await store.settlement_lag_stats()
+
+    assert stats["pairs_with_lag"] == 1
+    assert stats["different_day_pairs"] == 1
+
+
 @pytest.mark.asyncio
 async def test_due_only_pending_cases_respect_persisted_retry_delay(tmp_path):
     from datetime import UTC, datetime, timedelta

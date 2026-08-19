@@ -190,6 +190,53 @@ def test_polymarket_missing_schedule_takes_the_maximum_published_rate():
     assert basis == "schedule_missing_max_rate_applied"
 
 
+def test_observation_carries_the_settlement_timing_annotation():
+    """The timing tag rides along with every pre-existing field and changes
+    none of them: it is observability only (atlas/settlement_timing.py)."""
+    from datetime import UTC, datetime
+
+    from test_settlement_timing import KALSHI_CHAMBER_CONTROL_RULES
+
+    kalshi = _kalshi_t31(
+        {"yes_ask_dollars": "0.99", "yes_ask_size_fp": "100", "no_ask_dollars": "0.06",
+         "no_ask_size_fp": "200"}
+    )
+    kalshi.raw_rules_text += " " + KALSHI_CHAMBER_CONTROL_RULES
+    kalshi.close_time = datetime(2026, 9, 11, 20, 0, tzinfo=UTC)
+    polymarket = _polymarket_tail({"bestAsk": "0.059", "bestBid": "0.01"})
+    polymarket.close_time = datetime(2026, 9, 11, 20, 0, tzinfo=UTC)
+
+    pairs = match_twin_shapes([kalshi], [polymarket])
+    observation = observe_pair(pairs[0], observed_at="2026-08-12T20:00:00+00:00")
+    timing = observation["settlement_timing"]
+    assert timing["asymmetric"] is True
+    assert timing["early_venue"] == "kalshi"
+    assert "EARLY_MEDIA_CONSENSUS" in timing["early_codes"]
+    assert timing["days_to_settlement"] == "30.0"
+    assert timing["horizon_basis"] == "kalshi_close_time"
+    # Nothing the radar already recorded moved.
+    assert observation["trusted"] is False
+    assert observation["pair_kind"] == PAIR_KIND
+    assert observation["verification_status"] == "REVIEW_REQUIRED"
+    assert observation["best_basket"] == "kalshi_no+polymarket_no"
+    assert Decimal(observation["best_gap"]) < 0
+    assert observation["executable_gap"] is False
+    assert {basket["legs"] for basket in observation["baskets"]} == {
+        "kalshi_yes+polymarket_yes",
+        "kalshi_no+polymarket_no",
+    }
+
+
+def test_symmetric_pair_observation_flags_no_asymmetry():
+    kalshi = _kalshi_t31({"no_ask_dollars": "0.02", "no_ask_size_fp": "500"})
+    polymarket = _polymarket_tail({"bestAsk": "0.90", "bestBid": "0.955"})
+    pairs = match_twin_shapes([kalshi], [polymarket])
+    observation = observe_pair(pairs[0], observed_at="2026-08-12T20:00:00+00:00")
+    assert observation["settlement_timing"]["asymmetric"] is False
+    assert observation["settlement_timing"]["codes"] == []
+    assert observation["settlement_timing"]["early_venue"] is None
+
+
 def _observation(day: str, gap: str, cost: str, size: str | None, pair: str = "p1") -> dict:
     return {
         "observed_at": f"{day}T12:00:00+00:00",

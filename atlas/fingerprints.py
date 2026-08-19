@@ -411,6 +411,12 @@ def _election_cycle(market: Market) -> str | None:
         return match.group(1)
     if match := re.search(r"\b(?:midterm|election)\b.{0,40}\b(20\d{2})\b", text):
         return match.group(1)
+    # Kalshi's chamber-control listings say "win the House in 2026" without the
+    # word election/midterm anywhere in title or rules (CONTROLH-2026, verified
+    # live 2026-08-19); without this the subject falls back to close_time and
+    # can never pair with the Polymarket cycle-stamped twin.
+    if match := re.search(r"\b(?:in|after)\s+(?:the\s+)?(20\d{2})\b", text):
+        return match.group(1)
     if market.measurement_period and (
         match := re.search(r"\b(20\d{2})\b", market.measurement_period)
     ):

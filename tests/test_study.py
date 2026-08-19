@@ -20,6 +20,8 @@ def _observation(
     codes: list[str] | None = None,
     basket: dict | None = None,
     subject: str = "us_fomc_rate_decision|2027-01",
+    days_to_settlement: str | None = None,
+    asymmetric: bool = False,
 ) -> dict:
     default_basket = {
         "legs": "kalshi_yes+polymarket_no",
@@ -40,6 +42,14 @@ def _observation(
         if codes is not None
         else ["SETTLEMENT_GUARANTEE_UNKNOWN", "SETTLEMENT_POLICY_MISMATCH"],
         "baskets": [basket if basket is not None else default_basket],
+        "settlement_timing": {
+            "asymmetric": asymmetric,
+            "codes": ["SETTLEMENT_TIMING_ASYMMETRIC"] if asymmetric else [],
+            "early_venue": "kalshi" if asymmetric else None,
+            "early_codes": ["EARLY_MEDIA_CONSENSUS"] if asymmetric else [],
+            "days_to_settlement": days_to_settlement,
+            "horizon_basis": "kalshi_close_time" if days_to_settlement else None,
+        },
     }
 
 
@@ -151,6 +161,102 @@ def test_go_threshold_counts_verified_not_candidate_opportunities():
     assert report["distinct_opportunities"] == 10
     assert report["venue_text_only_opportunities_total"] == 0
     assert report["meets_go_threshold"] is False
+
+
+def test_settlement_timing_curve_buckets_by_days_to_settlement():
+    """The carry-vs-mispricing curve: gaps bucketed by days until the basket's
+    capital unlocks, split by whether the pair carries a settlement-timing
+    asymmetry. Observations with no horizon, or past it, are counted apart."""
+    observations = [
+        _observation("2026-08-20T10:00:00+00:00", pair="p1", gap="0.02", days_to_settlement="3.0"),
+        _observation("2026-08-20T10:00:00+00:00", pair="p2", gap="0.04", days_to_settlement="5.0"),
+        _observation(
+            "2026-08-20T10:00:00+00:00", pair="p3", gap="0.06",
+            days_to_settlement="20.0", asymmetric=True,
+        ),
+        _observation(
+            "2026-08-20T10:00:00+00:00", pair="p4", gap="0.10",
+            days_to_settlement="30.0", asymmetric=True,
+        ),
+        _observation("2026-08-20T10:00:00+00:00", pair="p5", gap="0.01", days_to_settlement="45.0"),
+        _observation(
+            "2026-08-20T10:00:00+00:00", pair="p6", gap="0.20",
+            days_to_settlement="120.0", asymmetric=True,
+        ),
+        _observation("2026-08-20T10:00:00+00:00", pair="p7", gap="0.03"),
+        _observation("2026-08-20T10:00:00+00:00", pair="p8", gap="0.03", days_to_settlement="-2.0"),
+    ]
+    curve = study_report(observations, today=date(2026, 8, 20))["settlement_timing_curve"]
+    assert curve["observations_with_horizon"] == 6
+    assert curve["observations_without_horizon"] == 1
+    assert curve["observations_after_horizon"] == 1
+    assert curve["asymmetric_pairs"] == 3
+    buckets = {bucket["bucket"]: bucket for bucket in curve["buckets"]}
+    assert [bucket["bucket"] for bucket in curve["buckets"]] == ["0-7", "8-30", "31-90", "90+"]
+    assert buckets["0-7"]["observations"] == 2
+    assert buckets["0-7"]["median_gap"] == "0.03"
+    assert buckets["8-30"]["observations"] == 2
+    assert buckets["8-30"]["median_gap"] == "0.08"
+    assert buckets["31-90"]["observations"] == 1
+    assert buckets["31-90"]["median_gap"] == "0.01"
+    assert buckets["90+"]["observations"] == 1
+    assert buckets["90+"]["median_gap"] == "0.20"
+
+
+def test_settlement_timing_curve_splits_asymmetric_from_symmetric_pairs():
+    """The question the split answers: do asymmetric-settlement pairs carry
+    systematically wider gaps than symmetric ones at the same horizon?"""
+    observations = [
+        _observation("2026-08-20T10:00:00+00:00", pair="s1", gap="0.01", days_to_settlement="10.0"),
+        _observation("2026-08-20T10:00:00+00:00", pair="s2", gap="0.03", days_to_settlement="12.0"),
+        _observation(
+            "2026-08-20T10:00:00+00:00", pair="a1", gap="0.07",
+            days_to_settlement="11.0", asymmetric=True,
+        ),
+        _observation(
+            "2026-08-20T10:00:00+00:00", pair="a2", gap="0.09",
+            days_to_settlement="13.0", asymmetric=True,
+        ),
+    ]
+    curve = study_report(observations, today=date(2026, 8, 20))["settlement_timing_curve"]
+    assert curve["asymmetric_observations"] == 2
+    assert curve["symmetric_observations"] == 2
+    assert curve["asymmetric_median_gap"] == "0.08"
+    assert curve["symmetric_median_gap"] == "0.02"
+    bucket = next(item for item in curve["buckets"] if item["bucket"] == "8-30")
+    assert bucket["asymmetric_median_gap"] == "0.08"
+    assert bucket["symmetric_median_gap"] == "0.02"
+    assert bucket["executable_observations"] == 4
+
+
+def test_settlement_timing_curve_includes_gaps_that_do_not_clear_fees():
+    """The curve measures the price relationship, not opportunity counting: a
+    negative (non-executable) gap still belongs on it."""
+    observations = [
+        _observation(
+            "2026-08-20T10:00:00+00:00", pair="n1", gap="-0.01",
+            executable=False, days_to_settlement="4.0",
+        ),
+    ]
+    report = study_report(observations, today=date(2026, 8, 20))
+    curve = report["settlement_timing_curve"]
+    assert report["distinct_opportunities"] == 0
+    assert curve["observations_with_horizon"] == 1
+    bucket = next(item for item in curve["buckets"] if item["bucket"] == "0-7")
+    assert bucket["observations"] == 1
+    assert bucket["executable_observations"] == 0
+    assert bucket["median_gap"] == "-0.01"
+
+
+def test_legacy_observations_without_the_timing_field_are_symmetric_and_horizonless():
+    """Observations persisted before the annotation existed must not crash the
+    report or be silently counted as asymmetric."""
+    legacy = _observation("2026-08-20T10:00:00+00:00")
+    legacy.pop("settlement_timing")
+    curve = study_report([legacy], today=date(2026, 8, 20))["settlement_timing_curve"]
+    assert curve["observations_with_horizon"] == 0
+    assert curve["observations_without_horizon"] == 1
+    assert curve["asymmetric_pairs"] == 0
 
 
 def test_non_executable_observations_never_become_opportunities():

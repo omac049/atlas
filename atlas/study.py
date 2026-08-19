@@ -19,6 +19,12 @@ amendment):
   refusal consists solely of codes a venue text revision would clear. These are
   the review's "verified opportunity" precursors: nothing structural stands
   between them and approval except published wording.
+- **Settlement-timing curve** — observations bucketed by days until the LATER
+  leg settles (the basket's capital lock-up), split by whether the pair carries
+  a settlement-timing asymmetry tag (``atlas.settlement_timing``). It answers
+  whether an observed gap is carry compensation (gaps shrink as settlement
+  nears, and widen with lock-up) or mispricing. The tag is DESCRIPTIVE: it
+  gates nothing and never upgrades a pair's trust.
 """
 
 from collections import Counter
@@ -36,6 +42,15 @@ RUN_GAP_TOLERANCE_SECONDS = 900
 
 # Go/no-go thresholds adopted from the 2026-08-19 external viability review.
 GO_MIN_OPPORTUNITIES_PER_MONTH = 10
+
+# Days-to-settlement buckets for the gap-vs-horizon curve; the last bucket is
+# open-ended. Boundaries are inclusive upper bounds.
+SETTLEMENT_HORIZON_BUCKETS: tuple[tuple[str, int | None], ...] = (
+    ("0-7", 7),
+    ("8-30", 30),
+    ("31-90", 90),
+    ("90+", None),
+)
 
 # Verification codes a venue text revision alone would clear.
 VENUE_TEXT_ONLY_CODES = {
@@ -182,7 +197,90 @@ def study_report(observations: list[dict], today: date | None = None) -> dict:
         },
         "executable_size_contracts": sizes,
         "fee_model_rows": dict(fee_models),
+        "settlement_timing_curve": _settlement_timing_curve(observations),
         "weekly": weekly,
+    }
+
+
+def _horizon_bucket(days: Decimal) -> str:
+    for label, upper in SETTLEMENT_HORIZON_BUCKETS:
+        if upper is None or days <= upper:
+            return label
+    return SETTLEMENT_HORIZON_BUCKETS[-1][0]
+
+
+def _median_gap(gaps: list[Decimal]) -> str | None:
+    return str(median(gaps)) if gaps else None
+
+
+def _settlement_timing_curve(observations: list[dict]) -> dict:
+    """Gap against time-to-settlement, split by settlement-timing asymmetry.
+
+    Every observation carrying a parseable ``best_gap`` counts — negative gaps
+    included, because the question is how the cross-venue price relationship
+    behaves as the lock-up shortens, not how often it clears fees. The
+    asymmetry split is descriptive: an asymmetric pair is one where a venue
+    published an early-determination clause its twin did not, which is a
+    caution tag, never an approval input.
+    """
+    buckets: dict[str, dict] = {
+        label: {"gaps": [], "executable": 0, "asymmetric": [], "symmetric": []}
+        for label, _ in SETTLEMENT_HORIZON_BUCKETS
+    }
+    without_horizon = 0
+    after_horizon = 0
+    asymmetric_gaps: list[Decimal] = []
+    symmetric_gaps: list[Decimal] = []
+    asymmetric_pairs: set[tuple[str, str]] = set()
+
+    for observation in observations:
+        timing = observation.get("settlement_timing") or {}
+        asymmetric = bool(timing.get("asymmetric"))
+        if asymmetric:
+            asymmetric_pairs.add(_pair_key(observation))
+        gap = _decimal(observation.get("best_gap"))
+        if gap is None:
+            continue
+        days = _decimal(timing.get("days_to_settlement"))
+        if days is None:
+            without_horizon += 1
+            continue
+        if days < 0:
+            after_horizon += 1
+            continue
+        bucket = buckets[_horizon_bucket(days)]
+        bucket["gaps"].append(gap)
+        if observation.get("executable_gap") and gap > 0:
+            bucket["executable"] += 1
+        if asymmetric:
+            bucket["asymmetric"].append(gap)
+            asymmetric_gaps.append(gap)
+        else:
+            bucket["symmetric"].append(gap)
+            symmetric_gaps.append(gap)
+
+    return {
+        "observations_with_horizon": sum(len(data["gaps"]) for data in buckets.values()),
+        "observations_without_horizon": without_horizon,
+        "observations_after_horizon": after_horizon,
+        "asymmetric_pairs": len(asymmetric_pairs),
+        "asymmetric_observations": len(asymmetric_gaps),
+        "symmetric_observations": len(symmetric_gaps),
+        "asymmetric_median_gap": _median_gap(asymmetric_gaps),
+        "symmetric_median_gap": _median_gap(symmetric_gaps),
+        "buckets": [
+            {
+                "bucket": label,
+                "observations": len(buckets[label]["gaps"]),
+                "executable_observations": buckets[label]["executable"],
+                "median_gap": _median_gap(buckets[label]["gaps"]),
+                "asymmetric_observations": len(buckets[label]["asymmetric"]),
+                "asymmetric_median_gap": _median_gap(buckets[label]["asymmetric"]),
+                "symmetric_observations": len(buckets[label]["symmetric"]),
+                "symmetric_median_gap": _median_gap(buckets[label]["symmetric"]),
+            }
+            for label, _ in SETTLEMENT_HORIZON_BUCKETS
+        ],
     }
 
 

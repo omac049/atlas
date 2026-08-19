@@ -9,6 +9,7 @@ from atlas.models import Market, MarketStatus, OrderBook, OrderBookLevel, VenueN
 from atlas.venues.base import (
     PredictionVenue,
     classify_terminal_error,
+    normalize_settled_at,
     pending_terminal_evidence,
 )
 from atlas.venues.fixtures import fixture_books, fixture_markets
@@ -16,6 +17,20 @@ from atlas.venues.http import get_json
 
 # Order-book states in which the gateway's settlement price is final.
 _TERMINAL_STATES = {"MARKET_STATE_EXPIRED", "MARKET_STATE_TERMINATED"}
+
+
+def _book_settled_at(market_data: object) -> str | None:
+    """Recover the settlement time from a `/book` payload.
+
+    ``stats.settlementSetTime`` is the gateway's authoritative stamp;
+    ``transactTime`` carries the same value on settled books and is used only
+    as a fallback. Both are nanosecond precision, so they must be normalized.
+    """
+    if not isinstance(market_data, dict):
+        return None
+    stats = market_data.get("stats")
+    raw = stats.get("settlementSetTime") if isinstance(stats, dict) else None
+    return normalize_settled_at(raw or market_data.get("transactTime"))
 
 
 class PolymarketUSVenue(PredictionVenue):
@@ -187,6 +202,19 @@ class PolymarketUSVenue(PredictionVenue):
         payload = await self._get(f"/v1/markets/{market_id}/settlement")
         return payload if isinstance(payload, dict) else {}
 
+    async def _settlement_timestamp(self, market_id: str) -> str | None:
+        """Best-effort settlement time for a market the settlement endpoint settled.
+
+        Strictly observability: every failure path returns ``None`` so that a
+        book outage can never turn final settlement evidence into pending
+        evidence.
+        """
+        try:
+            book = await self._get(f"/v1/markets/{market_id}/book")
+        except httpx.HTTPError:
+            return None
+        return _book_settled_at(book.get("marketData") if isinstance(book, dict) else None)
+
     async def get_terminal_settlement_evidence(self, market_id: str) -> dict:
         """Return final binary public evidence, preferring the settlement endpoint."""
         if self.fixture:
@@ -207,6 +235,11 @@ class PolymarketUSVenue(PredictionVenue):
                 "reason": "settlement_endpoint",
                 "retryable": False,
                 "settlement": str(_binary_decimal(settlement)),
+                # The settlement endpoint carries no timestamp, so the book is
+                # consulted purely for settlement timing. Best-effort by design:
+                # a failed lookup leaves settled_at None and never downgrades
+                # otherwise-final evidence.
+                "settled_at": await self._settlement_timestamp(market_id),
                 "payload": payload,
             }
         try:
@@ -254,6 +287,7 @@ class PolymarketUSVenue(PredictionVenue):
             "settlement": str(binary),
             "state": state,
             "preliminary": is_preliminary,
+            "settled_at": _book_settled_at(market_data),
             # Deterministic subset only: embedding the full order book made the
             # validation evidence hash churn with quote noise.
             "payload": {

@@ -93,6 +93,15 @@ BATCH_DEFAULT_KALSHI_SERIES_TICKERS = (
     "KXPCECORE",
     "KXGDP",
 )
+# 2026 chamber-control markets (events CONTROLH-2026/-2028, CONTROLS-2026/-2028)
+# sit ~36k deep in Kalshi's recent-first open catalog — far beyond the 20-page
+# list_markets budget — so the election-discovery panel read Kalshi as 0 until
+# they were pulled via the bounded series scan like the macro series above.
+# Series tickers verified against the live catalog 2026-08-19.
+DISCOVERY_ELECTION_KALSHI_SERIES_TICKERS = (
+    "CONTROLH",
+    "CONTROLS",
+)
 BATCH_MAX_TARGET_LABELS = 50
 BATCH_MAX_KALSHI_EVENT_PAGES = 100
 BATCH_MAX_POLYMARKET_PAGES = 20
@@ -419,9 +428,10 @@ async def scan_pairs(live: bool) -> list:
     if live:
         # The recent-first open catalog drowns low-frequency macro series under
         # sports markets — the same reach gap the settled-event scan had. Merge
-        # the bounded series scan so open FOMC/CPI markets enter the queue.
+        # the bounded series scan so open FOMC/CPI markets enter the queue,
+        # plus the chamber-control series feeding election discovery.
         series_markets = await kalshi_venue.list_open_series_markets(
-            BATCH_DEFAULT_KALSHI_SERIES_TICKERS
+            BATCH_DEFAULT_KALSHI_SERIES_TICKERS + DISCOVERY_ELECTION_KALSHI_SERIES_TICKERS
         )
         seen_ids = {market.market_id for market in kalshi_markets}
         kalshi_markets.extend(

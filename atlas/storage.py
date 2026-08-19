@@ -2,6 +2,7 @@ import json
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
+from statistics import median
 from typing import ClassVar
 
 import aiosqlite
@@ -120,6 +121,21 @@ def _as_float(value: object) -> float | None:
         return float(str(value))
     except (TypeError, ValueError):
         return None
+
+
+def _outcome_settled_same_day(payload: dict[str, object]) -> bool:
+    """Whether both legs of a resolved outcome settled on the same UTC day.
+
+    Outcomes recorded before the flag existed still carry both timestamps, so
+    fall back to comparing their ISO date prefixes.
+    """
+    same_day = payload.get("settled_same_day")
+    if isinstance(same_day, bool):
+        return same_day
+    left = str(payload.get("kalshi_settled_at") or "")[:10]
+    right = str(payload.get("polymarket_settled_at") or "")[:10]
+    return not left or not right or left == right
+
 
 class AtlasStore:
     # DB paths whose schema + migrations have already run in this process.
@@ -887,6 +903,49 @@ class AtlasStore:
             )
         return history
 
+    async def settlement_lag_stats(self) -> dict[str, object]:
+        """Aggregate the observed settlement-timing asymmetry across resolved pairs.
+
+        Read-only observability over recorded validation outcomes. Lags are
+        signed seconds following ``atlas.validation.settlement_lag_observation``:
+        positive means the Kalshi leg settled EARLIER than its Polymarket twin.
+        ``median_lag_seconds`` keeps that sign; ``max_lag_seconds`` reports the
+        largest magnitude observed, so it is never negative. Outcomes without a
+        computable lag are skipped rather than counted as zero.
+        """
+        await self.initialize()
+        async with aiosqlite.connect(self.path) as db:
+            rows = await (
+                await db.execute("SELECT payload_json FROM validation_outcomes")
+            ).fetchall()
+        lags: list[float] = []
+        different_day = 0
+        first_venue_counts: dict[str, int] = {}
+        for (payload_json,) in rows:
+            try:
+                payload = json.loads(payload_json or "{}")
+            except (TypeError, ValueError):
+                continue
+            if not isinstance(payload, dict):
+                continue
+            lag = payload.get("settlement_lag_seconds")
+            if isinstance(lag, bool) or not isinstance(lag, int | float):
+                continue
+            lags.append(float(lag))
+            if not _outcome_settled_same_day(payload):
+                different_day += 1
+            first_venue = payload.get("first_settled_venue")
+            if first_venue:
+                key = str(first_venue)
+                first_venue_counts[key] = first_venue_counts.get(key, 0) + 1
+        return {
+            "pairs_with_lag": len(lags),
+            "median_lag_seconds": float(median(lags)) if lags else None,
+            "max_lag_seconds": max((abs(lag) for lag in lags), default=None),
+            "different_day_pairs": different_day,
+            "first_settled_venue_counts": first_venue_counts,
+        }
+
     async def validation_summary(self) -> dict[str, object]:
         await self.initialize()
         async with aiosqlite.connect(self.path) as db:
@@ -921,6 +980,7 @@ class AtlasStore:
             ).fetchone()
         versions, markets = int(evidence[0] or 0), int(evidence[1] or 0)
         return {
+            "settlement_lag": await self.settlement_lag_stats(),
             "evidence_versions": versions,
             "markets_tracked": markets,
             "rule_changes": max(0, versions - markets),

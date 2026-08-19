@@ -64,6 +64,15 @@ def test_kalshi_series_tickers_default_to_no_series_scan():
     assert _parse_kalshi_series_tickers(None) == ()
 
 
+def test_live_discovery_series_scan_includes_chamber_control_series():
+    """CONTROLH/CONTROLS sit ~36k deep in Kalshi's recent-first open catalog,
+    beyond the list_markets page budget — the series scan is the only way the
+    election-discovery panel sees a non-zero Kalshi side."""
+    from atlas.cli import DISCOVERY_ELECTION_KALSHI_SERIES_TICKERS
+
+    assert DISCOVERY_ELECTION_KALSHI_SERIES_TICKERS == ("CONTROLH", "CONTROLS")
+
+
 def test_kalshi_series_tickers_accept_repeated_comma_separated_lowercase_values():
     assert _parse_kalshi_series_tickers(["kxfeddecision, KXFED", "KXFEDDECISION"]) == (
         "KXFEDDECISION",

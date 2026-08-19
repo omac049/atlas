@@ -9,6 +9,7 @@ from atlas.models import Market, MarketStatus, OrderBook, OrderBookLevel, VenueN
 from atlas.venues.base import (
     PredictionVenue,
     classify_terminal_error,
+    normalize_settled_at,
     pending_terminal_evidence,
 )
 from atlas.venues.fixtures import fixture_books, fixture_markets
@@ -239,6 +240,9 @@ class KalshiVenue(PredictionVenue):
             "result": normalized,
             "market_status": str(raw.get("status") or "settled"),
             "settlement_ts": raw.get("settlement_ts"),
+            # Cross-venue settlement-timing key; the raw field stays for
+            # backwards compatibility with already-stored evidence.
+            "settled_at": normalize_settled_at(raw.get("settlement_ts")),
         }
 
     async def enrich_market_source(self, market: Market) -> Market:

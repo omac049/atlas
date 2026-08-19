@@ -1,3 +1,5 @@
+import json
+import sqlite3
 from datetime import UTC, datetime, timedelta
 
 import pytest
@@ -11,6 +13,7 @@ from atlas.validation import (
     capture_validation_universe,
     market_evidence_snapshot,
     reconcile_validation_cases,
+    settlement_lag_observation,
 )
 from atlas.venues.fixtures import fixture_markets
 from atlas.verification import verify_equivalence
@@ -49,6 +52,32 @@ class PendingEvidenceVenue(SettledVenue):
 
     async def get_terminal_settlement_evidence(self, market_id):
         return dict(self.evidence)
+
+
+class TimedEvidenceVenue(SettledVenue):
+    """Venue whose terminal evidence carries a normalized settlement time."""
+
+    def __init__(self, market, settlement, settled_at):
+        super().__init__(market)
+        self.settlement = settlement
+        self.settled_at = settled_at
+
+    async def get_terminal_settlement_evidence(self, market_id):
+        return {
+            "source": "timed-test",
+            "status": "settled",
+            "settlement": self.settlement,
+            "settled_at": self.settled_at,
+        }
+
+
+def _stored_outcome(store, pair_id):
+    with sqlite3.connect(store.path) as db:
+        row = db.execute(
+            "SELECT payload_json FROM validation_outcomes WHERE pair_id = ?",
+            (pair_id,),
+        ).fetchone()
+    return json.loads(row[0])
 
 
 class ExplodingVenue:
@@ -203,6 +232,137 @@ async def test_terminal_evidence_refreshes_both_validation_legs(tmp_path):
     assert result["labeled"] == 1
     outcome = (await store.validation_summary())
     assert outcome["trusted_labels"] == 1
+
+
+def _settled_leg_pair(pair_id, settled_at_a, settled_at_b):
+    markets = fixture_markets()
+    pair = verify_equivalence(markets["kalshi"][0], markets["polymarket_us"][0], pair_id)
+    left = pair.market_a.model_copy(deep=True)
+    right = pair.market_b.model_copy(deep=True)
+    left.raw_market_json["settlement_evidence"] = {"settled_at": settled_at_a}
+    right.raw_market_json["settlement_evidence"] = {"settled_at": settled_at_b}
+    return pair, left, right
+
+
+def test_settlement_lag_is_positive_when_the_kalshi_leg_settles_first():
+    """Sign convention: positive lag == first (Kalshi) leg settled earlier."""
+    _, left, right = _settled_leg_pair(
+        "lag-sign",
+        "2026-11-04T02:00:00+00:00",
+        "2026-11-06T02:00:00+00:00",
+    )
+
+    observation = settlement_lag_observation(left, right)
+
+    assert observation["kalshi_settled_at"] == "2026-11-04T02:00:00+00:00"
+    assert observation["polymarket_settled_at"] == "2026-11-06T02:00:00+00:00"
+    assert observation["settlement_lag_seconds"] == 172800.0
+    assert observation["first_settled_venue"] == left.venue.value
+    assert observation["settled_same_day"] is False
+
+
+def test_settlement_lag_is_negative_when_the_polymarket_leg_settles_first():
+    _, left, right = _settled_leg_pair(
+        "lag-sign-inverse",
+        "2026-11-04T12:00:00+00:00",
+        "2026-11-04T06:00:00+00:00",
+    )
+
+    observation = settlement_lag_observation(left, right)
+
+    assert observation["settlement_lag_seconds"] == -21600.0
+    assert observation["first_settled_venue"] == right.venue.value
+    assert observation["settled_same_day"] is True
+
+
+@pytest.mark.parametrize(
+    ("left_ts", "right_ts"),
+    [(None, "2026-11-06T02:00:00+00:00"), ("2026-11-04T02:00:00+00:00", None), (None, None)],
+)
+def test_missing_settlement_timestamp_yields_no_lag_without_raising(left_ts, right_ts):
+    _, left, right = _settled_leg_pair("lag-missing", left_ts, right_ts)
+
+    observation = settlement_lag_observation(left, right)
+
+    assert observation["settlement_lag_seconds"] is None
+    assert observation["first_settled_venue"] is None
+    assert observation["settled_same_day"] is None
+
+
+def test_settlement_lag_falls_back_to_venue_specific_timestamp_keys():
+    """Evidence recorded before `settled_at` existed still carries raw stamps."""
+    _, left, right = _settled_leg_pair("lag-legacy", None, None)
+    left.raw_market_json["settlement_evidence"] = {
+        "settlement_ts": "2026-11-04T02:00:00.155125Z"
+    }
+    right.raw_market_json["settlement_evidence"] = {"closed_time": "2026-11-04 03:00:00+00"}
+
+    observation = settlement_lag_observation(left, right)
+
+    assert observation["kalshi_settled_at"] == "2026-11-04T02:00:00.155125+00:00"
+    assert observation["polymarket_settled_at"] == "2026-11-04T03:00:00+00:00"
+    assert observation["settlement_lag_seconds"] == pytest.approx(3599.844875)
+
+
+@pytest.mark.asyncio
+async def test_resolved_outcome_records_both_settlement_times_and_signed_lag(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    pair, left, right = _settled_leg_pair("lag-outcome", None, None)
+    await _save_case(store, pair)
+    left.status = MarketStatus.CLOSED
+    right.status = MarketStatus.CLOSED
+    left.raw_market_json.pop("result", None)
+    right.raw_market_json.pop("outcomePrices", None)
+    left.raw_market_json.pop("settlement_evidence", None)
+    right.raw_market_json.pop("settlement_evidence", None)
+
+    result = await reconcile_validation_cases(
+        store,
+        TimedEvidenceVenue(left, "1", "2026-11-04T02:00:00Z"),
+        TimedEvidenceVenue(right, "1", "2026-11-19T18:30:00Z"),
+        now=datetime(2030, 1, 1, tzinfo=UTC),
+    )
+
+    assert result["resolved"] == 1
+    stored = _stored_outcome(store, pair.pair_id)
+    assert stored["kalshi_settled_at"] == "2026-11-04T02:00:00+00:00"
+    assert stored["polymarket_settled_at"] == "2026-11-19T18:30:00+00:00"
+    assert stored["settlement_lag_seconds"] == 1355400.0
+    assert stored["first_settled_venue"] == left.venue.value
+    # Observability only: the existing label fields are untouched.
+    assert stored["relationship_status"] == "CONFIRMED"
+    assert stored["trusted_label"] == "APPROVED_EQUIVALENT"
+    assert stored["evidence"]["settlement_lag_seconds"] == 1355400.0
+    lag = (await store.validation_summary())["settlement_lag"]
+    assert lag["pairs_with_lag"] == 1
+    assert lag["median_lag_seconds"] == 1355400.0
+    assert lag["different_day_pairs"] == 1
+
+
+@pytest.mark.asyncio
+async def test_resolved_outcome_without_timestamps_records_null_lag(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    pair, left, right = _settled_leg_pair("lag-outcome-missing", None, None)
+    await _save_case(store, pair)
+    left.status = MarketStatus.CLOSED
+    right.status = MarketStatus.CLOSED
+    left.raw_market_json.pop("result", None)
+    right.raw_market_json.pop("outcomePrices", None)
+    left.raw_market_json.pop("settlement_evidence", None)
+    right.raw_market_json.pop("settlement_evidence", None)
+
+    result = await reconcile_validation_cases(
+        store,
+        TerminalEvidenceVenue(left, "1"),
+        TerminalEvidenceVenue(right, "1"),
+        now=datetime(2030, 1, 1, tzinfo=UTC),
+    )
+
+    assert result["resolved"] == 1
+    stored = _stored_outcome(store, pair.pair_id)
+    assert stored["settlement_lag_seconds"] is None
+    assert stored["first_settled_venue"] is None
+    assert (await store.validation_summary())["settlement_lag"]["pairs_with_lag"] == 0
 
 
 @pytest.mark.asyncio

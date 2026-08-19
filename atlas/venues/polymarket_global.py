@@ -21,7 +21,11 @@ import httpx
 
 from atlas.config import settings
 from atlas.models import Market, MarketStatus, VenueName
-from atlas.venues.base import classify_terminal_error, pending_terminal_evidence
+from atlas.venues.base import (
+    classify_terminal_error,
+    normalize_settled_at,
+    pending_terminal_evidence,
+)
 from atlas.venues.http import get_json
 
 
@@ -184,6 +188,9 @@ class PolymarketGlobalHistoricalVenue:
             "settlement": str(settlement),
             "closed": True,
             "closed_time": item.get("closedTime"),
+            # Gamma has no settlement stamp beyond the close time; it is the
+            # best available proxy for when this leg became final.
+            "settled_at": normalize_settled_at(item.get("closedTime")),
             "uma_resolution_status": "resolved",
             "resolved_by": item.get("resolvedBy"),
             "automatically_resolved": item.get("automaticallyResolved"),

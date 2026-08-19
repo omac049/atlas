@@ -1,10 +1,42 @@
+import re
 from abc import ABC, abstractmethod
+from datetime import UTC, datetime
 
 import httpx
 
 from atlas.models import Market, OrderBook
 
 TerminalEvidence = dict[str, object]
+
+_SUBSECOND = re.compile(r"\.(\d+)")
+
+
+def normalize_settled_at(value: object) -> str | None:
+    """Normalize a venue settlement timestamp to an ISO-8601 UTC string.
+
+    Venues publish settlement times in incompatible shapes: Kalshi's
+    ``settlement_ts`` is microsecond precision, Polymarket US's
+    ``settlementSetTime`` is nanosecond precision, and Gamma's ``closedTime``
+    is a space-separated offset stamp. Sub-second digits are truncated to the
+    six that ``datetime`` can represent, naive stamps are read as UTC, and
+    anything unparseable returns ``None`` so a missing timestamp can never
+    raise inside settlement evidence.
+    """
+    if isinstance(value, datetime):
+        parsed = value
+    else:
+        text = str(value or "").strip()
+        if not text:
+            return None
+        text = text.replace("Z", "+00:00").replace("z", "+00:00")
+        text = _SUBSECOND.sub(lambda match: "." + match.group(1)[:6], text, count=1)
+        try:
+            parsed = datetime.fromisoformat(text)
+        except ValueError:
+            return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=UTC)
+    return parsed.astimezone(UTC).isoformat()
 
 
 def pending_terminal_evidence(
