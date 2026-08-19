@@ -180,6 +180,27 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   - **Release-calendar burst mode**: new `atlas/release_calendar.py` (hardcoded UTC release instants for ISM/jobs/CPI/FOMC through Dec 2026, windows −10m/+50m) and `_burst_aware_sleep` in the monitor loop — inside a window the read-only radar scan runs every 30s instead of every 5m; the full pair scan and backfills stay on the base cadence. Cadence-only by construction (a stale entry changes scan frequency, nothing else); CPI entries beyond September must be added from the published BLS schedule. Tests in `tests/test_release_calendar.py`.
   - **Discovery note for the label pipeline**: Gamma tag `105533` (PCE) exists and carries the open core-PCE buckets — the "no Gamma tag ID is known for PCE" gap above is closed for future harvests; jobs tag `993` also carries the monthly unemployment-rate buckets.
 
+## 2026-08-19 — the 90-day study is formalized and running
+
+- [x] **Charter adopted**: `docs/NINETY_DAY_STUDY.md` — 2026-08-19 → 2026-11-17, frozen-rules
+  policy (rule changes need the existing owner gate PLUS an amendment note; study baseline commit
+  `47adf0c`), metric definitions shared verbatim with `atlas/study.py`, the external review's
+  go/no-go thresholds as the day-90 decision rule, and the phase-2 latency-simulation spec (due by
+  day 31; needs burst sampling around detected gaps — the 5-minute sweep cannot resolve sub-second
+  decay).
+- [x] **Instrumentation**: `atlas/study.py` + `atlas gaps study` compute the weekly report from
+  persisted observations only (regenerable bit-for-bit), writing dated JSON to `data/study/`;
+  `com.atlas.study` runs it Mondays 07:00. 8 tests pin the definitions. Two of my own first-draft
+  metrics were dishonest and are fixed with pins: the rate window now spans the retroactive
+  observations (a week of data on study day 1 must not be divided by one day), and the go test
+  counts VENUE-TEXT-ONLY opportunities (the charter's "verified" precursor), never raw candidates.
+- [x] **Day-1 report on real data** (14,677 observations, window 2026-08-12→): 21 candidate
+  opportunities, **17 venue-text-only**, verified rate 63.8/30d vs threshold 10, median survival
+  **129 minutes** across 21 runs (12 single-sweep), median executable size 33 contracts. Caveat
+  recorded in-report: 14,643 of the rows carry the legacy flat-buffer fee model — the first clean
+  all-venue-fee week lands 2026-08-26.
+- [x] Public repo synced: all local work through the fee model is pushed (`7dd9c66..47adf0c`).
+
 ## 2026-08-19 — gap radar fees are now venue-published, not a flat buffer
 
 - [x] **External viability review's fee critique verified and fixed.** The flat 2c/basket buffer

@@ -1273,6 +1273,28 @@ async def gaps_status() -> None:
         )
 
 
+async def gaps_study(write: bool = True) -> None:
+    """Weekly 90-day-study report from persisted radar observations only.
+
+    Charter: docs/NINETY_DAY_STUDY.md. Regenerable bit-for-bit from the
+    database; writing the dated JSON keeps a tamper-evident weekly trail for
+    the go/no-go decision at day 90.
+    """
+    from atlas.study import study_report
+
+    store = AtlasStore()
+    observations = await store.all_gap_observations()
+    report = study_report(observations)
+    print(json.dumps(report, indent=2))
+    if write:
+        directory = Path("data/study")
+        directory.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now(UTC).strftime("%Y%m%d")
+        target = directory / f"study-report-{stamp}.json"
+        target.write_text(json.dumps(report, indent=2) + "\n")
+        print(f"study_report_written={target}")
+
+
 def main() -> None:
     # The authenticated order-book streams read their credentials from the
     # process environment; worker.py already does this, but the continuous
@@ -1335,6 +1357,12 @@ def main() -> None:
     gaps_sub = gaps.add_subparsers(dest="action", required=True)
     gaps_scan_parser = gaps_sub.add_parser("scan")
     gaps_scan_parser.add_argument("--live", action="store_true")
+    gaps_study_parser = gaps_sub.add_parser(
+        "study", help="90-day study report (docs/NINETY_DAY_STUDY.md)"
+    )
+    gaps_study_parser.add_argument(
+        "--no-write", action="store_true", help="print only; skip the dated JSON artifact"
+    )
     gaps_sub.add_parser("status")
     learning = sub.add_parser("learning")
     learning_sub = learning.add_subparsers(dest="action", required=True)
@@ -1471,6 +1499,8 @@ def main() -> None:
         asyncio.run(approval_frontier_report(max(args.limit, 1)))
     elif args.command == "gaps" and args.action == "scan":
         asyncio.run(gaps_scan(args.live))
+    elif args.command == "gaps" and args.action == "study":
+        asyncio.run(gaps_study(write=not args.no_write))
     elif args.command == "gaps" and args.action == "status":
         asyncio.run(gaps_status())
     elif args.command == "learning" and args.action == "export":
