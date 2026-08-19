@@ -1,8 +1,13 @@
+import functools
+import json
+import os
+import time
+from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
 
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 
 from atlas import __version__
 from atlas.frontier import approval_frontier
@@ -12,10 +17,14 @@ from atlas.watchlist import build_watchlist
 app = FastAPI(title="Atlas", version=__version__)
 dashboard_path = Path(__file__).resolve().parents[2] / "apps" / "dashboard" / "index.html"
 dashboard_dir = dashboard_path.parent
+# CWD-relative like AtlasStore's default "data/atlas.sqlite3": the launchd
+# services and CLI both run from the repo root.
+study_dir = Path("data") / "study"
 
 
 @app.get("/health")
 def health() -> dict[str, str | bool]:
+    # trading_enabled is intentionally hardcoded, never settings-driven: no config can flip it.
     return {"service": "atlas", "version": __version__, "trading_enabled": False, "status": "ok"}
 
 
@@ -42,19 +51,126 @@ def _backfill_run_summary(run: dict) -> dict:
     }
 
 
-@app.get("/api/overview")
-async def overview() -> dict:
-    from atlas.agent import AtlasAgent
+@functools.lru_cache(maxsize=1)
+def _fixture_demo() -> tuple:
+    """Deterministic fixture demo (markets/books/pair/opportunity/research), once per process."""
     from atlas.arbitrage import calculate_opportunity
-    from atlas.evaluation import learning_readiness
+    from atlas.fees import DEMO_BASKET_FEES, DEMO_BASKET_SLIPPAGE
     from atlas.simulation import run_fixture_research
-    from atlas.storage import AtlasStore
     from atlas.venues.fixtures import fixture_books, fixture_markets
     from atlas.verification import verify_equivalence
 
     markets, books = fixture_markets(), fixture_books()
-    stored_books = await AtlasStore().latest_orderbooks(limit=2)
+    pair = verify_equivalence(
+        markets["kalshi"][0], markets["polymarket_us"][0], "fixture-fed-sep26"
+    )
+    opportunity = calculate_opportunity(
+        pair,
+        books["kalshi:KALSHI-FED-SEP26"],
+        books["polymarket_us:PM-FED-SEP26"],
+        Decimal(100),
+        fees=DEMO_BASKET_FEES,
+        slippage=DEMO_BASKET_SLIPPAGE,
+    )
+    research = run_fixture_research(
+        pair,
+        {"a": books["kalshi:KALSHI-FED-SEP26"], "b": books["polymarket_us:PM-FED-SEP26"]},
+    )
+    return markets, books, pair, opportunity, research
+
+
+# The dashboard polls every 15s, and the gap-observation trio JSON-parses tens of
+# thousands of stored rows per read — cache it briefly instead of per request.
+_GAP_SNAPSHOT_TTL_SECONDS = 30.0
+_gap_snapshot: tuple[float, tuple] | None = None
+
+
+async def _gap_observation_snapshot(store) -> tuple:
+    global _gap_snapshot
+    now = time.monotonic()
+    if _gap_snapshot is not None and now < _gap_snapshot[0]:
+        return _gap_snapshot[1]
+    value = (
+        await store.all_gap_observations(limit=50000),
+        await store.gap_observation_count(),
+        await store.gap_subject_aggregates(),
+    )
+    _gap_snapshot = (now + _GAP_SNAPSHOT_TTL_SECONDS, value)
+    return value
+
+
+@app.get("/api/study")
+def study() -> dict:
+    """Newest persisted 90-day-study report, verbatim.
+
+    Reports are written weekly by `atlas gaps study` (atlas/cli.py); this route
+    only reads what already exists on disk and NEVER recomputes the study —
+    regenerating in-request would walk tens of thousands of observations and
+    break the "regenerable bit-for-bit, tamper-evident trail" property.
+    """
+    no_report = {"paper_only": True, "status": "NO_REPORT"}
+    try:
+        reports = sorted(study_dir.glob("study-report-*.json"))
+    except OSError:
+        return no_report
+    if not reports:
+        return no_report
+    newest = reports[-1]
+    try:
+        report = json.loads(newest.read_text())
+        generated_at = datetime.fromtimestamp(newest.stat().st_mtime, tz=UTC).isoformat()
+    except (OSError, ValueError):
+        return no_report
+    return {
+        "paper_only": True,
+        "source": newest.name,
+        "generated_at": generated_at,
+        "report": report,
+    }
+
+
+def _recent_gap_row(observation: dict) -> dict:
+    """Compact one gap observation for the overview feed, fees included."""
+    row = {
+        "observed_at": observation.get("observed_at"),
+        "event_subject": observation.get("event_subject"),
+        "shape": observation.get("shape"),
+        "best_gap": observation.get("best_gap"),
+        "executable_gap": observation.get("executable_gap"),
+        "verification_status": observation.get("verification_status"),
+    }
+    # The per-venue fees live on the winning basket (gap_radar._baskets); older
+    # rows predate the venue-published fee model, so the keys are optional.
+    best = next(
+        (
+            basket
+            for basket in observation.get("baskets") or []
+            if basket.get("legs") == observation.get("best_basket")
+        ),
+        {},
+    )
+    for key in ("kalshi_fee", "polymarket_fee", "polymarket_fee_basis", "kalshi_size"):
+        if key in best:
+            row[key] = best[key]
+    return row
+
+
+@app.get("/api/overview")
+async def overview() -> dict:
+    from atlas.agent import AtlasAgent
+    from atlas.evaluation import learning_readiness
+    from atlas.live_monitor import REQUIRED_STREAM_CREDENTIALS
+    from atlas.storage import AtlasStore
+
+    # Presence check only — the values themselves are never read into the
+    # payload (hard invariant: credentials are never logged or served).
+    missing_credentials = [
+        name for name in REQUIRED_STREAM_CREDENTIALS if not os.getenv(name)
+    ]
+
+    markets, books, pair, opportunity, research = _fixture_demo()
     store = AtlasStore()
+    stored_books = await store.latest_orderbooks(limit=2)
     stored_opportunity = await store.latest_opportunity()
     stored_pair = await store.latest_pair()
     paper_trades = await store.paper_trade_summary()
@@ -90,35 +206,20 @@ async def overview() -> dict:
         for case in pending_validation_cases
     ]
     historical_backfill = await store.latest_historical_backfill()
-    gap_observations = await store.all_gap_observations()
-    gap_observation_total = await store.gap_observation_count()
-    gap_subject_aggregates = await store.gap_subject_aggregates()
+    gap_observations, gap_observation_total, gap_subject_aggregates = (
+        await _gap_observation_snapshot(store)
+    )
     recent_gaps = await store.recent_gap_observations(6)
     recent_backfills = await store.recent_historical_backfills(limit=6)
     training_readiness = await learning_readiness(store)
-    pair = verify_equivalence(
-        markets["kalshi"][0], markets["polymarket_us"][0], "fixture-fed-sep26"
-    )
-    opportunity = calculate_opportunity(
-        pair,
-        books["kalshi:KALSHI-FED-SEP26"],
-        books["polymarket_us:PM-FED-SEP26"],
-        Decimal(100),
-        fees=Decimal("0.83"),
-        slippage=Decimal("0.20"),
-    )
-    research = run_fixture_research(
-        pair,
-        {"a": books["kalshi:KALSHI-FED-SEP26"], "b": books["polymarket_us:PM-FED-SEP26"]},
-    )
     agent_payload = await store.latest_agent_run()
     if agent_payload is None:
+        # In-memory fallback only: a GET must never write, so nothing is persisted.
         agent_run = await AtlasAgent(
             {"kalshi": markets["kalshi"], "polymarket_us": markets["polymarket_us"]},
             books=books,
         ).run()
         agent_payload = agent_run.model_dump()
-        await store.save_agent_run(agent_payload)
     active_pair = stored_pair or pair
     return {
         "paper_only": True,
@@ -173,17 +274,11 @@ async def overview() -> dict:
         ),
         "gap_radar": {
             "summary": paper_bankroll_summary(gap_observations),
-            "recent": [
-                {
-                    "observed_at": observation.get("observed_at"),
-                    "event_subject": observation.get("event_subject"),
-                    "shape": observation.get("shape"),
-                    "best_gap": observation.get("best_gap"),
-                    "executable_gap": observation.get("executable_gap"),
-                    "verification_status": observation.get("verification_status"),
-                }
-                for observation in recent_gaps
-            ],
+            "recent": [_recent_gap_row(observation) for observation in recent_gaps],
+        },
+        "live_stream_credentials": {
+            "missing": missing_credentials,
+            "complete": not missing_credentials,
         },
         "research": {
             "detected_opportunities": research.detected_opportunities,
@@ -202,10 +297,44 @@ async def overview() -> dict:
 # Assets stay cacheable; only the shell must always be revalidated.
 _NO_STORE = {"Cache-Control": "no-store, must-revalidate"}
 
+_DASHBOARD_ASSETS = (
+    "dashboard.css",
+    "dashboard-research.css",
+    "dashboard-agent.css",
+    "dashboard.js",
+    "dashboard-panes.js",
+    "favicon.svg",
+)
+
+
+def _asset_version() -> str:
+    """Cache-busting token: newest mtime across the dashboard assets.
+
+    Computed per request — six stat calls against a 15s poll cycle is noise,
+    and it means an edited asset takes effect on the next shell load with no
+    process restart or manual version bump.
+    """
+    stamps = [
+        stat.st_mtime
+        for name in _DASHBOARD_ASSETS
+        if (stat := _safe_stat(dashboard_dir / name)) is not None
+    ]
+    return str(int(max(stamps))) if stamps else "0"
+
+
+def _safe_stat(path: Path):
+    try:
+        return path.stat()
+    except OSError:
+        return None
+
 
 @app.get("/", include_in_schema=False)
-def dashboard() -> FileResponse:
-    return FileResponse(dashboard_path, headers=_NO_STORE)
+def dashboard() -> HTMLResponse:
+    # `__ATLAS_ASSETS__` in index.html becomes the asset version token; when
+    # the markup still carries literal versions the replace is a no-op.
+    html = dashboard_path.read_text(encoding="utf-8")
+    return HTMLResponse(html.replace("__ATLAS_ASSETS__", _asset_version()), headers=_NO_STORE)
 
 
 @app.get("/dashboard.css", include_in_schema=False)
@@ -226,6 +355,11 @@ def dashboard_agent_css() -> FileResponse:
 @app.get("/dashboard.js", include_in_schema=False)
 def dashboard_js() -> FileResponse:
     return FileResponse(dashboard_dir / "dashboard.js")
+
+
+@app.get("/dashboard-panes.js", include_in_schema=False)
+def dashboard_panes_js() -> FileResponse:
+    return FileResponse(dashboard_dir / "dashboard-panes.js")
 
 
 @app.get("/favicon.svg", include_in_schema=False)

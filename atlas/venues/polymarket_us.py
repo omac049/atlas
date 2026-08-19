@@ -6,9 +6,16 @@ import httpx
 
 from atlas.config import settings
 from atlas.models import Market, MarketStatus, OrderBook, OrderBookLevel, VenueName
-from atlas.venues.base import PredictionVenue
+from atlas.venues.base import (
+    PredictionVenue,
+    classify_terminal_error,
+    pending_terminal_evidence,
+)
 from atlas.venues.fixtures import fixture_books, fixture_markets
 from atlas.venues.http import get_json
+
+# Order-book states in which the gateway's settlement price is final.
+_TERMINAL_STATES = {"MARKET_STATE_EXPIRED", "MARKET_STATE_TERMINATED"}
 
 
 class PolymarketUSVenue(PredictionVenue):
@@ -126,11 +133,17 @@ class PolymarketUSVenue(PredictionVenue):
 
     async def get_market(self, market_id: str) -> Market:
         if self.fixture:
-            return next(
-                m
-                for m in await self.list_markets()
-                if m.market_id == market_id or m.venue_market_id == market_id
+            market = next(
+                (
+                    m
+                    for m in await self.list_markets()
+                    if m.market_id == market_id or m.venue_market_id == market_id
+                ),
+                None,
             )
+            if market is None:
+                raise ValueError(f"unknown fixture market {market_id}")
+            return market
         path = (
             f"/v1/market/id/{market_id}"
             if str(market_id).isdigit()
@@ -177,22 +190,42 @@ class PolymarketUSVenue(PredictionVenue):
     async def get_terminal_settlement_evidence(self, market_id: str) -> dict:
         """Return final binary public evidence, preferring the settlement endpoint."""
         if self.fixture:
-            return {}
+            return pending_terminal_evidence(
+                "polymarket_us_settlement", "fixture_mode", retryable=False
+            )
+        endpoint_error: httpx.HTTPError | None = None
         try:
             payload = await self.get_settlement(market_id)
-        except httpx.HTTPError:
+        except httpx.HTTPError as exc:
             payload = {}
+            endpoint_error = exc
         settlement = payload.get("settlement") if isinstance(payload, dict) else None
         if _binary_decimal(settlement) is not None:
             return {
                 "source": "settlement_endpoint",
+                "status": "settled",
+                "reason": "settlement_endpoint",
+                "retryable": False,
                 "settlement": str(_binary_decimal(settlement)),
                 "payload": payload,
             }
         try:
             book = await self._get(f"/v1/markets/{market_id}/book")
-        except httpx.HTTPError:
-            return {}
+        except httpx.HTTPError as exc:
+            # Classify the book failure only: the settlement endpoint 404s for
+            # every unsettled market, so it must never shadow this request.
+            reason, retryable, http_status = classify_terminal_error(exc)
+            evidence = pending_terminal_evidence(
+                "polymarket_us_terminal_book",
+                reason,
+                retryable=retryable,
+                http_status=http_status,
+            )
+            if isinstance(endpoint_error, httpx.HTTPStatusError):
+                evidence["settlement_endpoint_http_status"] = (
+                    endpoint_error.response.status_code
+                )
+            return evidence
         market_data = book.get("marketData", {}) if isinstance(book, dict) else {}
         stats = market_data.get("stats", {}) or {}
         raw_price = stats.get("settlementPx")
@@ -200,18 +233,35 @@ class PolymarketUSVenue(PredictionVenue):
         binary = _binary_decimal(value)
         state = str(market_data.get("state") or "")
         preliminary = stats.get("settlementPreliminaryFlag")
-        if (
-            binary is None
-            or state not in {"MARKET_STATE_EXPIRED", "MARKET_STATE_TERMINATED"}
-            or preliminary is True
-        ):
-            return {}
+        # The gateway serializes this flag inconsistently (bool, "true", 1).
+        is_preliminary = str(preliminary).lower() in {"true", "1"}
+        if binary is None or state not in _TERMINAL_STATES or is_preliminary:
+            reason = (
+                "preliminary_terminal_result"
+                if is_preliminary
+                else "not_terminal"
+                if state not in _TERMINAL_STATES
+                else "terminal_result_missing"
+            )
+            return pending_terminal_evidence(
+                "polymarket_us_terminal_book", reason, retryable=True
+            )
         return {
             "source": "terminal_market_book",
+            "status": "settled",
+            "reason": "terminal_market_book",
+            "retryable": False,
             "settlement": str(binary),
             "state": state,
-            "preliminary": preliminary,
-            "payload": book,
+            "preliminary": is_preliminary,
+            # Deterministic subset only: embedding the full order book made the
+            # validation evidence hash churn with quote noise.
+            "payload": {
+                "market_slug": market_id,
+                "state": state,
+                "settlement": str(binary),
+                "preliminary": is_preliminary,
+            },
         }
 
     @staticmethod

@@ -14,7 +14,8 @@ from atlas.discovery import (
     scan_market_pairs,
 )
 from atlas.fingerprints import build_fingerprint, deterministic_settlement_blockers
-from atlas.models import VenueName
+from atlas.models import MarketStatus, VenueName
+from atlas.venues.base import classify_terminal_error
 from atlas.venues.fixtures import fixture_markets
 from atlas.venues.kalshi import SETTLED_SERIES_MAX_PAGES, KalshiVenue
 from atlas.venues.polymarket_global import PolymarketGlobalHistoricalVenue
@@ -134,6 +135,52 @@ def test_finalized_kalshi_market_maps_to_settled():
         {"ticker": "KX-FINAL", "status": "finalized", "result": "yes"}
     )
     assert market.status.value == "settled"
+
+
+@pytest.mark.asyncio
+async def test_kalshi_terminal_evidence_is_binary_and_structured(monkeypatch):
+    venue = KalshiVenue(fixture=False)
+
+    async def fake_get(path, params=None):
+        return {"market": {"ticker": "KX-FINAL", "status": "finalized", "result": "yes"}}
+
+    monkeypatch.setattr(venue, "_get", fake_get)
+    evidence = await venue.get_terminal_settlement_evidence("KX-FINAL")
+
+    assert evidence["source"] == "kalshi_resolved_market"
+    assert evidence["status"] == "settled"
+    assert evidence["retryable"] is False
+    assert evidence["settlement"] == "1"
+
+
+@pytest.mark.asyncio
+async def test_kalshi_terminal_evidence_classifies_transient_failure(monkeypatch):
+    venue = KalshiVenue(fixture=False)
+
+    async def failing_get(path, params=None):
+        raise httpx.HTTPStatusError(
+            "busy",
+            request=httpx.Request("GET", "https://example.test"),
+            response=httpx.Response(503),
+        )
+
+    monkeypatch.setattr(venue, "_get", failing_get)
+    evidence = await venue.get_terminal_settlement_evidence("KX-FINAL")
+
+    assert evidence["status"] == "pending"
+    assert evidence["reason"] == "venue_server_error"
+    assert evidence["retryable"] is True
+    assert evidence["http_status"] == 503
+
+
+def test_terminal_error_classification_does_not_retry_client_errors():
+    error = httpx.HTTPStatusError(
+        "missing",
+        request=httpx.Request("GET", "https://example.test"),
+        response=httpx.Response(404),
+    )
+
+    assert classify_terminal_error(error) == ("venue_client_error", False, 404)
 
 
 @pytest.mark.asyncio
@@ -368,6 +415,7 @@ async def test_global_polymarket_requires_resolved_yes_no_terminal_prices():
     evidence = await venue.get_terminal_settlement_evidence("42")
 
     assert evidence["source"] == "polymarket_global_gamma_closed_market"
+    assert evidence["status"] == "settled"
     assert evidence["settlement"] == "1"
 
 
@@ -390,7 +438,14 @@ async def test_global_polymarket_rejects_ambiguous_terminal_evidence(status, out
         "outcomePrices": prices,
     }
 
-    assert await venue.get_terminal_settlement_evidence("42") == {}
+    evidence = await venue.get_terminal_settlement_evidence("42")
+    assert evidence["status"] == "pending"
+    assert evidence["reason"] == (
+        "resolution_not_final" if status == "proposed" else
+        "ambiguous_terminal_prices" if outcomes.startswith('["Yes"') else
+        "ambiguous_outcomes"
+    )
+    assert evidence["retryable"] is (status == "proposed")
 
 
 @pytest.mark.asyncio
@@ -421,7 +476,178 @@ async def test_polymarket_terminal_book_is_final_binary_settlement(monkeypatch):
     evidence = await venue.get_terminal_settlement_evidence("settled-market")
 
     assert evidence["source"] == "terminal_market_book"
+    assert evidence["status"] == "settled"
     assert evidence["settlement"] == "1.000"
+
+
+@pytest.mark.asyncio
+async def test_polymarket_us_pending_book_is_retryable(monkeypatch):
+    venue = PolymarketUSVenue(fixture=False)
+
+    async def no_endpoint(market_id):
+        raise httpx.HTTPStatusError(
+            "not found",
+            request=httpx.Request("GET", "https://example.test"),
+            response=httpx.Response(404),
+        )
+
+    async def open_book(path, params=None):
+        return {"marketData": {"state": "MARKET_STATE_OPEN", "stats": {}}}
+
+    monkeypatch.setattr(venue, "get_settlement", no_endpoint)
+    monkeypatch.setattr(venue, "_get", open_book)
+
+    evidence = await venue.get_terminal_settlement_evidence("open-market")
+
+    assert evidence["status"] == "pending"
+    assert evidence["reason"] == "not_terminal"
+    assert evidence["retryable"] is True
+
+
+@pytest.mark.asyncio
+async def test_polymarket_us_book_failure_is_classified_over_settlement_404(monkeypatch):
+    """A transient book failure must not be shadowed by the settlement-endpoint
+    404 that every unsettled market returns (which would park the case as a
+    non-retryable client error)."""
+    venue = PolymarketUSVenue(fixture=False)
+
+    async def no_endpoint(market_id):
+        raise httpx.HTTPStatusError(
+            "not found",
+            request=httpx.Request("GET", "https://example.test/settlement"),
+            response=httpx.Response(404),
+        )
+
+    async def failing_book(path, params=None):
+        raise httpx.HTTPStatusError(
+            "busy",
+            request=httpx.Request("GET", "https://example.test/book"),
+            response=httpx.Response(500),
+        )
+
+    monkeypatch.setattr(venue, "get_settlement", no_endpoint)
+    monkeypatch.setattr(venue, "_get", failing_book)
+
+    evidence = await venue.get_terminal_settlement_evidence("busy-market")
+
+    assert evidence["source"] == "polymarket_us_terminal_book"
+    assert evidence["status"] == "pending"
+    assert evidence["reason"] == "venue_server_error"
+    assert evidence["retryable"] is True
+    assert evidence["http_status"] == 500
+    assert evidence["settlement_endpoint_http_status"] == 404
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("flag", ["true", 1, True])
+async def test_polymarket_us_preliminary_flag_variants_stay_pending(monkeypatch, flag):
+    """The gateway serializes the preliminary flag inconsistently; every truthy
+    encoding must keep the settlement pending rather than recording it final."""
+    venue = PolymarketUSVenue(fixture=False)
+
+    async def no_endpoint(market_id):
+        raise httpx.HTTPStatusError(
+            "not found",
+            request=httpx.Request("GET", "https://example.test"),
+            response=httpx.Response(404),
+        )
+
+    async def preliminary_book(path, params=None):
+        return {
+            "marketData": {
+                "state": "MARKET_STATE_EXPIRED",
+                "stats": {
+                    "settlementPx": {"value": "1", "currency": "USD"},
+                    "settlementPreliminaryFlag": flag,
+                },
+            }
+        }
+
+    monkeypatch.setattr(venue, "get_settlement", no_endpoint)
+    monkeypatch.setattr(venue, "_get", preliminary_book)
+
+    evidence = await venue.get_terminal_settlement_evidence("preliminary-market")
+
+    assert evidence["status"] == "pending"
+    assert evidence["reason"] == "preliminary_terminal_result"
+    assert evidence["retryable"] is True
+
+
+@pytest.mark.asyncio
+async def test_polymarket_us_settled_book_payload_is_compact_and_deterministic(monkeypatch):
+    venue = PolymarketUSVenue(fixture=False)
+
+    async def no_endpoint(market_id):
+        raise httpx.HTTPStatusError(
+            "not found",
+            request=httpx.Request("GET", "https://example.test"),
+            response=httpx.Response(404),
+        )
+
+    async def terminal_book(path, params=None):
+        return {
+            "marketData": {
+                "state": "MARKET_STATE_EXPIRED",
+                "stats": {
+                    "settlementPx": {"value": "1", "currency": "USD"},
+                    "settlementPreliminaryFlag": False,
+                },
+                "bids": [{"px": "0.99", "qty": "10"}],
+            }
+        }
+
+    monkeypatch.setattr(venue, "get_settlement", no_endpoint)
+    monkeypatch.setattr(venue, "_get", terminal_book)
+
+    evidence = await venue.get_terminal_settlement_evidence("settled-market")
+
+    assert evidence["status"] == "settled"
+    assert evidence["payload"] == {
+        "market_slug": "settled-market",
+        "state": "MARKET_STATE_EXPIRED",
+        "settlement": "1",
+        "preliminary": False,
+    }
+
+
+@pytest.mark.asyncio
+async def test_kalshi_fixture_terminal_evidence_settles_from_fixture_market(monkeypatch):
+    venue = KalshiVenue(fixture=True)
+    settled = fixture_markets()["kalshi"][0].model_copy(deep=True)
+    settled.status = MarketStatus.SETTLED
+    settled.raw_market_json["result"] = "yes"
+    settled.raw_market_json["status"] = "finalized"
+
+    async def settled_catalog(max_pages: int = 20):
+        return [settled]
+
+    monkeypatch.setattr(venue, "list_markets", settled_catalog)
+
+    evidence = await venue.get_terminal_settlement_evidence(settled.venue_market_id)
+
+    assert evidence["source"] == "kalshi_resolved_market"
+    assert evidence["status"] == "settled"
+    assert evidence["settlement"] == "1"
+
+
+@pytest.mark.asyncio
+async def test_fixture_unknown_market_is_pending_evidence_not_exception():
+    venue = KalshiVenue(fixture=True)
+
+    evidence = await venue.get_terminal_settlement_evidence("no-such-fixture")
+
+    assert evidence["source"] == "kalshi_resolved_market"
+    assert evidence["status"] == "pending"
+    assert evidence["reason"] == "fixture_market_missing"
+    assert evidence["retryable"] is False
+
+
+@pytest.mark.asyncio
+async def test_fixture_get_market_raises_value_error_for_unknown_ids():
+    with pytest.raises(ValueError, match="unknown fixture market"):
+        await KalshiVenue(fixture=True).get_market("no-such-fixture")
+    with pytest.raises(ValueError, match="unknown fixture market"):
+        await PolymarketUSVenue(fixture=True).get_market("no-such-fixture")
 
 
 def test_pair_scan_only_returns_live_candidates():

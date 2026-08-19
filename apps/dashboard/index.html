@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Atlas — paper-only cross-market prediction research. One event, two markets, priced apart." />
+    <meta name="description" content="Operational dashboard for Atlas, a paper-only research instrument that watches Kalshi and Polymarket, pairs equivalent contracts, and records the price gap between them." />
     <title>Atlas — Cross-Market Intelligence</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/dashboard.css?v=20260817-alerts" />
-    <link rel="stylesheet" href="/dashboard-research.css?v=20260817-alerts" />
-    <link rel="stylesheet" href="/dashboard-agent.css?v=20260817-alerts" />
+    <link rel="stylesheet" href="/dashboard.css?v=__ATLAS_ASSETS__" />
+    <link rel="stylesheet" href="/dashboard-research.css?v=__ATLAS_ASSETS__" />
+    <link rel="stylesheet" href="/dashboard-agent.css?v=__ATLAS_ASSETS__" />
   </head>
   <body>
     <main class="shell" id="top">
@@ -61,18 +61,23 @@
           <span class="brand-word"><strong>ATLAS</strong><small>Cross-market intelligence</small></span>
         </a>
         <nav class="topnav" aria-label="Sections">
+          <a href="#crossings">Crossings</a>
           <a href="#watch">Watch</a>
           <a href="#frontier">Frontier</a>
           <a href="#pipeline">Pipeline</a>
           <a href="#opportunities">Opportunities</a>
+          <a href="#agent">Agent</a>
           <a href="#settlement">Settlement</a>
           <a href="#terminal">Terminal</a>
+          <a href="#normalization">Normalization</a>
           <a href="#validation">Validation</a>
+          <a href="#study">Study</a>
         </nav>
         <div class="top-status">
           <span class="paper-chip badge badge--warn badge--dot" title="Atlas is a research instrument. No order-placement path exists.">PAPER · LIVE ORDERS DISABLED</span>
           <span class="pulse"></span><span id="connection">CONNECTING</span>
           <span class="divider"></span><span id="updated">—</span>
+          <span id="monitor-freshness"></span>
         </div>
       </header>
 
@@ -159,6 +164,8 @@
         <div><span class="section-label">Evidence mode</span><strong id="evidence-mode">—</strong></div>
         <p id="evidence-detail">Loading current live-discovery state.</p>
       </section>
+
+      <div id="credentials-banner" class="credentials-banner" hidden></div>
 
       <section class="cohort-panel panel" id="pipeline" aria-labelledby="cohort-status">
         <div class="cohort-head">
@@ -247,6 +254,25 @@
           </div>
         </div>
         <div id="settlement-rankings" class="settlement-rankings"><div class="empty">No settlement ranking recorded yet.</div></div>
+        <div class="settlement-polling">
+          <h3>Settlement polling queue</h3>
+          <p id="polling-queue-status" class="muted"></p>
+          <div class="polling-queue-scroll">
+            <table class="study-weekly-table polling-queue-table">
+              <thead>
+                <tr>
+                  <th scope="col">Pair</th>
+                  <th scope="col">Source</th>
+                  <th scope="col">Reason</th>
+                  <th scope="col" class="num">Next poll</th>
+                  <th scope="col" class="num">Retries</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody id="polling-queue-rows"></tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <section class="grid" id="terminal">
@@ -317,6 +343,10 @@
             <small id="validation-readiness-detail">Waiting for settlement-verified labels and both outcome classes.</small>
           </div>
           <p id="validation-safety" class="validation-safety">Paper only / never executed · settlement-verified labels only</p>
+          <div class="learning-counts-block">
+            <span class="section-label">Learning examples</span>
+            <div id="learning-counts"></div>
+          </div>
         </div>
         <div class="validation-metrics metric-grid">
           <div><span title="Markets whose rules are versioned in the evidence ledger">Markets tracked</span><strong id="validation-markets">—</strong></div>
@@ -333,6 +363,15 @@
           <div><span title="Closed cross-venue events considered by historical backfill">Historical candidate events</span><strong id="backfill-shared">—</strong></div>
           <div><span title="Labels still needed to reach the 50-label training gate">Min label count gap</span><strong id="backfill-remaining">50</strong></div>
           <div><span title="Verification status of the latest historical backfill run">Provenance state</span><strong id="validation-provenance-state">NO VERIFIED RUN</strong></div>
+        </div>
+      </section>
+
+      <section id="study" class="grid">
+        <div class="panel study-panel">
+          <span class="section-label">Formalized opportunity study · paper only</span>
+          <h2>90-day study</h2>
+          <p id="study-status" class="muted">Loading study report…</p>
+          <div id="study-content"></div>
         </div>
       </section>
 
@@ -387,6 +426,7 @@
 
       <footer><span>ATLAS / research instrument</span><span>no execution module installed</span></footer>
     </main>
-    <script src="/dashboard.js?v=20260817-alerts"></script>
+    <script src="/dashboard.js?v=__ATLAS_ASSETS__"></script>
+    <script src="/dashboard-panes.js?v=__ATLAS_ASSETS__" defer></script>
   </body>
 </html>

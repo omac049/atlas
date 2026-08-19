@@ -53,6 +53,56 @@ function sparkline(history = []) {
 
 let watchState = {rows: [], filter: 'all', sort: 'best_gap', direction: 'desc', window: '24h', expanded: null};
 
+const WATCH_WINDOWS = ['1h', '24h', '7d', 'all'];
+const WATCH_FILTERS = ['all', 'executable', 'positive'];
+const UI_STATE_KEY = 'atlas.ui.v1';
+// localStorage throws in private mode / blocked-storage contexts; persistence is
+// a convenience, so every access is guarded and failure means "defaults".
+function persistUiState() {
+  try {
+    localStorage.setItem(UI_STATE_KEY, JSON.stringify({watch: {
+      window: watchState.window,
+      filter: watchState.filter,
+      sort: watchState.sort,
+      direction: watchState.direction,
+    }}));
+  } catch { /* storage unavailable — state stays in-memory only */ }
+}
+function hydrateUiState() {
+  try {
+    const saved = (JSON.parse(localStorage.getItem(UI_STATE_KEY) || '{}') || {}).watch || {};
+    if (WATCH_WINDOWS.includes(saved.window)) watchState.window = saved.window;
+    if (WATCH_FILTERS.includes(saved.filter)) watchState.filter = saved.filter;
+    if (typeof saved.sort === 'string' && saved.sort) watchState.sort = saved.sort;
+    if (saved.direction === 'asc' || saved.direction === 'desc') watchState.direction = saved.direction;
+  } catch { /* corrupt or unavailable storage — keep defaults */ }
+}
+// One place syncs the chips and sort headers to watchState, so hydration and the
+// keyboard shortcuts cannot drift out of step with the click handlers.
+function syncWatchControls() {
+  document.querySelectorAll('[data-watch-window]').forEach((button) => {
+    const active = button.dataset.watchWindow === watchState.window;
+    button.classList.toggle('is-active', active);
+    if (active) {
+      const delta = $('watch-window-delta');
+      if (delta) delta.textContent = button.textContent;
+    }
+  });
+  document.querySelectorAll('[data-watch-filter]').forEach((button) => {
+    button.classList.toggle('is-active', button.dataset.watchFilter === watchState.filter);
+  });
+  document.querySelectorAll('[data-watch-sort]').forEach((header) => {
+    const sorted = header.dataset.watchSort === watchState.sort;
+    header.classList.toggle('is-sorted', sorted);
+    header.dataset.sortDirection = sorted ? watchState.direction : '';
+  });
+}
+
+// Board search is display-only: it narrows what is painted without touching the
+// window, sort, or filter logic, and an empty query is a no-op.
+let boardSearchQuery = '';
+let boardSearchInput = null;
+
 // The selected window supplies change, range, and trend. `best_gap` is always the
 // latest reading regardless of window — a price is a price.
 const windowOf = (row) => (row.windows || {})[watchState.window] || {};
@@ -63,10 +113,14 @@ function watchRowsForDisplay() {
     if (watchState.filter === 'positive') return Number(row.best_gap) > 0;
     return true;
   });
+  const query = boardSearchQuery;
+  const searched = !query ? filtered : filtered.filter((row) =>
+    [row.event_subject, row.kalshi_title, row.polymarket_title]
+      .some((field) => String(field || '').toLowerCase().includes(query)));
   const key = watchState.sort;
   const numeric = key === 'best_gap' || key === 'window_change';
   const valueOf = (row) => (key === 'window_change' ? windowOf(row).change : row[key]);
-  const sorted = [...filtered].sort((a, b) => {
+  const sorted = [...searched].sort((a, b) => {
     const left = numeric ? Number(valueOf(a) ?? -999) : String(valueOf(a) ?? '');
     const right = numeric ? Number(valueOf(b) ?? -999) : String(valueOf(b) ?? '');
     if (left < right) return watchState.direction === 'asc' ? -1 : 1;
@@ -244,7 +298,24 @@ function renderFrontier(frontier) {
   }).join('') : '<div class="empty">No blocked candidates recorded yet.</div>';
 }
 
+let freshestDataAt = null;
+
 function render(data) {
+  // Companion panes (dashboard-panes.js) listen for the overview payload; a
+  // broken listener must never take the main board down with it.
+  try {
+    document.dispatchEvent(new CustomEvent('atlas:overview', {detail: data}));
+  } catch { /* a listener error is the listener's problem, not render's */ }
+  // Freshness is judged against the newest data point the payload carries, not
+  // just the orderbook timestamp — the monitor writes these on every scan.
+  const freshCandidates = [
+    data.last_updated,
+    data.watchlist?.generated_at,
+    data.shadow_observation?.created_at,
+    data.discovery_scan?.scanned_at,
+    ...((data.watchlist?.rows || []).map((row) => row.last_observed_at)),
+  ].map((iso) => new Date(iso || '').getTime()).filter((time) => Number.isFinite(time) && time > 0);
+  freshestDataAt = freshCandidates.length ? Math.max(...freshCandidates) : null;
   lastGoodUpdate = data.last_updated;
   $('connection').textContent = 'CONNECTED'; $('connection').classList.remove('offline');
   $('updated').textContent = `UPDATED ${age(data.last_updated).toUpperCase()}`;
@@ -614,14 +685,29 @@ function render(data) {
   const demo = Boolean(evidence.demo_opportunity);
   $('opportunity').innerHTML = `<div class="opp-top"><span class="match">${demo ? 'FIXTURE RESEARCH / DEMO EDGE' : 'MATCH FOUND / APPROVED EQUIVALENT'}</span><span class="badge badge--dot ${demo ? 'badge--warn' : 'badge--ok'}">${demo ? 'NOT LIVE' : `PAPER ${o.status}`}</span></div><div class="contracts">Kalshi <span class="arrow">↔</span> Polymarket US</div><div class="legs"><div class="leg"><span class="leg-label">KALSHI / YES EXECUTABLE</span><span class="price">${money(o.leg_a_average_price)}</span></div><div class="leg"><span class="leg-label">POLYMARKET US / NO HEDGE</span><span class="price">${money(o.leg_b_average_price)}</span></div><div class="metrics"><div class="metric"><span>NET LOCKED EDGE</span><strong class="positive">${pct(o.expected_roi)}</strong></div><div class="metric"><span>EXECUTABLE SIZE</span><strong>${money(o.contracts)}</strong></div><div class="metric"><span>NET COST</span><strong>${money(o.net_cost)}</strong></div></div></div>`;
 }
+let renderFailed = false;
 async function refresh() {
+  let data;
   try {
-    const response = await fetch('/api/overview', {cache:'no-store'});
-    render(await response.json());
+    const response = await fetch('/api/overview', {cache:'no-store', signal: AbortSignal.timeout(10000)});
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    data = await response.json();
   } catch {
     $('connection').textContent = 'OFFLINE'; $('connection').classList.add('offline');
     $('updated').textContent = lastGoodUpdate ? `SHOWING DATA FROM ${age(lastGoodUpdate).toUpperCase()}` : 'NO DATA RECEIVED YET';
+    return false;
   }
+  // The fetch succeeded, so a throw below is a dashboard bug, not an outage —
+  // it must never masquerade as OFFLINE. render() restores the connected state.
+  try {
+    render(data);
+    renderFailed = false;
+  } catch (err) {
+    console.error(err);
+    renderFailed = true;
+    $('updated').textContent = 'RENDER ERROR — SEE BROWSER CONSOLE';
+  }
+  return true;
 }
 // Delegated so it survives the 15s re-render, and keyboard-operable because the
 // verdict codes behind a row are the most useful thing on the board.
@@ -639,15 +725,16 @@ $('watch-rows').addEventListener('keydown', (event) => {
 document.querySelectorAll('[data-watch-window]').forEach((button) => {
   button.addEventListener('click', () => {
     watchState.window = button.dataset.watchWindow;
-    document.querySelectorAll('[data-watch-window]').forEach((other) => other.classList.toggle('is-active', other === button));
-    $('watch-window-delta').textContent = button.textContent;
+    syncWatchControls();
+    persistUiState();
     paintWatchRows();
   });
 });
 document.querySelectorAll('[data-watch-filter]').forEach((button) => {
   button.addEventListener('click', () => {
     watchState.filter = button.dataset.watchFilter;
-    document.querySelectorAll('[data-watch-filter]').forEach((other) => other.classList.toggle('is-active', other === button));
+    syncWatchControls();
+    persistUiState();
     paintWatchRows();
   });
 });
@@ -656,16 +743,126 @@ document.querySelectorAll('[data-watch-sort]').forEach((header) => {
     const key = header.dataset.watchSort;
     watchState.direction = watchState.sort === key && watchState.direction === 'desc' ? 'asc' : 'desc';
     watchState.sort = key;
-    document.querySelectorAll('[data-watch-sort]').forEach((other) => {
-      other.classList.toggle('is-sorted', other === header);
-      other.dataset.sortDirection = other === header ? watchState.direction : '';
-    });
+    syncWatchControls();
+    persistUiState();
     paintWatchRows();
   });
 });
-$('refresh').addEventListener('click', refresh); refresh(); setInterval(refresh, 15000);
+// The search input is injected here rather than written into index.html so the
+// markup contract stays owned by one place; if the controls are absent (partial
+// page, test harness), the board simply has no search.
+function installBoardSearch() {
+  const chip = document.querySelector('[data-watch-filter]');
+  const container = chip ? (chip.closest('.board-controls') || chip.parentElement) : null;
+  if (!container) return;
+  boardSearchInput = document.createElement('input');
+  boardSearchInput.type = 'search';
+  boardSearchInput.className = 'board-search';
+  boardSearchInput.placeholder = 'filter pairs… ( / )';
+  boardSearchInput.setAttribute('aria-label', 'Filter pairs by subject or contract title');
+  boardSearchInput.addEventListener('input', () => {
+    boardSearchQuery = boardSearchInput.value.trim().toLowerCase();
+    paintWatchRows();
+  });
+  container.appendChild(boardSearchInput);
+}
+
+const cycleWindow = (step) => {
+  const index = WATCH_WINDOWS.indexOf(watchState.window);
+  watchState.window = WATCH_WINDOWS[(index + step + WATCH_WINDOWS.length) % WATCH_WINDOWS.length];
+  syncWatchControls();
+  persistUiState();
+  paintWatchRows();
+};
+const cycleFilter = () => {
+  const index = WATCH_FILTERS.indexOf(watchState.filter);
+  watchState.filter = WATCH_FILTERS[(index + 1) % WATCH_FILTERS.length];
+  syncWatchControls();
+  persistUiState();
+  paintWatchRows();
+};
+
+// Board-level shortcuts. The per-row Enter/Space keydown handler above stays —
+// this one is document-level and ignores typing contexts and chorded keys.
+document.addEventListener('keydown', (event) => {
+  if (event.metaKey || event.ctrlKey || event.altKey) return;
+  const tag = event.target && event.target.tagName ? event.target.tagName.toLowerCase() : '';
+  if (tag === 'input' || tag === 'textarea' || tag === 'select') {
+    // Escape is the one shortcut that must work while typing in the board
+    // search: it is how the operator leaves the search box.
+    if (event.key === 'Escape' && boardSearchInput && event.target === boardSearchInput) {
+      boardSearchInput.blur();
+    }
+    return;
+  }
+  if (event.key === 'r') {
+    refresh();
+  } else if (event.key === '[') {
+    cycleWindow(-1);
+  } else if (event.key === ']') {
+    cycleWindow(1);
+  } else if (event.key === 'f') {
+    cycleFilter();
+  } else if (event.key === '/') {
+    if (boardSearchInput) {
+      event.preventDefault();
+      boardSearchInput.focus();
+    }
+  } else if (event.key === 'Escape') {
+    if (watchState.expanded !== null) {
+      watchState.expanded = null;
+      paintWatchRows();
+    }
+    if (boardSearchInput) boardSearchInput.blur();
+  }
+});
+
+// Freshness verdict for the header: how old is the newest data point Atlas has,
+// independent of whether the API itself is answering.
+function updateFreshnessUI() {
+  const connection = $('connection');
+  const offline = Boolean(connection && connection.classList.contains('offline'));
+  const stamp = freshestDataAt ?? (lastGoodUpdate ? new Date(lastGoodUpdate).getTime() : null);
+  // No data yet and no failure recorded: keep the page's initial wording rather
+  // than declaring the feed stale during the very first fetch.
+  if (stamp === null && !offline) return;
+  const minutes = stamp ? Math.max(0, (Date.now() - stamp) / 60000) : null;
+  const tier = minutes === null ? 'danger' : minutes < 10 ? 'fresh' : minutes <= 30 ? 'warn' : 'danger';
+  const freshness = $('monitor-freshness');
+  if (freshness) {
+    freshness.textContent = minutes === null
+      ? 'MONITOR —'
+      : `MONITOR ${minutes < 90 ? `${Math.round(minutes)}m` : `${Math.round(minutes / 60)}h`}`;
+    freshness.classList.toggle('warn', tier === 'warn' && !offline);
+    freshness.classList.toggle('danger', tier === 'danger' || offline);
+  }
+  const status = $('system-status');
+  if (status) {
+    status.textContent = offline ? 'Feed offline' : tier === 'fresh' ? 'Paper pipeline live' : 'Feed stale';
+  }
+  const dot = document.querySelector('.state-dot');
+  if (dot) {
+    dot.classList.toggle('danger', offline);
+    dot.classList.toggle('warn', !offline && tier !== 'fresh');
+  }
+}
+
+// Self-scheduling poll: steady 15s while healthy; while the API is unreachable
+// the delay doubles up to a 120000ms cap so an outage is not hammered.
+let refreshDelay = 15000;
+async function refreshLoop() {
+  const ok = await refresh();
+  refreshDelay = ok ? 15000 : Math.min(refreshDelay * 2, 120000);
+  updateFreshnessUI();
+  setTimeout(refreshLoop, refreshDelay);
+}
+hydrateUiState();
+syncWatchControls();
+installBoardSearch();
+$('refresh').addEventListener('click', refresh); refreshLoop();
 setInterval(() => {
-  if (lastGoodUpdate && !$('connection').classList.contains('offline')) {
+  if (lastGoodUpdate && !renderFailed && !$('connection').classList.contains('offline')) {
     $('updated').textContent = `UPDATED ${age(lastGoodUpdate).toUpperCase()}`;
   }
+  updateFreshnessUI();
 }, 5000);

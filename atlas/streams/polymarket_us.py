@@ -46,10 +46,3 @@ class PolymarketUSMarketStream:
             )
             async for raw in websocket:
                 yield json.loads(raw)
-
-    @staticmethod
-    def parse_book(message: dict) -> tuple[str, list[dict], list[dict]] | None:
-        data = message.get("marketData")
-        if not data:
-            return None
-        return data.get("marketSlug", ""), data.get("bids", []), data.get("offers", [])

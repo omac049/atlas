@@ -1,7 +1,9 @@
 import argparse
 import asyncio
+import functools
 import json
 import re
+import sqlite3
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -27,6 +29,7 @@ from atlas.discovery import (
     structured_identity_candidates,
 )
 from atlas.enrichment import enrich_shared_rules, enrich_weather_rules
+from atlas.fees import DEMO_BASKET_FEES, DEMO_BASKET_SLIPPAGE
 from atlas.frontier import approval_frontier, capture_frontier_rules_evidence
 from atlas.learning import export_learning_splits, export_training_jsonl
 from atlas.live_monitor import LiveStreamCredentialsMissing, run_pair
@@ -280,11 +283,11 @@ def _validate_batch_limits(
 
 
 async def markets_sync(fixture: bool = True) -> None:
-    store = AtlasStore()
+    # The markets table is legacy/unread (write-only, zero SELECTs anywhere),
+    # so this command no longer persists the catalog — it lists it.
     for venue in (KalshiVenue(fixture=fixture), PolymarketUSVenue(fixture=fixture)):
         markets = await venue.list_markets()
-        await store.save_markets(markets)
-        print(f"{venue.name}: synced {len(markets)} market(s)")
+        print(f"{venue.name}: listed {len(markets)} market(s) (catalog persistence retired)")
         for market in markets:
             print(f"  {market.market_id} | {market.title}")
 
@@ -308,8 +311,8 @@ async def opportunities_demo() -> None:
         books["kalshi:KALSHI-FED-SEP26"],
         books["polymarket_us:PM-FED-SEP26"],
         Decimal(100),
-        fees=Decimal("0.83"),
-        slippage=Decimal("0.20"),
+        fees=DEMO_BASKET_FEES,
+        slippage=DEMO_BASKET_SLIPPAGE,
     )
     if opportunity is None:
         print("No approved executable opportunity")
@@ -677,9 +680,12 @@ async def shadow_watch(interval: int, limit: int) -> None:
         await asyncio.sleep(delay)
 
 
-async def watch_pairs(live: bool, interval: int, backfill_interval: int = 86_400) -> None:
+async def watch_pairs(
+    live: bool, interval: int, backfill_interval: int = 86_400, prune_interval: int = 86_400
+) -> None:
     monitors: dict[str, asyncio.Task] = {}
     store = AtlasStore()
+    last_pruned_at: datetime | None = None
     while True:
         approved = await _safe_scan_pairs(live)
         if live:
@@ -689,8 +695,16 @@ async def watch_pairs(live: bool, interval: int, backfill_interval: int = 86_400
                     # Without this callback a failure inside the task is
                     # swallowed and the pair silently never streams, which is
                     # indistinguishable from "no opportunity was found" — the
-                    # exact shape of a missing-credential outage.
-                    task.add_done_callback(_report_pair_monitor_exit)
+                    # exact shape of a missing-credential outage. The callback
+                    # also pops the pair from `monitors` so the next scan
+                    # iteration can respawn it instead of it staying dead.
+                    task.add_done_callback(
+                        functools.partial(
+                            _report_pair_monitor_exit,
+                            monitors=monitors,
+                            pair_id=pair.pair_id,
+                        )
+                    )
                     monitors[pair.pair_id] = task
             if await _historical_backfill_due(store, backfill_interval):
                 try:
@@ -702,6 +716,16 @@ async def watch_pairs(live: bool, interval: int, backfill_interval: int = 86_400
                     )
                 except (httpx.HTTPError, OSError, ValueError) as exc:
                     print(f"scheduled_backfill_failed={type(exc).__name__}")
+            if _prune_due(last_pruned_at, prune_interval):
+                try:
+                    deleted = await store.prune()
+                    last_pruned_at = datetime.now(UTC)
+                    print(
+                        f"scheduled_prune: deleted={sum(deleted.values())} "
+                        "note=manual_vacuum_reclaims_disk"
+                    )
+                except (OSError, sqlite3.Error) as exc:
+                    print(f"scheduled_prune_failed={type(exc).__name__}")
             # Gap-radar evidence accrues on the same cadence as the scan so the
             # executable-gap question answers itself while the monitor runs.
             try:
@@ -744,6 +768,31 @@ async def _burst_aware_sleep(interval: int) -> None:
             print(f"gap_radar_scan_failed={type(exc).__name__} retry_on_next_interval=true")
 
 
+def _prune_due(last_pruned_at: datetime | None, interval: int) -> bool:
+    """Daily retention-sweep guard, mirroring `_historical_backfill_due`.
+
+    Prune leaves no persisted marker to read back, so the guard is in-process:
+    the first live iteration prunes immediately, then once per interval for
+    the life of the monitor process. A restart pruning once more is harmless —
+    the sweep is idempotent over anything younger than its cutoffs.
+    """
+    if last_pruned_at is None:
+        return True
+    return datetime.now(UTC) - last_pruned_at >= timedelta(seconds=max(interval, 60))
+
+
+async def prune_stale_data(store: AtlasStore | None = None) -> None:
+    """Delete stale operational rows; the evidence/label chain is never touched."""
+    deleted = await (store or AtlasStore()).prune()
+    for table, count in deleted.items():
+        print(f"prune: {table} deleted={count}")
+    print(
+        f"prune: total_deleted={sum(deleted.values())} "
+        "note=DELETE frees pages but never shrinks the file; "
+        "run a one-time manual VACUUM to reclaim disk"
+    )
+
+
 async def _historical_backfill_due(store: AtlasStore, interval: int) -> bool:
     latest = await store.latest_historical_backfill()
     if latest is None:
@@ -755,8 +804,20 @@ async def _historical_backfill_due(store: AtlasStore, interval: int) -> bool:
     return datetime.now(UTC) - completed >= timedelta(seconds=max(interval, 60))
 
 
-def _report_pair_monitor_exit(task: asyncio.Task) -> None:
-    """Log why a live pair monitor stopped; never let it fail silently."""
+def _report_pair_monitor_exit(
+    task: asyncio.Task,
+    monitors: dict[str, asyncio.Task] | None = None,
+    pair_id: str | None = None,
+) -> None:
+    """Log why a live pair monitor stopped; never let it fail silently.
+
+    Always drops the pair from the monitors registry first — on every exit
+    path, including cancellation and missing credentials — so the next scan
+    iteration respawns the pair instead of leaving it dead for the process
+    lifetime.
+    """
+    if monitors is not None and pair_id is not None:
+        monitors.pop(pair_id, None)
     if task.cancelled():
         return
     exc = task.exception()
@@ -1459,6 +1520,13 @@ def main() -> None:
     batch.add_argument("--candidate-events", type=int, default=BATCH_MAX_CANDIDATE_EVENTS)
     batch.add_argument("--market-pairs", type=int, default=BATCH_MAX_MARKET_PAIRS)
     batch.add_argument("--resolved-pairs", type=int, default=BATCH_MAX_RESOLVED_PAIRS)
+    sub.add_parser(
+        "prune",
+        help=(
+            "delete stale operational rows (order books >30d; newest-20 reports/scans/runs); "
+            "never touches evidence or labels; a one-time manual VACUUM reclaims disk"
+        ),
+    )
     replay = sub.add_parser("replay")
     replay_sub = replay.add_subparsers(dest="action", required=True)
     capture = replay_sub.add_parser("capture")
@@ -1572,6 +1640,8 @@ def main() -> None:
                 kalshi_series_tickers,
             )
         )
+    elif args.command == "prune":
+        asyncio.run(prune_stale_data())
     elif args.command == "replay" and args.action == "capture":
         asyncio.run(replay_capture(args.live, args.output))
     elif args.command == "replay" and args.action == "run":

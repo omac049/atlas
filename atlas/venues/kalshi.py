@@ -6,7 +6,11 @@ import httpx
 
 from atlas.config import settings
 from atlas.models import Market, MarketStatus, OrderBook, OrderBookLevel, VenueName
-from atlas.venues.base import PredictionVenue
+from atlas.venues.base import (
+    PredictionVenue,
+    classify_terminal_error,
+    pending_terminal_evidence,
+)
 from atlas.venues.fixtures import fixture_books, fixture_markets
 from atlas.venues.http import get_json
 
@@ -180,13 +184,62 @@ class KalshiVenue(PredictionVenue):
 
     async def get_market(self, market_id: str) -> Market:
         if self.fixture:
-            return next(
-                m
-                for m in await self.list_markets()
-                if m.market_id == market_id or m.venue_market_id == market_id
+            market = next(
+                (
+                    m
+                    for m in await self.list_markets()
+                    if m.market_id == market_id or m.venue_market_id == market_id
+                ),
+                None,
             )
+            if market is None:
+                raise ValueError(f"unknown fixture market {market_id}")
+            return market
         payload = await self._get(f"/markets/{market_id}")
         return self._normalize_market(payload.get("market", payload))
+
+    async def get_terminal_settlement_evidence(self, market_id: str) -> dict:
+        """Return final binary evidence from Kalshi's resolved market record.
+
+        Kalshi exposes the terminal result on the market payload rather than a
+        separate settlement endpoint. Keep the evidence adapter-shaped so the
+        validation reconciler can treat both venues identically.
+        """
+        source = "kalshi_resolved_market"
+        try:
+            market = await self.get_market(market_id)
+        except httpx.HTTPError as exc:
+            reason, retryable, http_status = classify_terminal_error(exc)
+            return pending_terminal_evidence(
+                source, reason, retryable=retryable, http_status=http_status
+            )
+        except ValueError:
+            # Fixture mode only: the market is simply absent from the fixture
+            # catalog, which no amount of re-polling will change.
+            if self.fixture:
+                return pending_terminal_evidence(
+                    source, "fixture_market_missing", retryable=False
+                )
+            raise
+        if market.status is not MarketStatus.SETTLED:
+            return pending_terminal_evidence(source, "not_terminal", retryable=True)
+        raw = market.raw_market_json
+        result = raw.get("result") or raw.get("settlement_value") or raw.get("expiration_value")
+        normalized = str(result or "").lower()
+        if normalized not in {"yes", "no"}:
+            return pending_terminal_evidence(
+                source, "terminal_result_missing", retryable=True
+            )
+        return {
+            "source": source,
+            "status": "settled",
+            "reason": "resolved_market_record",
+            "retryable": False,
+            "settlement": "1" if normalized == "yes" else "0",
+            "result": normalized,
+            "market_status": str(raw.get("status") or "settled"),
+            "settlement_ts": raw.get("settlement_ts"),
+        }
 
     async def enrich_market_source(self, market: Market) -> Market:
         if self.fixture:

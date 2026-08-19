@@ -18,11 +18,13 @@ from atlas.cli import (
     _parse_batch_tag_ids,
     _parse_global_tag_ids,
     _parse_kalshi_series_tickers,
+    _report_pair_monitor_exit,
     _run_scheduled_backfill,
     _safe_scan_pairs,
     learning_backfill,
     learning_backfill_batch,
 )
+from atlas.live_monitor import LiveStreamCredentialsMissing
 
 
 def test_global_tag_id_override_defaults_to_targeted_catalog():
@@ -470,3 +472,78 @@ def test_batch_default_tags_target_guarantee_reachable_families():
     GUARANTEED settlement path (chamber-control, CPI) — see atlas/settlement.py."""
     assert BATCH_DEFAULT_GLOBAL_TAG_IDS == ("144", "487", "100196", "101701")
     assert set(BATCH_DEFAULT_GLOBAL_TAG_IDS) <= set(TARGETED_GLOBAL_TAG_IDS)
+
+
+async def _finished_failing_task(exc: BaseException) -> asyncio.Task:
+    async def failing():
+        raise exc
+
+    task = asyncio.ensure_future(failing())
+    with pytest.raises(type(exc)):
+        await task
+    return task
+
+
+async def test_pair_monitor_exit_pops_pair_after_generic_failure():
+    """A crashed pair must leave the monitors registry so the next scan
+    iteration respawns it; before 2026-08-19 it stayed dead for the process
+    lifetime."""
+    task = await _finished_failing_task(RuntimeError("stream died"))
+    monitors = {"pair-1": task}
+
+    _report_pair_monitor_exit(task, monitors=monitors, pair_id="pair-1")
+
+    assert "pair-1" not in monitors
+
+
+async def test_pair_monitor_exit_pops_pair_after_credentials_missing():
+    task = await _finished_failing_task(
+        LiveStreamCredentialsMissing("needs POLYMARKET_US_API_KEY")
+    )
+    monitors = {"pair-1": task}
+
+    _report_pair_monitor_exit(task, monitors=monitors, pair_id="pair-1")
+
+    assert "pair-1" not in monitors
+
+
+async def test_pair_monitor_exit_pops_pair_after_cancellation():
+    task = asyncio.ensure_future(asyncio.sleep(60))
+    task.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    monitors = {"pair-1": task}
+
+    _report_pair_monitor_exit(task, monitors=monitors, pair_id="pair-1")
+
+    assert "pair-1" not in monitors
+
+
+def test_prune_due_first_call_then_once_per_interval():
+    from datetime import UTC, datetime, timedelta
+
+    from atlas.cli import _prune_due
+
+    assert _prune_due(None, 86_400) is True
+    assert _prune_due(datetime.now(UTC), 86_400) is False
+    assert _prune_due(datetime.now(UTC) - timedelta(days=2), 86_400) is True
+    # Intervals are floored at 60s, mirroring _historical_backfill_due.
+    assert _prune_due(datetime.now(UTC) - timedelta(seconds=30), 1) is False
+
+
+@pytest.mark.asyncio
+async def test_prune_command_reports_deletions_and_vacuum_note(tmp_path, capsys):
+    from atlas.cli import prune_stale_data
+    from atlas.storage import AtlasStore
+
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    for index in range(25):
+        await store.save_catalog_report({"sequence": index})
+
+    await prune_stale_data(store)
+
+    output = capsys.readouterr().out
+    assert "catalog_reports deleted=5" in output
+    assert "orderbook_snapshots deleted=0" in output
+    assert "total_deleted=5" in output
+    assert "VACUUM" in output

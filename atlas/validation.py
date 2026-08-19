@@ -1,5 +1,5 @@
 import json
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from decimal import Decimal, InvalidOperation
 from hashlib import sha256
 
@@ -11,6 +11,11 @@ from atlas.models import ContractPair, Market, MarketStatus, MatchStatus
 from atlas.outcomes import settled_outcome
 from atlas.policy_evidence import parse_market_policy_evidence
 from atlas.settlement import GuaranteeStatus, assess_settlement_guarantee
+from atlas.settlement_polling import (
+    PendingReasonCode,
+    plan_settlement_polls,
+    retry_delay,
+)
 from atlas.storage import AtlasStore
 from atlas.verification import verify_equivalence
 
@@ -130,19 +135,58 @@ async def reconcile_validation_cases(
 ) -> dict[str, int]:
     now = now or datetime.now(UTC)
     summary = {"checked": 0, "pending": 0, "resolved": 0, "labeled": 0, "errors": 0}
-    for case in await store.pending_validation_cases(limit):
-        pair = ContractPair.model_validate(case["payload"]["pair"])
-        if not _case_due(pair, case.get("last_checked_at"), now):
-            summary["pending"] += 1
+    cases = await store.pending_validation_cases(
+        limit=max(limit * 4, 20), due_only=True, now=now
+    )
+    pairs_by_id = {
+        str(case["pair_id"]): ContractPair.model_validate(case["payload"]["pair"])
+        for case in cases
+    }
+    poll_plan = plan_settlement_polls(
+        pairs_by_id.values(),
+        now=now,
+        last_checked_at={
+            str(case["pair_id"]): case.get("last_checked_at") for case in cases
+        },
+    )
+    case_by_id = {str(case["pair_id"]): case for case in cases}
+    for decision in poll_plan.pending:
+        await store.update_validation_pending(
+            decision.pair_id,
+            pending_reason="|".join(str(reason) for reason in decision.pending_reason_codes),
+            next_poll_at=decision.next_poll_at.isoformat(),
+        )
+
+    # Cases created by older catalog snapshots may lack both timing fields. They
+    # are still worth one immediate evidence attempt; if that attempt is not
+    # terminal, the venue-specific pending reason becomes the durable schedule
+    # signal. The planner keeps MISSING_SETTLEMENT_TIMING visible for the API.
+    ready_decisions = list(poll_plan.ready)
+    ready_decisions.extend(
+        decision
+        for decision in poll_plan.pending
+        if decision.pending_reason_codes == (PendingReasonCode.MISSING_SETTLEMENT_TIMING,)
+    )
+    for decision in ready_decisions[:limit]:
+        case = case_by_id.get(decision.pair_id)
+        if case is None:
+            summary["errors"] += 1
             continue
+        pair = ContractPair.model_validate(case["payload"]["pair"])
         try:
             market_a = await kalshi_venue.get_market(pair.market_a.venue_market_id)
             market_b = await polymarket_venue.get_market(pair.market_b.venue_market_id)
-        except (httpx.HTTPError, KeyError, StopIteration, ValueError):
-            await store.mark_validation_checked(pair.pair_id)
+        except (httpx.HTTPError, KeyError, ValueError):
+            await store.mark_validation_checked(
+                pair.pair_id,
+                pending_reason=PendingReasonCode.VENUE_EVIDENCE_UNAVAILABLE.value,
+                next_poll_at=(now + retry_delay(int(case.get("retry_count", 0)))).isoformat(),
+                increment_retry=True,
+            )
             summary["errors"] += 1
             continue
-        market_b = await _apply_final_settlement(market_b, polymarket_venue)
+        market_a = await _apply_terminal_settlement(market_a, kalshi_venue)
+        market_b = await _apply_terminal_settlement(market_b, polymarket_venue)
         summary["checked"] += 1
         await store.save_market_evidence_snapshots(
             [
@@ -157,7 +201,33 @@ async def reconcile_validation_cases(
             or outcome_a is None
             or outcome_b is None
         ):
-            await store.mark_validation_checked(pair.pair_id)
+            pending_reason = "|".join(
+                _pending_evidence_reasons(market_a, market_b)
+            ) or PendingReasonCode.TERMINAL_EVIDENCE_MISSING.value
+            failures = _pending_evidence_failures(market_a, market_b)
+            retry_count = int(case.get("retry_count", 0))
+            if failures:
+                # A failed evidence request counts against the retry budget;
+                # only a non-retryable failure can exhaust it.
+                exhausted = any(
+                    failure.get("retryable") is False for failure in failures
+                ) and retry_count + 1 >= int(case.get("max_retries", 5))
+                await store.mark_validation_checked(
+                    pair.pair_id,
+                    "EVIDENCE_EXHAUSTED" if exhausted else "AWAITING_SETTLEMENT",
+                    pending_reason=pending_reason,
+                    next_poll_at=(now + retry_delay(retry_count)).isoformat(),
+                    increment_retry=True,
+                )
+            else:
+                # A clean "not settled yet" answer is not a failure: reset the
+                # consecutive-failure counter and poll again at the base delay.
+                await store.mark_validation_checked(
+                    pair.pair_id,
+                    pending_reason=pending_reason,
+                    next_poll_at=(now + retry_delay(0)).isoformat(),
+                    retry_count=0,
+                )
             summary["pending"] += 1
             continue
 
@@ -170,8 +240,11 @@ async def reconcile_validation_cases(
             "relationship_status": relationship_status,
             "outcome_a": outcome_a,
             "outcome_b": outcome_b,
+            "kalshi_evidence": market_a.raw_market_json.get("settlement_evidence"),
+            "polymarket_evidence": market_b.raw_market_json.get("settlement_evidence"),
             "resolved_at": resolved_at,
         }
+        await store.mark_validation_checked(pair.pair_id, retry_count=0)
         await store.save_validation_outcome(
             {
                 "pair_id": pair.pair_id,
@@ -192,18 +265,34 @@ async def reconcile_validation_cases(
     return summary
 
 
-async def _apply_final_settlement(market: Market, venue: object) -> Market:
-    """Apply an explicit final binary settlement response; leave absent data pending."""
-    if market.status is MarketStatus.SETTLED and settled_outcome(market) is not None:
+async def _apply_terminal_settlement(market: Market, venue: object) -> Market:
+    """Refresh one leg from authoritative terminal evidence when available.
+
+    Venue adapters may expose a stronger ``get_terminal_settlement_evidence``
+    method (for example, a resolved market endpoint or a final order-book
+    marker). The older ``get_settlement`` method remains a compatibility
+    fallback. A binary value alone is never enough: the adapter must return a
+    structured evidence object that can be persisted with the validation
+    outcome.
+    """
+    existing = settled_outcome(market)
+    if existing is not None and market.raw_market_json.get("settlement_evidence"):
         return market
+    get_terminal = getattr(venue, "get_terminal_settlement_evidence", None)
     get_settlement = getattr(venue, "get_settlement", None)
-    if not callable(get_settlement):
+    fetch = get_terminal if callable(get_terminal) else get_settlement
+    if not callable(fetch):
         return market
     try:
-        payload = await get_settlement(market.venue_market_id)
+        payload = await fetch(market.venue_market_id)
     except (httpx.HTTPError, KeyError, TypeError, ValueError):
         return market
-    value = payload.get("settlement") if isinstance(payload, dict) else None
+    if not isinstance(payload, dict):
+        return market
+    if payload.get("status") == "pending":
+        market.raw_market_json["settlement_evidence"] = payload
+        return market
+    value = payload.get("settlement")
     try:
         settlement = Decimal(str(value))
     except (InvalidOperation, TypeError, ValueError):
@@ -218,25 +307,42 @@ async def _apply_final_settlement(market: Market, venue: object) -> Market:
     return market
 
 
-def _case_due(
-    pair: ContractPair, last_checked_at: object, now: datetime
-) -> bool:
-    dates = [
-        value
-        for value in (
-            pair.market_a.close_time,
-            pair.market_a.resolution_time,
-            pair.market_b.close_time,
-            pair.market_b.resolution_time,
-        )
-        if value is not None
-    ]
-    if dates and max(dates) > now:
-        return False
-    if last_checked_at:
-        checked = datetime.fromisoformat(str(last_checked_at))
-        return now - checked >= timedelta(hours=1)
-    return True
+def _pending_evidence_reasons(*markets: Market) -> list[str]:
+    reasons: list[str] = []
+    for market in markets:
+        evidence = market.raw_market_json.get("settlement_evidence")
+        if isinstance(evidence, dict) and evidence.get("status") == "pending":
+            reason = evidence.get("reason")
+            if reason:
+                reasons.append(f"{market.venue.value}:{reason}")
+    return reasons
+
+
+# Pending-evidence reasons that mean "the request failed", as opposed to "the
+# venue answered and the market is simply not settled yet". Only failures
+# consume the bounded retry budget; see ``classify_terminal_error``.
+_EVIDENCE_FAILURE_REASONS = {
+    "rate_limited",
+    "venue_server_error",
+    "venue_client_error",
+    "request_timeout",
+    "network_error",
+    "venue_request_error",
+}
+
+
+def _pending_evidence_failures(*markets: Market) -> list[dict[str, object]]:
+    """Return pending settlement evidence whose reason is a request failure."""
+    failures: list[dict[str, object]] = []
+    for market in markets:
+        evidence = market.raw_market_json.get("settlement_evidence")
+        if (
+            isinstance(evidence, dict)
+            and evidence.get("status") == "pending"
+            and str(evidence.get("reason")) in _EVIDENCE_FAILURE_REASONS
+        ):
+            failures.append(evidence)
+    return failures
 
 
 def _resolution_label(

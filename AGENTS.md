@@ -19,7 +19,7 @@ Paper-only cross-market prediction-market research system. Watches Kalshi and Po
 ## Commands
 
 ```bash
-uv run pytest                      # full suite (currently ~458 tests, all must pass)
+uv run pytest                      # full suite (currently ~523 tests, all must pass)
 uv run pytest tests/test_X.py -x   # targeted
 uv run ruff check .                # lint (line-length 100, py312)
 uv run atlas --help                # CLI entry point

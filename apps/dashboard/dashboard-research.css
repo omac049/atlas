@@ -319,6 +319,9 @@
   .cohort-path { grid-template-columns: repeat(2, 1fr); }
   .cohort-gate { grid-template-columns: 1fr; }
   .cohort-gate p { text-align: left; }
+  .election-candidate { flex-wrap: wrap; }
+  .election-candidate > div:last-child { text-align: left; flex: 1 1 100%; min-width: 0; }
+  .election-candidate em { max-width: 100%; overflow-wrap: anywhere; }
 }
 @media (max-width: 620px) {
   .normalization-row { grid-template-columns: 1fr repeat(3, minmax(38px, 0.5fr)); }

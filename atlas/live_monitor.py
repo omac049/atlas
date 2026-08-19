@@ -7,6 +7,7 @@ from websockets.exceptions import WebSocketException
 
 from atlas.arbitrage import calculate_opportunity
 from atlas.models import ContractPair, PaperTradeRecord
+from atlas.orderbooks.state import SequenceGapError
 from atlas.storage import AtlasStore
 from atlas.streams.coordinator import StreamCoordinator
 from atlas.streams.kalshi import KalshiOrderBookStream
@@ -21,6 +22,16 @@ class LiveStreamCredentialsMissing(RuntimeError):
     """
 
 
+# Environment variable NAMES the live streams require — names only, so the API
+# can report which credentials are absent without ever touching their values.
+REQUIRED_STREAM_CREDENTIALS = (
+    "KALSHI_API_KEY_ID",
+    "KALSHI_PRIVATE_KEY_PATH",
+    "POLYMARKET_US_API_KEY",
+    "POLYMARKET_US_API_SECRET",
+)
+
+
 async def run_pair(pair: ContractPair, store: AtlasStore | None = None) -> None:
     if pair.approved_by is None or pair.status.value not in {
         "APPROVED_EQUIVALENT",
@@ -31,13 +42,7 @@ async def run_pair(pair: ContractPair, store: AtlasStore | None = None) -> None:
     # invisible in practice: this coroutine is spawned with create_task by the
     # continuous monitor, so the exception is swallowed and the pair simply
     # never streams — indistinguishable from "no opportunity was found".
-    required = (
-        "KALSHI_API_KEY_ID",
-        "KALSHI_PRIVATE_KEY_PATH",
-        "POLYMARKET_US_API_KEY",
-        "POLYMARKET_US_API_SECRET",
-    )
-    missing = [name for name in required if not os.environ.get(name)]
+    missing = [name for name in REQUIRED_STREAM_CREDENTIALS if not os.environ.get(name)]
     if missing:
         raise LiveStreamCredentialsMissing(
             "live order-book streaming needs "
@@ -91,14 +96,22 @@ async def run_pair(pair: ContractPair, store: AtlasStore | None = None) -> None:
                 stream = KalshiOrderBookStream(key_id, key_path, [kalshi_ticker])
                 async for message in stream.messages():
                     delay = 1.0
-                    book = coordinator.kalshi_event(kalshi_ticker, message)
+                    try:
+                        book = coordinator.kalshi_event(kalshi_ticker, message)
+                    except SequenceGapError:
+                        # The book state has reset and Kalshi only sends a
+                        # snapshot on (re)subscribe: drop the stale book and
+                        # reconnect so a fresh snapshot resyncs it.
+                        books.pop("a", None)
+                        break
                     if book:
                         books["a"] = book
                         await store.save_orderbook(book)
                         await evaluate()
             except asyncio.CancelledError:
                 raise
-            except (OSError, RuntimeError, ValueError, WebSocketException):
+            except (KeyError, TypeError, ArithmeticError, OSError, RuntimeError, ValueError,
+                    WebSocketException):
                 await asyncio.sleep(delay)
                 delay = min(delay * 2, 30.0)
 
@@ -117,7 +130,8 @@ async def run_pair(pair: ContractPair, store: AtlasStore | None = None) -> None:
                         await evaluate()
             except asyncio.CancelledError:
                 raise
-            except (OSError, RuntimeError, ValueError, WebSocketException):
+            except (KeyError, TypeError, ArithmeticError, OSError, RuntimeError, ValueError,
+                    WebSocketException):
                 await asyncio.sleep(delay)
                 delay = min(delay * 2, 30.0)
 

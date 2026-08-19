@@ -9,7 +9,7 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
 ## Current validated state
 
 - [x] Paper-only policy remains enforced. No order-placement path is enabled.
-- [x] API is serving at `http://127.0.0.1:8000/`.
+- [x] API is serving at `http://127.0.0.1:8010/`.
 - [x] Continuous live monitor is running with `pairs watch --live`.
 - [x] Polymarket US and tagged Polymarket Global historical catalogs are connected.
 - [x] Historical settlement evidence is required before creating trusted labels.
@@ -225,6 +225,28 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   (both venues charge takers only on our tracked families) would apply if the radar ever modeled
   resting orders; PM-US gateway fees are unmodeled because the radar prices Gamma quotes.
 
+## 2026-08-19 — bug-hunt hardening pass (streams, settlement polling, API, storage, dead code)
+
+- [x] **Streams NO-side complement fixed**: the Kalshi stream's NO-book handling no longer derives
+  the wrong side of the complement, so streamed NO quotes match what the REST book reports.
+- [x] **Sequence-gap resubscribe**: a detected orderbook sequence gap now triggers a resubscribe
+  instead of silently continuing on a stale book.
+- [x] **Settlement-polling backoff is actually active**: the bounded retry/backoff metadata is now
+  enforced with coherent retry and exhaustion semantics (previously recorded but not honored).
+- [x] **`GET /api/overview` made read-only + cached**: the overview no longer mutates state on read,
+  and the expensive gap-observation aggregation is cached briefly instead of recomputed per poll.
+- [x] **Storage hardening**: init-once schema setup, indexes on the hot query paths, and bounded
+  pruning of grown tables.
+- [x] **Dead code removed**: `atlas/streams/base.py` (unused `StreamCollector`) and `atlas/worker.py`
+  (unused `atlas-worker` console script duplicating live-monitor logic; entry dropped from
+  `pyproject.toml`).
+- [x] **Fee constant consolidation**: the demo/fixture basket figures (0.83 fees / 0.20 slippage)
+  now live once in `atlas/fees.py` (`DEMO_BASKET_FEES`/`DEMO_BASKET_SLIPPAGE`) and are imported by
+  the monitor, CLI demo, and API fixture demo — distinct from the venue-published fee schedules in
+  `atlas/gap_radar.py`, which are untouched.
+- [x] README/TODO port drift fixed (8000 → 8010; the `.claude/launch.json` dev preview stays on 8020
+  by design so it cannot collide with the launchd-managed API).
+
 ## 2026-08-18 — live pairing gate fixed (paper trading was structurally unreachable)
 
 - [x] **Root-caused why `paper_trades` is empty after 12k+ shadow observations.** Paper trades are
@@ -418,7 +440,7 @@ Do not treat a lexical match, a `REVIEW_REQUIRED` pair, or a divergent outcome a
 ## Step 1 — verify the runtime
 
 ```bash
-curl http://127.0.0.1:8000/health
+curl http://127.0.0.1:8010/health
 python3 -m atlas.cli learning status
 python3 -m atlas.cli learning readiness
 ```

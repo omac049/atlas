@@ -32,12 +32,14 @@ Last verified: **2026-08-17**.
 
 - **Milestone achieved 2026-08-13: the first real trusted settled pairs.** Three `APPROVED_EQUIVALENT` labels from the settled July 2026 FOMC meeting (maintain, >25bps hike tail, >25bps cut tail), approved by the human-signed-off rounding preimage-equality rule (`docs/decisions/2026-08-12-fed-rounding-preimage-equality.md`) with both legs `GUARANTEED` and consistent terminal outcomes on both venues. Every FOMC meeting (~8/year) can now mint more.
 - API: serving locally (`/health` reports `trading_enabled=false`).
-- Test suite: `441 passed, 1 warning` at the latest full run; `ruff check .` reports zero issues.
+- Test suite: `450 passed, 1 warning` at the latest full run; `ruff check .` reports zero issues.
 - The dashboard leads with a live market-watch board (`atlas/watchlist.py` → `watchlist` in `/api/overview`): one row per tracked event subject with the latest gap, change against the selected window's open, window high/low, an inline sparkline, and the deterministic verdict carried through verbatim. Windows are `1h / 24h / 7d / all` — a pair can be widening on the hour and narrowing on the week, and the board says which. History is downsampled rather than truncated so a 7-day sparkline actually spans seven days, and a window with no readings reports `NO_DATA` instead of borrowing numbers from outside it. Every row stays labelled a candidate, never a proven twin.
 - An approval-frontier watch (`atlas pairs frontier`, also `approval_frontier` in `/api/overview`) ranks blocked pairs by how far they are from approval and flags pairs whose published rules text has changed, so waiting for venue-text alignment is no longer passive. It separates blockers a venue could clear by publishing more text from structural divergences that no amount of waiting fixes, and it reports its own blind spots. The monitor now records a rules baseline for both legs of every blocked candidate (`capture_frontier_rules_evidence`), including Polymarket Global legs the validation universe never sees. Latest scan: 8 blocked, 7 blocked on venue text alone, 0 rules changes in 14 days, **0 pairs with an unmonitored leg** — every blocked pair has a baseline, so the next venue text revision registers as a rules-version change.
 - A paper-only gap radar (`atlas gaps scan --live`) now measures live cross-venue price gaps on twin-shaped candidate pairs at executable top-of-book prices, and the dashboard's "$2k paper meter" answers the original bankroll question with recorded assumptions instead of hope. The meter stakes 5% of the current bankroll per opportunity (size-capped by the Kalshi book) so it measures compounding, the radar watches every canonically normalized family on both venues (17 twin-shaped pairs across 9 subjects at the 2026-08-14 scan), and the monitor bursts the read-only radar to a 30-second cadence inside scheduled release windows (`atlas/release_calendar.py`).
 - Trusted settlement labels: `72` — 8 `APPROVED_EQUIVALENT` + 64 evidence-backed `REJECTED`. **Both the label-mix and the 50-label volume requirements are satisfied**; the learning loop reports `READY` with no blockers, so the next move is a first training/evaluation experiment against the frozen holdout rather than more accumulation.
 - Latest learning readiness check: `training_ready=True`, `labels=72`, `observations=388`.
+- Settlement reconciliation now refreshes both venue legs through a shared terminal-evidence contract. Kalshi resolved-market evidence is normalized alongside Polymarket's settlement endpoint/final-book evidence, and validation outcomes persist the evidence source for each leg.
+- Settlement polling is now adaptive and auditable: candidates are ordered by expected readiness, not polled before their settlement window, venue-specific evidence methods classify retryable versus terminal blockers, and pending cases expose their reason, next poll time, and bounded retry count through the API.
 - Current queue: 12 persisted settlement candidates; all are `BLOCKED`. Discretionary fair-price pairs now carry the terminal gate `STRUCTURALLY_UNREACHABLE_DISCRETIONARY_SETTLEMENT` and sort below every reachable candidate, so the queue surfaces where a first trusted label is possible.
 - Scheduled bounded backfills default to guarantee-reachable Polymarket Global tags (`144` Elections, `487` House, `100196` Fed Rates, `101701` CPI) plus explicit Kalshi series scans (`KXFEDDECISION`, `KXFED`, `KXCPIYOY`, `KXCPI`, `KXCPICORE`), all verified against live catalog probes. The batch fetches the tag-independent catalog (Polymarket US closed sweep + Kalshi settled-event scan, ~110s live) **once** and shares it across tags; folding it into each tag's 120s budget had timed out every tag since the feature shipped. First `BATCH_COMPLETE` on 2026-08-17 minted 10 evidence-backed `REJECTED` labels with `paper_only=true`.
 - The US CPI family covers all four published variants (headline/core x YoY/MoM) with signed thresholds from published wording only. Every monthly BLS release yields at least two settled exact-complement pairs (headline YoY tail, core MoM tail), each blocked only on the same two venue-text gaps: the divergent missing-data fallback and Kalshi's absent terminal fallback.
@@ -46,9 +48,9 @@ Last verified: **2026-08-17**.
 - Execution-ready events: `0`.
 - Awaiting-settlement cases: `0`.
 - Milestone alerts: none yet, because no candidate has cleared the deterministic gate.
-- Learning is intentionally blocked until trusted labels include both approved and rejected outcomes and the minimum label count is met.
+- Learning is ready for the first frozen-holdout training/evaluation experiment; do not add more labels solely for volume until the evaluation objective and family-balanced metric are defined.
 
-The first-trusted-pair milestone was completed on 2026-08-13. The active milestone is now **the balanced trusted dataset** (50+ labels spanning both approved and rejected classes). A milestone pair required that it:
+The first-trusted-pair milestone was completed on 2026-08-13. The balanced trusted-dataset milestone was completed on 2026-08-14, and the active milestone is now **frozen-holdout evaluation plus settlement-frontier improvement**. A trusted pair requires that it:
 
 1. passes deterministic verification as `APPROVED_EQUIVALENT` or `APPROVED_INVERSE`;
 2. has complete rule and settlement-source evidence for both venues;
@@ -213,15 +215,17 @@ The local default is SQLite. PostgreSQL and Redis variables exist for future dep
 Start the API/dashboard:
 
 ```bash
-uvicorn apps.api.main:app --reload
+uvicorn apps.api.main:app --reload --port 8010
 ```
 
-Then open [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+Then open [http://127.0.0.1:8010/](http://127.0.0.1:8010/).
+(The `.claude/launch.json` dev preview deliberately uses port 8020 so it never
+collides with the always-on launchd-managed API on 8010.)
 
 Verify the runtime:
 
 ```bash
-curl http://127.0.0.1:8000/health
+curl http://127.0.0.1:8010/health
 python3 -m atlas.cli learning status
 python3 -m atlas.cli learning readiness
 ```
@@ -299,7 +303,7 @@ python3 -m atlas.cli learning export \
   --eval-output data/training/atlas-eval.jsonl
 ```
 
-The current readiness target is at least 50 trusted labels with both approved and rejected examples. Before any fine-tuning experiment, review balance, provenance, duplicate handling, temporal leakage, and the evaluation split.
+The current readiness target of at least 50 trusted labels with both approved and rejected examples is met. Before any training experiment, review balance, provenance, duplicate handling, temporal leakage, and the evaluation split.
 
 ## Dashboard and API
 
@@ -335,20 +339,18 @@ A candidate is not validated because:
 - one venue has settled;
 - the dashboard contains a populated row.
 
-Validation requires complete cross-venue evidence, deterministic rule compatibility, terminal outcomes from both venues, and an auditable reconciliation result. The first trusted pair is the next proof point; it is not permission to risk the full account.
+Validation requires complete cross-venue evidence, deterministic rule compatibility, terminal outcomes from both venues, and an auditable reconciliation result. Trusted settled pairs now exist, but they are research labels—not permission to risk the full account.
 
 ## Current blockers and next work
 
 The detailed checklist lives in [`TODO.md`](TODO.md). The immediate sequence is:
 
 1. Keep the monitor and bounded historical probes running.
-2. Improve source evidence completeness until candidates can become guarantee-complete.
-3. Confirm the first deterministic pair emits `DETERMINISTIC_RULE_GATE` and reaches `AWAITING_SETTLEMENT`.
-4. Capture terminal settlement from both venues.
-5. Reconcile and expose the first trusted label in the dashboard and exports.
-6. Accumulate a balanced trusted dataset.
-7. Evaluate normalizer/verifier changes against a frozen holdout.
-8. Build live-readiness controls while keeping order placement disabled.
+2. Improve source evidence completeness until reachable candidates can become guarantee-complete.
+3. Evaluate the 72-label dataset against the frozen holdout with family-balanced metrics.
+4. Use settlement-frontier evidence changes to detect when CPI/FOMC candidates can promote.
+5. Preserve terminal evidence provenance for both venue legs in every trusted outcome.
+6. Build live-readiness controls while keeping order placement disabled.
 
 If a venue lacks explicit rules, cancellation terms, finality, or authoritative settlement source, keep the candidate blocked and improve the adapter/evidence path rather than weakening the verifier.
 

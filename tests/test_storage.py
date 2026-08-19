@@ -4,17 +4,16 @@ import aiosqlite
 import pytest
 
 from atlas.storage import AtlasStore
-from atlas.venues.fixtures import fixture_books, fixture_markets
+from atlas.venues.fixtures import fixture_books
 
 
 @pytest.mark.asyncio
-async def test_store_persists_market_and_orderbook(tmp_path):
+async def test_store_persists_orderbook(tmp_path):
     store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
-    market = fixture_markets()["kalshi"][0]
     book = fixture_books()["kalshi:KALSHI-FED-SEP26"]
-    await store.save_markets([market])
     await store.save_orderbook(book)
     assert (tmp_path / "atlas.sqlite3").exists()
+    assert len(await store.latest_orderbooks()) == 1
 
 
 @pytest.mark.asyncio
@@ -448,9 +447,263 @@ async def test_gap_columns_backfill_from_existing_json_payloads(tmp_path):
         )
         await db.commit()
 
+    # The legacy row predates the promoted columns; the backfill runs during
+    # initialization, so simulate a fresh process by clearing the
+    # initialize-once guard for this path before re-initializing.
+    AtlasStore._initialized_paths.discard(str(path.resolve()))
     await store.initialize()
     aggregates = await store.gap_subject_aggregates()
 
     assert aggregates["legacy|2026-08"]["observations"] == 1
     assert aggregates["legacy|2026-08"]["low"] == -0.07
     assert aggregates["legacy|2026-08"]["executable_observations"] == 1
+
+
+async def _save_validation_case(store, pair_id="case-1", **overrides):
+    case = {
+        "pair_id": pair_id,
+        "source_kind": "APPROVED",
+        "decision_status": "APPROVED_EQUIVALENT",
+        "guarantee_a": "GUARANTEED",
+        "guarantee_b": "GUARANTEED",
+        "payload": {"pair": {}},
+    }
+    case.update(overrides)
+    await store.save_validation_case(case)
+
+
+async def _case_row(store, pair_id="case-1"):
+    return next(
+        case
+        for case in await store.pending_validation_cases(limit=50)
+        if case["pair_id"] == pair_id
+    )
+
+
+@pytest.mark.asyncio
+async def test_mark_validation_checked_default_leaves_retry_count_untouched(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await _save_validation_case(store)
+
+    await store.mark_validation_checked("case-1", pending_reason="not_terminal")
+    await store.mark_validation_checked("case-1", pending_reason="not_terminal")
+
+    case = await _case_row(store)
+    assert case["retry_count"] == 0
+    assert case["last_retry_at"] is None
+    assert case["last_checked_at"] is not None
+
+
+@pytest.mark.asyncio
+async def test_mark_validation_checked_increment_retry_caps_at_max_retries(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await _save_validation_case(store, max_retries=2)
+
+    for _ in range(3):
+        await store.mark_validation_checked("case-1", increment_retry=True)
+
+    case = await _case_row(store)
+    assert case["retry_count"] == 2
+    assert case["last_retry_at"] is not None
+
+
+@pytest.mark.asyncio
+async def test_mark_validation_checked_explicit_zero_resets_retry_count(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await _save_validation_case(store)
+    await store.mark_validation_checked("case-1", increment_retry=True)
+    assert (await _case_row(store))["retry_count"] == 1
+
+    await store.mark_validation_checked("case-1", retry_count=0)
+
+    assert (await _case_row(store))["retry_count"] == 0
+
+
+@pytest.mark.asyncio
+async def test_evidence_exhausted_status_leaves_pending_pool_and_summary_counts_it(
+    tmp_path,
+):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await _save_validation_case(store, max_retries=1)
+
+    await store.mark_validation_checked(
+        "case-1",
+        "EVIDENCE_EXHAUSTED",
+        pending_reason="polymarket_us:venue_client_error",
+        increment_retry=True,
+    )
+
+    assert await store.pending_validation_cases() == []
+    summary = await store.validation_summary()
+    assert summary["retry_exhausted"] == 1
+    assert summary["awaiting_settlement"] == 0
+
+
+@pytest.mark.asyncio
+async def test_due_only_pending_cases_respect_persisted_retry_delay(tmp_path):
+    from datetime import UTC, datetime, timedelta
+
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await _save_validation_case(store)
+    now = datetime(2030, 1, 1, tzinfo=UTC)
+    await store.mark_validation_checked(
+        "case-1",
+        pending_reason="not_terminal",
+        next_poll_at=(now + timedelta(hours=4)).isoformat(),
+        increment_retry=True,
+    )
+
+    assert await store.pending_validation_cases(due_only=True, now=now) == []
+    assert len(await store.pending_validation_cases(now=now)) == 1
+    later = now + timedelta(hours=5)
+    assert len(await store.pending_validation_cases(due_only=True, now=later)) == 1
+
+
+@pytest.mark.asyncio
+async def test_initialize_runs_schema_once_per_path_and_per_path_independently(
+    tmp_path, monkeypatch
+):
+    original = aiosqlite.Connection.executescript
+    calls: list[str] = []
+
+    def spy(self, sql_script):
+        calls.append(sql_script)
+        return original(self, sql_script)
+
+    monkeypatch.setattr(aiosqlite.Connection, "executescript", spy)
+
+    path_a = str(tmp_path / "a.sqlite3")
+    store_one = AtlasStore(path_a)
+    await store_one.initialize()
+    await store_one.initialize()
+    await AtlasStore(path_a).initialize()
+    assert len(calls) == 1
+
+    # A second path is a different database and must initialize on its own.
+    await AtlasStore(str(tmp_path / "b.sqlite3")).initialize()
+    assert len(calls) == 2
+
+
+@pytest.mark.asyncio
+async def test_initialize_creates_hot_path_indexes(tmp_path):
+    path = tmp_path / "atlas.sqlite3"
+    await AtlasStore(str(path)).initialize()
+    async with aiosqlite.connect(path) as db:
+        index_names = set()
+        for table in ("validation_cases", "market_evidence_snapshots", "orderbook_snapshots"):
+            rows = await (await db.execute(f"PRAGMA index_list({table})")).fetchall()
+            index_names.update(row[1] for row in rows)
+    assert "idx_validation_cases_tracking_poll" in index_names
+    assert "idx_market_evidence_market_rules" in index_names
+    assert "idx_orderbook_snapshots_timestamp" in index_names
+
+
+@pytest.mark.asyncio
+async def test_prune_deletes_old_orderbook_snapshots_and_keeps_recent(tmp_path):
+    from datetime import UTC, datetime, timedelta
+
+    path = tmp_path / "atlas.sqlite3"
+    store = AtlasStore(str(path))
+    await store.initialize()
+    now = datetime.now(UTC)
+    async with aiosqlite.connect(path) as db:
+        for market_id, age_days in (("m-old", 40), ("m-edge", 31), ("m-recent", 1)):
+            await db.execute(
+                "INSERT INTO orderbook_snapshots (market_id, venue, timestamp, payload_json)"
+                " VALUES (?, ?, ?, ?)",
+                (market_id, "kalshi", (now - timedelta(days=age_days)).isoformat(), "{}"),
+            )
+        await db.commit()
+
+    deleted = await store.prune()
+
+    assert deleted["orderbook_snapshots"] == 2
+    async with aiosqlite.connect(path) as db:
+        rows = await (await db.execute("SELECT market_id FROM orderbook_snapshots")).fetchall()
+    assert [row[0] for row in rows] == ["m-recent"]
+
+
+@pytest.mark.asyncio
+async def test_prune_keeps_only_the_newest_20_report_rows(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    for index in range(25):
+        await store.save_catalog_report({"sequence": index})
+        await store.save_discovery_scan(
+            {
+                "kalshi_active": index, "polymarket_active": 0, "comparisons": 0,
+                "approved": 0, "review": 0,
+            }
+        )
+        await store.save_agent_run({"sequence": index})
+
+    deleted = await store.prune()
+
+    assert deleted["catalog_reports"] == 5
+    assert deleted["discovery_scans"] == 5
+    assert deleted["agent_runs"] == 5
+    # The newest row — the only one anything reads — survives.
+    assert (await store.latest_catalog_report())["sequence"] == 24
+    assert (await store.latest_discovery_scan())["kalshi_active"] == 24
+    assert (await store.latest_agent_run())["sequence"] == 24
+    async with aiosqlite.connect(store.path) as db:
+        for table in ("catalog_reports", "discovery_scans", "agent_runs"):
+            count = (await (await db.execute(f"SELECT COUNT(*) FROM {table}")).fetchone())[0]
+            assert count == 20
+
+
+@pytest.mark.asyncio
+async def test_prune_below_thresholds_deletes_nothing(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    book = fixture_books()["kalshi:KALSHI-FED-SEP26"]
+    await store.save_orderbook(book)
+    await store.save_catalog_report({"sequence": 0})
+
+    from datetime import UTC, datetime
+
+    deleted = await store.prune(now=datetime.now(UTC))
+    assert all(count == 0 for count in deleted.values())
+    assert len(await store.latest_orderbooks()) == 1
+
+
+@pytest.mark.asyncio
+async def test_prune_never_touches_the_evidence_or_label_chain(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    old = "2020-01-01T00:00:00+00:00"
+    await _save_validation_case(store, pair_id="protected-case")
+    await store.save_market_evidence_snapshots(
+        [
+            {
+                "market_id": "kalshi:k1", "venue": "kalshi", "observed_at": old,
+                "evidence_hash": "hash-1", "rules_hash": "rules-1",
+                "status": "OPEN", "outcome": None, "reason": "captured",
+                "payload": {"rules": "text"},
+            }
+        ]
+    )
+    await store.save_learning_example(
+        "protected-example", "REJECTED", {"evidence": {"settlement_verified": True}}
+    )
+    await store.save_validation_outcome(
+        {
+            "pair_id": "protected-case", "resolved_at": old,
+            "relationship_status": "CONFIRMED", "outcome_a": "yes", "outcome_b": "yes",
+            "trusted_label": None,
+        }
+    )
+    await store.save_paper_trade_outcome("protected-trade", "CONFIRMED", "yes", "yes")
+
+    deleted = await store.prune()
+
+    protected = {
+        "market_evidence_snapshots", "validation_cases", "validation_outcomes",
+        "learning_examples", "paper_trades", "paper_trade_outcomes", "opportunities",
+    }
+    assert protected.isdisjoint(deleted)
+    summary = await store.validation_summary()
+    assert summary["cases"] == 1
+    assert summary["evidence_versions"] == 1
+    assert summary["confirmed"] == 1
+    assert (await store.learning_counts())["REJECTED"] == 1
+    async with aiosqlite.connect(store.path) as db:
+        row = await (await db.execute("SELECT COUNT(*) FROM paper_trade_outcomes")).fetchone()
+    assert row[0] == 1

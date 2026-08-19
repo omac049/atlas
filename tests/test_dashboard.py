@@ -214,6 +214,35 @@ def test_dashboard_alerts_on_executable_crossings():
     assert ".crossing" in styles
 
 
+def test_dashboard_refresh_times_out_checks_status_and_backs_off_offline():
+    """A hung fetch must abort, an HTTP error page must not render as data, a
+    render bug must not report as OFFLINE, and an outage must back off instead
+    of hammering the API every 15 seconds."""
+    script = (ROOT / "apps" / "dashboard" / "dashboard.js").read_text()
+
+    assert "AbortSignal.timeout" in script
+    assert "response.ok" in script
+    assert "120000" in script
+    assert "RENDER ERROR" in script
+    # The offline strings stay pinned: the network failure path must keep them.
+    assert "OFFLINE" in script
+    assert "SHOWING DATA FROM" in script
+    assert "NO DATA RECEIVED YET" in script
+
+
+def test_dashboard_persists_ui_state_and_broadcasts_the_overview_payload():
+    """The board's window/filter/sort survive a reload via localStorage, the
+    overview payload is rebroadcast for companion panes, the board grows a
+    client-side search box, and the header reports monitor freshness."""
+    script = (ROOT / "apps" / "dashboard" / "dashboard.js").read_text()
+
+    assert "atlas.ui.v1" in script
+    assert "atlas:overview" in script
+    assert "localStorage" in script
+    assert "board-search" in script
+    assert "monitor-freshness" in script
+
+
 def test_dashboard_rows_drill_down_to_the_verdict_codes():
     """The mismatch codes answer "why is this not tradeable?" — the most useful
     thing on the board, and the reason a row is clickable at all."""

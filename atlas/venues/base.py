@@ -1,7 +1,44 @@
 from abc import ABC, abstractmethod
-from collections.abc import AsyncIterator
+
+import httpx
 
 from atlas.models import Market, OrderBook
+
+TerminalEvidence = dict[str, object]
+
+
+def pending_terminal_evidence(
+    source: str,
+    reason: str,
+    *,
+    retryable: bool,
+    http_status: int | None = None,
+) -> TerminalEvidence:
+    evidence: TerminalEvidence = {
+        "source": source,
+        "status": "pending",
+        "reason": reason,
+        "retryable": retryable,
+    }
+    if http_status is not None:
+        evidence["http_status"] = http_status
+    return evidence
+
+
+def classify_terminal_error(exc: httpx.HTTPError) -> tuple[str, bool, int | None]:
+    """Classify a bounded public-API failure for the next settlement poll."""
+    if isinstance(exc, httpx.HTTPStatusError):
+        status = exc.response.status_code
+        if status == 429:
+            return "rate_limited", True, status
+        if status >= 500:
+            return "venue_server_error", True, status
+        return "venue_client_error", False, status
+    if isinstance(exc, httpx.TimeoutException):
+        return "request_timeout", True, None
+    if isinstance(exc, httpx.NetworkError):
+        return "network_error", True, None
+    return "venue_request_error", True, None
 
 
 class PredictionVenue(ABC):
@@ -15,12 +52,3 @@ class PredictionVenue(ABC):
 
     @abstractmethod
     async def get_orderbook(self, market_id: str) -> OrderBook: ...
-
-    async def stream_orderbook(self, market_ids: list[str]) -> AsyncIterator[OrderBook]:
-        raise NotImplementedError("WebSocket collection is not enabled in the first scaffold")
-
-    async def get_rules(self, market_id: str) -> str:
-        return (await self.get_market(market_id)).raw_rules_text
-
-    async def get_settlement(self, market_id: str) -> dict:
-        return {}

@@ -2,6 +2,14 @@
 
 This adapter intentionally exposes no order-book or order-placement interface. Global
 markets are evidence inputs only and cannot enter Atlas's live execution pipeline.
+It also deliberately does NOT subclass ``PredictionVenue``: implementing that
+interface would require an order-book method, which this venue must never have.
+
+Note on retryability: ``get_terminal_settlement_evidence`` reports
+``retryable=False`` for ambiguous *settled* outcomes (non-Yes/No outcome lists,
+non-binary terminal prices). That is correct, not a bug — a market that already
+settled with a non-binary result will never become binary, so re-polling it is
+pointless. Only ``resolution_not_final`` (UMA still deliberating) is retryable.
 """
 
 import json
@@ -13,6 +21,7 @@ import httpx
 
 from atlas.config import settings
 from atlas.models import Market, MarketStatus, VenueName
+from atlas.venues.base import classify_terminal_error, pending_terminal_evidence
 from atlas.venues.http import get_json
 
 
@@ -119,29 +128,59 @@ class PolymarketGlobalHistoricalVenue:
     async def get_terminal_settlement_evidence(self, market_id: str) -> dict:
         item = self._closed_markets.get(str(market_id))
         if item is None:
-            payload = await self._get(f"/markets/{market_id}")
+            try:
+                payload = await self._get(f"/markets/{market_id}")
+            except httpx.HTTPError as exc:
+                reason, retryable, http_status = classify_terminal_error(exc)
+                return pending_terminal_evidence(
+                    "polymarket_global_gamma_closed_market",
+                    reason,
+                    retryable=retryable,
+                    http_status=http_status,
+                )
             item = payload if isinstance(payload, dict) else {}
         if item.get("closed") is not True:
-            return {}
+            return pending_terminal_evidence(
+                "polymarket_global_gamma_closed_market", "not_terminal", retryable=True
+            )
         if str(item.get("umaResolutionStatus") or "").lower() != "resolved":
-            return {}
+            return pending_terminal_evidence(
+                "polymarket_global_gamma_closed_market",
+                "resolution_not_final",
+                retryable=True,
+            )
         outcomes = _json_list(item.get("outcomes"))
         prices = _json_list(item.get("outcomePrices"))
         if len(outcomes) != 2 or len(prices) != 2:
-            return {}
+            return pending_terminal_evidence(
+                "polymarket_global_gamma_closed_market",
+                "terminal_result_missing",
+                retryable=True,
+            )
         normalized = [str(outcome).strip().lower() for outcome in outcomes]
         if set(normalized) != {"yes", "no"}:
-            return {}
+            return pending_terminal_evidence(
+                "polymarket_global_gamma_closed_market",
+                "ambiguous_outcomes",
+                retryable=False,
+            )
         parsed_prices = [_binary_decimal(price) for price in prices]
         if any(price is None for price in parsed_prices) or set(parsed_prices) != {
             Decimal(0),
             Decimal(1),
         }:
-            return {}
+            return pending_terminal_evidence(
+                "polymarket_global_gamma_closed_market",
+                "ambiguous_terminal_prices",
+                retryable=False,
+            )
         yes_index = normalized.index("yes")
         settlement = parsed_prices[yes_index]
         return {
             "source": "polymarket_global_gamma_closed_market",
+            "status": "settled",
+            "reason": "resolved_gamma_market",
+            "retryable": False,
             "settlement": str(settlement),
             "closed": True,
             "closed_time": item.get("closedTime"),

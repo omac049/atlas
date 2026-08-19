@@ -1,13 +1,22 @@
 import json
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
+from typing import ClassVar
 
 import aiosqlite
 
-from atlas.models import ContractPair, Market, Opportunity, OrderBook, PaperTradeRecord
+from atlas.models import ContractPair, Opportunity, OrderBook, PaperTradeRecord
+
+# How long raw order-book snapshots stay useful, and how many of the
+# newest-row-only report tables `prune()` keeps around for debugging.
+PRUNE_ORDERBOOK_MAX_AGE_DAYS = 30
+PRUNE_KEEP_NEWEST = 20
 
 SCHEMA = """
+-- LEGACY, UNREAD: nothing in Atlas writes or reads the markets table any more
+-- (`save_markets` was removed 2026-08-19; zero SELECTs existed anywhere).
+-- Existing rows are left in place deliberately — no destructive migration.
 CREATE TABLE IF NOT EXISTS markets (
   market_id TEXT PRIMARY KEY, venue TEXT NOT NULL, venue_market_id TEXT NOT NULL,
   title TEXT NOT NULL, payload_json TEXT NOT NULL, retrieved_at TEXT NOT NULL
@@ -89,6 +98,17 @@ CREATE TABLE IF NOT EXISTS historical_backfills (
   run_id INTEGER PRIMARY KEY AUTOINCREMENT, created_at TEXT NOT NULL,
   status TEXT NOT NULL, payload_json TEXT NOT NULL
 );
+-- Additive indexes for the measured hot paths. `latest_orderbooks` orders by
+-- snapshot_id, which is the rowid primary key and needs no extra index; the
+-- timestamp index serves prune()'s age-cutoff delete instead. The
+-- market_evidence index mirrors rules_version_history exactly: filter by
+-- market_id, group by (market_id, rules_hash), MIN/MAX(observed_at).
+-- The validation_cases index lives in initialize() because its columns are
+-- added by post-schema migrations on older databases.
+CREATE INDEX IF NOT EXISTS idx_orderbook_snapshots_timestamp
+  ON orderbook_snapshots(timestamp);
+CREATE INDEX IF NOT EXISTS idx_market_evidence_market_rules
+  ON market_evidence_snapshots(market_id, rules_hash, observed_at);
 """
 
 
@@ -102,10 +122,25 @@ def _as_float(value: object) -> float | None:
         return None
 
 class AtlasStore:
+    # DB paths whose schema + migrations have already run in this process.
+    # Every public method calls initialize(), and call sites construct fresh
+    # AtlasStore instances constantly, so without this guard the full ~20
+    # statement executescript and every PRAGMA migration probe re-ran on every
+    # single storage call. The guard is per resolved path: the FIRST
+    # initialization of a path always runs in full (the additive migration
+    # pattern below must still fire for existing databases), and each distinct
+    # path (e.g. per-test tmp_path stores) initializes independently. A plain
+    # set is enough — everything runs on one event loop, and a rare
+    # interleaved double-initialization is idempotent.
+    _initialized_paths: ClassVar[set[str]] = set()
+
     def __init__(self, path: str = "data/atlas.sqlite3"):
         self.path = Path(path)
 
     async def initialize(self) -> None:
+        key = str(self.path.resolve())
+        if key in AtlasStore._initialized_paths:
+            return
         self.path.parent.mkdir(parents=True, exist_ok=True)
         async with aiosqlite.connect(self.path) as db:
             await db.executescript(SCHEMA)
@@ -127,8 +162,17 @@ class AtlasStore:
             for column, statement in migrations.items():
                 if column not in columns:
                     await db.execute(statement)
+            # Created here rather than in SCHEMA: on pre-migration databases
+            # next_poll_at only exists after the ALTERs above have run.
+            # Matches pending_validation_cases exactly (tracking_status
+            # equality filter, then the next_poll_at due check).
+            await db.execute(
+                "CREATE INDEX IF NOT EXISTS idx_validation_cases_tracking_poll "
+                "ON validation_cases(tracking_status, next_poll_at)"
+            )
             await self._migrate_gap_observation_columns(db)
             await db.commit()
+        AtlasStore._initialized_paths.add(key)
 
     async def _migrate_gap_observation_columns(self, db: aiosqlite.Connection) -> None:
         """Promote the queried gap fields out of the JSON payload into columns.
@@ -174,25 +218,46 @@ class AtlasStore:
                    WHERE event_subject IS NULL"""
             )
 
-    async def save_markets(self, markets: list[Market]) -> None:
+    async def prune(self, *, now: datetime | None = None) -> dict[str, int]:
+        """Delete stale operational rows; returns rows deleted per table.
+
+        Removes only reproducible operational exhaust:
+        - ``orderbook_snapshots`` older than ``PRUNE_ORDERBOOK_MAX_AGE_DAYS``
+        - ``catalog_reports``, ``discovery_scans``, and ``agent_runs`` beyond
+          the newest ``PRUNE_KEEP_NEWEST`` rows (only their newest row is ever
+          read; the rest is kept purely as a short debugging tail)
+
+        The evidence/label chain is NEVER touched: market_evidence_snapshots,
+        validation_cases, validation_outcomes, learning_examples, paper_trades,
+        paper_trade_outcomes, and opportunities are the system's ground truth
+        and must stay append-only.
+
+        DELETE frees pages inside the file but never shrinks it; run a
+        one-time manual ``VACUUM`` against the database to reclaim disk.
+        """
         await self.initialize()
-        now = datetime.now(UTC).isoformat()
+        cutoff = (
+            (now or datetime.now(UTC)) - timedelta(days=PRUNE_ORDERBOOK_MAX_AGE_DAYS)
+        ).isoformat()
+        deleted: dict[str, int] = {}
         async with aiosqlite.connect(self.path) as db:
-            await db.executemany(
-                "INSERT OR REPLACE INTO markets VALUES (?, ?, ?, ?, ?, ?)",
-                [
-                    (
-                        m.market_id,
-                        m.venue.value,
-                        m.venue_market_id,
-                        m.title,
-                        m.model_dump_json(),
-                        now,
-                    )
-                    for m in markets
-                ],
+            cursor = await db.execute(
+                "DELETE FROM orderbook_snapshots WHERE timestamp < ?", (cutoff,)
             )
+            deleted["orderbook_snapshots"] = cursor.rowcount
+            for table, id_column in (
+                ("catalog_reports", "report_id"),
+                ("discovery_scans", "scan_id"),
+                ("agent_runs", "run_id"),
+            ):
+                cursor = await db.execute(
+                    f"DELETE FROM {table} WHERE {id_column} NOT IN "
+                    f"(SELECT {id_column} FROM {table} ORDER BY {id_column} DESC LIMIT ?)",
+                    (PRUNE_KEEP_NEWEST,),
+                )
+                deleted[table] = cursor.rowcount
             await db.commit()
+        return deleted
 
     async def save_orderbook(self, book: OrderBook) -> None:
         await self.initialize()
@@ -701,7 +766,16 @@ class AtlasStore:
         next_poll_at: str | None = None,
         retry_count: int | None = None,
         max_retries: int | None = None,
+        increment_retry: bool = False,
     ) -> None:
+        """Record one settlement poll for a validation case.
+
+        ``retry_count`` counts consecutive evidence *failures*, not polls:
+        it moves only when ``increment_retry`` is set (incremented, capped at
+        ``max_retries``, stamping ``last_retry_at``) or when an explicit
+        ``retry_count`` value is passed (e.g. ``0`` to reset after a clean
+        answer). A plain check leaves it untouched.
+        """
         await self.initialize()
         now = datetime.now(UTC).isoformat()
         async with aiosqlite.connect(self.path) as db:
@@ -709,21 +783,25 @@ class AtlasStore:
                 """UPDATE validation_cases SET tracking_status = ?, updated_at = ?,
                 last_checked_at = ?, pending_reason = COALESCE(?, pending_reason),
                 next_poll_at = COALESCE(?, next_poll_at),
-                retry_count = CASE WHEN ? IS NULL THEN MIN(retry_count + 1, max_retries)
+                retry_count = CASE WHEN ? THEN MIN(retry_count + 1, max_retries)
+                                   WHEN ? IS NULL THEN retry_count
                                    ELSE MIN(?, max_retries) END,
                 max_retries = CASE WHEN ? IS NULL THEN max_retries
                                    ELSE MAX(1, MIN(?, 100)) END,
-                last_retry_at = ? WHERE pair_id = ?""",
+                last_retry_at = CASE WHEN ? THEN ? ELSE last_retry_at END
+                WHERE pair_id = ?""",
                 (
                     tracking_status,
                     now,
                     now,
                     pending_reason,
                     next_poll_at,
+                    int(increment_retry),
                     retry_count,
                     max(0, int(retry_count)) if retry_count is not None else None,
                     max_retries,
                     max(1, min(int(max_retries), 100)) if max_retries is not None else None,
+                    int(increment_retry),
                     now,
                     pair_id,
                 ),
@@ -826,8 +904,8 @@ class AtlasStore:
                     SUM(CASE WHEN tracking_status = 'AWAITING_SETTLEMENT'
                               AND (next_poll_at IS NULL OR next_poll_at <= datetime('now'))
                              THEN 1 ELSE 0 END),
-                    SUM(CASE WHEN tracking_status = 'AWAITING_SETTLEMENT'
-                              AND retry_count >= max_retries THEN 1 ELSE 0 END)
+                    SUM(CASE WHEN tracking_status = 'EVIDENCE_EXHAUSTED'
+                             THEN 1 ELSE 0 END)
                     FROM validation_cases"""
                 )
             ).fetchone()
