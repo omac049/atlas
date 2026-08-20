@@ -33,6 +33,7 @@ from atlas.fees import DEMO_BASKET_FEES, DEMO_BASKET_SLIPPAGE
 from atlas.frontier import approval_frontier, capture_frontier_rules_evidence
 from atlas.learning import export_learning_splits, export_training_jsonl
 from atlas.live_monitor import LiveStreamCredentialsMissing, run_pair
+from atlas.models import Market
 from atlas.monitor import run_once
 from atlas.paper import PaperExecutor
 from atlas.registry import approve_pair
@@ -131,12 +132,44 @@ LIVE_GLOBAL_OPEN_PAGES = 2
 # markets in the intended family (jobs 993 carries the monthly
 # unemployment-rate buckets alongside JOLTS; GDP 370 is mostly foreign-
 # jurisdiction contracts, which the normalizers jurisdiction-gate away).
-# Elections/House stay out: margin-of-victory spreads produce no twin shapes.
-GAP_RADAR_KALSHI_SERIES_TICKERS = BATCH_DEFAULT_KALSHI_SERIES_TICKERS + (
-    "KXU3",
-    "KXISMPMI",
-    "KXUSISMSERV",
+# Elections tag 144 is mostly margin-of-victory spreads, which produce no twin
+# shapes — but chamber control is not a spread. It is a CATEGORICAL twin (one
+# party, one chamber, one cycle) that the threshold-only matcher could not form
+# until `_twin_shape` learned the categorical kind. Added to radar scope
+# 2026-08-20, mid-study: these families are quarantined from the go/no-go rate
+# in atlas/study.py (POST_START_SCOPE_FAMILIES) so week-to-week comparability
+# survives. Verified live the same day: 8 Kalshi chamber-control markets x 9
+# Polymarket party-control markets -> 4 twins, all tagged
+# SETTLEMENT_TIMING_ASYMMETRIC, which is the only reason the study's
+# asymmetric-vs-symmetric split has any eligible population at all.
+GAP_RADAR_KALSHI_SERIES_TICKERS = (
+    BATCH_DEFAULT_KALSHI_SERIES_TICKERS
+    + DISCOVERY_ELECTION_KALSHI_SERIES_TICKERS
+    + (
+        "KXU3",
+        "KXISMPMI",
+        "KXUSISMSERV",
+    )
 )
+# Polymarket US gateway categories the radar watches. This is the venue a US
+# account can actually trade, and it is the ONLY Polymarket source whose legs
+# can be sized from a published book. `macro` carries the FOMC / CPI / GDP /
+# payrolls / unemployment ladders. Scope only — it decides what is priced,
+# never what is approved.
+#
+# `politics` is DELIBERATELY EXCLUDED (measured live 2026-08-20). The gateway's
+# joint "2026 Midterms: Balance of Power" contracts (`paccc-balpow-*`) settle on
+# BOTH chambers at once, yet they normalize to the single-chamber subject
+# `us_house_control|2026` with a NON-NULL affirmative outcome — and the wrong
+# one: `...-rhou-dsen` ("R House, D Senate") reports `democratic_party`. The
+# categorical-twin guard that protects the Global venue relies on joint
+# contracts carrying a NULL affirmative outcome, which is true on Gamma and
+# false here, so a Kalshi "Will Democrats win the House" leg paired straight
+# through and the radar printed phantom gaps of 31.5c and 79.8c. Chamber
+# control stays watched on Global tag 144 (already quarantined from the
+# go/no-go rate); re-admitting `politics` requires fixing the election
+# normalizer's chamber attribution first — see TODO.
+GAP_RADAR_PMUS_CATEGORIES = ("macro",)
 GAP_RADAR_GLOBAL_TAG_IDS = (
     "100196",  # Fed Rates
     "101701",  # CPI
@@ -146,6 +179,7 @@ GAP_RADAR_GLOBAL_TAG_IDS = (
     "370",  # GDP
     "105113",  # ISM manufacturing + services
     "105533",  # Core PCE
+    "144",  # Elections — carries the chamber-control twins (added 2026-08-20)
 )
 
 
@@ -1289,39 +1323,103 @@ async def monitor_live(pair_id: str) -> None:
     await run_pair(pair)
 
 
+async def _polymarket_us_top_of_book(
+    venue: PolymarketUSVenue, market: Market
+) -> dict[str, object] | None:
+    """Displayed top-of-book depth for one tradeable Polymarket US leg.
+
+    Unlike Gamma, the US gateway publishes a two-sided book, so a paired basket
+    can be sized on BOTH legs instead of assuming the Polymarket fill. Depth is
+    mapped to the side actually taken: buying YES lifts the top offer
+    (``yes_asks``), buying NO sells YES into the top bid (``no_asks``, which the
+    adapter already derives as ``1 - bid``).
+
+    Returns None on any book failure so a single missing book degrades that one
+    observation to assumed-fill rather than dropping the pair or the scan.
+    """
+    try:
+        book = await venue.get_orderbook(market.venue_market_id)
+    except Exception:  # noqa: BLE001 - read-only; a missing book is not fatal
+        return None
+    return {
+        "yes_size": book.yes_asks[0].quantity if book.yes_asks else None,
+        "no_size": book.no_asks[0].quantity if book.no_asks else None,
+    }
+
+
 async def gaps_scan(live: bool) -> None:
     """One bounded, read-only radar pass over open twin-shaped candidate pairs.
 
     Observes and records executable top-of-book gaps; never places orders and
     never touches the approved-pair registry. Pairs are candidates only.
     """
-    from atlas.gap_radar import match_twin_shapes, observe_pair, paper_bankroll_summary
+    from atlas.gap_radar import (
+        match_twin_shapes,
+        observe_pair,
+        paper_bankroll_summary,
+        polymarket_leg_is_tradeable,
+    )
 
     kalshi = KalshiVenue(fixture=not live)
     globalpm = PolymarketGlobalHistoricalVenue(tag_ids=GAP_RADAR_GLOBAL_TAG_IDS)
+    pmus = PolymarketUSVenue(fixture=not live)
     kalshi_markets = await kalshi.list_open_series_markets(GAP_RADAR_KALSHI_SERIES_TICKERS)
-    polymarket_markets = await globalpm.list_open_markets() if live else []
-    pairs = match_twin_shapes(kalshi_markets, polymarket_markets)
+    global_markets = await globalpm.list_open_markets() if live else []
+    # Polymarket US is the tradeable leg. Its failure must not take the whole
+    # scan down: a US outage degrades to the Global-only corpus we already had.
+    try:
+        pmus_markets = await pmus.list_open_category_markets(GAP_RADAR_PMUS_CATEGORIES)
+    except Exception as exc:  # noqa: BLE001 - read-only scope, recorded not raised
+        print(f"gap_radar_pmus_scope_failed={type(exc).__name__} degraded_to_global_only=true")
+        pmus_markets = []
+    polymarket_markets = [*global_markets, *pmus_markets]
+    pairs = match_twin_shapes(kalshi_markets, global_markets) + match_twin_shapes(
+        kalshi_markets, pmus_markets
+    )
     store = AtlasStore()
     recorded = 0
     executable = 0
+    tradeable_pairs = 0
+    tradeable_executable = 0
     for pair in pairs:
-        observation = observe_pair(pair)
+        polymarket_market = pair["polymarket_market"]
+        sizes = None
+        if polymarket_leg_is_tradeable(polymarket_market):
+            tradeable_pairs += 1
+            sizes = await _polymarket_us_top_of_book(pmus, polymarket_market)
+        observation = observe_pair(pair, polymarket_sizes=sizes)
         if observation is None:
             continue
+        if observation["tradeable_venue_pair"] and observation["executable_gap"]:
+            tradeable_executable += 1
         await store.save_gap_observation(observation)
         recorded += 1
         if observation["executable_gap"]:
             executable += 1
+            # A gap without its depth is not a finding. Live GDP pairs on
+            # 2026-08-20 printed a 7.8c gap backed by 0.06 contracts.
+            size = observation.get("best_basket_size")
+            floors = (
+                "" if observation.get("meets_tick_floor") and observation.get("meets_size_floor")
+                else " BELOW_FLOOR"
+            )
             print(
                 f"  GAP {observation['best_gap']} {observation['event_subject']} "
-                f"[{observation['best_basket']}] status={observation['verification_status']}"
+                f"[{observation['best_basket']}] size={size or 'unknown'} "
+                f"venue={observation['polymarket_venue']} "
+                f"status={observation['verification_status']}{floors}"
             )
     summary = paper_bankroll_summary(await store.all_gap_observations())
     print(
         f"gap_radar: paper_only=true kalshi_markets={len(kalshi_markets)} "
-        f"polymarket_markets={len(polymarket_markets)} twin_shaped_pairs={len(pairs)} "
-        f"recorded={recorded} executable_now={executable}"
+        f"polymarket_markets={len(polymarket_markets)} "
+        f"(global={len(global_markets)} pmus={len(pmus_markets)}) "
+        f"twin_shaped_pairs={len(pairs)} recorded={recorded} executable_now={executable}"
+    )
+    # The only numbers that speak to tradeability. Global legs are research.
+    print(
+        f"gap_radar_tradeable: pairs={tradeable_pairs} "
+        f"executable_now={tradeable_executable} venue=polymarket_us"
     )
     print(
         f"paper_bankroll={summary['paper_bankroll']} "

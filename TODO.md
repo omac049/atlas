@@ -1,12 +1,101 @@
 # Atlas continuation checklist
 
-Last updated: 2026-08-17 (adaptive settlement polling is integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, and bounded retry metadata; 450 tests green)
+Last updated: 2026-08-20 (**the radar was pointed at a venue that cannot be traded**; Polymarket US added to scope, go/no-go now charges for capital lock-up and flips to NO-GO; execution track dropped by owner decision; 590 tests green, lint clean)
 
-Current handoff note (2026-08-17): the runtime has 72 trusted labels (8 approved, 64 rejected), learning readiness is `READY`, and the next product milestone is frozen-holdout evaluation plus evidence-frontier improvement. The older historical notes below retain prior run counts for provenance; they are not the current state.
+Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
+
+Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, bounded retry metadata; 450 tests green; 72 trusted labels)
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
 
+## 2026-08-20 — the radar was measuring an untradeable venue
+
+- [x] **Root cause, measured not guessed:** all 18,650 gap observations — and
+  every one of the 1,490 "executable" ones — priced a `polymarket_global` leg.
+  That adapter's own docstring says its markets "can never reach shadow,
+  approval, or paper-trading paths that require executable prices", and it is
+  the offshore venue. `gaps_scan` (`atlas/cli.py`) built its universe from
+  `PolymarketGlobalHistoricalVenue` **only**; Polymarket US was never an input.
+  This is why those gaps survive for hours — nobody can close them.
+- [x] **Not a pagination bug** (first hypothesis, disproved): the PM-US adapter
+  pages correctly and `list_markets()` returns 22,149 live markets with macro
+  and politics on pages 0-1, well inside the 20-page cap. It was pure scope.
+- [x] **Fix:** `PolymarketUSVenue.list_open_category_markets` + a new
+  `GAP_RADAR_PMUS_CATEGORIES = ("macro",)` scope. PM-US legs are priced from the
+  gateway's real two-sided book (`/v1/markets/{slug}/book`, keyed `bids` /
+  `offers`), so `polymarket_fill_assumed_at_quote` is now per-observation and
+  **false** for US rows. `_baskets` records `polymarket_size` and `basket_size`
+  (the thinner binding leg); observations carry `polymarket_venue` and
+  `tradeable_venue_pair`.
+- [x] **Two silent gateway traps found and documented in the adapter:** the
+  singular `category=macro` is ignored and returns the unfiltered catalog, and a
+  comma-joined `categories=macro,politics` returns **zero** events with HTTP 200.
+  Only repeated `categories` params filter. A client-side re-check guards scope
+  if the param ever stops working. The scoped sweep went 27.5s -> 3.4s.
+- [x] **Fee model:** PM-US publishes a scalar `feeCoefficient` (0.06) and no
+  `feeSchedule`; without a branch for it every US quote fell to the max-rate
+  fallback and overstated the fee by ~17%.
+- [x] **Phantom caught before it could mislead.** With `politics` briefly in
+  scope, Kalshi's "Will Democrats win the House" paired with the gateway's joint
+  `paccc-balpow-*` contracts and printed gaps of **31.5c and 79.8c**. Cause: the
+  joint "R House, D Senate" contract normalizes to `us_house_control|2026` with
+  a **non-null and wrong** affirmative outcome (`democratic_party`). The Gamma
+  guard relies on joint contracts having a *null* outcome — true there, false
+  here. 3 observations recorded and deleted (they postdate the last published
+  report, so no artifact contains them); `politics` removed from scope; both the
+  defect and the containment pinned by test.
+- [x] **Study phase 2 pulled forward from day 31.** `return_on_locked_capital`
+  divides the edge by the later leg's horizon — which was already computed and
+  bucketed, and which nothing divided by. `distinct_pairs` now sits beside
+  `distinct_opportunities` (26 opportunities come from **11 pairs**).
+  `meets_go_threshold` became an object of named sub-tests; a sub-test with no
+  eligible population reports `null` and does not pass.
+- [x] **The paper meter no longer rounds in its own favour.** An opportunity
+  with no published depth ran **uncapped** at the full 5% stake — 8 of 26
+  opportunities, 35% of recorded profit. Now skipped and counted. The meter
+  reads **+$19.29** over 9 days, not +$29.74.
+- [x] **Floors added, and they change the reading completely.** Both venues tick
+  at 1c, so an edge under one tick is quantization noise; and a gap is worth
+  nothing if you cannot take size. `meets_tick_floor` / `meets_size_floor` /
+  `best_basket_size` are recorded per observation (`executable_gap` deliberately
+  unchanged so the series stays comparable). The live scan now prints depth and
+  a `BELOW_FLOOR` marker: on 2026-08-20 **every tradeable executable gap was
+  BELOW_FLOOR**, including a 7.8c GDP gap backed by **0.06 contracts** of
+  Polymarket depth. The only above-floor row is the Global house-control pair at
+  165k contracts — Kalshi-side depth only, on a venue that cannot be traded.
+- [x] **Result: GO -> NO-GO on unchanged data.** Frequency still passes
+  (73.3/30d vs 10); return on locked capital is **3.38% annualized** vs a 15%
+  hurdle; median basket **$459** vs a $500 floor. Tradeable subset: **1.66%**.
+- [x] **Owner decision 2026-08-20: execution track dropped, pivot to contract
+  intelligence.** Paper-only now stands indefinitely rather than provisionally.
+  The staged path in `README.md` is dormant, not pending.
+
+- [ ] **The two new go thresholds are PROVISIONAL** —
+  `GO_MIN_ANNUALIZED_RETURN_ON_LOCKED_CAPITAL = 0.15` and
+  `GO_MIN_MEDIAN_BASKET_NOTIONAL_USD = 500` are placeholders chosen as the
+  risk-free rate plus a risk premium, and the smallest basket worth attention.
+  They are reported under `provisional_pending_owner_signoff`. Record a decision
+  before day 90 treats either as authoritative.
+- [ ] **Election normalizer: chamber attribution is wrong on joint contracts.**
+  `paccc-balpow-2026-11-03-rhou-dsen` ("R House, D Senate") reports
+  `affirmative_outcome=democratic_party`. It only affects PM-US politics, which
+  scope now excludes, but it is a frozen-path defect: fixing it needs owner
+  sign-off plus a charter amendment. Re-admitting `politics` to radar scope
+  depends on it. Pinned by
+  `test_pmus_joint_balance_of_power_misattributes_its_chamber_party`.
+- [ ] **Hand-run tradeable snapshot, 2026-08-20 (not yet automated):** across
+  FOMC Sep/Oct, CPI YoY, and unemployment — **27 Kalshi x PM-US twin pairs, 0
+  executable**, best −0.12c, median −2.12c, baskets costing $1.00-$1.02. The two
+  US venues are arbitrage-linked. The near-dated release windows (jobs
+  2026-09-04, CPI 2026-09-11, FOMC 2026-09-16) already burst at 30s and are the
+  honest test of whether a tradeable gap ever opens.
+
 ## Current validated state
+
+*Provenance list — each item was true when checked off, and the invariants still hold.
+Run counts and test totals inside it are historical snapshots, **not** current values
+(e.g. "172 tests passing" below is from 2026-08-11; the suite is 573 as of 2026-08-20).
+For live numbers see the handoff note above, `README.md`, or `/api/overview`.*
 
 - [x] Paper-only policy remains enforced. No order-placement path is enabled.
 - [x] API is serving at `http://127.0.0.1:8010/`.
@@ -46,10 +135,14 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
 
 ## Current blockers
 
-- Reachable candidates remain blocked by published venue-text gaps, especially Kalshi terminal fallback/revision language for CPI and Polymarket rounding/fallback language for FOMC.
-- No candidate is execution-ready; paper-only and never-executed safeguards remain mandatory.
-- The next learning decision is evaluation quality, not label accumulation: define family-balanced holdout metrics before training or changing normalization rules.
-- Polling is now adaptive, but venue policy gaps remain external evidence blockers; do not convert retryable/pending states into approvals.
+*(Verified against the live runtime 2026-08-20.)*
+
+- Reachable candidates remain blocked by published venue-text gaps, especially Kalshi terminal fallback/revision language for CPI and Polymarket rounding/fallback language for FOMC. Current frontier scan: 8 blocked, **6 blocked on venue text alone**, 0 rules changes in 14 days, 0 pairs with an unmonitored leg.
+- No candidate is execution-ready; paper-only and never-executed safeguards remain mandatory. Execution-ready events `0`, awaiting-settlement cases `0`.
+- **The verifier and normalizers are frozen for measurement until 2026-11-17** (90-day study). A rule change needs owner sign-off *and* a charter amendment note. Verdict-neutral fixes (logging, performance, reporting shape) are exempt but should still be noted if they change a reported metric's shape.
+- The next learning decision is evaluation quality, not label accumulation: define family-balanced holdout metrics before training. Do not add labels solely for volume — 81 already clears both the mix and 50-label volume gates.
+- ~~Settlement-timing asymmetry is unmeasurable in radar scope~~ **RESOLVED 2026-08-20**: the categorical chamber-control twins are now watched, giving the split 4 asymmetric pairs. See the 2026-08-20 scope entry.
+- Polling is adaptive, but venue policy gaps remain external evidence blockers; do not convert retryable/pending states into approvals.
 
 ## Active milestone status
 
@@ -541,3 +634,110 @@ python3 -m atlas.cli learning export \
 - [ ] Follow-up now unblocked: bound the raw load to a recent window (the bounded windows only need
   ~7d) so `/api/overview` stops loading the full table. Measured 0.94s; the remaining cost is the
   JSON parse of every loaded row.
+
+## 2026-08-20 — settlement-timing curve reporting corrected; docs re-synced
+
+- [x] **Confirmed the curve's zeros were data age, not a broken pipeline.** Every gap
+  observation recorded since 2026-08-19T23:25Z carries the `settlement_timing`
+  annotation with a parsed horizon: 2,856 of 2,856 annotated rows have one, i.e.
+  **100% coverage since the feature shipped**. The horizon math is right — it takes
+  the later of the two legs' anchors (`max` over `resolution_time`, else
+  `close_time`), which is the honest capital lock-up for a paired position.
+- [x] **Fixed a real measurement-honesty bug: two unrelated populations were pooled.**
+  `observations_without_horizon` counted 15,527, which read as "most of our data has
+  no settlement horizon". In fact those rows simply predate the annotation. They are
+  now `unannotated_observations`, split by *key presence* (not truthiness), leaving
+  `observations_without_horizon` for annotated rows whose venues published no anchor
+  — currently 0. This is the same rule `fee_model_rows` already applies to its two
+  fee models. Pooling them would have understated coverage for the whole study,
+  because the pre-annotation block never shrinks. The four counts now reconcile
+  exactly to `observations_reviewed` (verified live: 18,383).
+- [x] **Fixed a second one: an unmeasurable comparison was presenting as a result.**
+  `asymmetric_median_gap: null` beside a populated `symmetric_median_gap` invited the
+  day-90 reading "asymmetry was measured and didn't matter". It was never measured.
+  The report now emits `asymmetry_measured` plus `asymmetry_blind_spot`
+  (`NO_ANNOTATED_OBSERVATIONS` / `NO_WATCHED_PAIR_PUBLISHES_EARLY_DETERMINATION`),
+  and `annotated_observations` / `annotated_pairs` to show the eligible population.
+- [x] Dashboard surfaces the gap-vs-lock-up table and renders the blind spot as an
+  amber caution block, not a neutral footnote — a GO/NO-GO panel must not hide an
+  untested dimension. Verified live in the browser against the running API; zero
+  console errors. (New CSS: `.study-subhead`, `.study-note`, `.study-note--caution`.)
+- [x] Charter amended (`docs/NINETY_DAY_STUDY.md`): metric definitions for settlement
+  horizon and annotated observation, the separation rule, the known blind spot, and a
+  dated amendment note recording that no go/no-go metric moved and the deterministic
+  verifier is byte-unchanged. 4 new tests; suite 569 → **573 passing**, lint clean.
+- [x] README/TODO re-synced to the live runtime (81 labels, 573 tests, 6-of-8 frontier
+  pairs blocked on venue text alone) and the study is now described as the governing
+  milestone with its frozen-rules constraint.
+
+### RESOLVED 2026-08-20 — the asymmetry split now has an eligible population
+
+Root cause was two independent gates, not one:
+
+1. **Scope** — the radar's Kalshi series list and Polymarket tag list simply did
+   not include chamber control. The recorded rationale ("Elections/House stay out:
+   margin-of-victory spreads produce no twin shapes") was true of *spreads* but
+   never evaluated for *categorical* contracts.
+2. **The matcher, which was the real blocker** — `match_twin_shapes` required a
+   numeric threshold and operator on both legs. Chamber control has neither
+   (`threshold=None`, verified live). Adding the scope alone would have produced
+   **zero** pairs.
+
+- [x] `_twin_shape` in `atlas/gap_radar.py` now recognizes a second twin kind:
+  categorical twins pair on identical subject/action/scope plus a **non-null,
+  equal** affirmative outcome, with neither leg publishing a threshold. A
+  threshold contract is never compared to a categorical one.
+- [x] **Not done deliberately:** opposing parties are NOT an inverse shape. Ties
+  and third outcomes exist — which is why both venues publish tiebreak clauses —
+  so calling them complements would be inference. Pinned by test.
+- [x] **Trap guarded:** Polymarket's "2026 Balance of Power: D Senate, D House"
+  joint contracts normalize to the *house-control* subject with no affirmative
+  outcome. Requiring non-null-and-equal keeps a joint bet from pairing with a
+  House-only bet. Found empirically on the live catalog; pinned by test.
+- [x] Radar scope gained Kalshi `CONTROLH`/`CONTROLS` + Polymarket tag `144`.
+  Tag `487` stays out — the live probe found 0 party_control markets under it.
+- [x] **Quarantined from go/no-go** (`POST_START_SCOPE_FAMILIES` in
+  `atlas/study.py`): measured in full under `post_start_scope`, held out of the
+  opportunity counts, both rates, `meets_go_threshold`, and the weekly table —
+  but INCLUDED in the settlement-timing curve, which is not a go/no-go input and
+  is the whole reason the family was added. Charter amended.
+- [x] Verified live 2026-08-20: radar 17 → **21 twin-shaped pairs**; frozen-scope
+  headline byte-identical before and after (24 opportunities, 66.7 verified/30d,
+  GO); curve went from `asymmetry_measured: false` to **4 asymmetric pairs vs
+  3,043 symmetric observations**. Dashboard renders both blocks, 0 console errors.
+  581 tests green, lint clean.
+
+**Early signal, do not over-read:** asymmetric median gap +0.29¢ vs symmetric
+−3.0¢. That is 4 observations from a single scan. It is directionally consistent
+with asymmetric pairs trading wider (carry compensation), but it is nowhere near
+evidence. The point of the 90 days is to let this accumulate.
+
+- [ ] **These pairs must stay `REVIEW_REQUIRED`.** Kalshi may settle on a media-call
+  consensus months before the Polymarket twin's official sources resolve, so the
+  basket is not truly locked. The asymmetry is a caution signal; it can never
+  promote a pair to a trusted label.
+- [ ] Polymarket publishes no displayed size on these legs, so the 163,706-contract
+  median is Kalshi-side only. Do not present it as two-legged depth.
+- [ ] When the 2026 contracts settle, the asymmetric population empties unless the
+  2028 contracts get a Polymarket counterpart. The blind-spot reporting stays in
+  place for exactly that reason — watch for it to re-fire.
+
+### Next dated commitment — study phase 2 by day 31 (2026-09-18)
+
+- [ ] Replay each executable observation under simulated execution delays of 250ms,
+  500ms, 1s, and 2s using the next recorded quotes; require both legs to remain
+  fillable.
+- [ ] Measure legging/partial-fill exposure and report **return on locked capital
+  until settlement**, not profit per basket — the horizon buckets now feed this
+  directly.
+- [ ] Add burst sampling around detected gaps: the 5-minute sweep cannot resolve
+  sub-second decay. Instrumentation only — not a rule change, so no sign-off gate,
+  but note it in the charter.
+- [ ] Watch the fee-model split converge: 14,643 rows still carry the legacy flat 2¢
+  buffer against 3,723 venue-published. Per-week comparisons must keep them separate
+  until the legacy rows age out of the reporting window.
+
+### Housekeeping
+
+- [ ] Delete 3 stale `worktree-agent-*` branches (core PCE, GDP, payrolls) — their
+  families are already on `main` with tests; the branches are dead duplicates.

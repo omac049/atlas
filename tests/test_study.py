@@ -8,7 +8,12 @@ arithmetic. The report must be regenerable from persisted observations alone.
 
 from datetime import date
 
-from atlas.study import STUDY_START, study_report
+from atlas.study import (
+    NO_ANNOTATED_OBSERVATIONS,
+    NO_WATCHED_PAIR_PUBLISHES_EARLY_DETERMINATION,
+    STUDY_START,
+    study_report,
+)
 
 
 def _observation(
@@ -130,7 +135,8 @@ def test_go_threshold_uses_elapsed_days_not_calendar_hope():
     assert report["phase"] == 1
     assert report["rate_window_days"] == 10
     assert report["verified_opportunities_per_30_days"] == "6.0"
-    assert report["meets_go_threshold"] is False
+    assert report["meets_frequency_threshold"] is False
+    assert report["meets_go_threshold"]["go"] is False
 
 
 def test_rate_window_extends_to_retroactive_observations():
@@ -160,7 +166,8 @@ def test_go_threshold_counts_verified_not_candidate_opportunities():
     report = study_report(observations, today=date(2026, 8, 28))
     assert report["distinct_opportunities"] == 10
     assert report["venue_text_only_opportunities_total"] == 0
-    assert report["meets_go_threshold"] is False
+    assert report["meets_frequency_threshold"] is False
+    assert report["meets_go_threshold"]["go"] is False
 
 
 def test_settlement_timing_curve_buckets_by_days_to_settlement():
@@ -255,8 +262,66 @@ def test_legacy_observations_without_the_timing_field_are_symmetric_and_horizonl
     legacy.pop("settlement_timing")
     curve = study_report([legacy], today=date(2026, 8, 20))["settlement_timing_curve"]
     assert curve["observations_with_horizon"] == 0
-    assert curve["observations_without_horizon"] == 1
+    assert curve["unannotated_observations"] == 1
     assert curve["asymmetric_pairs"] == 0
+
+
+def test_unannotated_rows_are_never_pooled_with_missing_venue_anchors():
+    """The two reasons a row has no horizon must stay separable.
+
+    A row recorded before the annotation shipped says nothing about what the
+    venues published; a row annotated with a null horizon says the venues
+    published no usable anchor. Pooling them would permanently understate
+    coverage, because the pre-annotation block never shrinks as the study runs.
+    """
+    legacy = _observation("2026-08-20T10:00:00+00:00", pair="old")
+    legacy.pop("settlement_timing")
+    no_anchor = _observation("2026-08-20T10:00:00+00:00", pair="new", days_to_settlement=None)
+    curve = study_report([legacy, no_anchor], today=date(2026, 8, 20))["settlement_timing_curve"]
+
+    assert curve["unannotated_observations"] == 1
+    assert curve["observations_without_horizon"] == 1
+    assert curve["annotated_observations"] == 1
+    assert curve["annotated_pairs"] == 1
+
+
+def test_empty_asymmetry_split_names_its_blind_spot_instead_of_reading_as_a_finding():
+    """A null asymmetric median beside a populated symmetric one must not read
+    as "asymmetry was measured and did not matter" — if no watched pair carries
+    the tag, the comparison had no eligible population and was never made."""
+    observations = [
+        _observation("2026-08-20T10:00:00+00:00", pair="s1", gap="0.01", days_to_settlement="10.0"),
+        _observation("2026-08-20T10:00:00+00:00", pair="s2", gap="0.03", days_to_settlement="12.0"),
+    ]
+    curve = study_report(observations, today=date(2026, 8, 20))["settlement_timing_curve"]
+
+    assert curve["symmetric_median_gap"] == "0.02"
+    assert curve["asymmetric_median_gap"] is None
+    assert curve["asymmetry_measured"] is False
+    assert curve["asymmetry_blind_spot"] == NO_WATCHED_PAIR_PUBLISHES_EARLY_DETERMINATION
+
+
+def test_no_annotated_rows_at_all_is_a_distinct_blind_spot_from_no_asymmetric_pair():
+    legacy = _observation("2026-08-20T10:00:00+00:00")
+    legacy.pop("settlement_timing")
+    curve = study_report([legacy], today=date(2026, 8, 20))["settlement_timing_curve"]
+
+    assert curve["asymmetry_measured"] is False
+    assert curve["asymmetry_blind_spot"] == NO_ANNOTATED_OBSERVATIONS
+
+
+def test_a_real_asymmetric_pair_clears_the_blind_spot():
+    observations = [
+        _observation("2026-08-20T10:00:00+00:00", pair="s1", gap="0.01", days_to_settlement="10.0"),
+        _observation(
+            "2026-08-20T10:00:00+00:00", pair="a1", gap="0.07",
+            days_to_settlement="11.0", asymmetric=True,
+        ),
+    ]
+    curve = study_report(observations, today=date(2026, 8, 20))["settlement_timing_curve"]
+
+    assert curve["asymmetry_measured"] is True
+    assert curve["asymmetry_blind_spot"] is None
 
 
 def test_non_executable_observations_never_become_opportunities():
@@ -267,3 +332,58 @@ def test_non_executable_observations_never_become_opportunities():
     report = study_report(observations, today=date(2026, 8, 20))
     assert report["distinct_opportunities"] == 0
     assert report["weekly"][0]["observations"] == 2
+
+
+def test_post_start_families_are_measured_but_kept_out_of_the_go_threshold():
+    """A family added to radar scope mid-study must not raise the headline rate.
+
+    The go/no-go asks whether opportunities occur often enough. If the instrument
+    widens mid-flight, the rate rises because we changed what we look at — so the
+    new family is measured in full on its own ledger and quarantined from both
+    the rate and the weekly table, which is the artifact compared across weeks.
+    """
+    macro = _observation("2026-08-20T10:00:00+00:00", pair="m1", gap="0.03")
+    house = _observation(
+        "2026-08-20T10:00:00+00:00", pair="h1", gap="0.09",
+        subject="us_house_control|2026",
+    )
+    report = study_report([macro, house], today=date(2026, 8, 20))
+
+    # Headline stays on the scope frozen at STUDY_START.
+    assert report["distinct_opportunities"] == 1
+    assert report["frozen_scope_observations"] == 1
+    assert report["weekly"][0]["opportunities"] == 1
+    assert "us_house_control" not in report["weekly"][0]["families"]
+
+    # ...and the new family is fully counted, clearly labelled, on its own ledger.
+    post = report["post_start_scope"]
+    assert post["observations"] == 1
+    assert post["distinct_opportunities"] == 1
+    assert post["excluded_from_go_threshold"] is True
+    assert post["family_executable_observations"] == {"us_house_control": 1}
+    assert "us_house_control" in post["families"]
+
+
+def test_post_start_families_still_appear_on_the_settlement_timing_curve():
+    """Quarantine applies to the go/no-go rate, NOT to the curve — the chamber
+    pairs are the only ones that can carry the asymmetry tag, so excluding them
+    there would re-open the very blind spot they were added to close."""
+    house = _observation(
+        "2026-08-20T10:00:00+00:00", pair="h1", gap="0.09",
+        subject="us_house_control|2026", days_to_settlement="165.0", asymmetric=True,
+    )
+    curve = study_report([house], today=date(2026, 8, 20))["settlement_timing_curve"]
+
+    assert curve["asymmetric_observations"] == 1
+    assert curve["asymmetry_measured"] is True
+    assert curve["asymmetry_blind_spot"] is None
+    bucket = next(item for item in curve["buckets"] if item["bucket"] == "90+")
+    assert bucket["asymmetric_median_gap"] == "0.09"
+
+
+def test_fee_model_rows_still_count_every_observation_regardless_of_scope():
+    """Fee provenance is a property of the row, not the scope."""
+    macro = _observation("2026-08-20T10:00:00+00:00", pair="m1")
+    house = _observation("2026-08-20T10:00:00+00:00", pair="h1", subject="us_house_control|2026")
+    report = study_report([macro, house], today=date(2026, 8, 20))
+    assert report["fee_model_rows"]["venue_published"] == 2

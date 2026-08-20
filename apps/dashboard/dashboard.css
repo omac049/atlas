@@ -730,6 +730,23 @@ footer {
 .study-weekly-table tbody tr:hover { background: var(--surface-2); }
 .study-weekly-table tbody th { color: var(--text); font-weight: 500; }
 .study-weekly-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.study-subhead {
+  margin: var(--s5) 0 var(--s3);
+  font: var(--label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.study-note { margin-top: var(--s3); font: var(--data-sm); }
+/* A dimension the study could not measure is a caution, not a neutral note:
+   it must not be skimmed past on the way to the GO badge. */
+.study-note--caution {
+  padding: var(--s3);
+  border-left: 2px solid var(--warn);
+  background: var(--warn-soft);
+  color: var(--body);
+  opacity: 1;
+}
 
 /* ============================================================== responsive */
 @media (max-width: 1060px) {
