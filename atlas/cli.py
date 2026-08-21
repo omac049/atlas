@@ -33,7 +33,7 @@ from atlas.fees import DEMO_BASKET_FEES, DEMO_BASKET_SLIPPAGE
 from atlas.frontier import approval_frontier, capture_frontier_rules_evidence
 from atlas.learning import export_learning_splits, export_training_jsonl
 from atlas.live_monitor import LiveStreamCredentialsMissing, run_pair
-from atlas.models import Market
+from atlas.models import Market, VenueName
 from atlas.monitor import run_once
 from atlas.paper import PaperExecutor
 from atlas.registry import approve_pair
@@ -521,14 +521,23 @@ async def scan_pairs(live: bool) -> list:
     else:
         weather_enrichment = None
         shared_rule_enrichment = None
-    pairs = scan_market_pairs(kalshi_markets, polymarket_markets)
+    # THE PAIRING UNIVERSE INCLUDES GLOBAL. Every approved pair on record is
+    # Kalshi <-> polymarket_global, yet this scan compared Kalshi against
+    # POLYMARKET US ONLY — so `discovery_scans.approved` read 0 across 21
+    # consecutive scans while 4 approved pairs sat in the queue, and the live
+    # label loop was structurally dead (100% of labels came from backfill.py).
+    #
+    # Deliberately NOT widened: the enrichment passes above and the shadow
+    # observation below are bound to `polymarket_venue` (the US adapter) and
+    # would ask it for Global slugs, and shadow additionally needs an order book
+    # that the Global adapter does not expose at all.
+    polymarket_universe = [*polymarket_markets, *global_open_markets]
+    pairs = scan_market_pairs(kalshi_markets, polymarket_universe)
     approved = [
         pair for pair in pairs if pair.status.value in {"APPROVED_EQUIVALENT", "APPROVED_INVERSE"}
     ]
     review = [pair for pair in pairs if pair.status.value == "REVIEW_REQUIRED"]
-    catalog_report = compatibility_report(
-        kalshi_markets, [*polymarket_markets, *global_open_markets]
-    )
+    catalog_report = compatibility_report(kalshi_markets, polymarket_universe)
     catalog_report["polymarket_global_open_markets"] = len(global_open_markets)
     catalog_report["polymarket_global_open_tag_ids"] = list(
         LIVE_GLOBAL_TAG_IDS if global_open_markets else ()
@@ -546,7 +555,7 @@ async def scan_pairs(live: bool) -> list:
     frontier_evidence = await capture_frontier_rules_evidence(
         store,
         settlement_rankings,
-        [*kalshi_markets, *polymarket_markets, *global_open_markets],
+        [*kalshi_markets, *polymarket_universe],
     )
     print(
         "frontier_evidence: "
@@ -554,17 +563,27 @@ async def scan_pairs(live: bool) -> list:
         f"new_versions={frontier_evidence['frontier_new_versions']} "
         f"unavailable={frontier_evidence['frontier_legs_unavailable']}"
     )
-    reviews = review_market_pairs(kalshi_markets, polymarket_markets)
-    identity_candidates = structured_identity_candidates(kalshi_markets, polymarket_markets)
+    reviews = review_market_pairs(kalshi_markets, polymarket_universe)
+    identity_candidates = structured_identity_candidates(kalshi_markets, polymarket_universe)
     review_candidates = _deduplicate_candidates([*reviews, *identity_candidates])
     if not review_candidates:
-        review_candidates = propose_market_pairs(kalshi_markets, polymarket_markets)
+        review_candidates = propose_market_pairs(kalshi_markets, polymarket_universe)
     await store.save_candidate_proposals(review_candidates[:25])
     validation_capture = await capture_validation_universe(
-        store, kalshi_markets, polymarket_markets, approved, review_candidates
+        store, kalshi_markets, polymarket_universe, approved, review_candidates
     )
+    # A Global leg is meaningless to the US gateway, so reconciliation is given
+    # an adapter per venue. Without this, every Global case 404s and retries
+    # forever under a reason code that reads like a venue outage.
     validation_reconciliation = await reconcile_validation_cases(
-        store, kalshi_venue, polymarket_venue
+        store,
+        kalshi_venue,
+        polymarket_venue,
+        extra_polymarket_venues={
+            VenueName.POLYMARKET_GLOBAL.value: PolymarketGlobalHistoricalVenue(
+                tag_ids=LIVE_GLOBAL_TAG_IDS
+            )
+        },
     )
     print(
         "validation: "

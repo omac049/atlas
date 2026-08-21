@@ -387,3 +387,45 @@ def test_fee_model_rows_still_count_every_observation_regardless_of_scope():
     house = _observation("2026-08-20T10:00:00+00:00", pair="h1", subject="us_house_control|2026")
     report = study_report([macro, house], today=date(2026, 8, 20))
     assert report["fee_model_rows"]["venue_published"] == 2
+
+
+def test_an_approved_pair_counts_as_verified_and_is_reported_separately():
+    """The metric named "verified" used to exclude the only verified pairs.
+
+    `if codes and codes <= VENUE_TEXT_ONLY_CODES` required a NON-EMPTY mismatch
+    set, so an observation that cleared the deterministic verifier — no codes at
+    all — fell through both branches. 48 executable observations on the settled
+    FOMC pairs were dropped that way, while pairs blocked on wording were
+    counted. The two populations are now separate and both feed the frequency
+    test: a pair that CLEARED the verifier is not the same thing as a pair
+    blocked only on venue text.
+    """
+    observations = [
+        _observation("2026-08-20T10:00:00+00:00", pair="approved", codes=[]),
+        _observation("2026-08-20T10:00:00+00:00", pair="wording", codes=["SETTLEMENT_POLICY_MISMATCH"]),
+        _observation("2026-08-20T10:00:00+00:00", pair="structural", codes=["THRESHOLD_MISMATCH"]),
+    ]
+    observations[0]["verification_status"] = "APPROVED_EQUIVALENT"
+    report = study_report(observations, today=date(2026, 8, 20))
+    assert report["distinct_opportunities"] == 3
+    assert report["approved_opportunities_total"] == 1
+    assert report["venue_text_only_opportunities_total"] == 1
+    # Both count as verified; the structural mismatch does not.
+    assert report["verified_opportunities_total"] == 2
+    week = report["weekly"][0]
+    assert week["approved_opportunities"] == 1
+    assert week["venue_text_only_opportunities"] == 1
+
+
+def test_an_empty_code_set_alone_cannot_promote_a_row_to_approved():
+    """A missing `mismatch_codes` field is not evidence of approval.
+
+    The status must also be a trusted approval, so a malformed or truncated row
+    cannot be counted as verified by an absent field.
+    """
+    observations = [_observation("2026-08-20T10:00:00+00:00", pair="malformed", codes=[])]
+    observations[0]["verification_status"] = "REVIEW_REQUIRED"
+    report = study_report(observations, today=date(2026, 8, 20))
+    assert report["distinct_opportunities"] == 1
+    assert report["approved_opportunities_total"] == 0
+    assert report["verified_opportunities_total"] == 0

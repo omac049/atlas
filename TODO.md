@@ -1,12 +1,56 @@
 # Atlas continuation checklist
 
-Last updated: 2026-08-20 (**the radar was pointed at a venue that cannot be traded**; Polymarket US added to scope, go/no-go now charges for capital lock-up and flips to NO-GO; execution track dropped by owner decision; 590 tests green, lint clean)
+Last updated: 2026-08-20 (**the live label loop was structurally dead** — the scan compared Kalshi against Polymarket US only while every approved pair is Kalshi x Global; approved went 0 -> 12 and validation cases 81 -> 112 on the first live scan after the fix; the "verified" metric was excluding the only verified pairs; 595 tests green, lint clean)
 
 Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
 Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, bounded retry metadata; 450 tests green; 72 trusted labels)
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
+
+## 2026-08-20 (b) — the live label loop was structurally dead
+
+- [x] **Root cause:** `scan_pairs` passed **Polymarket US only** to
+  `scan_market_pairs`, `review_market_pairs`, `structured_identity_candidates`,
+  and `capture_validation_universe` — while every approved pair on record is
+  Kalshi x `polymarket_global`. `compatibility_report` and
+  `capture_frontier_rules_evidence` already received the combined universe, so
+  the queue showed 4 approved pairs while `discovery_scans.approved` read **0
+  across 21 consecutive scans**, and 100% of trusted labels came from
+  `backfill.py`.
+- [x] **Fix:** a single `polymarket_universe = [*polymarket_markets,
+  *global_open_markets]` feeds the pairing / review / validation paths.
+  Deliberately NOT widened: the enrichment passes and `_record_shadow_observation`
+  are bound to the US adapter, and shadow additionally needs an order book the
+  Global venue does not expose at all. Pinned by test, including the negative.
+- [x] **The trap behind it:** `reconcile_validation_cases` hardcoded
+  `polymarket_venue.get_market(...)`. A Global slug means nothing to the US
+  gateway, so every Global case would 404, be recorded as
+  `VENUE_EVIDENCE_UNAVAILABLE`, and retry **forever** — a permanent stall that
+  reads like a venue outage. Reconciliation now resolves the adapter from
+  `market.venue`; an adapter without `get_market` (the Global venue exposes
+  evidence methods only) carries the persisted market forward while
+  `_apply_terminal_settlement` refreshes the terminal evidence reconciliation
+  actually adjudicates on. A leg with no adapter gets a new, distinct
+  `VENUE_ADAPTER_MISSING` reason and does **not** burn the retry budget —
+  never-asked is not asked-and-failed.
+- [x] **Verified live:** comparisons 760 -> **1,182**, approved **0 -> 12**
+  (FOMC Sep/Oct/Dec 2026 + Jan 2027), validation cases 81 -> **112** including
+  the first 12 `source_kind=APPROVED` cases ever created by the live path. All
+  31 new cases sit `NOT_CLOSED`, which is correct — those meetings have not
+  happened yet. `trading_enabled=false` throughout.
+- [x] **The "verified" metric counted the wrong pairs.**
+  `if codes and codes <= VENUE_TEXT_ONLY_CODES` required a **non-empty** code
+  set, so pairs that cleared the verifier were excluded from the metric named
+  "verified" while pairs blocked on wording were counted. Now split into
+  `approved_opportunities_total` + `venue_text_only_opportunities_total` ->
+  `verified_opportunities_total`. An empty code set alone cannot promote a row:
+  the status must also be a trusted approval, so a truncated row cannot sneak
+  in through an absent field. Charter amended.
+
+- [ ] **Watch the 12 approved pairs through settlement.** They are the first
+  live-path approvals; each needs terminal evidence on both venues before it can
+  mint a trusted label. The Sep 16 FOMC meeting is the first to settle.
 
 ## 2026-08-20 — the radar was measuring an untradeable venue
 
