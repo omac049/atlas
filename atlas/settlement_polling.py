@@ -22,6 +22,13 @@ class PendingReasonCode(StrEnum):
     MISSING_SETTLEMENT_TIMING = "MISSING_SETTLEMENT_TIMING"
     TERMINAL_EVIDENCE_MISSING = "TERMINAL_EVIDENCE_MISSING"
     VENUE_EVIDENCE_UNAVAILABLE = "VENUE_EVIDENCE_UNAVAILABLE"
+    # No adapter was supplied for the leg's venue. Distinct from
+    # VENUE_EVIDENCE_UNAVAILABLE, which means the adapter was asked and could
+    # not answer: this one means it was never asked, so retrying is pointless
+    # until the caller wires the venue in. Kept visible rather than silent,
+    # because a Global leg reconciled through the US adapter would 404 forever
+    # and read as a venue outage.
+    VENUE_ADAPTER_MISSING = "VENUE_ADAPTER_MISSING"
 
 
 class PollDisposition(StrEnum):

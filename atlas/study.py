@@ -110,6 +110,13 @@ VENUE_TEXT_ONLY_CODES = {
     "REVISION_POLICY_MISMATCH",
 }
 
+# An observation carrying NO mismatch codes at one of these statuses cleared the
+# deterministic verifier outright. Requiring a non-empty code set — as the
+# "verified" metric did until 2026-08-20 — excluded precisely the pairs that
+# passed, while counting pairs that merely failed on wording. 48 executable
+# observations on the settled FOMC pairs were dropped that way.
+TRUSTED_APPROVAL_STATUSES = {"APPROVED_EQUIVALENT", "APPROVED_INVERSE"}
+
 
 def _decimal(value: object) -> Decimal | None:
     if value is None:
@@ -156,6 +163,11 @@ def study_report(observations: list[dict], today: date | None = None) -> dict:
     fee_models = Counter()
     opportunities: set[tuple[str, str, str]] = set()
     text_only: set[tuple[str, str, str]] = set()
+    approved_opportunities: set[tuple[str, str, str]] = set()
+    # Union of the two: pairs that cleared the verifier plus pairs blocked only
+    # on venue wording. This is what the charter's frequency test means by
+    # "verified", and it is what `verified_opportunities_per_30_days` reports.
+    verified: set[tuple[str, str, str]] = set()
     first_observed: date | None = None
     frozen_observations = 0
     post_start_observations = 0
@@ -202,6 +214,7 @@ def study_report(observations: list[dict], today: date | None = None) -> dict:
                 "gaps": [],
                 "families": Counter(),
                 "venue_text_only_opportunities": set(),
+                "approved_opportunities": set(),
             },
         )
         week["observations"] += 1
@@ -215,9 +228,21 @@ def study_report(observations: list[dict], today: date | None = None) -> dict:
             opportunities.add(opportunity)
             week["opportunities"] += 1
             codes = set(observation.get("mismatch_codes") or [])
-            if codes and codes <= VENUE_TEXT_ONLY_CODES:
+            status = str(observation.get("verification_status") or "")
+            # Two distinct populations, deliberately not merged into one bucket:
+            # a pair that CLEARED the verifier is not the same thing as a pair
+            # blocked only on wording. Both are "verified" for the frequency
+            # test; only the first is actually approved. The status check makes
+            # an empty code set insufficient on its own, so a malformed row
+            # cannot be promoted by an absent field.
+            if not codes and status in TRUSTED_APPROVAL_STATUSES:
+                week["approved_opportunities"].add(opportunity)
+                approved_opportunities.add(opportunity)
+                verified.add(opportunity)
+            elif codes and codes <= VENUE_TEXT_ONLY_CODES:
                 week["venue_text_only_opportunities"].add(opportunity)
                 text_only.add(opportunity)
+                verified.add(opportunity)
 
     survivals, singletons = _survival_runs(executable)
     sizes = _executable_sizes(executable)
@@ -243,6 +268,7 @@ def study_report(observations: list[dict], today: date | None = None) -> dict:
             "executable_observations": data["executable_observations"],
             "opportunities": data["opportunities"],
             "venue_text_only_opportunities": len(data["venue_text_only_opportunities"]),
+            "approved_opportunities": len(data["approved_opportunities"]),
             "median_gap": str(median(data["gaps"])) if data["gaps"] else None,
             "max_gap": str(max(data["gaps"])) if data["gaps"] else None,
             "families": dict(data["families"].most_common()),
@@ -258,7 +284,7 @@ def study_report(observations: list[dict], today: date | None = None) -> dict:
     span_start = min(first_observed or STUDY_START, STUDY_START)
     elapsed_days = max(1, (today - span_start).days + 1)
     candidate_rate = len(opportunities) * Decimal(30) / Decimal(elapsed_days)
-    verified_rate = len(text_only) * Decimal(30) / Decimal(elapsed_days)
+    verified_rate = len(verified) * Decimal(30) / Decimal(elapsed_days)
     return {
         "paper_only": True,
         "study_start": STUDY_START.isoformat(),
@@ -270,6 +296,11 @@ def study_report(observations: list[dict], today: date | None = None) -> dict:
         "rate_window_days": elapsed_days,
         "distinct_opportunities": len(opportunities),
         "venue_text_only_opportunities_total": len(text_only),
+        # Cleared the deterministic verifier outright — excluded from the
+        # "verified" count until 2026-08-20 because the filter required a
+        # NON-EMPTY mismatch set.
+        "approved_opportunities_total": len(approved_opportunities),
+        "verified_opportunities_total": len(verified),
         "candidate_opportunities_per_30_days": str(candidate_rate.quantize(Decimal("0.1"))),
         "verified_opportunities_per_30_days": str(verified_rate.quantize(Decimal("0.1"))),
         "go_threshold_per_30_days": GO_MIN_OPPORTUNITIES_PER_MONTH,

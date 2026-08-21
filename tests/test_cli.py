@@ -574,3 +574,105 @@ async def test_prune_command_reports_deletions_and_vacuum_note(tmp_path, capsys)
     assert "orderbook_snapshots deleted=0" in output
     assert "total_deleted=5" in output
     assert "VACUUM" in output
+
+
+@pytest.mark.asyncio
+async def test_scan_compares_kalshi_against_global_legs_too(monkeypatch, tmp_path):
+    """The live label loop was structurally dead.
+
+    Every approved pair on record is Kalshi <-> polymarket_global, but this scan
+    passed POLYMARKET US ONLY to `scan_market_pairs`. `discovery_scans.approved`
+    read 0 across 21 consecutive scans while 4 approved pairs sat in the queue,
+    and 100% of trusted labels came from `backfill.py` instead.
+
+    Pins that the Global legs reach the pairing, review, and validation paths,
+    and that the adapter-bound shadow path does NOT receive them — the Global
+    venue exposes no order book at all.
+    """
+    from atlas.cli import scan_pairs
+    from atlas.models import VenueName
+    from atlas.storage import AtlasStore
+    from atlas.venues.fixtures import fixture_markets
+    from atlas.venues.kalshi import KalshiVenue
+    from atlas.venues.polymarket_us import PolymarketUSVenue
+
+    markets = fixture_markets()
+    global_leg = markets["polymarket_us"][0].model_copy(deep=True)
+    global_leg.venue = VenueName.POLYMARKET_GLOBAL
+    global_leg.market_id = "polymarket_global:probe"
+
+    seen: dict[str, list] = {}
+
+    def _capture(name, result=None):
+        def _inner(kalshi, polymarket, *args, **kwargs):
+            seen[name] = list(polymarket)
+            return result if result is not None else []
+
+        return _inner
+
+    async def _acapture(name, result):
+        async def _inner(*args, **kwargs):
+            markets_arg = args[2] if len(args) > 2 else []
+            seen[name] = list(markets_arg)
+            return result
+
+        return _inner
+
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    monkeypatch.setattr("atlas.cli.AtlasStore", lambda *a, **k: store)
+    # Fixture venues, so `live=True` never touches the network.
+    monkeypatch.setattr("atlas.cli.KalshiVenue", lambda *a, **k: KalshiVenue(fixture=True))
+    monkeypatch.setattr(
+        "atlas.cli.PolymarketUSVenue", lambda *a, **k: PolymarketUSVenue(fixture=True)
+    )
+
+    async def _global():
+        return [global_leg]
+
+    monkeypatch.setattr("atlas.cli._safe_global_open_markets", _global)
+    monkeypatch.setattr("atlas.cli.scan_market_pairs", _capture("scan"))
+    monkeypatch.setattr("atlas.cli.review_market_pairs", _capture("review"))
+    monkeypatch.setattr("atlas.cli.structured_identity_candidates", _capture("identity"))
+
+    # Live-only side paths stubbed: they are adapter-bound and would fetch.
+    async def _noop_enrich(*args, **kwargs):
+        return 0
+
+    async def _noop_rules(*args, **kwargs):
+        return {
+            "shared_events_considered": 0, "pairs_refreshed": 0,
+            "new_evidence_versions": 0, "exact_rule_matches": 0,
+            "complete_policy_pairs": 0, "shared_events_skipped_non_guaranteed": 0,
+        }
+
+    async def _noop_frontier(*args, **kwargs):
+        return {
+            "frontier_legs_observed": 0, "frontier_new_versions": 0,
+            "frontier_legs_unavailable": 0,
+        }
+
+    async def _noop_reconcile(*args, **kwargs):
+        return {"checked": 0, "resolved": 0, "labeled": 0}
+
+    async def _capture_shadow(store_, kalshi_venue, pm_venue, kalshi_markets, pm_markets):
+        seen["shadow"] = list(pm_markets)
+
+    # Fixture catalogs are 1 market per venue, which the truncation guard would
+    # (correctly, for production) reject as a degraded catalog.
+    monkeypatch.setattr("atlas.cli._catalog_health", lambda *a, **k: (True, []))
+    monkeypatch.setattr("atlas.cli._enrich_candidate_sources", _noop_enrich)
+    monkeypatch.setattr("atlas.cli.enrich_weather_rules", _noop_rules)
+    monkeypatch.setattr("atlas.cli.enrich_shared_rules", _noop_rules)
+    monkeypatch.setattr("atlas.cli.capture_frontier_rules_evidence", _noop_frontier)
+    monkeypatch.setattr("atlas.cli.reconcile_validation_cases", _noop_reconcile)
+    monkeypatch.setattr("atlas.cli._record_shadow_observation", _capture_shadow)
+
+    await scan_pairs(live=True)
+
+    for name in ("scan", "review", "identity"):
+        ids = {market.market_id for market in seen[name]}
+        assert "polymarket_global:probe" in ids, f"{name} never received the Global leg"
+
+    # Shadow needs an order book the Global adapter does not expose.
+    shadow_ids = {market.market_id for market in seen.get("shadow", [])}
+    assert "polymarket_global:probe" not in shadow_ids
