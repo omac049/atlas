@@ -118,13 +118,27 @@ def test_gap_radar_scope_covers_every_normalized_family_and_no_spread_tags():
     """The radar watches every family with a canonical normalizer on both venues
     (that is the precondition for a twin shape to form) and is decoupled from the
     scheduled-batch defaults so widening it never changes label-harvest scope.
-    Elections/House margin spreads are excluded: they cannot form twin shapes."""
-    from atlas.cli import GAP_RADAR_GLOBAL_TAG_IDS, GAP_RADAR_KALSHI_SERIES_TICKERS
 
-    assert GAP_RADAR_KALSHI_SERIES_TICKERS == BATCH_DEFAULT_KALSHI_SERIES_TICKERS + (
-        "KXU3",
-        "KXISMPMI",
-        "KXUSISMSERV",
+    Elections tag 144 was added 2026-08-20 for the CATEGORICAL chamber-control
+    twins, which the threshold-only matcher could not form. That tag also carries
+    margin-of-victory spreads; those still cannot pair, but they are refused by
+    `_twin_shape` on the merits rather than by never being fetched. House tag 487
+    stays out — the live probe found 0 party_control markets under it.
+    """
+    from atlas.cli import (
+        DISCOVERY_ELECTION_KALSHI_SERIES_TICKERS,
+        GAP_RADAR_GLOBAL_TAG_IDS,
+        GAP_RADAR_KALSHI_SERIES_TICKERS,
+    )
+
+    assert GAP_RADAR_KALSHI_SERIES_TICKERS == (
+        BATCH_DEFAULT_KALSHI_SERIES_TICKERS
+        + DISCOVERY_ELECTION_KALSHI_SERIES_TICKERS
+        + (
+            "KXU3",
+            "KXISMPMI",
+            "KXUSISMSERV",
+        )
     )
     assert GAP_RADAR_GLOBAL_TAG_IDS == (
         "100196",
@@ -135,8 +149,12 @@ def test_gap_radar_scope_covers_every_normalized_family_and_no_spread_tags():
         "370",
         "105113",
         "105533",
+        "144",
     )
-    assert "144" not in GAP_RADAR_GLOBAL_TAG_IDS
+    # The chamber-control series must be present on the Kalshi side, or tag 144
+    # has nothing to pair against and the asymmetry split stays empty.
+    assert "CONTROLH" in GAP_RADAR_KALSHI_SERIES_TICKERS
+    assert "CONTROLS" in GAP_RADAR_KALSHI_SERIES_TICKERS
     assert "487" not in GAP_RADAR_GLOBAL_TAG_IDS
 
 

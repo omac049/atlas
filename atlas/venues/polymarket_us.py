@@ -40,7 +40,9 @@ class PolymarketUSVenue(PredictionVenue):
     def __init__(self, fixture: bool = True):
         self.fixture = fixture
 
-    async def _get(self, path: str, params: dict | None = None) -> dict | list:
+    async def _get(
+        self, path: str, params: dict | list[tuple[str, str]] | None = None
+    ) -> dict | list:
         async with httpx.AsyncClient(
             base_url=self.base_url, timeout=settings.http_timeout_seconds
         ) as client:
@@ -72,6 +74,65 @@ class PolymarketUSVenue(PredictionVenue):
             # hard bound either way.
             if not events:
                 return markets
+            offset += limit
+        return markets
+
+    async def list_open_category_markets(
+        self, categories: tuple[str, ...], max_pages: int = 40
+    ) -> list[Market]:
+        """Open markets in the named gateway categories, filtered during paging.
+
+        The radar needs a BOUNDED Polymarket US universe. The full open sweep is
+        ~22k markets and costs ~56s just to fingerprint (measured 2026-08-20),
+        which a 30-second release-window burst cannot afford. Categories are the
+        gateway's own published field, so this narrows the scope without
+        inferring anything: ``macro`` carries the FOMC/CPI/GDP/payrolls/
+        unemployment ladders and ``politics`` the chamber-control contracts.
+
+        Filtering happens before normalization, so a skipped event costs nothing
+        beyond the page fetch it already shared with the wanted ones.
+        """
+        if self.fixture:
+            return [
+                market
+                for market in fixture_markets()[VenueName.POLYMARKET_US]
+                if market.status == MarketStatus.ACTIVE
+            ]
+        wanted = {category.lower() for category in categories}
+        markets: list[Market] = []
+        seen: set[str] = set()
+        limit, offset = 100, 0
+        for _ in range(max_pages):
+            # Two silent gateway traps here, both verified live 2026-08-20:
+            #   * the SINGULAR `category=macro` is ignored and returns the
+            #     unfiltered catalog;
+            #   * a comma-joined `categories=macro,politics` returns zero
+            #     events with HTTP 200 — a silent empty, not an error.
+            # Only REPEATED `categories` params filter correctly, so they are
+            # sent as a param list. The client-side re-check below is the
+            # guard: if this ever stops filtering, scope must not silently
+            # widen to all ~22k open markets.
+            params: list[tuple[str, str]] = [
+                ("active", "true"),
+                ("closed", "false"),
+                ("with_nested_markets", "true"),
+                ("limit", str(limit)),
+                ("offset", str(offset)),
+            ]
+            params.extend(("categories", category) for category in sorted(wanted))
+            payload = await self._get("/v1/events", params=params)
+            events = payload.get("events", []) if isinstance(payload, dict) else []
+            if not events:
+                return markets
+            for event in events:
+                if str(event.get("category") or "").lower() not in wanted:
+                    continue
+                for item in event.get("markets", []):
+                    slug = item.get("slug") or item.get("marketSlug") or item.get("id")
+                    if slug in seen:
+                        continue
+                    seen.add(slug)
+                    markets.append(self._normalize_market(item))
             offset += limit
         return markets
 

@@ -6,7 +6,7 @@ import httpx
 async def get_json(
     client: httpx.AsyncClient,
     path: str,
-    params: dict | None = None,
+    params: dict | list[tuple[str, str]] | None = None,
     attempts: int = 3,
     retry_delay: float = 0.25,
     total_timeout_seconds: float | None = 30.0,
