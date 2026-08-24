@@ -1493,7 +1493,7 @@ async def intel_report(write: bool = True) -> None:
     from atlas.intel import divergence_report, render_divergence_markdown
 
     store = AtlasStore()
-    report = await divergence_report(store)
+    report = await divergence_report(store, clarity_scan=latest_clarity_scan())
     markdown = render_divergence_markdown(report)
     print(markdown)
     if write:
@@ -1505,6 +1505,99 @@ async def intel_report(write: bool = True) -> None:
         json_target.write_text(json.dumps(report, indent=2, default=str) + "\n")
         md_target.write_text(markdown)
         print(f"intel_report_written={md_target}")
+
+
+CLARITY_VENUES = ("kalshi", "polymarket_us")
+# A live grade of every open contract on both venues is a catalog-wide sweep, so
+# it carries a per-venue cap by default: the artifact records the cap and marks
+# the venue truncated, because a sample presented as a census would be exactly
+# the kind of overclaim this score exists to avoid.
+CLARITY_MAX_MARKETS_DEFAULT = 2000
+
+
+def _clarity_venue(name: str, live: bool):
+    return KalshiVenue(fixture=not live) if name == "kalshi" else PolymarketUSVenue(fixture=not live)
+
+
+async def clarity_grade(venue_name: str, market_id: str, live: bool = True) -> None:
+    """Grade one market's published settlement text. Read-only, decides nothing."""
+    from atlas.clarity import clarity_score, flag_prose
+
+    market = await _clarity_venue(venue_name, live).get_market(market_id)
+    grade = clarity_score(market)
+    print(f"{grade['grade']} ({grade['score']}/100) {grade['market_id']}")
+    print(f"  {grade['title']}")
+    print(f"  settlement_guarantee={grade['guarantee_status']}")
+    for finding in grade["findings"]:
+        # A zero-point finding is the grade CAP, not a free pass; label it so.
+        cost = f"-{finding['points']}" if finding["points"] else "cap"
+        print(f"  {cost} {finding['code']}: {finding['prose']}")
+        print(f"      fix: {finding['fix']}")
+    for flag in grade["flags"]:
+        print(f"  flag {flag}: {flag_prose(flag)} (disclosed, not scored)")
+    if not grade["findings"]:
+        print("  no findings — every branch this grader checks is published")
+
+
+async def clarity_scan(live: bool, max_markets: int = CLARITY_MAX_MARKETS_DEFAULT) -> None:
+    """Grade the bounded open catalogs of Kalshi and Polymarket US.
+
+    One venue's outage must not take the scan down: a failed catalog fetch is
+    recorded as a degraded venue and the other venue still gets graded. Writes
+    the dated JSON artifact the divergence report reads.
+    """
+    from atlas.clarity import clarity_scan_report, render_scan_summary
+
+    markets: list[Market] = []
+    degraded: list[str] = []
+    truncated: list[str] = []
+    for venue_name in CLARITY_VENUES:
+        venue = _clarity_venue(venue_name, live)
+        try:
+            fetched = await venue.list_markets()
+        except Exception as exc:  # noqa: BLE001 - read-only scope, recorded not raised
+            print(f"clarity_scan_fetch_failed={venue_name} error={type(exc).__name__}")
+            degraded.append(venue_name)
+            continue
+        if max_markets and len(fetched) > max_markets:
+            truncated.append(venue_name)
+            fetched = fetched[:max_markets]
+        markets.extend(fetched)
+    report = clarity_scan_report(
+        markets,
+        degraded_venues=degraded,
+        scope={
+            "venues": list(CLARITY_VENUES),
+            "catalog": "open markets via list_markets()",
+            "live": bool(live),
+            "max_markets_per_venue": max_markets or None,
+            "truncated_venues": truncated,
+        },
+    )
+    for line in render_scan_summary(report):
+        print(line)
+    directory = Path("data/clarity")
+    directory.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now(UTC).strftime("%Y%m%d")
+    target = directory / f"clarity-scan-{stamp}.json"
+    target.write_text(json.dumps(report, indent=2, default=str) + "\n")
+    print(f"clarity_scan_written={target}")
+
+
+def latest_clarity_scan(directory: str = "data/clarity") -> dict | None:
+    """The most recent dated clarity scan on disk, or ``None`` when none exists.
+
+    Absence is absence: the divergence report omits its clarity section rather
+    than rendering an empty one that reads like a clean bill of health.
+    """
+    paths = sorted(Path(directory).glob("clarity-scan-*.json"))
+    if not paths:
+        return None
+    try:
+        return json.loads(paths[-1].read_text())
+    except (OSError, ValueError) as exc:
+        print(f"clarity_scan_unreadable={paths[-1]} error={type(exc).__name__}")
+        return None
 
 
 def main() -> None:
@@ -1585,6 +1678,28 @@ def main() -> None:
     )
     intel_report_parser.add_argument(
         "--no-write", action="store_true", help="print without writing data/intel/"
+    )
+    clarity = sub.add_parser(
+        "clarity", help="Settlement Clarity Score — deterministic A-F grade of venue fine print"
+    )
+    clarity_sub = clarity.add_subparsers(dest="action", required=True)
+    clarity_grade_parser = clarity_sub.add_parser(
+        "grade", help="grade one market's published settlement text"
+    )
+    clarity_grade_parser.add_argument("--venue", choices=CLARITY_VENUES, required=True)
+    clarity_grade_parser.add_argument("--market", required=True, help="venue market id or slug")
+    clarity_grade_parser.add_argument(
+        "--fixture", action="store_true", help="grade the bundled fixture market instead of live"
+    )
+    clarity_scan_parser = clarity_sub.add_parser(
+        "scan", help="grade the bounded open catalogs and write data/clarity/"
+    )
+    clarity_scan_parser.add_argument("--live", action="store_true")
+    clarity_scan_parser.add_argument(
+        "--max-markets",
+        type=int,
+        default=CLARITY_MAX_MARKETS_DEFAULT,
+        help="per-venue cap; 0 grades the whole bounded sweep",
     )
     learning = sub.add_parser("learning")
     learning_sub = learning.add_subparsers(dest="action", required=True)
@@ -1732,6 +1847,10 @@ def main() -> None:
         asyncio.run(gaps_study(write=not args.no_write))
     elif args.command == "intel" and args.action == "report":
         asyncio.run(intel_report(write=not args.no_write))
+    elif args.command == "clarity" and args.action == "grade":
+        asyncio.run(clarity_grade(args.venue, args.market, live=not args.fixture))
+    elif args.command == "clarity" and args.action == "scan":
+        asyncio.run(clarity_scan(args.live, max(args.max_markets, 0)))
     elif args.command == "gaps" and args.action == "status":
         asyncio.run(gaps_status())
     elif args.command == "learning" and args.action == "export":

@@ -216,8 +216,41 @@ def _price_disagreements(observations: list[dict]) -> list[dict]:
     return rows
 
 
+def _clarity_section(scan: dict | None, *, max_rows: int = 10) -> dict | None:
+    """The Settlement Clarity Score rollup, or ``None`` when no scan exists.
+
+    Absence is not a zero: a week with no scan omits the section entirely rather
+    than printing empty distributions that read like a clean catalog. The scan is
+    passed in rather than read from disk so this stays a pure function.
+    """
+    aggregates = (scan or {}).get("aggregates") or {}
+    per_venue = aggregates.get("per_venue") or {}
+    if not per_venue:
+        return None
+    return {
+        "scanned_at": scan.get("generated_at"),
+        "scoring_version": scan.get("scoring_version"),
+        "markets_graded": aggregates.get("markets_graded", 0),
+        "per_venue": per_venue,
+        "degraded_venues": scan.get("degraded_venues") or [],
+        "scope": scan.get("scope") or {},
+        "worst_offenders": (aggregates.get("worst") or [])[:max_rows],
+        # The scan states its own limits; this section adds the one that matters
+        # here — a grade is intelligence, never a verdict.
+        "limits": [
+            *(scan.get("limits") or []),
+            ("a grade never feeds a verification verdict or an approval label; "
+            "it decides nothing"),
+        ],
+    }
+
+
 async def divergence_report(
-    store: AtlasStore, *, now: datetime | None = None, max_rows: int = 25
+    store: AtlasStore,
+    *,
+    now: datetime | None = None,
+    max_rows: int = 25,
+    clarity_scan: dict | None = None,
 ) -> dict:
     """Assemble the weekly Contract Divergence Report from persisted evidence."""
     now = now or datetime.now(UTC)
@@ -238,8 +271,9 @@ async def divergence_report(
     ]
     disagreements = _price_disagreements(observations)
     asymmetries = _timing_asymmetries(observations)
+    clarity = _clarity_section(clarity_scan)
 
-    return {
+    report = {
         "paper_only": True,
         "generated_at": now.isoformat(),
         "report_kind": "CONTRACT_DIVERGENCE_REPORT",
@@ -284,6 +318,9 @@ async def divergence_report(
         },
         "blocker_glossary": dict(_BLOCKER_PROSE),
     }
+    if clarity is not None:
+        report["settlement_clarity"] = clarity
+    return report
 
 
 def render_divergence_markdown(report: dict) -> str:
@@ -369,6 +406,54 @@ def render_divergence_markdown(report: dict) -> str:
                 f"| {polymarket['guaranteed']}/{polymarket['legs_seen']} "
                 f"| {gaps[0] if gaps else '—'} |"
             )
+        lines.append("")
+
+    clarity = report.get("settlement_clarity")
+    if clarity:
+        lines += [
+            "## Settlement clarity",
+            "",
+            ("Every open contract graded A–F on how completely its venue "
+            "publishes what decides the payout — no twin pair required. "
+            f"Scan of {clarity['markets_graded']} contracts taken "
+            f"{clarity['scanned_at']}."),
+            "",
+            "| Venue | Graded | A | B | C | D | F | Mean |",
+            "|---|---|---|---|---|---|---|---|",
+        ]
+        for venue, stats in clarity["per_venue"].items():
+            distribution = stats["grade_distribution"]
+            bands = " | ".join(str(distribution.get(band, 0)) for band in "ABCDF")
+            lines.append(
+                f"| {venue} | {stats['markets']} | {bands} | {stats['mean_score']} |"
+            )
+        lines.append("")
+        for venue in clarity.get("degraded_venues") or []:
+            lines.append(
+                f"- {venue} could not be fetched for this scan — absent, not clean."
+            )
+        for venue in (clarity.get("scope") or {}).get("truncated_venues") or []:
+            lines.append(
+                f"- {venue} was sampled, not swept in full "
+                f"({(clarity.get('scope') or {}).get('max_markets_per_venue')} contracts)."
+            )
+        worst = clarity.get("worst_offenders") or []
+        if worst:
+            lines += [
+                "",
+                "Lowest-scoring open contracts:",
+                "",
+            ]
+            for row in worst:
+                codes = ", ".join(row.get("findings") or []) or "—"
+                shared = row.get("contracts_with_this_title") or 1
+                scale = f" ({shared} contracts share this wording)" if shared > 1 else ""
+                lines.append(
+                    f"- **{row['grade']} ({row['score']}/100)** {row['venue']} — "
+                    f"{row['title']}{scale} · {codes}"
+                )
+        lines.append("")
+        lines += [f"- {limit}" for limit in clarity["limits"]]
         lines.append("")
 
     asymmetries = report["settlement_timing_asymmetries"]
