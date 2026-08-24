@@ -1483,6 +1483,30 @@ async def gaps_study(write: bool = True) -> None:
         print(f"study_report_written={target}")
 
 
+async def intel_report(write: bool = True) -> None:
+    """Weekly Contract Divergence Report — the contract-intelligence deliverable.
+
+    Read-only over persisted evidence, regenerable bit-for-bit from the
+    database. Writes both the JSON (machine trail) and the markdown (the thing
+    a person outside this repo actually reads).
+    """
+    from atlas.intel import divergence_report, render_divergence_markdown
+
+    store = AtlasStore()
+    report = await divergence_report(store)
+    markdown = render_divergence_markdown(report)
+    print(markdown)
+    if write:
+        directory = Path("data/intel")
+        directory.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now(UTC).strftime("%Y%m%d")
+        json_target = directory / f"divergence-report-{stamp}.json"
+        md_target = directory / f"divergence-report-{stamp}.md"
+        json_target.write_text(json.dumps(report, indent=2, default=str) + "\n")
+        md_target.write_text(markdown)
+        print(f"intel_report_written={md_target}")
+
+
 def main() -> None:
     # The authenticated order-book streams read their credentials from the
     # process environment; worker.py already does this, but the continuous
@@ -1552,6 +1576,16 @@ def main() -> None:
         "--no-write", action="store_true", help="print only; skip the dated JSON artifact"
     )
     gaps_sub.add_parser("status")
+    intel = sub.add_parser(
+        "intel", help="contract-intelligence reports over persisted evidence"
+    )
+    intel_sub = intel.add_subparsers(dest="action", required=True)
+    intel_report_parser = intel_sub.add_parser(
+        "report", help="weekly Contract Divergence Report (markdown + JSON)"
+    )
+    intel_report_parser.add_argument(
+        "--no-write", action="store_true", help="print without writing data/intel/"
+    )
     learning = sub.add_parser("learning")
     learning_sub = learning.add_subparsers(dest="action", required=True)
     export = learning_sub.add_parser("export")
@@ -1696,6 +1730,8 @@ def main() -> None:
         asyncio.run(gaps_scan(args.live))
     elif args.command == "gaps" and args.action == "study":
         asyncio.run(gaps_study(write=not args.no_write))
+    elif args.command == "intel" and args.action == "report":
+        asyncio.run(intel_report(write=not args.no_write))
     elif args.command == "gaps" and args.action == "status":
         asyncio.run(gaps_status())
     elif args.command == "learning" and args.action == "export":
