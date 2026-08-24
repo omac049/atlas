@@ -136,3 +136,70 @@ async def test_markdown_renders_without_any_observations(tmp_path):
     markdown = render_divergence_markdown(report)
     assert "## At a glance" in markdown
     assert "## Method and limits" in markdown
+
+
+def _clarity_scan() -> dict:
+    """A minimal scan artifact in the shape `atlas clarity scan` writes."""
+    return {
+        "paper_only": True,
+        "scan_kind": "SETTLEMENT_CLARITY_SCAN",
+        "scoring_version": "1.0",
+        "generated_at": "2026-08-24T07:00:00+00:00",
+        "degraded_venues": ["polymarket_us"],
+        "scope": {"truncated_venues": ["kalshi"], "max_markets_per_venue": 2000},
+        "limits": ["its mean score is NOT comparable to Polymarket US's"],
+        "aggregates": {
+            "markets_graded": 2,
+            "per_venue": {
+                "kalshi": {
+                    "markets": 2,
+                    "grade_distribution": {"A": 1, "B": 0, "C": 0, "D": 0, "F": 1},
+                    "mean_score": "50.0",
+                }
+            },
+            "mean_score_per_category": {"kalshi": {"awards": "50.0"}},
+            "worst": [
+                {
+                    "market_id": "kalshi:BAD-1",
+                    "venue": "kalshi",
+                    "title": "Will the Acme Prize be awarded?",
+                    "grade": "F",
+                    "score": 0,
+                    "findings": ["MISSING_CANCELLATION_POLICY"],
+                    "contracts_with_this_title": 3,
+                }
+            ],
+        },
+        "markets": [],
+    }
+
+
+async def test_clarity_section_renders_from_a_supplied_scan(tmp_path):
+    """The grade is catalog-wide evidence; the report carries it verbatim."""
+    store = await _store_with(tmp_path, [])
+    report = await divergence_report(store, now=NOW, clarity_scan=_clarity_scan())
+    clarity = report["settlement_clarity"]
+    assert clarity["markets_graded"] == 2
+    assert clarity["per_venue"]["kalshi"]["grade_distribution"]["F"] == 1
+    markdown = render_divergence_markdown(report)
+    assert "## Settlement clarity" in markdown
+    assert "**F (0/100)** kalshi" in markdown
+    # One row per wording, with the ladder size kept visible.
+    assert "(3 contracts share this wording)" in markdown
+    # A venue that could not be fetched, and a venue that was only sampled, must
+    # both say so — an unscanned venue is not a venue without bad contracts.
+    assert "polymarket_us could not be fetched" in markdown
+    assert "kalshi was sampled, not swept in full" in markdown
+    # The scan states its own limits; the report must carry them, not bury them.
+    assert "NOT comparable" in markdown
+    assert "never feeds a verification verdict" in markdown
+
+
+async def test_clarity_section_is_absent_when_no_scan_exists(tmp_path):
+    """Absence is absence: an empty grade table would read as a clean catalog."""
+    store = await _store_with(tmp_path, [])
+    report = await divergence_report(store, now=NOW)
+    assert "settlement_clarity" not in report
+    assert "## Settlement clarity" not in render_divergence_markdown(report)
+    empty = await divergence_report(store, now=NOW, clarity_scan={"aggregates": {}})
+    assert "settlement_clarity" not in empty

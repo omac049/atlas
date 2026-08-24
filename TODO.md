@@ -8,6 +8,55 @@ Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness or
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
 
+## 2026-08-24 (c) — the Settlement Clarity Score
+
+- [x] **`atlas/clarity.py` — a deterministic A–F grade of ONE contract's fine
+  print**, with no twin pair, no order book, and no model. `clarity_score` is a
+  pure function over the canonical `Market`: it reads
+  `assess_settlement_guarantee` plus the policy-evidence parser and subtracts
+  fixed published points per undetermined payout branch. Every finding carries
+  plain English and a "what the venue would have to publish" fix. A
+  discretionary fair-price clause caps the grade at D as a ceiling, not a
+  deduction, so the score still reports how complete the rest of the text is.
+  Bands A>=90 / B>=75 / C>=60 / D>=40 / F. No published text at all is the one
+  special case: `F`, `0`, single finding `NO_RULES_TEXT`.
+- [x] **One-way dependency pinned by test.** The grade consumes the frozen
+  study modules; `atlas/verification.py`, `atlas/settlement.py`, and
+  `atlas/normalization.py` must never import it back — checked both by AST over
+  those three files and by a subprocess that imports them and asserts
+  `atlas.clarity` never lands in `sys.modules`. A marketing score must not be
+  able to move an approval label.
+- [x] **`atlas clarity grade` / `atlas clarity scan`** (fixture by default,
+  `--live`, `--max-markets` per-venue cap, default 2000). A venue whose catalog
+  fetch fails is recorded as `degraded_venues` and the other venue still gets
+  graded — an unscanned venue must never read as a venue with no bad contracts.
+  Dated artifact in `data/clarity/clarity-scan-YYYYMMDD.json`.
+- [x] **Divergence-report section** (`atlas intel report`): grade distribution
+  per venue plus the ten worst distinct wordings, deduped per (venue, title)
+  with the ladder size kept visible, and omitted entirely when no scan exists.
+- [x] First live sweep (2026-08-24, 2,000 open contracts per venue): Kalshi
+  mean **20.3** (0 A, 0 B, 0 C, 727 D, 1,273 F), Polymarket US mean **38.4**
+  (17 C, 1,521 D, 462 F). 16 new tests; 616 green, lint clean.
+
+- [ ] **The two per-venue means are NOT comparable yet.** Kalshi publishes
+  settlement sources on the EVENT record, which the market-level sweep does not
+  read, so `MISSING_AUTHORITATIVE_SOURCE` fires on ~90% of Kalshi rows and
+  depresses its mean. The artifact and the report both say so. Fixing it means
+  an event-source enrichment pass with a bounded per-event cache
+  (`KalshiVenue.enrich_market_source` already exists) — do that before the score
+  is ever published as a venue-vs-venue comparison.
+- [ ] Zero A and zero B grades across 4,000 live contracts. Confirm this is the
+  venues' prose and not a parser blind spot: hand-check ten D/F contracts whose
+  rules a human would call complete, and record the result. If the parsers are
+  the limit, the honest fix is a wider evidence parser, never a softer band.
+- [ ] Public lookup page (paste a market URL, get the grade and the findings) —
+  the free tool the paid report funnels from. Needs the enrichment above first.
+- [ ] Rules-change alerts on top of the score: the frontier already captures a
+  rules baseline per watched leg, so a grade that MOVES is the alertable event.
+- [ ] Consider scheduling `atlas clarity scan --live` weekly (a `com.atlas.clarity`
+  agent before `com.atlas.intel` on Mondays) so the report always has a fresh
+  scan; today it renders whatever scan is on disk.
+
 ## 2026-08-24 — the pivot gets its first artifact
 
 - [x] **Weekly Contract Divergence Report** (`atlas/intel.py`, `atlas intel
