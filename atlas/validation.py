@@ -7,7 +7,7 @@ import httpx
 
 from atlas.fingerprints import build_fingerprint
 from atlas.learning import record_verified_pair
-from atlas.models import ContractPair, Market, MarketStatus, MatchStatus
+from atlas.models import ContractPair, Market, MarketStatus, MatchStatus, VenueName
 from atlas.outcomes import settled_outcome
 from atlas.policy_evidence import parse_market_policy_evidence
 from atlas.settlement import GuaranteeStatus, assess_settlement_guarantee
@@ -127,12 +127,43 @@ async def capture_validation_universe(
     }
 
 
+def _resolve_leg_venue(
+    market: Market, polymarket_venue: object, extra_venues: dict[str, object] | None
+) -> object | None:
+    """The adapter that can speak for this leg's venue, or None.
+
+    Validation cases can carry a Polymarket **Global** leg — every approved pair
+    on record does — and Global slugs are meaningless to the US gateway. Routing
+    them through it returns 404, which the caller records as
+    VENUE_EVIDENCE_UNAVAILABLE and retries forever: a permanent stall that reads
+    like a venue outage. Resolving by `market.venue` keeps that honest.
+    """
+    venues: dict[str, object] = {VenueName.POLYMARKET_US.value: polymarket_venue}
+    venues.update(extra_venues or {})
+    return venues.get(str(market.venue))
+
+
+async def _refresh_leg(market: Market, venue: object) -> Market:
+    """Re-read one leg, falling back to the persisted market.
+
+    Not every adapter exposes ``get_market``: the Global venue deliberately
+    offers evidence methods only. When it does not, the stored market carries
+    forward and ``_apply_terminal_settlement`` still refreshes its terminal
+    evidence, which is the part reconciliation actually adjudicates on.
+    """
+    get_market = getattr(venue, "get_market", None)
+    if not callable(get_market):
+        return market
+    return await get_market(market.venue_market_id)
+
+
 async def reconcile_validation_cases(
     store: AtlasStore,
     kalshi_venue: object,
     polymarket_venue: object,
     limit: int = 20,
     now: datetime | None = None,
+    extra_polymarket_venues: dict[str, object] | None = None,
 ) -> dict[str, int]:
     now = now or datetime.now(UTC)
     summary = {"checked": 0, "pending": 0, "resolved": 0, "labeled": 0, "errors": 0}
@@ -174,9 +205,23 @@ async def reconcile_validation_cases(
             summary["errors"] += 1
             continue
         pair = ContractPair.model_validate(case["payload"]["pair"])
+        leg_b_venue = _resolve_leg_venue(
+            pair.market_b, polymarket_venue, extra_polymarket_venues
+        )
+        if leg_b_venue is None:
+            # Never asked, so retrying changes nothing until a caller wires the
+            # venue in. Recorded distinctly so it cannot be mistaken for an
+            # outage, and NOT counted against the retry budget.
+            await store.update_validation_pending(
+                pair.pair_id,
+                pending_reason=PendingReasonCode.VENUE_ADAPTER_MISSING.value,
+                next_poll_at=(now + retry_delay(int(case.get("retry_count", 0)))).isoformat(),
+            )
+            summary["pending"] += 1
+            continue
         try:
             market_a = await kalshi_venue.get_market(pair.market_a.venue_market_id)
-            market_b = await polymarket_venue.get_market(pair.market_b.venue_market_id)
+            market_b = await _refresh_leg(pair.market_b, leg_b_venue)
         except (httpx.HTTPError, KeyError, ValueError):
             await store.mark_validation_checked(
                 pair.pair_id,
@@ -187,7 +232,7 @@ async def reconcile_validation_cases(
             summary["errors"] += 1
             continue
         market_a = await _apply_terminal_settlement(market_a, kalshi_venue)
-        market_b = await _apply_terminal_settlement(market_b, polymarket_venue)
+        market_b = await _apply_terminal_settlement(market_b, leg_b_venue)
         summary["checked"] += 1
         await store.save_market_evidence_snapshots(
             [

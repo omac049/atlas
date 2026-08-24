@@ -139,6 +139,28 @@ are the honest test of whether a tradeable gap ever opens at all.
 
 ## Amendments
 
+- **2026-08-20 (b) — the "verified" metric counted the wrong pairs (measurement
+  fix; verifier and normalizers byte-unchanged).**
+  - **The defect:** `verified_opportunities_per_30_days` filtered on
+    `if codes and codes <= VENUE_TEXT_ONLY_CODES`. The leading `codes and`
+    required a **non-empty** mismatch set, so an observation that cleared the
+    deterministic verifier outright — no codes at all — fell through both
+    branches and was **excluded from the metric named "verified"**, while pairs
+    that merely failed on wording were counted. 48 executable observations on
+    the settled FOMC pairs were dropped this way.
+  - **What changed:** the two populations are now counted separately and both
+    feed the frequency test — `approved_opportunities_total` (cleared the
+    verifier) and `venue_text_only_opportunities_total` (blocked only on
+    wording), summing to `verified_opportunities_total`. Both also appear
+    per-week. An empty code set is **not sufficient on its own**: the status
+    must also be a trusted approval, so a malformed or truncated row cannot be
+    promoted into the approved count by an absent field.
+  - **Which metrics it can move:** `verified_opportunities_per_30_days` and
+    therefore the `frequency` sub-test — upward, since the previously excluded
+    approved pairs now count. It does not touch return on locked capital,
+    basket size, or tradeable-venue evidence, and the day-2 headline stays
+    NO-GO because those three are what fail.
+
 - **2026-08-20 — Polymarket US added to radar scope, and the go/no-go learned to
   fail (measurement change; verifier and normalizers byte-unchanged).** This is
   the largest amendment the study will carry. It is recorded in full because it

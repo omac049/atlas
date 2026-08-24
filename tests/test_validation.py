@@ -5,7 +5,7 @@ from datetime import UTC, datetime, timedelta
 import pytest
 
 from atlas.learning import record_verified_pair
-from atlas.models import MarketStatus
+from atlas.models import MarketStatus, VenueName
 from atlas.storage import AtlasStore
 from atlas.validation import (
     _apply_terminal_settlement,
@@ -563,3 +563,96 @@ async def test_non_retryable_evidence_failures_exhaust_the_case(tmp_path):
     assert result["pending"] == 1
     assert await store.pending_validation_cases() == []
     assert (await store.validation_summary())["retry_exhausted"] == 1
+
+
+class EvidenceOnlyGlobalVenue:
+    """Mirrors PolymarketGlobalHistoricalVenue: evidence methods, no get_market."""
+
+    def __init__(self, evidence):
+        self.evidence = evidence
+        self.asked_for = []
+
+    async def get_terminal_settlement_evidence(self, market_id):
+        self.asked_for.append(market_id)
+        return self.evidence
+
+
+@pytest.mark.asyncio
+async def test_a_global_leg_is_reconciled_through_its_own_venue_adapter(tmp_path):
+    """Every approved pair on record is Kalshi <-> polymarket_global.
+
+    Routing those through the US gateway returns 404 for a Global slug, which
+    the caller records as VENUE_EVIDENCE_UNAVAILABLE and retries forever — a
+    permanent stall that reads like a venue outage. The leg's own venue decides
+    the adapter, and an adapter without `get_market` still reconciles, because
+    terminal evidence is what reconciliation adjudicates on.
+    """
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    markets = fixture_markets()
+    global_leg = markets["polymarket_us"][0].model_copy(deep=True)
+    global_leg.venue = VenueName.POLYMARKET_GLOBAL
+    pair = verify_equivalence(markets["kalshi"][0], global_leg, "global-pair")
+    await store.save_validation_case(
+        {
+            "pair_id": pair.pair_id,
+            "source_kind": "APPROVED",
+            "decision_status": pair.status.value,
+            "guarantee_a": "GUARANTEED",
+            "guarantee_b": "GUARANTEED",
+            "payload": {"pair": pair.model_dump(mode="json")},
+        }
+    )
+    settled_a = pair.market_a.model_copy(deep=True)
+    settled_a.status = MarketStatus.SETTLED
+    settled_a.raw_market_json["result"] = "yes"
+
+    global_venue = EvidenceOnlyGlobalVenue(
+        {"status": "settled", "outcome": "yes", "source": "global-final-book"}
+    )
+    result = await reconcile_validation_cases(
+        store,
+        SettledVenue(settled_a),
+        SettledVenue(settled_a),  # the US adapter: must NOT be used for this leg
+        now=datetime(2030, 1, 1, tzinfo=UTC),
+        extra_polymarket_venues={VenueName.POLYMARKET_GLOBAL.value: global_venue},
+    )
+    assert global_venue.asked_for == [pair.market_b.venue_market_id]
+    assert result["checked"] == 1
+    assert result["errors"] == 0
+
+
+@pytest.mark.asyncio
+async def test_a_leg_with_no_adapter_is_pending_not_an_error(tmp_path):
+    """Never asked is not the same as asked-and-failed.
+
+    VENUE_EVIDENCE_UNAVAILABLE means the adapter could not answer and retrying
+    may help. A missing adapter means retrying changes nothing until a caller
+    wires the venue in, so it gets its own reason and does not burn the retry
+    budget.
+    """
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    markets = fixture_markets()
+    global_leg = markets["polymarket_us"][0].model_copy(deep=True)
+    global_leg.venue = VenueName.POLYMARKET_GLOBAL
+    pair = verify_equivalence(markets["kalshi"][0], global_leg, "unrouted-pair")
+    await store.save_validation_case(
+        {
+            "pair_id": pair.pair_id,
+            "source_kind": "APPROVED",
+            "decision_status": pair.status.value,
+            "guarantee_a": "GUARANTEED",
+            "guarantee_b": "GUARANTEED",
+            "payload": {"pair": pair.model_dump(mode="json")},
+        }
+    )
+    result = await reconcile_validation_cases(
+        store,
+        SettledVenue(pair.market_a),
+        SettledVenue(pair.market_b),  # US adapter only — no Global route supplied
+        now=datetime(2030, 1, 1, tzinfo=UTC),
+    )
+    assert result["errors"] == 0
+    assert result["checked"] == 0
+    assert result["pending"] == 1
+    pending = await store.pending_validation_cases(limit=5, due_only=False)
+    assert pending[0]["pending_reason"] == "VENUE_ADAPTER_MISSING"
