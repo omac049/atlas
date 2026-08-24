@@ -1,6 +1,6 @@
 # Atlas continuation checklist
 
-Last updated: 2026-08-24 (**Settlement Clarity Score shipped**: `atlas/clarity.py` grades one contract's fine print A–F deterministically, `atlas clarity grade|scan` plus a divergence-report section — the two per-venue means are not comparable until Kalshi event-source enrichment lands; also this day, the release-window keep-awake agent — no-sudo caffeinate holds from the evening before each print — and the API 0.0.0.0 LAN bind accepted and recorded as an owner decision; 618 tests green, lint clean)
+Last updated: 2026-08-24 (**clarity v1.1** — the hand-check found phantom findings and both fixes landed: supersession with visible reasons plus Kalshi series-level source evidence; Kalshi mean 20.3 -> 59.1 with F-count 1,273 -> 0, Polymarket US unchanged at 38.5 because its gaps are real; 622 tests green, lint clean)
 
 Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
@@ -38,19 +38,36 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   mean **20.3** (0 A, 0 B, 0 C, 727 D, 1,273 F), Polymarket US mean **38.4**
   (17 C, 1,521 D, 462 F). 16 new tests; 616 green, lint clean.
 
-- [ ] **The two per-venue means are NOT comparable yet.** Kalshi publishes
-  settlement sources on the EVENT record, which the market-level sweep does not
-  read, so `MISSING_AUTHORITATIVE_SOURCE` fires on ~90% of Kalshi rows and
-  depresses its mean. The artifact and the report both say so. Fixing it means
-  an event-source enrichment pass with a bounded per-event cache
-  (`KalshiVenue.enrich_market_source` already exists) — do that before the score
-  is ever published as a venue-vs-venue comparison.
-- [ ] Zero A and zero B grades across 4,000 live contracts. Confirm this is the
-  venues' prose and not a parser blind spot: hand-check ten D/F contracts whose
-  rules a human would call complete, and record the result. If the parsers are
-  the limit, the honest fix is a wider evidence parser, never a softer band.
+- [x] **Both Opus catches fixed (scoring v1.1, 2026-08-24).** The hand-check of
+  worst-graded contracts found REAL phantom findings: a platinum contract
+  stating "...then the market resolves to Yes" was charged
+  MISSING_AFFIRMATIVE_BRANCH (the frozen family parsers only know their own
+  families' wording), one unparseable clause stacked four overlapping
+  deductions, and Kalshi's sources live on `/series` (verified live:
+  `settlement_sources` is published on every series probed — Fed, metals,
+  sports), not the market record. Fixes, all inside clarity (frozen modules
+  byte-unchanged): a textual branch re-check and series-source evidence
+  SUPERSEDE contradicted findings — shown in the output as `superseded` with
+  the reason, never silently dropped — and branch codes that restate an
+  already-charged UNPARSED_SETTLEMENT_POLICY are suppressed so one defect
+  costs one deduction. Supersession can only REMOVE charges; a failed evidence
+  fetch leaves findings standing, so outages make grades stricter, never
+  kinder. Result: Kalshi 20.3 -> 59.1 mean, F 1,273 -> 0, B 0 -> 86 (the
+  FedDecision ladder, blocked only on revision policy); Polymarket US 38.4 ->
+  38.5 — its gaps were real. Zero A grades is now a credible finding: an A
+  needs >=90 and nearly every contract on either venue genuinely omits its
+  revision (-15) or cancellation (-20) terms.
+- [ ] **The remaining cross-venue caveat is PDFs.** Kalshi's full contract
+  terms live in per-series `contract_terms_url` PDFs no sweep reads, so its
+  remaining cancellation/revision findings may still overstate the gap vs
+  Polymarket US, whose full text is inline. The limits[] block and CLI caveat
+  say exactly this. Reading those PDFs (bounded fetch, hash the document,
+  extract clauses deterministically) is the same future adapter-evidence
+  project already flagged for weather — it would move Kalshi's D wall, not the
+  bands.
 - [ ] Public lookup page (paste a market URL, get the grade and the findings) —
-  the free tool the paid report funnels from. Needs the enrichment above first.
+  the free tool the paid report funnels from. The enrichment it needed now
+  exists; the PDF caveat above should ship on the page verbatim.
 - [ ] Rules-change alerts on top of the score: the frontier already captures a
   rules baseline per watched leg, so a grade that MOVES is the alertable event.
 - [ ] Consider scheduling `atlas clarity scan --live` weekly (a `com.atlas.clarity`
