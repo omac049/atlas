@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.atlas.intel</string>
+    <!-- python -m form, never the console script: see deploy/README.md. -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/ocorral/Atlas/.venv/bin/python</string>
+        <string>-m</string>
+        <string>atlas.cli</string>
+        <string>intel</string>
+        <string>report</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/ocorral/Atlas</string>
+    <!-- Mondays 07:15 — after com.atlas.study at 07:00, so the week's study
+         numbers are already on disk when the divergence report is assembled.
+         StartCalendarInterval runs at next wake if the Mac was asleep, so a
+         closed lid delays the weekly report rather than skipping the week. -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key>
+        <integer>1</integer>
+        <key>Hour</key>
+        <integer>7</integer>
+        <key>Minute</key>
+        <integer>15</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/Users/ocorral/Library/Logs/atlas-intel.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/ocorral/Library/Logs/atlas-intel.log</string>
+</dict>
+</plist>

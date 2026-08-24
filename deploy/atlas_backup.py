@@ -74,6 +74,39 @@ def main() -> None:
         stale.unlink()
         log(f"rotated out {stale.name}")
 
+    vacuum_live_database()
+
+
+def vacuum_live_database() -> None:
+    """Reclaim the disk that the monitor's nightly prune only frees logically.
+
+    ``store.prune()`` deletes rows but SQLite keeps the pages on its freelist,
+    so the file only ever grows: by 2026-08-20 it had reached 1.05 GB with 76%
+    of its pages free, and a manual VACUUM took it to 239 MB. Running it here —
+    only AFTER a snapshot has been taken and verified — closes that loop
+    nightly, at the quietest hour, with a fresh backup already on disk.
+
+    VACUUM needs a moment of exclusive access. The monitor writes briefly every
+    ~300s, so a 60s busy timeout is ample; if the database still cannot be
+    locked, skipping is safe — tomorrow's run tries again, and the only cost is
+    disk held one more day.
+    """
+    try:
+        connection = sqlite3.connect(DB, timeout=60, isolation_level=None)
+    except sqlite3.Error as exc:
+        log(f"WARN vacuum skipped, could not open live database: {exc}")
+        return
+    try:
+        before = DB.stat().st_size / 1_048_576
+        connection.execute("PRAGMA busy_timeout = 60000")
+        connection.execute("VACUUM")
+        after = DB.stat().st_size / 1_048_576
+        log(f"vacuum ok: {before:.0f} MB -> {after:.0f} MB")
+    except sqlite3.Error as exc:
+        log(f"WARN vacuum skipped ({exc}); retrying on the next nightly run")
+    finally:
+        connection.close()
+
 
 if __name__ == "__main__":
     main()

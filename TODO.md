@@ -1,12 +1,45 @@
 # Atlas continuation checklist
 
-Last updated: 2026-08-20 (**the live label loop was structurally dead** — the scan compared Kalshi against Polymarket US only while every approved pair is Kalshi x Global; approved went 0 -> 12 and validation cases 81 -> 112 on the first live scan after the fix; the "verified" metric was excluding the only verified pairs; 595 tests green, lint clean)
+Last updated: 2026-08-24 (**first contract-intelligence deliverable shipped**: weekly Contract Divergence Report via `atlas intel report` + com.atlas.intel launchd agent; nightly VACUUM added to the backup job; 7 stale worktree branches deleted after verifying content on main; deploy README bootstrap now lists study+intel agents; 600 tests green, lint clean)
 
 Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
 Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, bounded retry metadata; 450 tests green; 72 trusted labels)
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
+
+## 2026-08-24 — the pivot gets its first artifact
+
+- [x] **Weekly Contract Divergence Report** (`atlas/intel.py`, `atlas intel
+  report`, scheduled Mondays 07:15 via `com.atlas.intel` after the study
+  report). Assembles persisted evidence into the thing a person outside the
+  repo can read: approved equivalents awaiting settlement, the venue-text
+  frontier, a per-family rules-completeness scorecard, settlement-timing
+  asymmetries grouped per (subject, early venue) with lock-up ranges, and the
+  latest price disagreement per twin pair flagged by venue tradeability and
+  the tick/size floors. Read-only; decides nothing; caveats ship in the JSON
+  payload, not just the prose, so a machine consumer gets the same honesty
+  framing. 5 tests pin the honesty surface (candidates never proven, absent
+  measurement never a finding, untradeable never opportunity).
+- [x] **Nightly VACUUM in the backup job** (`deploy/atlas_backup.py`), only
+  after a snapshot is taken AND verified. The monitor's prune deletes rows but
+  SQLite keeps the pages — the file hit 1.05 GB at 76% free before the first
+  manual vacuum. 60s busy timeout; a locked database skips gracefully and
+  retries the next night.
+- [x] **7 stale `worktree-agent-*` branches deleted** (TODO said 3; there were
+  7). Verified first: 4 fully merged; the other 3 (core PCE / GDP / payrolls)
+  carry one stale commit each whose pinned test files are byte-identical on
+  main — dead duplicates, exactly as recorded below.
+- [x] `AGENTS.md` test count corrected (~523 -> ~595); `deploy/README.md`
+  bootstrap loop now includes `com.atlas.study` (it was installed out-of-band)
+  and the new `com.atlas.intel`; both documented in the Files section.
+
+- [ ] Show the divergence report to prospective users during phase-3
+  interviews (charter: day 61+, from 2026-10-18); collect what they would pay
+  for, not what they say is interesting.
+- [ ] The report's price-disagreement section will thin out as Global pairs
+  settle — watch that it keeps carrying tradeable-venue rows once the Sep
+  releases land.
 
 ## 2026-08-20 (b) — the live label loop was structurally dead
 

@@ -1,13 +1,13 @@
 # deploy/ — always-on runtime
 
-Atlas runs as four launchd agents that start at login and restart themselves on
+Atlas runs as six launchd agents that start at login and restart themselves on
 failure. Verified working from `/Users/ocorral/Atlas` on 2026-08-18.
 
 ## Install
 
 ```bash
 cp deploy/com.atlas.*.plist ~/Library/LaunchAgents/
-for l in com.atlas.api com.atlas.monitor com.atlas.healthcheck com.atlas.backup; do
+for l in com.atlas.api com.atlas.monitor com.atlas.healthcheck com.atlas.backup com.atlas.study com.atlas.intel; do
   launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/$l.plist
 done
 launchctl list | grep com.atlas   # third column 0 = healthy
@@ -28,9 +28,20 @@ reads the installed copy in `~/Library/LaunchAgents`, not the one in this repo.
   backup API (safe while the services hold the database open; a plain `cp` of a live
   SQLite file can capture a torn write). Verifies each snapshot with `quick_check`
   before rotating, keeps 3, and only rotates its own `atlas-auto-*` files so
-  hand-made checkpoints are never deleted. Labels are the irreplaceable asset:
+  hand-made checkpoints are never deleted. After a verified snapshot it also
+  `VACUUM`s the live database — the monitor's nightly prune deletes rows but
+  SQLite keeps the pages, so without this the file only grows (it hit 1.05 GB
+  with 76% free pages before the first manual vacuum on 2026-08-20). Labels are the irreplaceable asset:
   Kalshi prunes settled market detail after ~6 weeks, so a lost database cannot
   simply be re-harvested.
+- **`com.atlas.study.plist`** — Mondays 07:00, runs `atlas gaps study` to write the
+  weekly 90-day-study report into `data/study/`. Installed 2026-08-19 but only
+  added to the install loop above on 2026-08-20 — if `launchctl list` does not
+  show it, bootstrap it from the loop.
+- **`com.atlas.intel.plist`** — Mondays 07:15 (after the study report), runs
+  `atlas intel report` to write the weekly Contract Divergence Report into
+  `data/intel/` as markdown + JSON. Read-only over persisted evidence; this is
+  the contract-intelligence deliverable adopted 2026-08-20.
 - **`com.atlas.healthcheck.plist` + `atlas_healthcheck.py`** — a 60s liveness probe
   covering what `KeepAlive` cannot see: a process that is alive but wedged.
   Restarts the API when `/health` stops answering (after 2 consecutive misses, so a
