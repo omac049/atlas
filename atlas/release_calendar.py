@@ -63,6 +63,42 @@ def active_release_window(now: datetime) -> str | None:
     return None
 
 
+# How long before a release the machine must be held awake. macOS user agents
+# cannot WAKE a sleeping Mac (that needs a root `pmset` schedule) — they can
+# only stop an awake one from sleeping. Ten hours reaches back to the previous
+# evening for an 05:30 local jobs/CPI print, when the machine is realistically
+# still awake for the assertion to latch onto. The margin past WINDOW_AFTER
+# keeps the hold through the last burst scan.
+KEEP_AWAKE_BEFORE = timedelta(hours=10)
+KEEP_AWAKE_MARGIN = timedelta(minutes=10)
+
+
+def keep_awake_window(now: datetime) -> tuple[str, int] | None:
+    """(release name, seconds the machine must stay awake) or None.
+
+    Pure calendar arithmetic for deploy/atlas_awake.py, kept here so the burst
+    scans and the keep-awake hold can never disagree about what a release is.
+    The seconds count always runs to the END of that release's hold, so a
+    caffeinate assertion started mid-window still covers the remainder.
+    """
+    for name, release_at in SCHEDULED_RELEASES:
+        start = release_at - KEEP_AWAKE_BEFORE
+        end = release_at + WINDOW_AFTER + KEEP_AWAKE_MARGIN
+        if start <= now <= end:
+            return name, max(1, int((end - now).total_seconds()))
+    return None
+
+
+def next_keep_awake_start(now: datetime) -> datetime | None:
+    """When the next hold begins, or None when the calendar has run out."""
+    starts = sorted(
+        release_at - KEEP_AWAKE_BEFORE
+        for _, release_at in SCHEDULED_RELEASES
+        if release_at - KEEP_AWAKE_BEFORE > now
+    )
+    return starts[0] if starts else None
+
+
 def radar_delay_seconds(now: datetime, base_interval: int) -> tuple[int, str | None]:
     """(sleep seconds, active release name) for the monitor's radar pacing."""
     name = active_release_window(now)

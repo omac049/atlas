@@ -98,3 +98,39 @@ async def test_burst_aware_sleep_stays_quiet_outside_windows(monkeypatch):
     # quiet interval sleeps out in bounded slices with no extra scans
     assert sum(sleeps) == 150
     assert max(sleeps) <= 60
+
+
+def test_keep_awake_window_opens_the_evening_before_and_closes_after_the_burst():
+    """A 05:30-local print must be guarded from the previous evening: a user
+    agent cannot wake a sleeping Mac, only stop an awake one from sleeping,
+    so the hold has to latch while the machine is still realistically awake."""
+    from atlas.release_calendar import (
+        KEEP_AWAKE_BEFORE,
+        KEEP_AWAKE_MARGIN,
+        keep_awake_window,
+    )
+
+    name, release_at = SCHEDULED_RELEASES[0]
+    start = release_at - KEEP_AWAKE_BEFORE
+    end = release_at + WINDOW_AFTER + KEEP_AWAKE_MARGIN
+
+    assert keep_awake_window(start - timedelta(seconds=1)) is None
+    opened = keep_awake_window(start)
+    assert opened is not None and opened[0] == name
+    # The hold always runs to the END of the window, wherever it latches.
+    assert opened[1] == int((end - start).total_seconds())
+    mid = keep_awake_window(release_at)
+    assert mid is not None and mid[1] == int((end - release_at).total_seconds())
+    assert keep_awake_window(end + timedelta(seconds=1)) is None
+
+
+def test_next_keep_awake_start_reports_the_upcoming_hold_or_none():
+    from atlas.release_calendar import KEEP_AWAKE_BEFORE, next_keep_awake_start
+
+    _, release_at = SCHEDULED_RELEASES[0]
+    just_before = release_at - KEEP_AWAKE_BEFORE - timedelta(minutes=5)
+    assert next_keep_awake_start(just_before) == release_at - KEEP_AWAKE_BEFORE
+    # After the final scheduled release the calendar is exhausted, which the
+    # agent logs as "add next quarter" rather than sleeping forever.
+    _, last_release = SCHEDULED_RELEASES[-1]
+    assert next_keep_awake_start(last_release + timedelta(days=1)) is None

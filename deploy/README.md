@@ -1,13 +1,13 @@
 # deploy/ — always-on runtime
 
-Atlas runs as six launchd agents that start at login and restart themselves on
+Atlas runs as seven launchd agents that start at login and restart themselves on
 failure. Verified working from `/Users/ocorral/Atlas` on 2026-08-18.
 
 ## Install
 
 ```bash
 cp deploy/com.atlas.*.plist ~/Library/LaunchAgents/
-for l in com.atlas.api com.atlas.monitor com.atlas.healthcheck com.atlas.backup com.atlas.study com.atlas.intel; do
+for l in com.atlas.api com.atlas.monitor com.atlas.healthcheck com.atlas.backup com.atlas.study com.atlas.intel com.atlas.awake; do
   launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/$l.plist
 done
 launchctl list | grep com.atlas   # third column 0 = healthy
@@ -19,7 +19,13 @@ reads the installed copy in `~/Library/LaunchAgents`, not the one in this repo.
 
 ## Files
 
-- **`com.atlas.api.plist`** — uvicorn on port 8010. `KeepAlive` restarts it if it exits.
+- **`com.atlas.api.plist`** — uvicorn on port 8010, bound to `0.0.0.0` so the
+  dashboard is reachable from other devices on the local network (owner-accepted
+  decision, 2026-08-24). What that exposes: a read-only, unauthenticated research
+  API — paper-only flags, market evidence, no credentials, no order path, and no
+  write endpoints beyond the internal overview capture. Revisit before ever
+  carrying this plist to an untrusted network; reverting is deleting the two
+  `--host` lines and `kickstart`-ing the agent. `KeepAlive` restarts it if it exits.
 - **`com.atlas.monitor.plist`** — `pairs watch --live`. One instance only, per the
   one-monitor rule. Sets `PYTHONUNBUFFERED=1`, which is required, not optional:
   without it Python block-buffers stdout to a file and the log lags reality by
@@ -42,6 +48,17 @@ reads the installed copy in `~/Library/LaunchAgents`, not the one in this repo.
   `atlas intel report` to write the weekly Contract Divergence Report into
   `data/intel/` as markdown + JSON. Read-only over persisted evidence; this is
   the contract-intelligence deliverable adopted 2026-08-20.
+- **`com.atlas.awake.plist` + `atlas_awake.py`** — holds a `caffeinate -si`
+  assertion from ten hours before each scheduled release (the evening before an
+  05:30 jobs/CPI print) through the end of its burst window, so the radar's
+  30-second sampling is not slept through. Honest limits: a user agent cannot
+  WAKE a sleeping Mac and cannot override lid-close sleep — the lid must be open
+  (or an external display attached), AC power strongly recommended. The stronger
+  alternative is a one-time root schedule, e.g.
+  `sudo pmset repeat wakeorpoweron MTWRFSU 05:15:00`, which wakes the machine
+  regardless; this agent is the no-sudo fallback and the two compose safely.
+  Release times come from `atlas/release_calendar.py` — prune/extend that table
+  and the holds follow.
 - **`com.atlas.healthcheck.plist` + `atlas_healthcheck.py`** — a 60s liveness probe
   covering what `KeepAlive` cannot see: a process that is alive but wedged.
   Restarts the API when `/health` stops answering (after 2 consecutive misses, so a
