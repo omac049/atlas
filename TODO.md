@@ -1,12 +1,36 @@
 # Atlas continuation checklist
 
-Last updated: 2026-08-24 (**Settlement Clarity Score shipped**: `atlas/clarity.py` grades one contract's fine print A–F deterministically, `atlas clarity grade|scan` plus a divergence-report section — the two per-venue means are not comparable until Kalshi event-source enrichment lands; also this day, the release-window keep-awake agent — no-sudo caffeinate holds from the evening before each print — and the API 0.0.0.0 LAN bind accepted and recorded as an owner decision; 618 tests green, lint clean)
+Last updated: 2026-08-25 (**watchdog restart loop found and fixed**: after an 18h lid-closed gap the healthcheck kickstarted the monitor every 60s — 170 consecutive kills, zero completed cycles — because staleness was measured only from log mtime; silence is now measured from max(mtime, last kickstart), and the monitor prints a startup line before any network work; also discovered clarity v1.1 missed the #5 merge — recovery PR #6)
 
 Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
 Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, bounded retry metadata; 450 tests green; 72 trusted labels)
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
+
+## 2026-08-25 — the watchdog ate the monitor
+
+- [x] **Restart loop, observed live and fixed.** The Mac slept 18 hours; on wake
+  the monitor log was 65,000s stale, so `atlas_healthcheck.py` kickstarted the
+  monitor — and 60s later the mtime was unchanged (a fresh monitor spends
+  minutes in venue sweeps before its first write), so it killed it again.
+  **170 consecutive kickstarts, zero completed cycles**, collection dead from
+  11:09 to 12:0x. This exact loop would have destroyed the Sep 4 release-window
+  collection: any sleep gap ending near a print would kill the radar through
+  the whole burst.
+- [x] **Fix (two layers):** staleness is now measured from
+  `max(log mtime, last kickstart)` — a kickstart restarts the clock, and a
+  genuinely wedged monitor still dies one grace window later. And `watch_pairs`
+  prints `monitor_started:` before any network work, so a started monitor is
+  distinguishable from a wedged one from its first second. The plist's
+  `PYTHONUNBUFFERED` was already present and was not the issue — 60s of life
+  was simply shorter than the first cycle's first print.
+- [x] **Clarity v1.1 missed the #5 merge.** PR #5 merged at 21:09Z; commit
+  `ef969e7` (supersession, series-source evidence, one-deduction rule) landed
+  on the branch minutes later — so main shipped v1.0 with the phantom findings
+  the hand-check disproved. Recovery PR #6 carries the orphaned commit
+  unchanged. Lesson: after any "fix pushed to open PR" step, verify the merge
+  actually contains the fix commit before moving on.
 
 ## 2026-08-24 (c) — the Settlement Clarity Score
 
