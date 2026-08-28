@@ -50,6 +50,7 @@ the point: it is what makes the grade informative catalog-wide.
 
 from __future__ import annotations
 
+import re
 from collections import Counter, defaultdict
 from datetime import UTC, datetime
 from decimal import Decimal
@@ -59,11 +60,27 @@ from atlas.policy_evidence import parse_market_policy_evidence
 from atlas.settlement import assess_settlement_guarantee
 from atlas.settlement_timing import detect_settlement_timing_asymmetry
 
-SCORING_VERSION = "1.0"
+SCORING_VERSION = "1.1"
 SCAN_KIND = "SETTLEMENT_CLARITY_SCAN"
 
 NO_RULES_TEXT = "NO_RULES_TEXT"
 DISCRETIONARY_FAIR_PRICE_SETTLEMENT = "DISCRETIONARY_FAIR_PRICE_SETTLEMENT"
+
+# The frozen family parsers only recognize the wording of the families they
+# were written for, so on the wider catalog they report a branch as missing
+# when the venue plainly published it ("...then the market resolves to Yes").
+# A 2026-08-24 hand-check of the worst-graded contracts confirmed the phantom:
+# a platinum-price contract with an explicit Yes-branch was charged
+# MISSING_AFFIRMATIVE_BRANCH. Clarity therefore re-checks the generic yes/no
+# structure textually and SUPERSEDES a finding the text contradicts — shown in
+# the output as superseded, never silently dropped. This widens the parser; it
+# never softens a band.
+_AFFIRMATIVE_BRANCH = re.compile(
+    r"(?:resolves?|settles?|will\s+(?:resolve|settle))\s+to\s+['\"]?yes\b", re.IGNORECASE
+)
+_NEGATIVE_BRANCH = re.compile(
+    r"(?:resolves?|settles?|will\s+(?:resolve|settle))\s+to\s+['\"]?no\b", re.IGNORECASE
+)
 
 # Worst-to-best, so a cap is `max(grade, cap)` on this ordering.
 GRADES = ("A", "B", "C", "D", "F")
@@ -221,12 +238,16 @@ _TENTH = Decimal("0.1")
 # cross-venue comparison, and one of them is not currently fair — saying so is
 # cheaper than being caught by a reader who checks.
 SCAN_LIMITS: tuple[str, ...] = (
-    ("grades only the text carried on the canonical Market object from each "
-    "venue's catalog sweep; nothing is fetched from a second endpoint and "
-    "nothing is inferred from titles or categories"),
-    ("Kalshi publishes settlement sources on the EVENT record, which this sweep "
-    "does not read, so its MISSING_AUTHORITATIVE_SOURCE findings overstate the "
-    "gap and its mean score is NOT comparable to Polymarket US's"),
+    ("grades the text on the canonical Market object plus, for Kalshi, the "
+    "settlement sources its /series endpoint publishes (fetched by the scan and "
+    "passed in as evidence); nothing is inferred from titles or categories"),
+    ("a series-source fetch that fails leaves the source finding standing, so "
+    "an outage can only make grades stricter, never kinder; per-scan fetch "
+    "counts are recorded under scope"),
+    ("cross-venue means are still not a like-for-like comparison: Kalshi's full "
+    "contract terms live in per-series PDFs (contract_terms_url) that no sweep "
+    "reads, so its remaining cancellation/revision findings may overstate the "
+    "gap relative to Polymarket US, whose full text is inline on the market"),
     ("a grade measures published text, not a venue's settlement record: a "
     "vaguely worded contract that always settles correctly still grades badly"),
     ("category means only separate contracts whose venue publishes a category "
@@ -234,11 +255,22 @@ SCAN_LIMITS: tuple[str, ...] = (
 )
 
 
-def clarity_score(market: Market, *, graded_at: datetime | None = None) -> dict:
+def clarity_score(
+    market: Market,
+    *,
+    graded_at: datetime | None = None,
+    series_settlement_sources: list[str] | None = None,
+) -> dict:
     """Grade one market's published settlement text. Pure, deterministic, read-only.
 
     ``graded_at`` may be supplied so a report is byte-reproducible across runs;
-    it is the only value in the output that is not a function of the market.
+    it is the only value in the output that is not a function of the inputs.
+
+    ``series_settlement_sources`` is venue-published evidence the CALLER fetched
+    from a level the market record does not carry — Kalshi names its settlement
+    sources on the /series endpoint, not the market. When supplied and
+    non-empty it supersedes MISSING_AUTHORITATIVE_SOURCE: the venue did publish
+    the source, one endpoint up. Nothing is fetched here; purity holds.
     """
     stamp = (graded_at or datetime.now(UTC)).isoformat()
     header = {
@@ -266,9 +298,13 @@ def clarity_score(market: Market, *, graded_at: datetime | None = None) -> dict:
     ]
     codes = list(dict.fromkeys(_CANONICAL_CODES.get(code, code) for code in raw_codes))
 
+    superseded = _supersessions(market, codes, series_settlement_sources or [])
+
     score = 100
     findings = []
     for code in codes:
+        if code in superseded:
+            continue
         if code == DISCRETIONARY_FAIR_PRICE_SETTLEMENT:
             # A ceiling, not a deduction: see the module docstring.
             findings.append(_finding(code, 0))
@@ -292,9 +328,76 @@ def clarity_score(market: Market, *, graded_at: datetime | None = None) -> dict:
         "score": score,
         "guarantee_status": status,
         "findings": findings,
+        # Findings the assessors raised that stronger venue-published evidence
+        # contradicts. Shown, never silently dropped: the reader sees both what
+        # the narrow parser said and exactly why it was overruled.
+        "superseded": [
+            {"code": code, "reason": reason} for code, reason in sorted(superseded.items())
+        ],
         "flags": _flags(market),
         "graded_at": stamp,
     }
+
+
+def _supersessions(
+    market: Market, codes: list[str], series_sources: list[str]
+) -> dict[str, str]:
+    """Findings overruled by venue-published evidence, with the reason each fell.
+
+    Three deterministic rules, all of which can only REMOVE a charge — none can
+    add one, so a failed evidence fetch degrades to the stricter grade:
+
+    1. Series-level settlement sources supersede MISSING_AUTHORITATIVE_SOURCE.
+    2. An explicit textual yes-branch ("...resolves to Yes") supersedes
+       MISSING_AFFIRMATIVE_BRANCH; the same for the no-branch. The frozen
+       family parsers only know their families' wording; the generic structure
+       is re-checked here so the wider catalog is not charged for text it
+       plainly published.
+    3. When BOTH branches are textually present, UNPARSED_SETTLEMENT_POLICY is
+       superseded too. When the policy genuinely did not parse, the branch
+       codes are suppressed instead — they restate the same defect, and one
+       unparseable clause must cost one deduction, not four.
+    """
+    superseded: dict[str, str] = {}
+    if "MISSING_AUTHORITATIVE_SOURCE" in codes and series_sources:
+        names = ", ".join(sorted(series_sources))
+        superseded["MISSING_AUTHORITATIVE_SOURCE"] = (
+            f"the venue publishes settlement sources at series level: {names}"
+        )
+    text = " ".join(
+        str(part)
+        for part in (
+            market.raw_rules_text,
+            market.resolution_text,
+            market.raw_market_json.get("rules_primary"),
+            market.raw_market_json.get("rules_secondary"),
+        )
+        if part
+    )
+    has_yes = bool(_AFFIRMATIVE_BRANCH.search(text))
+    has_no = bool(_NEGATIVE_BRANCH.search(text))
+    if "MISSING_AFFIRMATIVE_BRANCH" in codes and has_yes:
+        superseded["MISSING_AFFIRMATIVE_BRANCH"] = (
+            "the published text states an explicit Yes-branch"
+        )
+    if "MISSING_NEGATIVE_BRANCH" in codes and has_no:
+        superseded["MISSING_NEGATIVE_BRANCH"] = (
+            "the published text states an explicit No-branch"
+        )
+    if "UNPARSED_SETTLEMENT_POLICY" in codes:
+        if has_yes and has_no:
+            superseded["UNPARSED_SETTLEMENT_POLICY"] = (
+                "both payout branches are textually explicit; the family parser "
+                "is narrower than the published text"
+            )
+        else:
+            for consequence in ("MISSING_AFFIRMATIVE_BRANCH", "MISSING_NEGATIVE_BRANCH"):
+                if consequence in codes and consequence not in superseded:
+                    superseded[consequence] = (
+                        "restates UNPARSED_SETTLEMENT_POLICY, which is already charged; "
+                        "one unparseable clause costs one deduction"
+                    )
+    return superseded
 
 
 def flag_prose(code: str) -> str:
@@ -309,6 +412,7 @@ def clarity_scan_report(
     worst_limit: int = 20,
     degraded_venues: list[str] | None = None,
     scope: dict | None = None,
+    series_sources: dict[str, list[str]] | None = None,
 ) -> dict:
     """Aggregate a bounded catalog sweep into the dated scan artifact.
 
@@ -319,7 +423,15 @@ def clarity_scan_report(
     contracts, nor a truncated sweep read as the whole catalog.
     """
     now = generated_at or datetime.now(UTC)
-    grades = [clarity_score(market, graded_at=now) for market in markets]
+    sources = series_sources or {}
+    grades = [
+        clarity_score(
+            market,
+            graded_at=now,
+            series_settlement_sources=sources.get(market.market_id),
+        )
+        for market in markets
+    ]
     rows = [
         {
             "market_id": grade["market_id"],
@@ -328,6 +440,7 @@ def clarity_scan_report(
             "grade": grade["grade"],
             "score": grade["score"],
             "findings": [finding["code"] for finding in grade["findings"]],
+            "superseded": [entry["code"] for entry in grade["superseded"]],
         }
         for grade in grades
     ]
@@ -397,8 +510,8 @@ def render_scan_summary(report: dict) -> list[str]:
         f"worst={aggregates['worst'][0]['grade'] if aggregates['worst'] else '—'}"
     )
     lines.append(
-        "clarity_scan_caveat=per-venue means are not cross-venue comparable "
-        "(see limits[] in the artifact)"
+        "clarity_scan_caveat=cross-venue means are not like-for-like: Kalshi's "
+        "full terms live in per-series PDFs no sweep reads (see limits[])"
     )
     return lines
 

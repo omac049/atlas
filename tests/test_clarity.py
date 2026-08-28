@@ -143,8 +143,12 @@ def test_the_same_defect_under_two_code_names_is_charged_once():
     codes = _codes(grade)
     assert codes.count("MISSING_AUTHORITATIVE_SOURCE") == 1
     assert "MISSING_RESOLUTION_SOURCE" not in codes
-    # Deductions past 100 clamp rather than going negative.
-    assert grade["score"] == 0
+    # One unparseable clause is ONE deduction: the branch codes that restate it
+    # are superseded (shown, not charged), so this text no longer floors to 0.
+    superseded = {entry["code"] for entry in grade["superseded"]}
+    assert "MISSING_AFFIRMATIVE_BRANCH" in superseded
+    assert "MISSING_NEGATIVE_BRANCH" in superseded
+    assert "UNPARSED_SETTLEMENT_POLICY" in _codes(grade)
     assert grade["grade"] == "F"
 
 
@@ -207,10 +211,10 @@ def test_scan_report_aggregates_per_venue_and_never_hides_a_missing_venue():
     ]
     assert report["degraded_venues"] == ["polymarket_global"]
     assert report["scope"]["truncated_venues"] == ["kalshi"]
-    # The per-venue means invite a cross-venue comparison the sweep cannot yet
-    # support (Kalshi publishes its sources one endpoint up), so the artifact
-    # must carry that limit with the numbers, not somewhere else.
-    assert any("NOT comparable" in limit for limit in report["limits"])
+    # The scan reads Kalshi's series-level sources as evidence; the limit the
+    # artifact must now carry is the failure direction — a fetch outage leaves
+    # findings standing, so grades can only get stricter, never kinder.
+    assert any("stricter, never kinder" in limit for limit in report["limits"])
 
 
 def test_worst_list_shows_distinct_wordings_not_one_ladder_ten_times():
@@ -327,3 +331,61 @@ def test_the_approval_pipeline_never_imports_the_grader():
         [sys.executable, "-c", probe], capture_output=True, text=True, check=True
     )
     assert result.stdout.strip() == "False"
+
+
+
+def test_series_level_sources_supersede_the_missing_source_finding():
+    """Kalshi names its settlement sources on /series, not the market record.
+
+    Venue-published evidence one endpoint up is still venue-published evidence.
+    Passed in by the caller so the scorer stays pure; and the supersession names
+    the sources so a reader can check the claim.
+    """
+    market = _market("If X happens, the market resolves to Yes.", source="unknown")
+    without = clarity_score(market)
+    assert "MISSING_AUTHORITATIVE_SOURCE" in _codes(without)
+    graded = clarity_score(market, series_settlement_sources=["Federal Reserve"])
+    assert "MISSING_AUTHORITATIVE_SOURCE" not in _codes(graded)
+    entry = next(
+        e for e in graded["superseded"] if e["code"] == "MISSING_AUTHORITATIVE_SOURCE"
+    )
+    assert "Federal Reserve" in entry["reason"]
+    assert graded["score"] == without["score"] + 20
+
+
+def test_an_explicit_yes_branch_cannot_be_charged_as_missing():
+    """Hand-checked live 2026-08-24: a platinum contract stating "...then the
+    market resolves to Yes" was charged MISSING_AFFIRMATIVE_BRANCH by the
+    family parsers, which only know their own families' wording. Clarity
+    re-checks the generic structure textually and overrules — visibly."""
+    market = _market(
+        "If the close price is above 1884.49 USD, then the market resolves to Yes.",
+        source="unknown",
+    )
+    grade = clarity_score(market)
+    assert "MISSING_AFFIRMATIVE_BRANCH" not in _codes(grade)
+    superseded = {e["code"]: e["reason"] for e in grade["superseded"]}
+    if "MISSING_AFFIRMATIVE_BRANCH" in superseded:
+        assert "Yes-branch" in superseded["MISSING_AFFIRMATIVE_BRANCH"]
+
+
+def test_both_branches_textually_present_supersede_the_unparsed_charge():
+    market = _market(
+        "If X, the market resolves to Yes. Otherwise, the market resolves to No.",
+        source="unknown",
+    )
+    grade = clarity_score(market)
+    codes = _codes(grade)
+    assert "UNPARSED_SETTLEMENT_POLICY" not in codes
+    assert "MISSING_AFFIRMATIVE_BRANCH" not in codes
+    assert "MISSING_NEGATIVE_BRANCH" not in codes
+
+
+def test_supersession_only_ever_removes_charges_never_adds_them():
+    """A failed evidence fetch degrades toward the STRICTER grade: passing no
+    series sources, or sources for the wrong market, changes nothing."""
+    market = _market("Something happens eventually.", source="unknown")
+    baseline = clarity_score(market)
+    with_empty = clarity_score(market, series_settlement_sources=[])
+    assert with_empty["score"] == baseline["score"]
+    assert with_empty["findings"] == baseline["findings"]
