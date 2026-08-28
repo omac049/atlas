@@ -1524,12 +1524,64 @@ def _clarity_venue(name: str, live: bool):
     return KalshiVenue(fixture=not live) if name == "kalshi" else PolymarketUSVenue(fixture=not live)
 
 
+# A scan of ~2,000 Kalshi markets spans a few hundred series; each is fetched
+# once, and the cap bounds a pathological catalog. When the cap binds it is
+# recorded in scope — an unfetched series only means the source finding stands.
+CLARITY_MAX_SERIES_FETCHES = 400
+
+
+def _kalshi_series_ticker(market: Market) -> str:
+    """The series a Kalshi market belongs to, from its ticker prefix.
+
+    `KXFEDDECISION-26SEP-H0` -> `KXFEDDECISION`. The market payload carries no
+    series field; the prefix convention is venue-wide (verified live 2026-08-24
+    across macro, metals, and sports series).
+    """
+    return market.venue_market_id.split("-")[0]
+
+
+async def _kalshi_series_evidence(
+    venue: KalshiVenue, markets: list[Market], cache: dict[str, list[str]]
+) -> dict[str, list[str]]:
+    """market_id -> series-level settlement source names, best effort.
+
+    Failures leave a market out of the map entirely, which the grader treats as
+    no evidence — findings stand, so an outage can only make grades stricter.
+    """
+    evidence: dict[str, list[str]] = {}
+    failures = 0
+    for market in markets:
+        ticker = _kalshi_series_ticker(market)
+        if ticker not in cache:
+            if len(cache) >= CLARITY_MAX_SERIES_FETCHES:
+                continue
+            try:
+                cache[ticker] = await venue.get_series_settlement_sources(ticker)
+            except (httpx.HTTPError, ValueError):
+                failures += 1
+                continue
+        if cache[ticker]:
+            evidence[market.market_id] = cache[ticker]
+    if failures:
+        print(f"clarity_series_fetch_failures={failures} findings_stand=true")
+    return evidence
+
+
 async def clarity_grade(venue_name: str, market_id: str, live: bool = True) -> None:
     """Grade one market's published settlement text. Read-only, decides nothing."""
     from atlas.clarity import clarity_score, flag_prose
 
-    market = await _clarity_venue(venue_name, live).get_market(market_id)
-    grade = clarity_score(market)
+    venue = _clarity_venue(venue_name, live)
+    market = await venue.get_market(market_id)
+    series_sources: list[str] | None = None
+    if venue_name == "kalshi" and live:
+        try:
+            series_sources = await venue.get_series_settlement_sources(
+                _kalshi_series_ticker(market)
+            )
+        except (httpx.HTTPError, ValueError):
+            series_sources = None  # evidence missing -> the stricter grade stands
+    grade = clarity_score(market, series_settlement_sources=series_sources)
     print(f"{grade['grade']} ({grade['score']}/100) {grade['market_id']}")
     print(f"  {grade['title']}")
     print(f"  settlement_guarantee={grade['guarantee_status']}")
@@ -1538,6 +1590,8 @@ async def clarity_grade(venue_name: str, market_id: str, live: bool = True) -> N
         cost = f"-{finding['points']}" if finding["points"] else "cap"
         print(f"  {cost} {finding['code']}: {finding['prose']}")
         print(f"      fix: {finding['fix']}")
+    for entry in grade["superseded"]:
+        print(f"  overruled {entry['code']}: {entry['reason']}")
     for flag in grade["flags"]:
         print(f"  flag {flag}: {flag_prose(flag)} (disclosed, not scored)")
     if not grade["findings"]:
@@ -1556,6 +1610,8 @@ async def clarity_scan(live: bool, max_markets: int = CLARITY_MAX_MARKETS_DEFAUL
     markets: list[Market] = []
     degraded: list[str] = []
     truncated: list[str] = []
+    series_sources: dict[str, list[str]] = {}
+    series_cache: dict[str, list[str]] = {}
     for venue_name in CLARITY_VENUES:
         venue = _clarity_venue(venue_name, live)
         try:
@@ -1567,16 +1623,23 @@ async def clarity_scan(live: bool, max_markets: int = CLARITY_MAX_MARKETS_DEFAUL
         if max_markets and len(fetched) > max_markets:
             truncated.append(venue_name)
             fetched = fetched[:max_markets]
+        if venue_name == "kalshi" and live:
+            series_sources.update(
+                await _kalshi_series_evidence(venue, fetched, series_cache)
+            )
         markets.extend(fetched)
     report = clarity_scan_report(
         markets,
         degraded_venues=degraded,
+        series_sources=series_sources,
         scope={
             "venues": list(CLARITY_VENUES),
             "catalog": "open markets via list_markets()",
             "live": bool(live),
             "max_markets_per_venue": max_markets or None,
             "truncated_venues": truncated,
+            "kalshi_series_fetched": len(series_cache),
+            "kalshi_series_fetch_cap": CLARITY_MAX_SERIES_FETCHES,
         },
     )
     for line in render_scan_summary(report):

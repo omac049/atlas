@@ -261,6 +261,29 @@ class KalshiVenue(PredictionVenue):
         market.raw_market_json["event_settlement_source"] = source
         return market
 
+    async def get_series_settlement_sources(self, series_ticker: str) -> list[str]:
+        """Settlement source names the venue publishes on its /series record.
+
+        Kalshi names its authoritative sources one endpoint above the market
+        (the market record carries none), so the clarity grader needs this as
+        caller-supplied evidence. Read-only; a 404 (unknown or delisted series)
+        is an empty answer, not an error.
+        """
+        if self.fixture:
+            return []
+        try:
+            payload = await self._get(f"/series/{series_ticker}")
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code == 404:
+                return []
+            raise
+        series = payload.get("series", {}) if isinstance(payload, dict) else {}
+        return [
+            str(source.get("name"))
+            for source in series.get("settlement_sources") or []
+            if source.get("name")
+        ]
+
     async def get_orderbook(self, market_id: str) -> OrderBook:
         if self.fixture:
             key = market_id if market_id.startswith("kalshi:") else f"kalshi:{market_id}"
