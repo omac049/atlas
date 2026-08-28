@@ -1452,6 +1452,81 @@ async def gaps_scan(live: bool) -> None:
     )
 
 
+async def gaps_capacity(limit: int = 12) -> None:
+    """Walk the live books of tradeable twin pairs and report real capacity.
+
+    Every recorded gap is a TOP-OF-BOOK number: one price per venue and
+    whatever size rests there. This pass fetches the actual ladders and walks
+    them, charging each contract its own rung and fees, so the answer is
+    dollars-you-could-deploy rather than cents-per-contract on unknown size.
+
+    Read-only and bounded: two order-book requests per pair, capped by
+    ``limit``. It records nothing — the 90-day study's observation stream is
+    frozen for measurement, so capacity is measured on demand, not folded
+    into the recorded corpus mid-flight.
+    """
+    from atlas.capacity import best_capacity
+    from atlas.gap_radar import match_twin_shapes, polymarket_leg_is_tradeable
+
+    kalshi = KalshiVenue(fixture=False)
+    pmus = PolymarketUSVenue(fixture=False)
+    kalshi_markets = await kalshi.list_open_series_markets(GAP_RADAR_KALSHI_SERIES_TICKERS)
+    pmus_markets = await pmus.list_open_category_markets(GAP_RADAR_PMUS_CATEGORIES)
+    pairs = [
+        pair
+        for pair in match_twin_shapes(kalshi_markets, pmus_markets)
+        if polymarket_leg_is_tradeable(pair["polymarket_market"])
+    ][:limit]
+    print(f"gaps_capacity: paper_only=true tradeable_pairs={len(pairs)}")
+    total = Decimal(0)
+    priced = 0
+    for pair in pairs:
+        kalshi_market = pair["kalshi_market"]
+        polymarket_market = pair["polymarket_market"]
+        try:
+            kalshi_book = await kalshi.get_orderbook(kalshi_market.venue_market_id)
+            polymarket_book = await pmus.get_orderbook(polymarket_market.venue_market_id)
+        except (httpx.HTTPError, OSError, ValueError) as exc:
+            print(f"  {kalshi_market.venue_market_id}: book_fetch_failed={type(exc).__name__}")
+            continue
+        directions = tuple(
+            basket["legs"]
+            for basket in _capacity_directions(pair["shape"])
+        )
+        result = best_capacity(
+            kalshi_book,
+            polymarket_book,
+            directions,
+            polymarket_market.raw_market_json,
+        )
+        if not result.get("supported"):
+            print(f"  {kalshi_market.venue_market_id}: no_profitable_rung")
+            continue
+        best = result["best"]
+        priced += 1
+        total += Decimal(best["total_profit_usd"])
+        print(
+            f"  {kalshi_market.venue_market_id}: {best['legs']} "
+            f"contracts={best['profitable_contracts']} "
+            f"top_of_book={best['top_of_book_contracts']} "
+            f"levels={best['levels_consumed']} stop={best['stop_reason']} "
+            f"profit_usd={best['total_profit_usd']}"
+        )
+    print(
+        f"gaps_capacity_total: pairs_with_capacity={priced} "
+        f"deployable_profit_usd={total} (top-of-book snapshot, no orders placed)"
+    )
+
+
+def _capacity_directions(shape: str) -> list[dict]:
+    """The basket directions a shape admits, mirroring gap_radar._baskets."""
+    from atlas.gap_radar import INVERSE_SHAPE
+
+    if shape == INVERSE_SHAPE:
+        return [{"legs": "kalshi_yes+polymarket_yes"}, {"legs": "kalshi_no+polymarket_no"}]
+    return [{"legs": "kalshi_yes+polymarket_no"}, {"legs": "kalshi_no+polymarket_yes"}]
+
+
 async def gaps_status() -> None:
     from atlas.gap_radar import paper_bankroll_summary
 
@@ -1730,6 +1805,11 @@ def main() -> None:
     gaps_sub = gaps.add_subparsers(dest="action", required=True)
     gaps_scan_parser = gaps_sub.add_parser("scan")
     gaps_scan_parser.add_argument("--live", action="store_true")
+    gaps_capacity_parser = gaps_sub.add_parser(
+        "capacity",
+        help="walk live books of tradeable pairs and report deployable capacity",
+    )
+    gaps_capacity_parser.add_argument("--limit", type=int, default=12)
     gaps_study_parser = gaps_sub.add_parser(
         "study", help="90-day study report (docs/NINETY_DAY_STUDY.md)"
     )
@@ -1913,6 +1993,8 @@ def main() -> None:
         asyncio.run(gaps_scan(args.live))
     elif args.command == "gaps" and args.action == "study":
         asyncio.run(gaps_study(write=not args.no_write))
+    elif args.command == "gaps" and args.action == "capacity":
+        asyncio.run(gaps_capacity(limit=args.limit))
     elif args.command == "intel" and args.action == "report":
         asyncio.run(intel_report(write=not args.no_write))
     elif args.command == "clarity" and args.action == "grade":
