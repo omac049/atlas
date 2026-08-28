@@ -74,6 +74,19 @@ CREATE TABLE IF NOT EXISTS shadow_observations (
 CREATE TABLE IF NOT EXISTS gap_observations (
   observation_id TEXT PRIMARY KEY, created_at TEXT NOT NULL, payload_json TEXT NOT NULL
 );
+-- Capacity samples live OUTSIDE gap_observations on purpose. The 90-day
+-- study's observation stream is frozen for measurement; folding a new field
+-- into it mid-flight would break the week-over-week comparison the study
+-- exists to make. These rows are a separate artifact, joined by pair and time
+-- only when a report asks for them.
+CREATE TABLE IF NOT EXISTS capacity_samples (
+  sample_id TEXT PRIMARY KEY, captured_at TEXT NOT NULL,
+  release_window TEXT, kalshi_market_id TEXT NOT NULL,
+  polymarket_market_id TEXT NOT NULL, event_subject TEXT,
+  profitable_contracts REAL, total_profit_usd REAL,
+  top_of_book_contracts REAL, payload_json TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_capacity_window ON capacity_samples(release_window, captured_at);
 CREATE TABLE IF NOT EXISTS agent_runs (
   run_id INTEGER PRIMARY KEY AUTOINCREMENT, created_at TEXT NOT NULL, payload_json TEXT NOT NULL
 );
@@ -1093,6 +1106,64 @@ class AtlasStore:
                 ),
             )
             await db.commit()
+
+    async def save_capacity_sample(self, sample: dict[str, object]) -> None:
+        """Record one ladder-walk measurement for one pair at one moment."""
+        await self.initialize()
+        async with aiosqlite.connect(self.path) as db:
+            await db.execute(
+                """INSERT OR REPLACE INTO capacity_samples
+                   (sample_id, captured_at, release_window, kalshi_market_id,
+                    polymarket_market_id, event_subject, profitable_contracts,
+                    total_profit_usd, top_of_book_contracts, payload_json)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    sample["sample_id"],
+                    sample["captured_at"],
+                    sample.get("release_window"),
+                    sample["kalshi_market_id"],
+                    sample["polymarket_market_id"],
+                    sample.get("event_subject"),
+                    _as_float(sample.get("profitable_contracts")),
+                    _as_float(sample.get("total_profit_usd")),
+                    _as_float(sample.get("top_of_book_contracts")),
+                    json.dumps(sample),
+                ),
+            )
+            await db.commit()
+
+    async def capacity_window_summary(self) -> dict[str, object]:
+        """Peak and typical deployable capacity, split by release window.
+
+        The quiet baseline is the ``release_window IS NULL`` bucket, so a
+        release peak is always read against the calm market that produced the
+        study's $2.88 median rather than against nothing.
+        """
+        await self.initialize()
+        async with aiosqlite.connect(self.path) as db:
+            db.row_factory = aiosqlite.Row
+            rows = await (
+                await db.execute(
+                    """SELECT COALESCE(release_window, '_quiet') AS window_name,
+                              COUNT(*) AS samples,
+                              SUM(CASE WHEN total_profit_usd > 0 THEN 1 ELSE 0 END) AS with_capacity,
+                              MAX(total_profit_usd) AS max_profit_usd,
+                              MAX(profitable_contracts) AS max_contracts
+                       FROM capacity_samples GROUP BY window_name ORDER BY window_name"""
+                )
+            ).fetchall()
+        return {
+            "windows": [
+                {
+                    "window": row["window_name"],
+                    "samples": row["samples"],
+                    "samples_with_capacity": row["with_capacity"],
+                    "max_profit_usd": row["max_profit_usd"],
+                    "max_profitable_contracts": row["max_contracts"],
+                }
+                for row in rows
+            ]
+        }
 
     async def recent_gap_observations(self, limit: int = 20) -> list[dict[str, object]]:
         await self.initialize()

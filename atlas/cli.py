@@ -4,6 +4,7 @@ import functools
 import json
 import re
 import sqlite3
+import uuid
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -828,6 +829,13 @@ async def _burst_aware_sleep(interval: int) -> None:
         if not in_burst:
             print(f"release_burst: window={release} radar_interval={delay}s")
             in_burst = True
+            # One capacity walk per window entry, not per burst scan: the
+            # ladder costs two book requests per pair, and the question is
+            # whether depth shows up at all, not its second-by-second shape.
+            try:
+                await record_capacity_samples(release_window=release)
+            except (httpx.HTTPError, OSError, ValueError) as exc:
+                print(f"capacity_record_failed={type(exc).__name__} window={release}")
         await asyncio.sleep(delay)
         slept += delay
         try:
@@ -1452,6 +1460,98 @@ async def gaps_scan(live: bool) -> None:
     )
 
 
+async def record_capacity_samples(
+    limit: int = 8, release_window: str | None = None
+) -> dict[str, object]:
+    """Walk live books for tradeable pairs and PERSIST what was deployable.
+
+    The study's capacity numbers so far were all taken on a quiet market,
+    where a gap is whatever dust someone left at a good price. This records
+    the same ladder walk with the active release window stamped on it, so a
+    CPI or jobs print can be compared against the calm baseline instead of
+    argued about.
+
+    Read-only against both venues (two book requests per pair, capped by
+    ``limit``) and written to ``capacity_samples`` — never into the frozen
+    observation stream. Returns a summary; never raises on a venue failure.
+    """
+    from atlas.capacity import best_capacity
+    from atlas.gap_radar import match_twin_shapes, polymarket_leg_is_tradeable
+
+    kalshi = KalshiVenue(fixture=False)
+    pmus = PolymarketUSVenue(fixture=False)
+    try:
+        kalshi_markets = await kalshi.list_open_series_markets(GAP_RADAR_KALSHI_SERIES_TICKERS)
+        pmus_markets = await pmus.list_open_category_markets(GAP_RADAR_PMUS_CATEGORIES)
+    except (httpx.HTTPError, OSError, ValueError) as exc:
+        print(f"capacity_catalog_failed={type(exc).__name__} window={release_window}")
+        return {"samples": 0, "with_capacity": 0, "release_window": release_window}
+    pairs = [
+        pair
+        for pair in match_twin_shapes(kalshi_markets, pmus_markets)
+        if polymarket_leg_is_tradeable(pair["polymarket_market"])
+    ][:limit]
+    store = AtlasStore()
+    captured_at = datetime.now(UTC).isoformat()
+    samples = 0
+    with_capacity = 0
+    best_usd = Decimal(0)
+    for pair in pairs:
+        kalshi_market = pair["kalshi_market"]
+        polymarket_market = pair["polymarket_market"]
+        try:
+            kalshi_book = await kalshi.get_orderbook(kalshi_market.venue_market_id)
+            polymarket_book = await pmus.get_orderbook(polymarket_market.venue_market_id)
+        except (httpx.HTTPError, OSError, ValueError):
+            continue
+        result = best_capacity(
+            kalshi_book,
+            polymarket_book,
+            _capacity_direction_legs(pair["shape"]),
+            polymarket_market.raw_market_json,
+        )
+        best = result.get("best") if result.get("supported") else None
+        profit = Decimal(best["total_profit_usd"]) if best else Decimal(0)
+        if profit > 0:
+            with_capacity += 1
+            best_usd = max(best_usd, profit)
+        samples += 1
+        await store.save_capacity_sample(
+            {
+                "sample_id": str(uuid.uuid4()),
+                "captured_at": captured_at,
+                "release_window": release_window,
+                "kalshi_market_id": kalshi_market.market_id,
+                "polymarket_market_id": polymarket_market.market_id,
+                "event_subject": pair.get("event_subject"),
+                "profitable_contracts": best["profitable_contracts"] if best else "0",
+                "total_profit_usd": str(profit),
+                "top_of_book_contracts": best.get("top_of_book_contracts") if best else "0",
+                "paper_only": True,
+                "detail": best or {"supported": False},
+            }
+        )
+    print(
+        f"capacity_recorded: window={release_window or 'quiet'} samples={samples} "
+        f"with_capacity={with_capacity} best_usd={best_usd}"
+    )
+    return {
+        "samples": samples,
+        "with_capacity": with_capacity,
+        "release_window": release_window,
+        "best_usd": str(best_usd),
+    }
+
+
+def _capacity_direction_legs(shape: str) -> tuple[str, ...]:
+    """Basket directions a shape admits, mirroring gap_radar._baskets."""
+    from atlas.gap_radar import INVERSE_SHAPE
+
+    if shape == INVERSE_SHAPE:
+        return ("kalshi_yes+polymarket_yes", "kalshi_no+polymarket_no")
+    return ("kalshi_yes+polymarket_no", "kalshi_no+polymarket_yes")
+
+
 async def gaps_capacity(limit: int = 12) -> None:
     """Walk the live books of tradeable twin pairs and report real capacity.
 
@@ -1489,14 +1589,10 @@ async def gaps_capacity(limit: int = 12) -> None:
         except (httpx.HTTPError, OSError, ValueError) as exc:
             print(f"  {kalshi_market.venue_market_id}: book_fetch_failed={type(exc).__name__}")
             continue
-        directions = tuple(
-            basket["legs"]
-            for basket in _capacity_directions(pair["shape"])
-        )
         result = best_capacity(
             kalshi_book,
             polymarket_book,
-            directions,
+            _capacity_direction_legs(pair["shape"]),
             polymarket_market.raw_market_json,
         )
         if not result.get("supported"):
@@ -1518,13 +1614,21 @@ async def gaps_capacity(limit: int = 12) -> None:
     )
 
 
-def _capacity_directions(shape: str) -> list[dict]:
-    """The basket directions a shape admits, mirroring gap_radar._baskets."""
-    from atlas.gap_radar import INVERSE_SHAPE
-
-    if shape == INVERSE_SHAPE:
-        return [{"legs": "kalshi_yes+polymarket_yes"}, {"legs": "kalshi_no+polymarket_no"}]
-    return [{"legs": "kalshi_yes+polymarket_no"}, {"legs": "kalshi_no+polymarket_yes"}]
+async def gaps_capacity_report() -> None:
+    """Deployable capacity by release window, against the quiet baseline."""
+    summary = await AtlasStore().capacity_window_summary()
+    windows = summary["windows"]
+    if not windows:
+        print("capacity_report: no samples recorded yet (records during release windows)")
+        return
+    print(f"{'window':<26}{'samples':>9}{'with cap':>10}{'max $':>10}{'max contracts':>15}")
+    print("-" * 70)
+    for row in windows:
+        name = "(quiet baseline)" if row["window"] == "_quiet" else row["window"]
+        print(
+            f"{name:<26}{row['samples']:>9}{row['samples_with_capacity']:>10}"
+            f"{row['max_profit_usd'] or 0:>10.4f}{row['max_profitable_contracts'] or 0:>15.2f}"
+        )
 
 
 async def gaps_status() -> None:
@@ -1810,6 +1914,12 @@ def main() -> None:
         help="walk live books of tradeable pairs and report deployable capacity",
     )
     gaps_capacity_parser.add_argument("--limit", type=int, default=12)
+    gaps_capacity_parser.add_argument(
+        "--record",
+        action="store_true",
+        help="persist the walk to capacity_samples (stamped with any active release window)",
+    )
+    gaps_sub.add_parser("capacity-report", help="deployable capacity by release window")
     gaps_study_parser = gaps_sub.add_parser(
         "study", help="90-day study report (docs/NINETY_DAY_STUDY.md)"
     )
@@ -1994,7 +2104,19 @@ def main() -> None:
     elif args.command == "gaps" and args.action == "study":
         asyncio.run(gaps_study(write=not args.no_write))
     elif args.command == "gaps" and args.action == "capacity":
-        asyncio.run(gaps_capacity(limit=args.limit))
+        if args.record:
+            from atlas.release_calendar import active_release_window
+
+            asyncio.run(
+                record_capacity_samples(
+                    limit=args.limit,
+                    release_window=active_release_window(datetime.now(UTC)),
+                )
+            )
+        else:
+            asyncio.run(gaps_capacity(limit=args.limit))
+    elif args.command == "gaps" and args.action == "capacity-report":
+        asyncio.run(gaps_capacity_report())
     elif args.command == "intel" and args.action == "report":
         asyncio.run(intel_report(write=not args.no_write))
     elif args.command == "clarity" and args.action == "grade":

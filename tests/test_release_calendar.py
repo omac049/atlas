@@ -62,6 +62,16 @@ async def test_burst_aware_sleep_runs_extra_radar_scans(monkeypatch):
 
     monkeypatch.setattr(cli, "gaps_scan", fake_scan)
 
+    # The burst loop also records a capacity walk on window entry. Without
+    # this patch the unit test reaches both live venues.
+    capacity_windows: list[str | None] = []
+
+    async def fake_capacity(limit=8, release_window=None):
+        capacity_windows.append(release_window)
+        return {"samples": 0}
+
+    monkeypatch.setattr(cli, "record_capacity_samples", fake_capacity)
+
     calls: list[datetime] = []
 
     def fake_delay(now, base_interval):
@@ -76,6 +86,8 @@ async def test_burst_aware_sleep_runs_extra_radar_scans(monkeypatch):
     # one 30s burst slice with a radar scan, then a quiet 60s chunk to finish
     assert sleeps == [30, 60]
     assert scans == [True]
+    # Exactly one capacity walk per window ENTRY, not per burst scan.
+    assert capacity_windows == ["test_release"]
 
 
 async def test_burst_aware_sleep_stays_quiet_outside_windows(monkeypatch):
