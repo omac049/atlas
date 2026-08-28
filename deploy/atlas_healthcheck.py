@@ -35,6 +35,7 @@ WATCHDOG_LOG = Path.home() / "Library" / "Logs" / "atlas-healthcheck.log"
 STATE_FILE = (
     Path.home() / "Library" / "Application Support" / "atlas-healthcheck" / "api-failures"
 )
+MONITOR_KICKSTART_FILE = STATE_FILE.parent / "monitor-last-kickstart"
 
 # The monitor sweeps every 300s. 1800s is six missed sweeps: long enough that a
 # slow venue catalog or a bounded retry budget can never trip it, short enough
@@ -114,13 +115,35 @@ def check_api() -> None:
     write_failures(0)
 
 
+def read_monitor_kickstart() -> float:
+    try:
+        return float(MONITOR_KICKSTART_FILE.read_text().strip())
+    except (OSError, ValueError):
+        return 0.0
+
+
 def check_monitor() -> None:
+    """Restart the monitor when its log stops advancing — measured honestly.
+
+    Silence is measured from the LATER of the log's last write and our own last
+    kickstart. Without the second term this loops fatally: after the Mac sleeps
+    past the staleness limit, the log mtime is hours old, the watchdog restarts
+    the monitor — and 60s later the mtime is unchanged (a fresh monitor needs
+    minutes of venue sweeps before its first, block-buffered write), so the
+    watchdog kills it again, forever. Observed live 2026-08-25: 170 consecutive
+    kickstarts at 60s intervals after an 18-hour lid-closed gap, zero completed
+    cycles. A kickstart therefore restarts the staleness clock; a monitor that
+    is genuinely wedged still dies, one grace window later.
+    """
     if not MONITOR_LOG.exists():
         log(f"monitor log missing at {MONITOR_LOG}")
         return
-    age = int(time.time() - MONITOR_LOG.stat().st_mtime)
+    last_signal = max(MONITOR_LOG.stat().st_mtime, read_monitor_kickstart())
+    age = int(time.time() - last_signal)
     if age > MONITOR_STALE_SECONDS:
         restart("com.atlas.monitor", f"log silent for {age}s (limit {MONITOR_STALE_SECONDS}s)")
+        MONITOR_KICKSTART_FILE.parent.mkdir(parents=True, exist_ok=True)
+        MONITOR_KICKSTART_FILE.write_text(str(time.time()))
 
 
 if __name__ == "__main__":

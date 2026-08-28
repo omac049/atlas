@@ -1,12 +1,36 @@
 # Atlas continuation checklist
 
-Last updated: 2026-08-24 (**clarity v1.1** — the hand-check found phantom findings and both fixes landed: supersession with visible reasons plus Kalshi series-level source evidence; Kalshi mean 20.3 -> 59.1 with F-count 1,273 -> 0, Polymarket US unchanged at 38.5 because its gaps are real; 622 tests green, lint clean)
+Last updated: 2026-08-28 (**early-exit model**: the recorded observation series is now replayed for in-market unwinds — 44% of qualifying entries could close at a median 0.85 days against 107-199 day settlement horizons, so the study's binding NO-GO test was measuring the hold-to-settlement assumption rather than the market; wired into the weekly report and the dashboard Study pane, depth explicitly not modeled. Merged in: the **watchdog restart loop** fix — after an 18h lid-closed gap the healthcheck kickstarted the monitor every 60s, 170 consecutive kills and zero completed cycles, because staleness was measured only from log mtime; silence is now max(mtime, last kickstart) and the monitor prints a startup line before any network work — and **clarity v1.1**, whose hand-check killed the phantom findings via supersession with visible reasons plus Kalshi series-level source evidence (Kalshi mean 20.3 -> 59.1, F-count 1,273 -> 0; Polymarket US unchanged at 38.5 because its gaps are real))
 
 Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
 Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, bounded retry metadata; 450 tests green; 72 trusted labels)
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
+
+## 2026-08-25 — the watchdog ate the monitor
+
+- [x] **Restart loop, observed live and fixed.** The Mac slept 18 hours; on wake
+  the monitor log was 65,000s stale, so `atlas_healthcheck.py` kickstarted the
+  monitor — and 60s later the mtime was unchanged (a fresh monitor spends
+  minutes in venue sweeps before its first write), so it killed it again.
+  **170 consecutive kickstarts, zero completed cycles**, collection dead from
+  11:09 to 12:0x. This exact loop would have destroyed the Sep 4 release-window
+  collection: any sleep gap ending near a print would kill the radar through
+  the whole burst.
+- [x] **Fix (two layers):** staleness is now measured from
+  `max(log mtime, last kickstart)` — a kickstart restarts the clock, and a
+  genuinely wedged monitor still dies one grace window later. And `watch_pairs`
+  prints `monitor_started:` before any network work, so a started monitor is
+  distinguishable from a wedged one from its first second. The plist's
+  `PYTHONUNBUFFERED` was already present and was not the issue — 60s of life
+  was simply shorter than the first cycle's first print.
+- [x] **Clarity v1.1 missed the #5 merge.** PR #5 merged at 21:09Z; commit
+  `ef969e7` (supersession, series-source evidence, one-deduction rule) landed
+  on the branch minutes later — so main shipped v1.0 with the phantom findings
+  the hand-check disproved. Recovery PR #6 carries the orphaned commit
+  unchanged. Lesson: after any "fix pushed to open PR" step, verify the merge
+  actually contains the fix commit before moving on.
 
 ## 2026-08-24 (c) — the Settlement Clarity Score
 

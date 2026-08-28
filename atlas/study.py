@@ -36,6 +36,8 @@ from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from statistics import median
 
+from atlas.early_exit import early_exit_model
+
 STUDY_START = date(2026, 8, 19)
 STUDY_DAYS = 90
 PHASE_2_START_DAY = 31  # latency-adjusted shadow execution must exist by here
@@ -357,6 +359,7 @@ def study_report(observations: list[dict], today: date | None = None) -> dict:
             ),
         },
         "settlement_timing_curve": _settlement_timing_curve(observations),
+        "early_exit_model": early_exit_model(observations),
         "weekly": weekly,
     }
 

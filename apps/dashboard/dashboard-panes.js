@@ -125,6 +125,15 @@
     const weekly = report.weekly || [];
     const curve = report.settlement_timing_curve || {};
     const postStart = report.post_start_scope;
+    const earlyExit = report.early_exit_model || {};
+    const earlyExitRows = Object.entries(earlyExit.thresholds || {}).map(([share, row]) => `<tr>
+        <th scope="row">${esc((Number(share) * 100).toFixed(0))}% of gap</th>
+        <td class="num">${num(row.entries)}</td>
+        <td class="num">${num(row.exited)}${row.censored ? ` <small>(${num(row.censored)} open)</small>` : ''}</td>
+        <td class="num">${esc(row.median_days_to_exit ?? '—')}</td>
+        <td class="num">${row.median_annualized == null ? '—' : esc((Number(row.median_annualized) * 100).toFixed(0)) + '%'}</td>
+        <td class="num">${row.median_hold_annualized == null ? '—' : esc((Number(row.median_hold_annualized) * 100).toFixed(1)) + '%'}</td>
+      </tr>`).join('');
     // Buckets with no observations are dropped rather than rendered as empty
     // rows — an absent horizon band is not a measurement of zero gap.
     const horizonRows = (curve.buckets || [])
@@ -189,6 +198,19 @@
       </table>
       <p class="muted study-note">Horizon = the <em>later</em> leg's published anchor; a locked basket frees capital only when both legs settle. Annotated ${num(curve.annotated_observations)} obs across ${num(curve.annotated_pairs)} pairs${Number(curve.unannotated_observations) > 0 ? `; ${num(curve.unannotated_observations)} earlier rows predate the annotation and are excluded, not counted as missing anchors` : ''}.</p>` : ''}
       ${curve.asymmetry_blind_spot ? `<p class="muted study-note study-note--caution">Settlement-timing asymmetry was <strong>not measured</strong> (${esc(curve.asymmetry_blind_spot)}). No pair the radar watches publishes an early-determination clause, so the asymmetric-vs-symmetric comparison has no eligible population. A null asymmetric median is a missing test, not a finding.</p>` : `<p class="muted study-note">Settlement-timing asymmetry: <strong>${num(curve.asymmetric_observations)}</strong> asymmetric obs across ${num(curve.asymmetric_pairs)} pairs (median ${cents(curve.asymmetric_median_gap)}) vs <strong>${num(curve.symmetric_observations)}</strong> symmetric (median ${cents(curve.symmetric_median_gap)}). Asymmetric = one venue may settle earlier than its twin, so the basket is not truly locked. Caution signal, never an approval input.</p>`}
+      ${earlyExitRows ? `<h3 class="study-subhead">Early-exit model · unwind in-market instead of holding</h3>
+      <table class="detail-table">
+        <thead><tr>
+          <th scope="col">Exit at</th>
+          <th scope="col" class="num">Entries</th>
+          <th scope="col" class="num">Exited</th>
+          <th scope="col" class="num">Median days held</th>
+          <th scope="col" class="num">Annualized (exit)</th>
+          <th scope="col" class="num">Annualized (hold)</th>
+        </tr></thead>
+        <tbody>${earlyExitRows}</tbody>
+      </table>
+      <p class="muted study-note">Replays recorded observations: sell both legs at top-of-book the first moment the unwind locks in the stated share of the entry gap. Exit prices come from the recorded complement basket (book identity); fees are the venue-published quadratic, symmetric on exit. Depth is <strong>not</strong> modeled and annualization floors holding periods at one day. Censored = still open when the series ends. Research measurement, never an approval input.</p>` : ''}
       ${postStart && Number(postStart.observations) > 0 ? `<h3 class="study-subhead">Added after study start · excluded from GO/NO-GO</h3>
       <div class="metrics">
         ${studyStat('FAMILIES', Object.keys(postStart.families || {}).join(', ') || null)}

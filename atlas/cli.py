@@ -749,6 +749,11 @@ async def watch_pairs(
     monitors: dict[str, asyncio.Task] = {}
     store = AtlasStore()
     last_pruned_at: datetime | None = None
+    # Printed BEFORE any network work: the liveness watchdog measures this
+    # log's mtime, and the first cycle print otherwise lands only after minutes
+    # of venue sweeps. A monitor that started must be distinguishable from one
+    # that is wedged, from its very first second.
+    print(f"monitor_started: paper_only=true live={live} interval={interval}s")
     while True:
         approved = await _safe_scan_pairs(live)
         if live:
