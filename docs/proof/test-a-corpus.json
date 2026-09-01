@@ -1,0 +1,342 @@
+{
+  "test": "A",
+  "charter": "docs/decisions/2026-08-31-fine-print-proof-charter.md",
+  "assembled_at": "2026-09-01",
+  "blind_protocol": "This file was committed BEFORE any disputed market was graded. Disputes may not be added, dropped, or reweighted based on grades; a dispute whose rules text cannot be fetched is reported as documented-but-ungradeable, never removed. Every source URL was loaded and verified during assembly.",
+  "inclusion_rule": "Entries with confidence 'verified' enter the gradeable set. Entry 16 is excluded pending re-verification because its only loadable source explicitly declined to confirm the details \u2014 decided now, before grading.",
+  "kalshi_coverage_note": "4 solid Kalshi disputes were found, not the 5 the charter hoped for, after dedicated searching. Kalshi's centralized rules-filed settlement model generates fewer publicly contested resolutions than Polymarket's oracle model; the shortfall is recorded here rather than padded with weak cases.",
+  "control_rule": "Per dispute: 3 settled, undisputed markets, same venue and category, nearest close-times, market_id tiebreak (atlas/proof.py select_controls). Never hand-picked.",
+  "disputes": [
+    {
+      "id": 1,
+      "venue": "polymarket",
+      "market": "Will Zelenskyy wear a suit before July?",
+      "slug": "will-zelenskyy-wear-a-suit-before-july",
+      "dispute_date": "2025-06/07",
+      "disputed": "Whether a NATO-summit outfit met the undefined 'suit' criterion; initial YES reversed via UMA vote.",
+      "conclusion": "Resolved NO; upheld despite ~$237M volume and media consensus calling it a suit.",
+      "sources": [
+        "https://decrypt.co/329210/polymarket-rules-no-237m-bet-zelenskyys",
+        "https://cryptoslate.com/polymarket-faces-backlash-over-disputed-200m-zelensky-suit-market/"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 2,
+      "venue": "polymarket",
+      "market": "Ukraine agrees to Trump mineral deal before April?",
+      "slug": "ukraine-agrees-to-give-trump-rare-earth-metals-before-april",
+      "dispute_date": "2025-03",
+      "disputed": "A ~25%-of-vote UMA whale voted YES though no deal was signed in the window.",
+      "conclusion": "Resolved YES against facts; venue called it a governance attack, no refunds.",
+      "sources": [
+        "https://finance.yahoo.com/news/polymarket-suffers-uma-governance-attack-101646076.html",
+        "https://coinmarketcap.com/academy/article/polymarket-reports-unprecedented-governance-attack-by-uma-whale-on-bet-resolution"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 3,
+      "venue": "polymarket",
+      "market": "MicroStrategy sells any Bitcoin by May 31, 2026?",
+      "slug": null,
+      "dispute_date": "2026-06/07",
+      "disputed": "8-K disclosed an in-window sale after the cutoff; did resolution require the sale or its public confirmation before the deadline?",
+      "conclusion": "Resolved NO after two disputed proposals and a UMA vote; traders sued alleging post-hoc rule change.",
+      "sources": [
+        "https://thedefiant.io/news/markets/usd85m-polymarket-dispute-over-strategy-s-may-bitcoin-sale-puts-uma-s-token-voting-oracle-on",
+        "https://www.cryptopolitan.com/polymarket-lawsuit-strategy-bitcoin-market/"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 4,
+      "venue": "polymarket",
+      "market": "US and Iran sign a permanent peace deal",
+      "slug": null,
+      "dispute_date": "2026-06",
+      "disputed": "Whether a 60-day ceasefire extension met the contract's 'permanent' requirement.",
+      "conclusion": "Still contested in verified reporting (~$345M volume).",
+      "sources": [
+        "https://thenextweb.com/news/polymarket-345-million-iran-peace-deal-dispute-uma-whale-voting",
+        "https://www.financemagnates.com/fintech/polymarkets-354m-iran-dispute-exposes-prediction-markets-settlement-problem/"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 5,
+      "venue": "polymarket",
+      "market": "Will the US invade Venezuela in 2025?",
+      "slug": "will-the-us-invade-venezuela-in-2025",
+      "dispute_date": "2026-01",
+      "disputed": "Whether the Maduro capture raid met the 'intended to establish control' invasion criterion; venue issued a mid-flight clarification.",
+      "conclusion": "Resolved NO; ~$10.5M paid to NO holders amid backlash.",
+      "sources": [
+        "https://defirate.com/news/polymarket-sparks-outrage-settling-10-5m-venezuela-invasion-market-as-no/",
+        "https://futurism.com/future-society/polymarket-venezuela-invasion-bets"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 6,
+      "venue": "polymarket",
+      "market": "Venezuela Presidential Election Winner (Gonzalez markets)",
+      "slug": "will-edmundo-gonzalez-win-the-2024-venezuela-presidential-election",
+      "dispute_date": "2024-07/08",
+      "disputed": "Official CNE result vs opposition tallies: which of the rules' two sources ('official information' vs 'consensus of credible reporting') governed.",
+      "conclusion": "UMA resolved for Gonzalez, overriding the official result.",
+      "sources": [
+        "https://frankmuci.substack.com/p/polymarket-settles-bet-against-its",
+        "https://www.lesswrong.com/posts/d4YjM6RWEoT3rBEHe/ambiguity-in-prediction-market-resolution-is-still-harmful"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 7,
+      "venue": "polymarket",
+      "market": "TikTok banned in the US before May 2025?",
+      "slug": null,
+      "dispute_date": "2025-01",
+      "disputed": "Whether a one-day self-shutdown under the divest-or-ban law was a 'ban'.",
+      "conclusion": "Resolved YES; upheld over user petition (~$120M volume).",
+      "sources": [
+        "https://cointelegraph.com/news/polymarket-faces-backlash-over-tik-tok-ban-prediction-resolution",
+        "https://www.dlnews.com/articles/markets/tiktok-disappearance-sparks-polymarket-petition/"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 8,
+      "venue": "polymarket",
+      "market": "Was Barron involved in $DJT?",
+      "slug": "was-barron-involved-in-djt",
+      "dispute_date": "2024-06",
+      "disputed": "UMA resolved NO; the venue publicly stated UMA got it wrong.",
+      "conclusion": "Effectively overturned: venue paid YES bettors and pledged oracle changes.",
+      "sources": [
+        "https://www.theblock.co/post/302171/polymarket-contradicts-umas-resolution-on-barron-trumps-involvement-with-djt-token",
+        "https://crypto.news/polymarket-reverses-oracle-decision-on-barron-trumps-involvement-in-djt-meme-coin/"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 9,
+      "venue": "polymarket",
+      "market": "Ethereum ETF approved by May 31?",
+      "slug": "ethereum-etf-approved-by-may-31",
+      "dispute_date": "2024-05",
+      "disputed": "Whether 19b-4 approval alone was ETF 'approval' with S-1s not yet effective.",
+      "conclusion": "Resolved YES; disputed through UMA, upheld.",
+      "sources": [
+        "https://cointelegraph.com/news/polymarket-gets-backlash-over-approved-outcome-13-million-ethereum-etf-bet"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 10,
+      "venue": "polymarket",
+      "market": "Will the missing submarine be found by June 23?",
+      "slug": "will-the-missing-submarine-be-found-by-june-23",
+      "dispute_date": "2023-06",
+      "disputed": "Whether located debris counted as 'found' under clarified cabin-referencing criteria.",
+      "conclusion": "UMA vote resolved YES; upheld amid tokenholder-conflict allegations.",
+      "sources": [
+        "https://www.dlnews.com/articles/markets/crypto-bets-on-titan-sub-cause-uproar-at-uma-polymarket/"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 11,
+      "venue": "polymarket",
+      "market": "US Bitcoin reserve in first 100 days",
+      "slug": null,
+      "dispute_date": "2025-03",
+      "disputed": "EO created a reserve funded only with seized BTC, which the criteria excluded; market stalled unresolved.",
+      "conclusion": "Resolution delayed amid objection; final outcome unconfirmed in verified sources.",
+      "sources": [
+        "https://thedefiant.io/news/markets/polymarket-stalls-on-btc-reserve-market-despite-trump-s-executive-order"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 12,
+      "venue": "polymarket",
+      "market": "Will Volodymyr Zelenskyy be the 2022 TIME Person of the Year?",
+      "slug": "will-volodymyr-zelenskyy-be-the-2022-time-person-of-the-year",
+      "dispute_date": "2022-12",
+      "disputed": "TIME named 'Zelensky and the spirit of Ukraine' \u2014 edge case on the 'exclusively named' clause.",
+      "conclusion": "Resolved YES by UMA vote; upheld.",
+      "sources": [
+        "https://manifold.markets/jack/how-will-polymarket-uma-resolve-the",
+        "https://polymarket.com/market/will-volodymyr-zelenskyy-be-the-2022-time-person-of-the-year"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 13,
+      "venue": "polymarket",
+      "market": "Trump declassifies UFO files in 2025?",
+      "slug": "trump-declassifies-ufo-files-in-2025",
+      "dispute_date": "2025-12",
+      "disputed": "YES finalized via UMA though critics identified no declassification order; late whale buying preceded resolution.",
+      "conclusion": "Resolved YES; upheld despite backlash (~$16M).",
+      "sources": [
+        "https://cryptoslate.com/polymarket-faces-major-credibility-crisis-after-whales-forced-a-yes-ufo-vote-without-evidence/"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 14,
+      "venue": "polymarket",
+      "market": "When will the Government shutdown end? (Nov 12 leg)",
+      "slug": "will-the-government-shutdown-end-november-12-365",
+      "dispute_date": "2025-11",
+      "disputed": "Bill signed Nov 12 but rules keyed on the OPM announcement, which came Nov 13.",
+      "conclusion": "Upheld: resolved to Nov 13 per the OPM-announcement rule.",
+      "sources": [
+        "https://www.oddsshopper.com/articles/prediction-markets/kalshi-vs-polymarket-settlement-rules",
+        "https://thedefiant.io/newsletter/defi-daily/end-of-gov-t-shutdown-brings-more-polymarket-drama"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 15,
+      "venue": "polymarket",
+      "market": "Cardi B performs at Super Bowl LX halftime",
+      "slug": null,
+      "dispute_date": "2026-02",
+      "disputed": "Whether dancing and mouthing lyrics in another artist's set was a 'performance'.",
+      "conclusion": "Resolved YES at $1 \u2014 the opposite economic outcome from Kalshi's handling of the same event.",
+      "sources": [
+        "https://www.cbsnews.com/news/cardi-b-super-bowl-prediction-market-dispute/",
+        "https://www.fortune.com/2026/02/11/did-cardi-b-perform-at-super-bowl-prop-bet-kalshi-polymarket"
+      ],
+      "confidence": "verified",
+      "note": "Fortune summary carried one detail inconsistent with CBS; CBS treated as the stronger source."
+    },
+    {
+      "id": 16,
+      "venue": "polymarket",
+      "market": "What will Trump say this week? (Khamenei leg)",
+      "slug": null,
+      "dispute_date": "2026-03",
+      "disputed": "Alleged utterances resolved NO citing possible mispronunciation; $170K lawsuit filed.",
+      "conclusion": "Resolved NO; litigation pending.",
+      "sources": [
+        "https://theccpress.com/polymarket-sued-170k-trump-prediction-bet"
+      ],
+      "confidence": "needs_reverification",
+      "excluded": "Only loadable source explicitly declined to confirm details; excluded from the gradeable set unless re-verified. Decided before grading."
+    },
+    {
+      "id": 17,
+      "venue": "kalshi",
+      "market": "Khamenei out as Supreme Leader before March 1, 2026",
+      "slug": null,
+      "dispute_date": "2026-02/03",
+      "disputed": "Venue invoked a death carveout and settled at last pre-death price rather than YES; plaintiffs argue 'leaves office for any reason' covered death.",
+      "conclusion": "Settled at last price; fees refunded and ~$2.2M covered; $54M class action pending.",
+      "sources": [
+        "https://news.bitcoin.com/legal-storm-hits-kalshi-as-traders-claim-death-carveout-erased-their-winning-bets/",
+        "https://www.foxbusiness.com/technology/prediction-market-kalshi-sued-54m-iran-leader-bets-death-carveout-invoked"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 18,
+      "venue": "kalshi",
+      "market": "Cardi B performs at Super Bowl LX halftime (Who will perform at the Big Game?)",
+      "slug": null,
+      "dispute_date": "2026-02",
+      "disputed": "Same event as #15: venue deemed the cameo unresolvable ambiguity and settled at last traded price instead of $1/$0.",
+      "conclusion": "Settled $0.26/$0.74 across $47.3M; a CFTC complaint filed.",
+      "sources": [
+        "https://www.cbsnews.com/news/cardi-b-super-bowl-prediction-market-dispute/",
+        "https://www.fortune.com/2026/02/11/did-cardi-b-perform-at-super-bowl-prop-bet-kalshi-polymarket"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 19,
+      "venue": "kalshi",
+      "market": "NFL Win Totals (49ers over 10.5 wins and peers)",
+      "slug": null,
+      "dispute_date": "2026-01",
+      "disputed": "Winning YES positions initially graded to return stakes, not $1 settlement value.",
+      "conclusion": "Overturned after viral coverage: full settlement value paid via credits.",
+      "sources": [
+        "https://nexteventhorizon.substack.com/p/why-wasnt-kalshi-paying-traders-that-won-nfl-futures",
+        "https://defirate.com/prediction-markets/how-contracts-settle/"
+      ],
+      "confidence": "verified"
+    },
+    {
+      "id": 20,
+      "venue": "kalshi",
+      "market": "2025 Oscars viewership above prior years",
+      "slug": null,
+      "dispute_date": "2025-03",
+      "disputed": "Settled NO on preliminary fast-nationals hours before final figures that would have flipped it; rules counted initial published figures.",
+      "conclusion": "Upheld: venue said 'legal and correct' while conceding it 'did not capture the spirit'.",
+      "sources": [
+        "https://manifold.markets/strutheo/will-kalshi-undo-their-controversia",
+        "https://defirate.com/prediction-markets/how-contracts-settle/"
+      ],
+      "confidence": "verified"
+    }
+  ],
+  "rejected_candidates": [
+    {
+      "candidate": "Kalshi UFC resolution (2026)",
+      "reason": "sole source 403'd; unverifiable"
+    },
+    {
+      "candidate": "Polymarket Trump indictment by March 31 (2023)",
+      "reason": "sole substantive source 403'd"
+    },
+    {
+      "candidate": "Polymarket Venezuela/Barinas UMA dispute (2022)",
+      "reason": "no loadable source found"
+    },
+    {
+      "candidate": "Polymarket Fort Knox gold audit (2025)",
+      "reason": "single weak, internally inconsistent source"
+    },
+    {
+      "candidate": "Kalshi SFUSD source-agency listing (2025)",
+      "reason": "drafting error, not a contested resolution"
+    },
+    {
+      "candidate": "Kalshi soccer market with no tie option (2025)",
+      "reason": "one-line mention, unverifiable as a specific market"
+    },
+    {
+      "candidate": "Jan 2026 shutdown contracts",
+      "reason": "criteria divergence, not a contested settlement; Nov 2025 case covers the genre"
+    },
+    {
+      "candidate": "Kalshi mention-market manipulation (2026)",
+      "reason": "outcome manipulation; settlement followed rules \u2014 out of scope"
+    },
+    {
+      "candidate": "Polymarket nuclear-detonation / F-15 rescue markets (2026)",
+      "reason": "delisted before resolution"
+    },
+    {
+      "candidate": "Maduro insider-trading case",
+      "reason": "clean settlement; the real dispute is entry 5"
+    },
+    {
+      "candidate": "Israel-Hezbollah ceasefire, recession, Epstein-files markets",
+      "reason": "checked; no documented resolution dispute"
+    },
+    {
+      "candidate": "Phemex price-source dispute (2025)",
+      "reason": "could not identify the specific market"
+    },
+    {
+      "candidate": "Kalshi-FlightAware source fight (2026)",
+      "reason": "data licensing, withdrawn in 24h; not a settlement dispute"
+    }
+  ]
+}
