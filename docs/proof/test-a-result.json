@@ -1,0 +1,825 @@
+{
+  "test": "A",
+  "charter": "docs/decisions/2026-08-31-fine-print-proof-charter.md",
+  "graded_at": "2026-09-01T17:39:28.881866+00:00",
+  "corpus_size_documented": 20,
+  "corpus_size_gradeable": 15,
+  "adequate_corpus": true,
+  "disputed": {
+    "markets": 15,
+    "median_score": 65,
+    "trouble_rate": "0.267",
+    "grades": [
+      {
+        "market_id": "polymarket_global:546814",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:521607",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:2169995",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:2099029",
+        "grade": "D",
+        "score": 40,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:589648",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:502006",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:507276",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:502710",
+        "grade": "D",
+        "score": 45,
+        "trouble_findings": [
+          "MISSING_AUTHORITATIVE_SOURCE"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:253750",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:251539",
+        "grade": "F",
+        "score": 20,
+        "trouble_findings": [
+          "MISSING_AUTHORITATIVE_SOURCE",
+          "NO_EXPLICIT_EXCEPTION_FALLBACK",
+          "UNPARSED_SETTLEMENT_POLICY"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:512250",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:244625",
+        "grade": "D",
+        "score": 50,
+        "trouble_findings": [
+          "NO_EXPLICIT_EXCEPTION_FALLBACK"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:537892",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:673597",
+        "grade": "F",
+        "score": 20,
+        "trouble_findings": [
+          "MISSING_AUTHORITATIVE_SOURCE",
+          "NO_EXPLICIT_EXCEPTION_FALLBACK",
+          "UNPARSED_SETTLEMENT_POLICY"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:555793",
+        "grade": "B",
+        "score": 75,
+        "trouble_findings": []
+      }
+    ]
+  },
+  "controls": {
+    "markets": 45,
+    "median_score": 65,
+    "trouble_rate": "0.222",
+    "grades": [
+      {
+        "market_id": "polymarket_global:522217",
+        "grade": "D",
+        "score": 40,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:529314",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:529659",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:508190",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:512180",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:512181",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:692258",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:1259282",
+        "grade": "D",
+        "score": 40,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:1576154",
+        "grade": "D",
+        "score": 55,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:1389831",
+        "grade": "F",
+        "score": 20,
+        "trouble_findings": [
+          "MISSING_AUTHORITATIVE_SOURCE",
+          "NO_EXPLICIT_EXCEPTION_FALLBACK",
+          "UNPARSED_SETTLEMENT_POLICY"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:1389832",
+        "grade": "F",
+        "score": 20,
+        "trouble_findings": [
+          "MISSING_AUTHORITATIVE_SOURCE",
+          "NO_EXPLICIT_EXCEPTION_FALLBACK",
+          "UNPARSED_SETTLEMENT_POLICY"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:1389833",
+        "grade": "F",
+        "score": 20,
+        "trouble_findings": [
+          "MISSING_AUTHORITATIVE_SOURCE",
+          "NO_EXPLICIT_EXCEPTION_FALLBACK",
+          "UNPARSED_SETTLEMENT_POLICY"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:515928",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:516714",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:516715",
+        "grade": "F",
+        "score": 30,
+        "trouble_findings": [
+          "MISSING_AUTHORITATIVE_SOURCE"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:502002",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:502003",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:502004",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:515366",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:515368",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:515369",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:502603",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:502609",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:502662",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:253198",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:253199",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:253485",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:248579",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:249407",
+        "grade": "D",
+        "score": 40,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:248840",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:524312",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:527702",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:528854",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:243548",
+        "grade": "D",
+        "score": 45,
+        "trouble_findings": [
+          "CONFLICTING_AUTHORITATIVE_SOURCE"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:247020",
+        "grade": "F",
+        "score": 30,
+        "trouble_findings": [
+          "CONFLICTING_AUTHORITATIVE_SOURCE"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:243919",
+        "grade": "D",
+        "score": 45,
+        "trouble_findings": [
+          "CONFLICTING_AUTHORITATIVE_SOURCE"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:516885",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:516886",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:516887",
+        "grade": "C",
+        "score": 65,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:673594",
+        "grade": "F",
+        "score": 20,
+        "trouble_findings": [
+          "MISSING_AUTHORITATIVE_SOURCE",
+          "NO_EXPLICIT_EXCEPTION_FALLBACK",
+          "UNPARSED_SETTLEMENT_POLICY"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:673595",
+        "grade": "F",
+        "score": 20,
+        "trouble_findings": [
+          "MISSING_AUTHORITATIVE_SOURCE",
+          "NO_EXPLICIT_EXCEPTION_FALLBACK",
+          "UNPARSED_SETTLEMENT_POLICY"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:673596",
+        "grade": "F",
+        "score": 20,
+        "trouble_findings": [
+          "MISSING_AUTHORITATIVE_SOURCE",
+          "NO_EXPLICIT_EXCEPTION_FALLBACK",
+          "UNPARSED_SETTLEMENT_POLICY"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:555781",
+        "grade": "B",
+        "score": 75,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:555782",
+        "grade": "B",
+        "score": 75,
+        "trouble_findings": []
+      },
+      {
+        "market_id": "polymarket_global:555783",
+        "grade": "B",
+        "score": 75,
+        "trouble_findings": []
+      }
+    ]
+  },
+  "median_score_gap": 0,
+  "trouble_rate_ratio": "1.20",
+  "criteria": {
+    "median_gap_ge_10": false,
+    "trouble_rate_60pct_and_2x": false
+  },
+  "outcome": "FAIL",
+  "resolution_log": [
+    {
+      "id": 1,
+      "venue": "polymarket",
+      "slug": "will-zelenskyy-wear-a-suit-before-july",
+      "status": "OK",
+      "market_id": "polymarket_global:546814",
+      "rules_chars": 467
+    },
+    {
+      "id": 2,
+      "venue": "polymarket",
+      "slug": "ukraine-agrees-to-give-trump-rare-earth-metals-before-april",
+      "status": "OK",
+      "market_id": "polymarket_global:521607",
+      "rules_chars": 731
+    },
+    {
+      "id": 3,
+      "venue": "polymarket",
+      "slug": "microstrategy-sells-any-bitcoin-by-may-31-2026",
+      "status": "OK",
+      "market_id": "polymarket_global:2169995",
+      "rules_chars": 328
+    },
+    {
+      "id": 4,
+      "venue": "polymarket",
+      "slug": "us-x-iran-permanent-peace-deal-by-may-15-2026-144-885-839",
+      "status": "OK",
+      "market_id": "polymarket_global:2099029",
+      "rules_chars": 1516
+    },
+    {
+      "id": 5,
+      "venue": "polymarket",
+      "slug": "will-the-us-invade-venezuela-in-2025",
+      "status": "OK",
+      "market_id": "polymarket_global:589648",
+      "rules_chars": 517
+    },
+    {
+      "id": 6,
+      "venue": "polymarket",
+      "slug": "will-edmundo-gonzalez-win-the-2024-venezuela-presidential-election",
+      "status": "OK",
+      "market_id": "polymarket_global:502006",
+      "rules_chars": 644
+    },
+    {
+      "id": 7,
+      "venue": "polymarket",
+      "slug": "tiktok-banned-in-the-us-before-may-2025",
+      "status": "OK",
+      "market_id": "polymarket_global:507276",
+      "rules_chars": 700
+    },
+    {
+      "id": 8,
+      "venue": "polymarket",
+      "slug": "was-barron-involved-in-djt",
+      "status": "OK",
+      "market_id": "polymarket_global:502710",
+      "rules_chars": 399
+    },
+    {
+      "id": 9,
+      "venue": "polymarket",
+      "slug": "ethereum-etf-approved-by-may-31",
+      "status": "OK",
+      "market_id": "polymarket_global:253750",
+      "rules_chars": 308
+    },
+    {
+      "id": 10,
+      "venue": "polymarket",
+      "slug": "will-the-missing-submarine-be-found-by-june-23",
+      "status": "OK",
+      "market_id": "polymarket_global:251539",
+      "rules_chars": 897
+    },
+    {
+      "id": 11,
+      "venue": "polymarket",
+      "slug": "will-trump-create-a-national-bitcoin-reserve-in-his-first-100-days",
+      "status": "OK",
+      "market_id": "polymarket_global:512250",
+      "rules_chars": 504
+    },
+    {
+      "id": 12,
+      "venue": "polymarket",
+      "slug": "will-volodymyr-zelenskyy-be-the-2022-time-person-of-the-year",
+      "status": "OK",
+      "market_id": "polymarket_global:244625",
+      "rules_chars": 1669
+    },
+    {
+      "id": 13,
+      "venue": "polymarket",
+      "slug": "trump-declassifies-ufo-files-in-2025",
+      "status": "OK",
+      "market_id": "polymarket_global:537892",
+      "rules_chars": 549
+    },
+    {
+      "id": 14,
+      "venue": "polymarket",
+      "slug": "will-the-government-shutdown-end-november-12-365",
+      "status": "OK",
+      "market_id": "polymarket_global:673597",
+      "rules_chars": 761
+    },
+    {
+      "id": 15,
+      "venue": "polymarket",
+      "slug": "will-cardi-b-perform-during-the-super-bowl-lx-halftime-show",
+      "status": "OK",
+      "market_id": "polymarket_global:555793",
+      "rules_chars": 477
+    },
+    {
+      "id": 17,
+      "venue": "kalshi",
+      "probes": [
+        "KXKHAMENEI",
+        "KXSUPREMELEADER",
+        "KXKHAMENEIOUT"
+      ],
+      "max_close": "2026-04-01",
+      "status": "UNFETCHABLE_LIKELY_PRUNED"
+    },
+    {
+      "id": 18,
+      "venue": "kalshi",
+      "probes": [
+        "KXHALFTIMESHOW",
+        "KXHALFTIMEPERFORMER",
+        "KXBIGGAMEPERFORM"
+      ],
+      "max_close": "2026-03-01",
+      "status": "UNFETCHABLE_LIKELY_PRUNED"
+    },
+    {
+      "id": 19,
+      "venue": "kalshi",
+      "probes": [
+        "KXNFLWINS",
+        "KXNFLSEASONWINS",
+        "KXNFLWINTOTAL"
+      ],
+      "max_close": "2026-02-01",
+      "status": "UNFETCHABLE_LIKELY_PRUNED"
+    },
+    {
+      "id": 20,
+      "venue": "kalshi",
+      "probes": [
+        "KXOSCARVIEWERS",
+        "KXOSCARSVIEWERS",
+        "KXOSCARSRATINGS"
+      ],
+      "max_close": "2025-04-01",
+      "status": "UNFETCHABLE_LIKELY_PRUNED"
+    },
+    {
+      "id": 1,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "286",
+        "label": "Celebrities"
+      },
+      "window_days": 45,
+      "candidates": 8,
+      "picked": [
+        "polymarket_global:522217",
+        "polymarket_global:529314",
+        "polymarket_global:529659"
+      ]
+    },
+    {
+      "id": 2,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "2",
+        "label": "Politics"
+      },
+      "window_days": 45,
+      "candidates": 100,
+      "picked": [
+        "polymarket_global:508190",
+        "polymarket_global:512180",
+        "polymarket_global:512181"
+      ]
+    },
+    {
+      "id": 3,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "100328",
+        "label": "Economy"
+      },
+      "window_days": 45,
+      "candidates": 100,
+      "picked": [
+        "polymarket_global:692258",
+        "polymarket_global:1259282",
+        "polymarket_global:1576154"
+      ]
+    },
+    {
+      "id": 4,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "78",
+        "label": "Iran"
+      },
+      "window_days": 45,
+      "candidates": 100,
+      "picked": [
+        "polymarket_global:1389831",
+        "polymarket_global:1389832",
+        "polymarket_global:1389833"
+      ]
+    },
+    {
+      "id": 5,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "2",
+        "label": "Politics"
+      },
+      "window_days": 45,
+      "candidates": 100,
+      "picked": [
+        "polymarket_global:515928",
+        "polymarket_global:516714",
+        "polymarket_global:516715"
+      ]
+    },
+    {
+      "id": 6,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "1597",
+        "label": "Global Elections"
+      },
+      "window_days": 45,
+      "candidates": 98,
+      "picked": [
+        "polymarket_global:502002",
+        "polymarket_global:502003",
+        "polymarket_global:502004"
+      ]
+    },
+    {
+      "id": 7,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "596",
+        "label": "Culture"
+      },
+      "window_days": 45,
+      "candidates": 100,
+      "picked": [
+        "polymarket_global:515366",
+        "polymarket_global:515368",
+        "polymarket_global:515369"
+      ]
+    },
+    {
+      "id": 8,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "100271",
+        "label": "DJT"
+      },
+      "window_days": 45,
+      "candidates": 13,
+      "picked": [
+        "polymarket_global:502603",
+        "polymarket_global:502609",
+        "polymarket_global:502662"
+      ]
+    },
+    {
+      "id": 9,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "100215",
+        "label": "All"
+      },
+      "window_days": 45,
+      "candidates": 100,
+      "picked": [
+        "polymarket_global:253198",
+        "polymarket_global:253199",
+        "polymarket_global:253485"
+      ]
+    },
+    {
+      "id": 10,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "100215",
+        "label": "All"
+      },
+      "window_days": 45,
+      "candidates": 100,
+      "picked": [
+        "polymarket_global:248579",
+        "polymarket_global:249407",
+        "polymarket_global:248840"
+      ]
+    },
+    {
+      "id": 11,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "235",
+        "label": "Bitcoin"
+      },
+      "window_days": 45,
+      "candidates": 100,
+      "picked": [
+        "polymarket_global:524312",
+        "polymarket_global:527702",
+        "polymarket_global:528854"
+      ]
+    },
+    {
+      "id": 12,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "100215",
+        "label": "All"
+      },
+      "window_days": 45,
+      "candidates": 100,
+      "picked": [
+        "polymarket_global:243548",
+        "polymarket_global:247020",
+        "polymarket_global:243919"
+      ]
+    },
+    {
+      "id": 13,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "596",
+        "label": "Culture"
+      },
+      "window_days": 45,
+      "candidates": 100,
+      "picked": [
+        "polymarket_global:516885",
+        "polymarket_global:516886",
+        "polymarket_global:516887"
+      ]
+    },
+    {
+      "id": 14,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "101542",
+        "label": "Gov Shutdown"
+      },
+      "window_days": 45,
+      "candidates": 91,
+      "picked": [
+        "polymarket_global:673594",
+        "polymarket_global:673595",
+        "polymarket_global:673596"
+      ]
+    },
+    {
+      "id": 15,
+      "status": "CONTROLS_SELECTED",
+      "tag": {
+        "id": "101674",
+        "label": "NFL Playoffs"
+      },
+      "window_days": 45,
+      "candidates": 100,
+      "picked": [
+        "polymarket_global:555781",
+        "polymarket_global:555782",
+        "polymarket_global:555783"
+      ]
+    }
+  ],
+  "controls_per_dispute_target": 3
+}

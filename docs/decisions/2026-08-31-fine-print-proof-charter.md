@@ -152,6 +152,46 @@ The result — pass, fail, or inconclusive — is written into this file with th
 evidence, and the funnel decision follows it. Nobody gets to relitigate the
 thresholds after the data arrives; that is the entire point of this document.
 
+## RESULT — Test A executed 2026-09-01: FAIL. Theory DISPROVEN.
+
+Run on the corpus locked in `docs/proof/test-a-corpus.json` by the committed
+runner `docs/proof/run_test_a.py`; full evidence in
+`docs/proof/test-a-result.json`.
+
+- **Corpus:** 20 documented, **15 gradeable** (exactly adequate) + 45
+  rule-selected controls. All four Kalshi disputes proved ungradeable — the
+  venue prunes settled-market detail, recorded per probe. One instrument error
+  was caught and corrected before the verdict: a series probe admitted a live
+  2027-season market into the disputed arm; the season guard that removed it
+  worked AGAINST the theory (it deleted a trouble-laden F from the disputed
+  side), and the corrected numbers are the ones below.
+- **Median clarity score: disputed 65 vs control 65 — gap 0.0** against a
+  required ≥10.
+- **Trouble-finding rate: disputed 26.7% vs control 22.2% — ratio 1.20x**
+  against a required 60%-at-2x.
+- Both criteria failed on an adequate corpus. Per the decision rule above,
+  signed before any data: **the theory is disproven.** The funnel stays
+  unbuilt.
+
+**What the data actually says.** The famous disputes overwhelmingly graded
+C-65 with ZERO trouble findings — indistinguishable from their controls. Real
+settlement trouble came from two places the clarity score does not measure:
+**predicate ambiguity** (what counts as a "suit", a "performance", a
+"permanent" deal, an "invasion", being "involved") and **oracle governance**
+(UMA whale votes, venue overrides). The score measures the completeness of
+settlement *machinery* — branches, fallbacks, sources — and the machinery was
+mostly present in the disputed markets. Completeness of machinery and
+ambiguity of meaning are different defect classes, and the disputes live in
+the second.
+
+**What survives.** The grade remains a true description of what a venue's text
+publishes — the catalog-wide machinery gaps it found are real. What died is
+the claim that this grade predicts disputes, and with it the product premise
+as charted. Tests B and C continue as instrumentation (C6 still watches the
+Sep 16 reconciliation), but under the signed decision rule they cannot
+resurrect the theory; a predicate-ambiguity instrument would be a NEW theory
+requiring a new pre-registered charter, not an amendment to this one.
+
 ## Owner sign-off
 
 - Thresholds and predictions proposed: 2026-08-31 (Claude, from live-graded

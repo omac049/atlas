@@ -1,12 +1,36 @@
 # Atlas continuation checklist
 
-Last updated: 2026-08-31 (**fine-print proof charter drafted** — pre-registered, falsifiable thresholds for Tests A/B/C; the seven Test C predictions for Sep 4/11/16 are live-graded and become binding when the charter merges; merge deadline 2026-09-04)
+Last updated: 2026-09-01 (**Test A executed: FAIL — theory disproven.** Disputed markets grade identically to controls (65 vs 65, trouble ratio 1.20x vs required 2x). Real disputes live in predicate ambiguity and oracle governance, which the clarity score does not measure. Per the signed charter: the funnel stays unbuilt. 637 tests green)
 
 Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
 Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, bounded retry metadata; 450 tests green; 72 trusted labels)
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
+
+## 2026-09-01 — Test A: FAIL. The theory is disproven.
+
+- [x] Corpus locked (20 documented, 13 rejected candidates recorded), harness
+  built and pinned, evaluation run by committed script. **15 gradeable disputes
+  vs 45 rule-selected controls: median 65 vs 65 (gap 0.0 vs required >=10),
+  trouble rate 26.7% vs 22.2% (1.20x vs required 60%-at-2x). FAIL on an
+  adequate corpus -> theory DISPROVEN per the signed decision rule.**
+- [x] Instrument error caught before verdict: a Kalshi series probe admitted a
+  live 2027-season market into the disputed arm; season guard added, and the
+  correction worked AGAINST the theory. All 4 Kalshi disputes ungradeable
+  (venue prunes) — recorded per probe.
+- [x] The finding that matters: famous disputes graded C-65 with ZERO trouble
+  findings. Settlement trouble in the wild comes from PREDICATE AMBIGUITY
+  ("suit", "performance", "permanent", "invasion") and ORACLE GOVERNANCE (UMA
+  whale votes, venue overrides) — defect classes the clarity score does not
+  measure. Machinery completeness != meaning clarity.
+- [x] Consequence honored: **no funnel.** Result written into the charter with
+  equal prominence, as signed.
+
+- [ ] Tests B and C continue as instrumentation (C6 watches the Sep 16
+  reconciliation) but cannot resurrect the theory under the signed rule.
+- [ ] If a predicate-ambiguity instrument is ever pursued, it is a NEW theory
+  needing a NEW pre-registered charter — owner decision, not a default.
 
 ## 2026-08-31 — the proof charter (gate before any funnel)
 
