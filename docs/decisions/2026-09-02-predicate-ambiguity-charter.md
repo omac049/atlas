@@ -174,6 +174,71 @@ single most likely one, and it is a legitimate answer. The reason to run it
 anyway is that Test A pointed here with unusual clarity, and the cost of a
 pre-registered answer is days.
 
+## RESULT — feasibility gate run 2026-09-02: FAILED. Hypothesis abandoned
+## before a holdout was assembled, per §4.
+
+Instrument: `atlas/ambiguity.py` (8 tests). Gate runner:
+`docs/proof/run_ambiguity_gate.py`. Evidence:
+`docs/proof/ambiguity-gate-result.json`.
+
+| Criterion | Required | Measured | |
+|---|---|---|---|
+| Disputed median PAS above controls | ≥ 15 | **15** (45 vs 30) | pass |
+| Disputed flag rate | ≥ 60% | **26.7%** (4 of 15) | **fail** |
+| Flag-rate ratio vs controls | ≥ 2x | 2.01x (26.7% vs 13.3%) | pass |
+
+The instrument separates the two arms in the predicted direction, and does so
+at exactly the ratio required — but it flags only 4 of 15 disputes. An
+instrument that misses three-quarters of the disputes it is meant to catch
+cannot support a product claim, whatever its ratio. Per §4 the hypothesis is
+abandoned **before** a holdout was assembled; no holdout corpus exists and no
+freeze commit was recorded.
+
+### The finding that outlives the hypothesis: disputes are not one thing
+
+Inspecting the misses was more informative than the gate. The corpus contains
+at least three distinct dispute classes, and the theory addresses only one:
+
+1. **Predicate ambiguity** (the theory's target) — Zelensky's "suit", Cardi
+   B's "performance", Iran's "permanent" deal. The instrument scored these
+   45–75 and flagged the top of the range. The theory works here.
+2. **Oracle governance** — the minerals-deal UMA whale vote, the Barron/$DJT
+   override. The rules text was not the problem; the vote was. The charter
+   explicitly excluded this class (§1), and the instrument correctly finds
+   little in the words.
+3. **Precisely-worded rules nobody read** — the November shutdown market
+   defined resolution as the first day OPM *announces* reopening, and even
+   spelled out that a later listed reopening date does not matter. Traders
+   disputed it because the correct answer contradicted intuition. The
+   instrument scored it 0, which is **right**: the predicate was anchored.
+
+A theory aimed at class 1 was tested against a corpus where classes 2 and 3
+are the majority. That is a design flaw in the test, not only a weak
+instrument — and it was invisible until the misses were read one by one.
+
+### One instrument bug, recorded and deliberately NOT fixed
+
+`_JUDGMENT_LADEN_TERMS` matches the literal `"involved"`, so the minerals
+market's "explicitly **involves**" did not fire. Stemming to `involv` would be
+a genuine correction.
+
+It was not applied, and the reason is the point of this whole charter: every
+fix available to me right now would move the numbers **toward** the theory,
+discovered by looking at a failing result on the development set. That is
+precisely the fit-to-development-set failure §2 was written to prevent. In
+Test A the analogous correction moved *against* the theory, which is why it
+was safe to apply. The asymmetry is the tell. The bug is recorded here so that
+any future re-charter starts from a corrected instrument and a fresh gate.
+
+### What a fourth charter would have to do differently
+
+Not "restrict the theory to class-1 disputes" — narrowing a theory to the
+cases it already explains is post-hoc goalpost-moving. It would need dispute
+**classification done blind** (by someone or something that has not seen the
+scores), a fresh holdout, a corrected instrument, and thresholds fixed before
+any of it is scored. Whether that is worth doing is an owner decision, and the
+honest input to it is that three hypotheses have now returned three negatives.
+
 ## 9. Sequence and sign-off
 
 1. Owner merges this charter (sign-off).
@@ -185,6 +250,6 @@ pre-registered answer is days.
 
 - Proposed: 2026-09-02 (Claude, one day after Test A's failure, having read
   the development set — see §2).
-- Freeze commit: _pending_.
+- Freeze commit: **never recorded** — the §4 gate failed first, by design.
 - Owner signature: _pending — merging this file constitutes sign-off on the
   protocol, thresholds, and the development/holdout separation._
