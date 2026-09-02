@@ -1,12 +1,35 @@
 # Atlas continuation checklist
 
-Last updated: 2026-09-01 (**Test A executed: FAIL — theory disproven.** Disputed markets grade identically to controls (65 vs 65, trouble ratio 1.20x vs required 2x). Real disputes live in predicate ambiguity and oracle governance, which the clarity score does not measure. Per the signed charter: the funnel stays unbuilt. 637 tests green)
+Last updated: 2026-09-02 (**third hypothesis charter drafted** — Predicate Ambiguity Score, pre-registered with a development/holdout split because the drafter has seen the Test A disputes; feasibility gate on the dev set, then a systematic UMA-escalation holdout; awaiting owner sign-off)
 
 Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
 Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, bounded retry metadata; 450 tests green; 72 trusted labels)
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
+
+## 2026-09-02 — third hypothesis: predicate ambiguity (charter proposed)
+
+- [x] `docs/decisions/2026-09-02-predicate-ambiguity-charter.md` drafted. Theory:
+  markets whose predicate turns on an undefined, judgment-laden term are
+  disputed at a materially higher rate than measurably-anchored ones.
+  Instrument: a deterministic Predicate Ambiguity Score (PAS, 0-100, flag at
+  >=50) over the same rules text the clarity score reads; AI judge exploratory
+  only, never decisive. Oracle governance deliberately excluded (venue-wide,
+  outcome-side).
+- [x] Contamination handled by protocol, not denial: the Test A corpus is the
+  DEVELOPMENT set (drafter has seen it); the test is a HOLDOUT assembled after
+  an instrument-freeze commit, sourced from UMA DVM escalations in a fixed
+  window (systematic, not newsworthy), excluding every dev-set market.
+  Feasibility gate on the dev set (>=15-point median gap, 60% flagged at 2x)
+  is necessary to proceed and never counts as evidence.
+- [x] Honest odds recorded in the charter: a pass-the-gate-then-fail-the-
+  holdout outcome is expected to be the single most likely one.
+
+- [ ] OWNER: merge to sign. Then build `atlas/ambiguity.py` + tests, run the
+  feasibility gate, record the freeze commit hash in the charter.
+- [ ] Verify the UMA escalation record is enumerable BEFORE relying on it;
+  fallback (press-sourced with dev-set exclusion) is recorded as weaker.
 
 ## 2026-09-01 — Test A: FAIL. The theory is disproven.
 
