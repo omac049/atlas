@@ -1,12 +1,41 @@
 # Atlas continuation checklist
 
-Last updated: 2026-09-02 (**third hypothesis abandoned at the feasibility gate** — the Predicate Ambiguity Score separates in the right direction (median 45 vs 30, ratio 2.01x) but flags only 4 of 15 disputes vs 60% required. No holdout assembled, no freeze commit, per charter §4. The finding that outlives it: disputes are at least three distinct classes and the theory addressed only one. 645 tests green)
+Last updated: 2026-09-04 (**fourth hypothesis charter drafted — repricing lag**: does Kalshi's in-game MLB moneyline keep trading at pre-play prices for a human-actionable window after a lead change, at size, by more than fees? Retrospective over the public trade tape + MLB play-by-play; both feeds verified live; paper-only; awaiting owner sign-off)
 
 Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
 Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, bounded retry metadata; 450 tests green; 72 trusted labels)
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
+
+## 2026-09-04 — fourth hypothesis: repricing lag (charter proposed)
+
+- [x] `docs/decisions/2026-09-04-repricing-lag-charter.md` drafted. This is the
+  owner's ORIGINAL idea ("bet the favorite; when they pull ahead it's already a
+  profit") in its only edge-bearing form: not that the price is right, but
+  that it is SLOW. Theory: after a lead-changing MLB play, Kalshi's moneyline
+  keeps trading at pre-play prices long enough (median lag >=5s), at size
+  (>=20 stale contracts in [5s,60s] on >=50% of plays), by more than fees
+  (median net gap >=3c). All three required; any one failing kills it.
+- [x] Both feeds verified live 2026-09-04 with exact fields: Kalshi
+  `/markets/trades` (microsecond `created_time`, `yes_price_dollars`,
+  `count_fp`, `is_block_trade`; one probed game = 24,346 trades) and MLB
+  `feed/live` (per-play `about.endTime` at ms precision, running scores).
+  Sample window fixed: first pitch 2026-08-15..2026-09-10. The single probed
+  game (STL@LAD 2026-09-03) is EXCLUDED from the sample.
+- [x] Confounds named first, all cutting against the theory: MLB's stringer
+  timestamp is itself late (negative lags counted as-is, never clipped);
+  trades are a lower bound on stale liquidity; block trades excluded; a PROVEN
+  tape proves availability, not that a human wins the race.
+- [x] Paper-only, without exception: a PROVEN result opens only a paper-only
+  live SHADOW charter; the 2026-08-20 decision dropping execution stands.
+
+- [ ] OWNER: merge to sign. Then build `atlas/repricing.py` + tests, record the
+  freeze hash, pull the sample, run, write the result in.
+- [ ] Decision stated in advance: this is the LAST prediction-market edge
+  hypothesis. Four covers the accessible space (cross-venue price, machinery
+  risk, semantic risk, speed). Whatever #4 says, the edge search in this
+  domain is complete after it.
 
 ## 2026-09-02 (b) — third hypothesis: ABANDONED at the feasibility gate
 
