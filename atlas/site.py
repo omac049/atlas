@@ -187,6 +187,19 @@ background:#f0f0f0;color:#333;margin-left:6px}
 """
 
 _GA4_ID = re.compile(r"G-[A-Z0-9]{6,12}")
+_METHODOLOGY_LINK = re.compile(r'href="(\.\./)*methodology"')
+
+
+def _href(path: str) -> str:
+    """Files are written as .html; links and canonicals are extensionless.
+
+    Static hosts (Cloudflare Pages among them) serve `/legal` for legal.html
+    and redirect `/legal.html` to it, so a link carrying the extension costs a
+    redirect on every click and a "page with redirect" note in Search Console.
+    """
+    if path == "index.html":
+        return ""
+    return path.removesuffix(".html")
 
 _NAV = (
     ("index.html", "Compare"),
@@ -202,8 +215,10 @@ _NAV = (
 def _page(site: Site, *, title: str, path: str, body: str, description: str) -> str:
     depth = path.count("/")
     root = "../" * depth
-    nav = "".join(f'<a href="{root}{href}">{_esc(label)}</a>' for href, label in _NAV)
-    canonical = f"{site.base_url.rstrip('/')}/{path}"
+    nav = "".join(
+        f'<a href="{root}{_href(href) or "./"}">{_esc(label)}</a>' for href, label in _NAV
+    )
+    canonical = f"{site.base_url.rstrip('/')}/{_href(path)}"
     analytics = ""
     if site.analytics_id and _GA4_ID.fullmatch(site.analytics_id):
         gid = site.analytics_id
@@ -222,7 +237,7 @@ def _page(site: Site, *, title: str, path: str, body: str, description: str) -> 
         f"<header><nav>{nav}</nav></header><main>{body}</main>"
         f"<footer><p>{_esc(DISCLOSURE)}</p><p>{_esc(NOT_ADVICE)}</p>"
         f"<p>Generated {_esc(site.stamp)} from published venue data. "
-        f"<a href=\"{root}methodology.html\">How these pages are made.</a></p></footer>"
+        f"<a href=\"{root}methodology\">How these pages are made.</a></p></footer>"
         "</body></html>\n"
     )
 
@@ -324,7 +339,7 @@ def render_pair(site: Site, page: PairPage) -> str:
         + _grade_line("Polymarket", page.polymarket_grade)
         + rules
         + "<p class=\"muted\">Fees use each venue's published taker formula at the last observed "
-        "price — see the <a href=\"../fees.html\">fee calculator</a> for any price.</p>"
+        "price — see the <a href=\"../fees\">fee calculator</a> for any price.</p>"
     )
     description = (
         f"{'Verified the same bet' if page.same_bet else 'Not verified as the same bet'}: "
@@ -345,7 +360,7 @@ def _sources(items: list[tuple[str, str]]) -> str:
 def render_index(site: Site) -> str:
     same = [p for p in site.pairs if p.same_bet]
     rows = "".join(
-        f"<tr><td><a href=\"compare/{p.slug}.html\">{_esc(p.title)}</a></td>"
+        f"<tr><td><a href=\"compare/{p.slug}\">{_esc(p.title)}</a></td>"
         f"<td>{'Same bet ✓' if p.same_bet else 'Not verified'}</td>"
         f"<td>{'Yes' if p.tradeable else 'Global only'}</td></tr>"
         for p in sorted(site.pairs, key=lambda p: (not p.same_bet, p.title))
@@ -449,7 +464,7 @@ def render_same_bet(site: Site) -> str:
         "matches and both venues' settlement terms are complete. Anything less is listed with the "
         "specific published differences. No model guesses; a lexical match on titles is never "
         "enough.</p>"
-        "<p><a href=\"index.html\">See every pair we track →</a></p>"
+        "<p><a href=\"./\">See every pair we track →</a></p>"
     )
     return _page(site, title="Is it the same bet on Kalshi and Polymarket?", path="same-bet.html",
                  body=body, description="Why identical-looking Kalshi and Polymarket contracts can "
@@ -603,7 +618,7 @@ def render_all(site: Site) -> dict[str, str]:
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
         + "".join(
-            f"  <url><loc>{_esc(base)}/{_esc(path)}</loc>"
+            f"  <url><loc>{_esc(base)}/{_esc(_href(path))}</loc>"
             f"<lastmod>{site.generated_at.date().isoformat()}</lastmod></url>\n"
             for path in pages
         )
@@ -641,7 +656,7 @@ def verify_pages(pages: dict[str, str]) -> list[str]:
             problems.append(f"{path}: missing affiliate disclosure")
         if NOT_ADVICE[:40] not in content:
             problems.append(f"{path}: missing not-advice notice")
-        if "methodology.html" not in content:
+        if not _METHODOLOGY_LINK.search(content):
             problems.append(f"{path}: no methodology link")
     return problems
 
