@@ -1,0 +1,407 @@
+{
+  "as_of": "2026-09-04",
+  "notes": "Status reflects public state-level actions against CFTC-regulated event-contract venues (Kalshi, Polymarket US, Robinhood/Crypto.com distribution). Every non-'No public state action reported' row cites at least one URL that was loaded during research. Rows marked 'No public state action reported' were checked against loaded 50-state trackers (CBS Sports, RotoWire) and targeted searches; absence of a finding is not proof of absence. This is research, not legal advice.",
+  "status_categories": [
+    "No public state action reported",
+    "Cease-and-desist or warning issued",
+    "Litigation pending",
+    "Court order restricting (TRO/injunction)",
+    "Court ruling favoring the venue",
+    "Legislation enacted or pending"
+  ],
+  "states": [
+    {
+      "state": "Alabama",
+      "status": "No public state action reported",
+      "summary": "No cease-and-desist, lawsuit, court order, or prediction-market-specific legislation by Alabama authorities was found; 50-state trackers list Kalshi and Polymarket as operating without restriction.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Alaska",
+      "status": "No public state action reported",
+      "summary": "No public action by Alaska authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Arizona",
+      "status": "Court ruling favoring the venue",
+      "summary": "Arizona Attorney General Kris Mayes filed a 20-count criminal information against KalshiEX LLC in Maricopa County Superior Court on March 17, 2026 (sports, player props, legislation, and election contracts), but U.S. District Judge Michael Liburdi issued an injunction on May 5-6, 2026 barring the state from prosecuting Kalshi on federal-preemption grounds; the Arizona Department of Gaming had earlier sent cease-and-desist letters to Kalshi, Robinhood and Crypto.com in 2025.",
+      "categories": ["sports", "elections", "politics"],
+      "sources": [
+        "https://www.azag.gov/press-release/attorney-general-mayes-charges-kalshi-illegal-gambling-operation-election-wagering",
+        "https://www.covers.com/industry/judges-ruling-keeps-arizona-from-taking-legal-action-against-kalshi-may-6-2026"
+      ]
+    },
+    {
+      "state": "Arkansas",
+      "status": "No public state action reported",
+      "summary": "No public action by Arkansas authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "California",
+      "status": "Litigation pending",
+      "summary": "Three California tribes (Blue Lake Rancheria, Chicken Ranch Rancheria of Me-Wuk Indians, Picayune Rancheria of the Chukchansi Indians) sued Kalshi and Robinhood under the Indian Gaming Regulatory Act; a federal judge denied their injunction in November 2025 and the Ninth Circuit heard the appeal on July 10, 2026 with no ruling yet; no action by California state agencies was found.",
+      "categories": ["sports"],
+      "sources": ["https://cdcgaming.com/brief/ninth-circuit-judges-question-kalshis-prediction-market-on-tribal-land/"]
+    },
+    {
+      "state": "Colorado",
+      "status": "No public state action reported",
+      "summary": "No public action by Colorado authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Connecticut",
+      "status": "Litigation pending",
+      "summary": "The Connecticut Department of Consumer Protection issued cease-and-desist orders to KalshiEX, Robinhood Derivatives and Crypto.com on December 2-3, 2025 over sports event contracts; U.S. District Judge Vernon Oliver denied Kalshi's preliminary injunction in early August 2026 (appeal to the Second Circuit filed), and on August 26, 2026 Attorney General William Tong sued Kalshi in state court seeking an injunction.",
+      "categories": ["sports"],
+      "sources": [
+        "https://portal.ct.gov/dcp/news-releases-from-the-department-of-consumer-protection/2025-news-releases/connecticut-consumer-protection-orders-cease-and-desist-conducting-unlicensed-online-gambling",
+        "https://portal.ct.gov/ag/press-releases/2026-press-releases/connecticut-sues-kalshi-to-stop-illegal-unlicensed-sports-betting"
+      ]
+    },
+    {
+      "state": "Delaware",
+      "status": "No public state action reported",
+      "summary": "No public action by Delaware authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "District of Columbia",
+      "status": "No public state action reported",
+      "summary": "No public action by District of Columbia authorities against prediction-market venues was found; DC joined a multi-state amicus brief supporting tribal plaintiffs in the Ninth Circuit but has taken no enforcement action of its own.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Florida",
+      "status": "No public state action reported",
+      "summary": "No formal cease-and-desist, lawsuit, or court order by Florida authorities was found; unverified reports exist that an early state advisory concerning Kalshi was withdrawn in February 2026 and that the Governor has publicly questioned conflicts with the Seminole Tribe's exclusive sports-betting compact, but no official source for either was loaded.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Georgia",
+      "status": "No public state action reported",
+      "summary": "No public action by Georgia authorities against prediction-market venues was found; secondary reports of a 2026 prediction-market bill could not be verified.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Hawaii",
+      "status": "Legislation enacted or pending",
+      "summary": "HB 2198, which would classify prediction-market event contracts on sports, contests, people, politics, catastrophe and death as illegal gambling, was advanced unanimously by the House Commerce-Consumer Protection Committee on February 9, 2026; final disposition after the May 8, 2026 session end was not verified.",
+      "categories": ["sports", "elections", "entertainment"],
+      "sources": ["https://www.yogonet.com/international/news/2026/02/09/117500-hawaii-house-committee-advances-bill-to-ban-prediction-markets"]
+    },
+    {
+      "state": "Idaho",
+      "status": "No public state action reported",
+      "summary": "No public action by Idaho authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Illinois",
+      "status": "Legislation enacted or pending",
+      "summary": "The Illinois Gaming Board issued cease-and-desist letters to Kalshi, Robinhood and Crypto.com on April 1, 2025 and to Polymarket on January 27, 2026; in spring 2026 the legislature enacted SB 3019 (signed with the budget in June 2026) folding prediction markets into the Sports Wagering Act with licensing and a tiered tax, and Kalshi sued in the Northern District of Illinois on June 24, 2026; the CFTC separately sued Illinois on April 2, 2026.",
+      "categories": ["sports"],
+      "sources": [
+        "https://igb.illinois.gov/sports-wagering/cease-and-desist-letters.html",
+        "https://capitolnewsillinois.com/news/prediction-market-kalshi-sues-illinois-over-its-push-to-regulate-sports-bets/"
+      ]
+    },
+    {
+      "state": "Indiana",
+      "status": "No public state action reported",
+      "summary": "No public action by Indiana authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Iowa",
+      "status": "Litigation pending",
+      "summary": "Kalshi filed a preemptive suit in the U.S. District Court for the Southern District of Iowa on March 11, 2026 against Attorney General Brenna Bird and the Iowa Racing and Gaming Commission after the AG's office declined to give non-enforcement assurances; no Iowa cease-and-desist was issued and no ruling had been reported as of a preliminary-injunction motion filed in August 2026.",
+      "categories": ["sports"],
+      "sources": ["https://www.bettingnews.com/articles/industry/kalshi-asks-court-to-block-iowa-gambling-enforcement/"]
+    },
+    {
+      "state": "Kansas",
+      "status": "No public state action reported",
+      "summary": "No public action by Kansas authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Kentucky",
+      "status": "Litigation pending",
+      "summary": "Attorney General Russell Coleman sued Kalshi (with Coinbase, Robinhood and Webull) and Polymarket in Franklin Circuit Court on June 17, 2026 for unlicensed sports betting; the General Assembly separately enacted in April 2026 a 14.25% excise tax on prediction-market transaction fees and HB 904 (effective July 15, 2026) barring licensed operators from contracting with prediction markets, which a venue coalition challenged in state court in June 2026.",
+      "categories": ["sports"],
+      "sources": [
+        "https://www.kentucky.gov/Pages/Activity-stream.aspx?n=AttorneyGeneral&prId=1944",
+        "https://www.lpm.org/news/2026-06-16/a-coalition-sues-to-block-kentuckys-new-14-25-prediction-markets-tax"
+      ]
+    },
+    {
+      "state": "Louisiana",
+      "status": "Cease-and-desist or warning issued",
+      "summary": "In approximately early December 2025 Louisiana Gaming Control Board Chair Christopher Hebert sent a letter to licensed gaming operators stating that sports event contracts are illegal sports wagering under state law and that involvement with them may affect licensure suitability; no lawsuit or order against a venue was found.",
+      "categories": ["sports"],
+      "sources": ["https://igamingbusiness.com/sports-betting/louisiana-prediction-markets-sports-betting-letter/"]
+    },
+    {
+      "state": "Maine",
+      "status": "No public state action reported",
+      "summary": "No public action by Maine authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Maryland",
+      "status": "Litigation pending",
+      "summary": "The Maryland gaming regulator issued a cease-and-desist to Kalshi in 2025; a federal district judge denied Kalshi's preliminary injunction in August 2025, the regulator agreed not to enforce pending appeal, and the Fourth Circuit heard argument May 7, 2026 with no decision yet; Baltimore City separately sued Kalshi and Polymarket in Baltimore City Circuit Court on August 13, 2026 under its consumer-protection ordinance.",
+      "categories": ["sports"],
+      "sources": ["https://thedailyrecord.com/2026/08/13/sports-betting-baltimore-kalshi-polymarket/"]
+    },
+    {
+      "state": "Massachusetts",
+      "status": "Court order restricting (TRO/injunction)",
+      "summary": "After Attorney General Andrea Campbell sued in September 2025, Suffolk County Superior Court Judge Christopher Barry-Smith granted a preliminary injunction on January 20, 2026 barring Kalshi from offering sports event contracts without a state license; the Supreme Judicial Court heard Kalshi's expedited appeal on May 5, 2026 and had not ruled as of early September 2026.",
+      "categories": ["sports"],
+      "sources": [
+        "https://www.nbcnews.com/news/us-news/kalshi-cannot-operate-sports-prediction-market-massachusetts-judge-rul-rcna255130",
+        "https://www.insurancejournal.com/news/east/2026/05/05/868519.htm"
+      ]
+    },
+    {
+      "state": "Michigan",
+      "status": "Court order restricting (TRO/injunction)",
+      "summary": "Attorney General Dana Nessel sued Kalshi in March 2026; Ingham County Circuit Judge Rosemarie Aquilina granted a temporary restraining order on June 30, 2026 ($120,000/day penalty) and a preliminary injunction announced September 2, 2026 requiring Kalshi to geofence Michigan out of sports contracts with a $500,000-per-violation penalty.",
+      "categories": ["sports"],
+      "sources": [
+        "https://www.wilx.com/2026/07/01/kalshi-ordered-halt-operations-michigan/",
+        "https://www.wilx.com/2026/09/02/michigan-blocks-kalshi-offering-online-sports-bets-after-lawsuit/"
+      ]
+    },
+    {
+      "state": "Minnesota",
+      "status": "Legislation enacted or pending",
+      "summary": "Governor Tim Walz signed SF 4760 in May 2026, the first state law banning prediction markets (effective August 1, 2026), but U.S. District Judge Katherine Menendez granted a preliminary injunction on July 27-28, 2026 in suits by the federal government, Kalshi and Polymarket, blocking enforcement pending litigation.",
+      "categories": ["sports", "elections", "entertainment", "economics"],
+      "sources": [
+        "https://abcnews.com/US/federal-court-blocks-minnesota-ban-prediction-markets-now/story?id=135148987",
+        "https://www.rotowire.com/prediction-markets/legal-timeline"
+      ]
+    },
+    {
+      "state": "Mississippi",
+      "status": "No public state action reported",
+      "summary": "No public action by Mississippi authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Missouri",
+      "status": "No public state action reported",
+      "summary": "No public action by Missouri authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Montana",
+      "status": "Litigation pending",
+      "summary": "The Montana Department of Justice Gambling Control Division issued cease-and-desist letters to Kalshi in spring 2025 and again on April 6, 2026; Kalshi sued in federal court in April 2026, and on August 27, 2026 U.S. District Judge Donald Molloy denied Kalshi's preliminary injunction for lack of irreparable harm, with the case continuing.",
+      "categories": ["sports"],
+      "sources": ["https://www.sportsbettingdime.com/news/industry/federal-judge-denies-kalshis-motion-for-preliminary-injunction-in-montana/"]
+    },
+    {
+      "state": "Nebraska",
+      "status": "No public state action reported",
+      "summary": "No public action by Nebraska authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Nevada",
+      "status": "Court order restricting (TRO/injunction)",
+      "summary": "On March 20, 2026 the First Judicial District Court granted the Nevada Gaming Control Board a TRO (later a preliminary injunction) barring Kalshi from offering sports, election and entertainment event contracts in Nevada, and Kalshi removed those categories for Nevada users; on August 28, 2026 the Ninth Circuit ruled 3-0 that the Commodity Exchange Act likely does not preempt Nevada gaming law as to sports contracts, remanding the election-contract question.",
+      "categories": ["sports", "elections", "entertainment"],
+      "sources": [
+        "https://www.gaming.nv.gov/siteassets/content/about/press-release/ngcb-granted-tro-against-kalshi.pdf",
+        "https://www.gaming.nv.gov/siteassets/content/about/press-release/ninth-circuit-rules-in-favor-of-nevada.pdf"
+      ]
+    },
+    {
+      "state": "New Hampshire",
+      "status": "No public state action reported",
+      "summary": "No public action by New Hampshire authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "New Jersey",
+      "status": "Court ruling favoring the venue",
+      "summary": "After New Jersey's 2025 cease-and-desist, the Third Circuit in KalshiEX LLC v. Flaherty (No. 25-1922) affirmed 2-1 on April 6, 2026 a preliminary injunction barring the state from enforcing its gambling laws against Kalshi's sports event contracts, holding them to be CEA 'swaps'; the New Jersey Attorney General petitioned the U.S. Supreme Court for review on September 2, 2026.",
+      "categories": ["sports"],
+      "sources": [
+        "https://www.hklaw.com/en/insights/publications/2026/04/federal-appeals-court-cftc-jurisdiction-over-sports-event-contracts",
+        "https://www.cryptotimes.io/2026/09/03/new-jersey-asks-supreme-court-to-rule-on-kalshi-sports-bets/"
+      ]
+    },
+    {
+      "state": "New Mexico",
+      "status": "Litigation pending",
+      "summary": "Attorney General Raul Torrez sued Kalshi in state District Court in Santa Fe on June 5, 2026 for unlicensed online sports betting and offering contracts to users under 21; four tribes and pueblos separately sued Kalshi in May 2026, the CFTC sued New Mexico on June 12, 2026, and Polymarket sued state officials in federal court in early July 2026.",
+      "categories": ["sports"],
+      "sources": ["https://cdcgaming.com/brief/new-mexico-attorney-general-sues-kalshi/"]
+    },
+    {
+      "state": "New York",
+      "status": "Litigation pending",
+      "summary": "Attorney General Letitia James, with Governor Hochul, sued KalshiEX in New York State Supreme Court on July 31, 2026 alleging an unlicensed gambling operation across sports, culture and election markets and seeking disgorgement and treble penalties; U.S. District Judge Analisa Torres had denied Kalshi's preemption-based preliminary injunction on July 9, 2026, and the CFTC filed its own suit against the state.",
+      "categories": ["sports", "elections", "entertainment"],
+      "sources": [
+        "https://ag.ny.gov/press-release/2026/governor-hochul-and-attorney-general-james-announce-new-york-has-sued-kalshi",
+        "https://www.rotowire.com/prediction-markets/legal-timeline"
+      ]
+    },
+    {
+      "state": "North Carolina",
+      "status": "Legislation enacted or pending",
+      "summary": "Governor Josh Stein signed Senate Bill 257 (the 2026 budget) on July 7, 2026, imposing a 6% tax on prediction-market net trading-fee revenue attributable to North Carolina residents from January 1, 2027 while expressly recognizing the CFTC's exclusive federal regulatory authority and imposing no state licensing.",
+      "categories": ["sports", "elections", "entertainment", "economics"],
+      "sources": ["https://decrypt.co/373209/north-carolina-bill-recognizes-cftcs-federal-regulatory-authority-over-prediction-markets"]
+    },
+    {
+      "state": "North Dakota",
+      "status": "No public state action reported",
+      "summary": "No public action by North Dakota authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Ohio",
+      "status": "Litigation pending",
+      "summary": "The Ohio Casino Control Commission issued cease-and-desist letters to Kalshi, Robinhood and Crypto.com in March 2025; Kalshi sued in October 2025, Chief Judge Sarah Morrison (S.D. Ohio) denied its preliminary injunction on March 10, 2026 holding sports contracts are not 'swaps', the Sixth Circuit denied an injunction pending appeal on April 24, 2026, and the Commission issued a $5 million fine notice that Kalshi is contesting in state court.",
+      "categories": ["sports"],
+      "sources": [
+        "https://www.covers.com/industry/ohio-judge-rules-against-kalshi-stating-sports-contracts-arent-swaps-march-10-2026",
+        "https://michigangaming.com/6th-circuit-denies-kalshi-preliminary-injunction-request/"
+      ]
+    },
+    {
+      "state": "Oklahoma",
+      "status": "No public state action reported",
+      "summary": "No public action by Oklahoma authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Oregon",
+      "status": "No public state action reported",
+      "summary": "No public action by Oregon authorities against prediction-market venues was found; a private federal class action against Kalshi in Oregon was reported but is not a state action.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Pennsylvania",
+      "status": "No public state action reported",
+      "summary": "No cease-and-desist, lawsuit or court order by Pennsylvania authorities was found; the Pennsylvania Gaming Control Board sent a memo to the CFTC in spring 2026 calling sports event contracts sports wagering, and Pennsylvania lies within the Third Circuit whose April 6, 2026 ruling favored Kalshi.",
+      "categories": [],
+      "sources": ["https://www.gamblingnews.com/news/pennsylvania-regulator-urges-cftc-to-rein-in-prediction-markets/"]
+    },
+    {
+      "state": "Rhode Island",
+      "status": "Litigation pending",
+      "summary": "Attorney General Peter Neronha sued Kalshi and Polymarket in Rhode Island Superior Court on May 21, 2026 seeking a declaration that sports event contracts are illegal gambling, a permanent injunction, and disgorgement; Kalshi filed a preemptive federal suit the same day and the CFTC sued the state on May 28, 2026.",
+      "categories": ["sports"],
+      "sources": ["https://riag.ri.gov/press-releases/attorney-general-neronha-sues-kalshi-and-polymarket-unlawfully-conducting-sports"]
+    },
+    {
+      "state": "South Carolina",
+      "status": "No public state action reported",
+      "summary": "No public action by South Carolina authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "South Dakota",
+      "status": "No public state action reported",
+      "summary": "No public action by South Dakota authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Tennessee",
+      "status": "Court ruling favoring the venue",
+      "summary": "The Tennessee Sports Wagering Council issued cease-and-desist letters to Kalshi, Polymarket and Crypto.com on January 9, 2026 with a January 31 refund deadline; Kalshi sued and U.S. District Judge Aleta Trauger granted it a preliminary injunction on February 20, 2026 (state appeal to the Sixth Circuit pending); separately, Governor Bill Lee signed a law on May 25, 2026 criminalizing manipulation of prediction-market outcomes without banning the platforms.",
+      "categories": ["sports"],
+      "sources": [
+        "https://www.sportsbettingdime.com/news/betting/tennessee-issues-cease-and-desist-notices-to-kalshi-polymarket-and-crypto/",
+        "https://bettorsinsider.com/news/2026/05/25/tennessee-governor-signs-sweepstakes-casino-ban-and-prediction-market-manipulation-bill-into-law/"
+      ]
+    },
+    {
+      "state": "Texas",
+      "status": "No public state action reported",
+      "summary": "No cease-and-desist, lawsuit, court order or bill was found; in March 2026 Lt. Gov. Dan Patrick directed the Senate State Affairs Committee to study closing 'gambling loopholes' used by prediction markets for the 2027 session, and Attorney General Ken Paxton declined to join multi-state amicus briefs against the venues.",
+      "categories": [],
+      "sources": ["https://www.texastribune.org/2026/05/01/texas-prediction-market-regulations-kalshi-gambling-sports-betting/"]
+    },
+    {
+      "state": "Utah",
+      "status": "Litigation pending",
+      "summary": "Kalshi sued Utah officials in federal court in February 2026 to preempt enforcement; on August 4-5, 2026 U.S. District Judge Robert Shelby ruled for Utah that the Commodity Exchange Act does not preempt the state's anti-gambling laws, Attorney General Derek Brown said the state will enforce them, and Kalshi announced it would appeal.",
+      "categories": ["sports"],
+      "sources": ["https://attorneygeneral.utah.gov/utah-defeats-kalshi-in-federal-court/"]
+    },
+    {
+      "state": "Vermont",
+      "status": "Legislation enacted or pending",
+      "summary": "Rep. Tom Stevens introduced H.913 in the 2026 session to effectively ban prediction markets in Vermont; as of April 24, 2026 the sponsor acknowledged it had little chance of passage that year and it was not enacted.",
+      "categories": ["sports", "elections"],
+      "sources": ["https://www.wcax.com/2026/04/24/vermont-lawmakers-debate-regulation-prediction-markets/"]
+    },
+    {
+      "state": "Virginia",
+      "status": "No public state action reported",
+      "summary": "No public action by Virginia authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Washington",
+      "status": "Court order restricting (TRO/injunction)",
+      "summary": "After the Washington State Gambling Commission's December 2025 notice and Attorney General Nick Brown's March 27, 2026 lawsuit, King County Superior Court Judge John McHale entered an order on August 13, 2026 requiring Kalshi to stop offering sports, election, politics, entertainment, culture, technology, science and 'mentions' contracts to Washington residents, with geofencing deadlines of August 19 and September 2, 2026.",
+      "categories": ["sports", "elections", "entertainment"],
+      "sources": ["https://www.atg.wa.gov/news/news-releases/judge-orders-kalshi-cease-numerous-washington-operations"]
+    },
+    {
+      "state": "West Virginia",
+      "status": "No public state action reported",
+      "summary": "No public action by West Virginia authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    },
+    {
+      "state": "Wisconsin",
+      "status": "Litigation pending",
+      "summary": "The Wisconsin Department of Justice under Attorney General Josh Kaul sued Kalshi, Robinhood, Coinbase, Polymarket and Crypto.com in Dane County Circuit Court on April 23-24, 2026 alleging illegal sports betting via event contracts; the Ho-Chunk Nation's separate August 2025 suit against Kalshi is set for trial in May 2027, and the CFTC sued Wisconsin on April 28, 2026.",
+      "categories": ["sports"],
+      "sources": ["https://www.wpr.org/sports/wisconsin-doj-lawsuit-kalshi-prediction-markets-illegal-online-sports-betting"]
+    },
+    {
+      "state": "Wyoming",
+      "status": "No public state action reported",
+      "summary": "No public action by Wyoming authorities against prediction-market venues was found.",
+      "categories": [],
+      "sources": ["https://www.cbssports.com/prediction/news/prediction-market-legal-states/"]
+    }
+  ]
+}

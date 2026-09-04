@@ -149,10 +149,19 @@ generation, pages, calculators, the disclosure language — is build work.
 - 2026-09-04: site generator merged (#18) — 71 pages from a live build, 61
   pairs, 4 verified same-bet, every page carrying the disclosure and the
   not-advice notice by build-time guardrail. Nightly regeneration agent
-  `com.atlas.site` added. The demand-test clock has **not** started: it starts
-  the day the site is live on a domain and the sitemap is submitted, which are
-  the owner's steps in `docs/SITE.md`.
-- 2026-09-04: domain purchased — `samebetornot.com`. Hosting next.
+  `com.atlas.site` added.
+- 2026-09-04: domain purchased — `samebetornot.com`.
+- 2026-09-04: **live** at https://samebetornot.com on GitHub Pages (gh-pages
+  branch, HTTPS enforced, www → apex, clean URLs, nightly publish proven).
+- **2026-09-04: the clock started.** Search Console property verified in the
+  owner's personal Google account (the work-account connector was deliberately
+  not used); sitemap submitted, 68 URLs discovered. **Week-6 verdict date:
+  2026-10-16.** Social clicks stay unmeasured until an analytics id is set, so
+  the search criterion is the one that can currently pass.
+- 2026-09-04: site v2 — live prices and contract links on every pair page,
+  plain-words summary composed from the verifier's codes, homepage grouped by
+  event family, About page, 51-jurisdiction sourced legal table
+  (`docs/site/legal-states.json`), visual identity.
 
 ## Deprioritized, not forgotten
 

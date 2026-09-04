@@ -2,9 +2,9 @@
 
 Turns what Atlas already computes — cross-venue twin pairs, the deterministic
 verifier's verdict on each, the venues' own fee formulas, settlement-timing
-annotations, and archived rules text — into a static HTML site: one factual
-comparison page per pair, plus pillar pages whose every claim carries a source
-and a date.
+annotations, archived rules text, and live quotes — into a static HTML site:
+one factual comparison page per pair, plus pillar pages whose every claim
+carries a source and a date.
 
 Read this before adding a page:
 
@@ -17,6 +17,8 @@ Read this before adding a page:
   more confident than the verifier.
 - Pillar content is data in this module — sourced, dated, conservative — so
   the generator, not a copywriter, is the single owner of what the site says.
+  The state-by-state legal table is data too (docs/site/legal-states.json) and
+  a row claiming state action without a source fails the build.
 - The generator is a read-only consumer of the pipeline. Nothing here is
   imported by verification, settlement, or normalization.
 """
@@ -34,8 +36,10 @@ from pathlib import Path
 from atlas.gap_radar import kalshi_taker_fee_per_contract
 from atlas.intel import _BLOCKER_PROSE
 
-SITE_VERSION = "0.1"
+SITE_VERSION = "0.2"
+SITE_NAME = "Same bet or not?"
 TRUSTED_STATUSES = {"APPROVED_EQUIVALENT", "APPROVED_INVERSE"}
+REPO_URL = "https://github.com/omac049/atlas"
 
 # Verified 2026-09-04 against the venues' published schedules; the calculator
 # page cites both. Kalshi's per-contract ceiling is the conservative reading
@@ -44,6 +48,8 @@ KALSHI_TAKER_RATE = Decimal("0.07")
 KALSHI_MAKER_SHARE = Decimal("0.25")
 POLYMARKET_US_TAKER_RATE = Decimal("0.06")
 POLYMARKET_US_MAKER_RATE = Decimal("0.0125")
+
+NO_STATE_ACTION = "No public state action reported"
 
 DISCLOSURE = (
     "Disclosure: this site may earn referral or affiliate revenue when you open an "
@@ -80,40 +86,89 @@ REASON_PROSE: dict[str, str] = {
     ),
 }
 
+# Event families as Atlas keys them -> the words a reader would use. Unknown
+# families fall back to a humanized key, never to the raw one.
+FAMILY_LABELS: dict[str, str] = {
+    "us_fomc_rate_decision": "Fed rate decisions",
+    "us_cpi_yoy": "CPI inflation, year over year",
+    "us_cpi_core_mom": "Core CPI, month over month",
+    "us_cpi_mom": "CPI, month over month",
+    "us_real_gdp_growth": "Real GDP growth",
+    "us_ism_manufacturing_pmi": "ISM Manufacturing PMI",
+    "us_unemployment_rate": "Unemployment rate",
+    "us_nonfarm_payrolls": "Nonfarm payrolls",
+    "us_senate_control": "Senate control 2026",
+    "us_house_control": "House control 2026",
+}
+
+VENUE_LABELS = {
+    "kalshi": "Kalshi",
+    "polymarket_us": "Polymarket US",
+    "polymarket_global": "Polymarket (global)",
+}
+
 
 def slugify(value: str) -> str:
     cleaned = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
     return cleaned[:120] or "page"
 
 
+def family_label(event_subject: str) -> str:
+    key = str(event_subject or "").split("|")[0]
+    return FAMILY_LABELS.get(key) or key.replace("_", " ").strip().capitalize() or "Other"
+
+
 def _esc(value: object) -> str:
     return html.escape(str(value), quote=True)
 
 
+def _clean_title(value: object) -> str:
+    return re.sub(r"\*\*", "", str(value or "")).strip()
+
+
+def _dec(value: object) -> Decimal | None:
+    try:
+        return Decimal(str(value)) if value is not None and str(value) != "" else None
+    except (ArithmeticError, ValueError, TypeError):
+        return None
+
+
 def _cents(value: object) -> str:
-    try:
-        return f"{Decimal(str(value)) * 100:.1f}¢"
-    except (ArithmeticError, ValueError, TypeError):
-        return "—"
+    dec = _dec(value)
+    return f"{dec * 100:.1f}¢" if dec is not None else "—"
 
 
-def _dollars(value: object) -> str:
-    try:
-        return f"${Decimal(str(value)):.2f}"
-    except (ArithmeticError, ValueError, TypeError):
-        return "—"
+def _price(value: object) -> str:
+    dec = _dec(value)
+    return f"{dec * 100:.0f}¢" if dec is not None else "—"
+
+
+def taker_fee_at(venue: str, price: Decimal | None) -> Decimal | None:
+    """Per-contract taker fee at a YES price, from the venue's published formula."""
+    if price is None or not (0 < price < 1):
+        return None
+    if venue == "kalshi":
+        return kalshi_taker_fee_per_contract(price)
+    if venue == "polymarket_us":
+        return POLYMARKET_US_TAKER_RATE * price * (1 - price)
+    return None
 
 
 @dataclass
 class PairPage:
     """One comparison page, built from a radar observation plus optional
-    archived rules text and clarity grades for each leg."""
+    archived rules text, clarity grades, and live quotes for each leg.
+
+    A quote is {"yes_ask": .., "yes_bid": .., "last": .., "url": ..}; every
+    field optional. Missing quote = no price shown, never a guessed one."""
 
     observation: dict
     kalshi_rules: str | None = None
     polymarket_rules: str | None = None
     kalshi_grade: dict | None = None
     polymarket_grade: dict | None = None
+    kalshi_quote: dict | None = None
+    polymarket_quote: dict | None = None
 
     @property
     def slug(self) -> str:
@@ -132,6 +187,14 @@ class PairPage:
         return bool(self.observation.get("tradeable_venue_pair"))
 
     @property
+    def polymarket_venue(self) -> str:
+        return str(self.observation.get("polymarket_venue") or "polymarket_global")
+
+    @property
+    def family(self) -> str:
+        return family_label(str(self.observation.get("event_subject") or ""))
+
+    @property
     def reasons(self) -> list[tuple[str, str]]:
         codes = list(self.observation.get("mismatch_codes") or [])
         timing = self.observation.get("settlement_timing") or {}
@@ -140,13 +203,39 @@ class PairPage:
         return [(code, REASON_PROSE.get(code, code.replace("_", " ").lower())) for code in codes]
 
     @property
-    def title(self) -> str:
+    def headline(self) -> str:
         # Kalshi titles are already plain questions; the subject key is not.
-        headline = str(self.observation.get("kalshi_title") or "").rstrip("?")
-        if not headline:
-            subject = str(self.observation.get("event_subject") or "").replace("|", " ")
-            headline = subject.replace("_", " ")
-        return f"Kalshi vs Polymarket: {headline}"
+        head = _clean_title(self.observation.get("kalshi_title")).rstrip("?")
+        return head or family_label(str(self.observation.get("event_subject") or ""))
+
+    @property
+    def title(self) -> str:
+        return f"Kalshi vs Polymarket: {self.headline}"
+
+    def human_summary(self) -> str:
+        """Deterministic prose composed from the verifier's codes and each leg's
+        fine-print findings. Templates, never a model."""
+        if self.same_bet:
+            return (
+                "Both venues' published terms resolve to the same outcome in every case the "
+                "checker examines: same subject, same threshold and direction, same settlement "
+                "source, same handling of revisions and cancellations. Prices can still differ "
+                "between the two, and fees always do."
+            )
+        parts = [prose for _, prose in self.reasons]
+        text = "Where they differ: " + "; ".join(parts) + "." if parts else (
+            "The checker could not confirm equivalence from the published text."
+        )
+        for label, grade in (("Kalshi", self.kalshi_grade), ("Polymarket", self.polymarket_grade)):
+            findings = [f["prose"] for f in (grade or {}).get("findings", []) if f.get("points")]
+            if findings:
+                text += f" {label}'s fine print: " + "; ".join(findings) + "."
+        text += (
+            " In an ordinary outcome both contracts pay the same. The difference shows up only "
+            "in the unusual case those gaps describe — a delayed release, a canceled event, a "
+            "revised number — which is exactly when a paired position stops being one bet."
+        )
+        return text
 
 
 @dataclass
@@ -157,6 +246,9 @@ class Site:
     # A GA4 measurement id (G-XXXXXXX). None = no analytics tag at all; the
     # demand test counts social clicks, so measurement is opt-in by the owner.
     analytics_id: str | None = None
+    # docs/site/legal-states.json, loaded by the CLI; None renders the short
+    # federal-picture version of the legal page.
+    legal_states: dict | None = None
 
     @property
     def stamp(self) -> str:
@@ -166,50 +258,83 @@ class Site:
 # --- page chrome -----------------------------------------------------------
 
 _CSS = """
-:root{--ink:#1a1a1a;--muted:#5c5c5c;--line:#e3e3e3;--ok:#1f7a3a;--warn:#9a4a00;--bg:#fff}
-*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,
-sans-serif;color:var(--ink);background:var(--bg)}main{max-width:860px;margin:0 auto;
-padding:24px 20px 60px}header nav{display:flex;flex-wrap:wrap;gap:14px;padding:14px 20px;
-border-bottom:1px solid var(--line);font-size:14px}header nav a{color:var(--ink);
-text-decoration:none}h1{font-size:1.7rem;line-height:1.2;margin:.2em 0 .4em}h2{font-size:1.2rem;
-margin:1.6em 0 .5em}table{border-collapse:collapse;width:100%;margin:.6em 0}th,td{text-align:left;
-padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;font-size:15px}
-th{font-weight:600}.verdict{padding:14px 16px;border-radius:8px;margin:1em 0;font-weight:600}
-.verdict.ok{background:#e9f6ee;color:var(--ok)}.verdict.no{background:#fbf1e6;color:var(--warn)}
-.muted{color:var(--muted);font-size:14px}blockquote{margin:.6em 0;padding:.6em 1em;
-border-left:3px solid var(--line);color:#333;font-size:14px;white-space:pre-wrap}
-footer{max-width:860px;margin:0 auto;padding:20px;border-top:1px solid var(--line);
-font-size:13px;color:var(--muted)}input[type=number]{font-size:16px;padding:6px 8px;width:110px}
-.calc{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1em 0}
-@media(max-width:600px){.calc{grid-template-columns:1fr}}
+:root{--ink:#17181a;--muted:#5f6368;--line:#e6e6e8;--soft:#f6f6f7;--ok:#146c3a;--ok-bg:#e6f4ea;
+--warn:#8a4b00;--warn-bg:#fdf1e3;--accent:#1d4ed8;--bg:#fff}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,
+sans-serif;color:var(--ink);background:var(--bg)}
+a{color:var(--accent)}main{max-width:880px;margin:0 auto;padding:28px 20px 64px}
+header{border-bottom:1px solid var(--line)}
+.top{max-width:880px;margin:0 auto;padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px 18px;
+align-items:baseline}
+.brand{font-weight:800;font-size:1.05rem;letter-spacing:-.01em;color:var(--ink);
+text-decoration:none;margin-right:auto}.brand span{color:var(--accent)}
+.top nav{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px}.top nav a{color:var(--ink);
+text-decoration:none;padding:2px 0;border-bottom:2px solid transparent}
+.top nav a:hover{border-color:var(--accent)}
+h1{font-size:1.85rem;line-height:1.2;letter-spacing:-.015em;margin:.2em 0 .4em}
+h2{font-size:1.2rem;margin:1.8em 0 .5em}h3{font-size:1rem;margin:1.4em 0 .4em}
+p{margin:.55em 0}.lede{font-size:1.08rem;color:#333}.muted{color:var(--muted);font-size:14px}
+table{border-collapse:collapse;width:100%;margin:.7em 0;font-size:15px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;background:var(--soft)}tbody tr:hover{background:#fafafa}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12.5px;font-weight:600;
+white-space:nowrap}.badge.ok{background:var(--ok-bg);color:var(--ok)}
+.badge.no{background:var(--warn-bg);color:var(--warn)}.badge.dim{background:var(--soft);
+color:var(--muted);font-weight:500}
+.verdict{padding:16px 18px;border-radius:10px;margin:1em 0;font-weight:600;line-height:1.45}
+.verdict.ok{background:var(--ok-bg);color:var(--ok)}.verdict.no{background:var(--warn-bg);
+color:var(--warn)}
+.summary{background:var(--soft);border-radius:10px;padding:14px 18px;margin:1em 0}
+blockquote{margin:.6em 0;padding:.7em 1em;border-left:3px solid var(--line);color:#333;
+font-size:14px;white-space:pre-wrap;background:#fcfcfc}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;
+margin:1em 0}.card{border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card a{font-weight:600;text-decoration:none}.card p{margin:.3em 0 0;font-size:14px;
+color:var(--muted)}
+footer{max-width:880px;margin:0 auto;padding:22px 20px;border-top:1px solid var(--line);
+font-size:13px;color:var(--muted)}
+input[type=number]{font-size:16px;padding:7px 9px;width:120px;border:1px solid #bbb;
+border-radius:6px}.calc{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1em 0}
+@media(max-width:600px){.calc{grid-template-columns:1fr}h1{font-size:1.5rem}}
 .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;
-background:#f0f0f0;color:#333;margin-left:6px}
+background:var(--soft);color:#333;margin-left:6px}.ext::after{content:" ↗";font-size:.85em}
 """
+
+_FAVICON = (
+    "data:image/svg+xml,"
+    "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E"
+    "%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E"
+    "%3Ccircle cx='12' cy='16' r='6.5' fill='none' stroke='%23fff' stroke-width='2.5'/%3E"
+    "%3Ccircle cx='20' cy='16' r='6.5' fill='none' stroke='%23fff' stroke-width='2.5'/%3E"
+    "%3C/svg%3E"
+)
 
 _GA4_ID = re.compile(r"G-[A-Z0-9]{6,12}")
 _METHODOLOGY_LINK = re.compile(r'href="(\.\./)*methodology"')
+
+_NAV = (
+    ("index.html", "Compare"),
+    ("fees.html", "Fees"),
+    ("same-bet.html", "Same bet?"),
+    ("legal.html", "Legal"),
+    ("taxes.html", "Taxes"),
+    ("referrals.html", "Referrals"),
+    ("about.html", "About"),
+)
 
 
 def _href(path: str) -> str:
     """Files are written as .html; links and canonicals are extensionless.
 
-    Static hosts (Cloudflare Pages among them) serve `/legal` for legal.html
-    and redirect `/legal.html` to it, so a link carrying the extension costs a
-    redirect on every click and a "page with redirect" note in Search Console.
+    Static hosts (GitHub Pages, Cloudflare Pages) serve `/legal` for
+    legal.html and redirect `/legal.html` to it, so a link carrying the
+    extension costs a redirect on every click and a "page with redirect" note
+    in Search Console.
     """
     if path == "index.html":
         return ""
     return path.removesuffix(".html")
-
-_NAV = (
-    ("index.html", "Compare"),
-    ("fees.html", "Fee calculator"),
-    ("same-bet.html", "Same bet or not?"),
-    ("legal.html", "Legal status"),
-    ("taxes.html", "Taxes"),
-    ("referrals.html", "Referral terms"),
-    ("methodology.html", "How this works"),
-)
 
 
 def _page(site: Site, *, title: str, path: str, body: str, description: str) -> str:
@@ -229,44 +354,60 @@ def _page(site: Site, *, title: str, path: str, body: str, description: str) -> 
         )
     return (
         "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\">"
-        f"<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
+        "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
         f"<title>{_esc(title)}</title>"
         f"<meta name=\"description\" content=\"{_esc(description)}\">"
         f"<link rel=\"canonical\" href=\"{_esc(canonical)}\">"
+        f"<link rel=\"icon\" href=\"{_FAVICON}\">"
+        f"<meta property=\"og:title\" content=\"{_esc(title)}\">"
+        f"<meta property=\"og:description\" content=\"{_esc(description)}\">"
+        f"<meta property=\"og:url\" content=\"{_esc(canonical)}\">"
+        f"<meta property=\"og:site_name\" content=\"{_esc(SITE_NAME)}\">"
         f"<style>{_CSS}</style>{analytics}</head><body>"
-        f"<header><nav>{nav}</nav></header><main>{body}</main>"
+        f"<header><div class=\"top\"><a class=\"brand\" href=\"{root or './'}\">Same bet "
+        f"<span>or not?</span></a><nav>{nav}</nav></div></header><main>{body}</main>"
         f"<footer><p>{_esc(DISCLOSURE)}</p><p>{_esc(NOT_ADVICE)}</p>"
         f"<p>Generated {_esc(site.stamp)} from published venue data. "
-        f"<a href=\"{root}methodology\">How these pages are made.</a></p></footer>"
+        f"<a href=\"{root}methodology\">How these pages are made</a> · "
+        f"<a href=\"{root}about\">About</a></p></footer>"
         "</body></html>\n"
     )
 
 
 # --- pair pages ------------------------------------------------------------
 
+def _leg_row(venue: str, obs_title: object, market_id: object, quote: dict | None) -> str:
+    quote = quote or {}
+    price = _dec(quote.get("yes_ask")) or _dec(quote.get("last"))
+    fee = taker_fee_at(venue, price)
+    label = VENUE_LABELS.get(venue, venue)
+    link = ""
+    if quote.get("url"):
+        link = (
+            f"<div><a class=\"ext\" href=\"{_esc(quote['url'])}\" rel=\"noopener\" "
+            f"target=\"_blank\">Open on {_esc(label)}</a></div>"
+        )
+    fee_text = _cents(fee) if fee is not None else ("set per market" if venue == "polymarket_global" and price else "—")
+    return (
+        f"<tr><td>{_esc(label)}</td><td>{_esc(_clean_title(obs_title))}"
+        f"<div class=\"muted\">{_esc(market_id)}</div>{link}</td>"
+        f"<td>{_price(price)}</td><td>{fee_text}</td></tr>"
+    )
+
+
 def _leg_table(page: PairPage) -> str:
     obs = page.observation
-    best = next(
-        (b for b in obs.get("baskets", []) if b.get("legs") == obs.get("best_basket")),
-        None,
-    )
-    kalshi_fee = _cents(best.get("kalshi_fee")) if best and best.get("kalshi_fee") else "—"
-    poly_fee = _cents(best.get("polymarket_fee")) if best and best.get("polymarket_fee") else "—"
-    venue = str(obs.get("polymarket_venue") or "polymarket")
-    venue_label = (
-        "Polymarket US"
-        if venue == "polymarket_us"
-        else "Polymarket (global — not available to US accounts)"
-    )
     return (
-        "<table><thead><tr><th>Venue</th><th>Contract</th><th>Taker fee at last observed price</th>"
-        "</tr></thead><tbody>"
-        f"<tr><td>Kalshi</td><td>{_esc(obs.get('kalshi_title', ''))}"
-        f"<div class=\"muted\">{_esc(obs.get('kalshi_market_id', ''))}</div></td>"
-        f"<td>{kalshi_fee} per contract</td></tr>"
-        f"<tr><td>{_esc(venue_label)}</td><td>{_esc(obs.get('polymarket_title', ''))}"
-        f"<div class=\"muted\">{_esc(obs.get('polymarket_market_id', ''))}</div></td>"
-        f"<td>{poly_fee} per share</td></tr></tbody></table>"
+        "<table><thead><tr><th>Venue</th><th>Contract</th><th>YES price</th>"
+        "<th>Taker fee at that price</th></tr></thead><tbody>"
+        + _leg_row("kalshi", obs.get("kalshi_title"), obs.get("kalshi_market_id"), page.kalshi_quote)
+        + _leg_row(
+            page.polymarket_venue,
+            obs.get("polymarket_title"),
+            obs.get("polymarket_market_id"),
+            page.polymarket_quote,
+        )
+        + "</tbody></table>"
     )
 
 
@@ -298,7 +439,7 @@ def render_pair(site: Site, page: PairPage) -> str:
         )
         verdict = (
             "<div class=\"verdict no\">Not verified as the same bet. The venues' published "
-            "terms differ in ways that could settle differently:</div>"
+            "terms differ in ways that could settle differently.</div>"
             f"<ul>{items or '<li>the verifier could not confirm equivalence from the published text</li>'}</ul>"
         )
     timing = obs.get("settlement_timing") or {}
@@ -316,10 +457,10 @@ def render_pair(site: Site, page: PairPage) -> str:
         )
     rules = ""
     if page.kalshi_rules:
-        rules += f"<h2>What Kalshi publishes</h2><blockquote>{_esc(page.kalshi_rules[:1200])}</blockquote>"
+        rules += f"<h2>What Kalshi publishes</h2><blockquote>{_esc(page.kalshi_rules[:1500])}</blockquote>"
     if page.polymarket_rules:
         rules += (
-            f"<h2>What Polymarket publishes</h2><blockquote>{_esc(page.polymarket_rules[:1200])}</blockquote>"
+            f"<h2>What Polymarket publishes</h2><blockquote>{_esc(page.polymarket_rules[:1500])}</blockquote>"
         )
     tradeable_note = (
         ""
@@ -328,22 +469,25 @@ def render_pair(site: Site, page: PairPage) -> str:
         "cannot trade; it is shown for the rules comparison only.</p>"
     )
     body = (
+        f"<p class=\"muted\">{_esc(page.family)}</p>"
         f"<h1>{_esc(page.title)}</h1>"
-        f"<p class=\"muted\">Last observed {_esc(str(obs.get('observed_at', ''))[:16].replace('T', ' '))} UTC. "
-        "Prices and fees change constantly; the rules comparison is the durable part.</p>"
+        f"<p class=\"muted\">Last checked {_esc(str(obs.get('observed_at', ''))[:16].replace('T', ' '))} UTC. "
+        "Prices move constantly; the rules comparison is the durable part.</p>"
         + verdict
+        + f"<div class=\"summary\"><strong>In plain words.</strong> {_esc(page.human_summary())}</div>"
         + tradeable_note
         + _leg_table(page)
+        + "<p class=\"muted\">YES price is the best ask at the last check. Fees use each venue's "
+        "published taker formula at that price — see the <a href=\"../fees\">fee calculator</a> "
+        "for any price.</p>"
         + timing_html
         + _grade_line("Kalshi", page.kalshi_grade)
         + _grade_line("Polymarket", page.polymarket_grade)
         + rules
-        + "<p class=\"muted\">Fees use each venue's published taker formula at the last observed "
-        "price — see the <a href=\"../fees\">fee calculator</a> for any price.</p>"
     )
     description = (
         f"{'Verified the same bet' if page.same_bet else 'Not verified as the same bet'}: "
-        f"{obs.get('kalshi_title', '')} vs {obs.get('polymarket_title', '')}."
+        f"{_clean_title(obs.get('kalshi_title'))} vs {_clean_title(obs.get('polymarket_title'))}."
     )
     return _page(site, title=page.title, path=f"compare/{page.slug}.html", body=body, description=description)
 
@@ -357,30 +501,62 @@ def _sources(items: list[tuple[str, str]]) -> str:
     ) + "</ul>"
 
 
+def _pair_row(p: PairPage) -> str:
+    badge = (
+        "<span class=\"badge ok\">Same bet ✓</span>"
+        if p.same_bet
+        else "<span class=\"badge no\">Not verified</span>"
+    )
+    where = "US" if p.tradeable else "<span class=\"badge dim\">global only</span>"
+    return (
+        f"<tr><td><a href=\"compare/{p.slug}\">{_esc(p.headline)}</a></td>"
+        f"<td>{badge}</td><td>{where}</td></tr>"
+    )
+
+
 def render_index(site: Site) -> str:
     same = [p for p in site.pairs if p.same_bet]
-    rows = "".join(
-        f"<tr><td><a href=\"compare/{p.slug}\">{_esc(p.title)}</a></td>"
-        f"<td>{'Same bet ✓' if p.same_bet else 'Not verified'}</td>"
-        f"<td>{'Yes' if p.tradeable else 'Global only'}</td></tr>"
-        for p in sorted(site.pairs, key=lambda p: (not p.same_bet, p.title))
-    )
+    families: dict[str, list[PairPage]] = {}
+    for p in sorted(site.pairs, key=lambda p: (p.family, not p.tradeable, p.headline)):
+        families.setdefault(p.family, []).append(p)
+    sections = ""
+    if same:
+        sections += (
+            "<h2>Verified: the same bet on both venues</h2>"
+            "<table><thead><tr><th>Pair</th><th>Verdict</th><th>Tradeable</th></tr></thead>"
+            f"<tbody>{''.join(_pair_row(p) for p in sorted(same, key=lambda p: p.headline))}</tbody></table>"
+        )
+    for fam, pairs in families.items():
+        sections += (
+            f"<h2>{_esc(fam)}</h2>"
+            "<table><thead><tr><th>Pair</th><th>Verdict</th><th>Tradeable</th></tr></thead>"
+            f"<tbody>{''.join(_pair_row(p) for p in pairs)}</tbody></table>"
+        )
     body = (
-        "<h1>Kalshi vs Polymarket, contract by contract</h1>"
-        "<p>The same event is often listed on both venues. Whether it is the <em>same bet</em> "
-        "depends on the fine print — the settlement source, what happens if the data is late, "
-        "how the number is rounded. These pages compare the venues' own published terms for "
-        f"every matched pair we track, using a deterministic rule check. Right now: "
-        f"<strong>{len(site.pairs)} pairs</strong>, of which <strong>{len(same)}</strong> verify as "
-        "the same bet.</p>"
-        "<p class=\"muted\">Regenerated from live venue data. No picks, no predictions — "
-        "just what each venue says it will do.</p>"
-        "<table><thead><tr><th>Pair</th><th>Verdict</th><th>US-tradeable</th></tr></thead>"
-        f"<tbody>{rows}</tbody></table>"
+        "<h1>Is it the same bet on Kalshi and Polymarket?</h1>"
+        "<p class=\"lede\">The same event is often listed on both venues. Whether it is the "
+        "<em>same bet</em> depends on the fine print — the settlement source, what happens if "
+        "the data is late, how the number is rounded. Every page here compares the two venues' "
+        "own published terms for one matched pair, using a deterministic rule check, and shows "
+        "the live price and fee on each side.</p>"
+        f"<p>Tracking <strong>{len(site.pairs)} pairs</strong> right now; <strong>{len(same)}</strong> "
+        "verify as the same bet. No picks, no predictions — just what each venue says it will do.</p>"
+        "<div class=\"cards\">"
+        "<div class=\"card\"><a href=\"fees\">Fee calculator</a><p>Both venues' exact published "
+        "formulas at any price.</p></div>"
+        "<div class=\"card\"><a href=\"same-bet\">Why \"same event\" isn't \"same bet\"</a>"
+        "<p>Three real cases where identical-looking contracts paid differently.</p></div>"
+        "<div class=\"card\"><a href=\"legal\">Legal status by state</a><p>Court orders, "
+        "cease-and-desists, and rulings, sourced.</p></div>"
+        "<div class=\"card\"><a href=\"taxes\">Taxes</a><p>What forms each venue sends, and "
+        "what practitioners say about reporting.</p></div>"
+        "</div>"
+        + sections
     )
-    return _page(site, title="Kalshi vs Polymarket — same bet or not, per contract", path="index.html",
-                 body=body, description="Contract-by-contract comparison of Kalshi and Polymarket "
-                 "using each venue's published rules.")
+    return _page(site, title="Kalshi vs Polymarket — same bet or not, contract by contract",
+                 path="index.html", body=body,
+                 description="Contract-by-contract comparison of Kalshi and Polymarket using "
+                 "each venue's published rules, with live prices and exact fees.")
 
 
 def render_fees(site: Site) -> str:
@@ -402,9 +578,9 @@ document.getElementById(i).addEventListener('input',fee);});});
 """
     body = (
         "<h1>Kalshi vs Polymarket fees, at your price</h1>"
-        "<p>Both venues charge more when a contract is near 50¢ and almost nothing near the "
-        "extremes — the fee is a curve, not a flat rate. The headline numbers (\"7%\" vs \"6%\") "
-        "are the coefficients in that curve. Enter a price and a size:</p>"
+        "<p class=\"lede\">Both venues charge more when a contract is near 50¢ and almost nothing "
+        "near the extremes — the fee is a curve, not a flat rate. The headline numbers (\"7%\" vs "
+        "\"6%\") are the coefficients in that curve. Enter a price and a size:</p>"
         "<div class=\"calc\"><label>Price (¢) <input id=\"p\" type=\"number\" min=\"1\" max=\"99\" "
         "value=\"50\"></label><label>Contracts <input id=\"n\" type=\"number\" min=\"1\" "
         "value=\"100\"></label></div>"
@@ -425,8 +601,8 @@ document.getElementById(i).addEventListener('input',fee);});});
         "<h2>At a glance</h2><table><thead><tr><th>Price</th><th>Kalshi taker</th>"
         f"<th>Polymarket US taker</th></tr></thead><tbody>{rows}</tbody></table>"
         "<p class=\"muted\">Both peak at 50¢: 1.75¢ (Kalshi, shown rounded up to 2¢ per contract) vs "
-        "1.5¢ (Polymarket US). At 90¢ they are 0.63¢ (rounded to 1¢) and 0.54¢. Deposits, withdrawals, and any crypto on-ramp costs are "
-        "separate and not modeled here.</p>"
+        "1.5¢ (Polymarket US). At 90¢ they are 0.63¢ (rounded to 1¢) and 0.54¢. "
+        "Deposits, withdrawals, and any crypto on-ramp costs are separate and not modeled here.</p>"
         + _sources([
             ("Kalshi Help Center — Fees", "https://help.kalshi.com/en/articles/13823805-fees"),
             ("Kalshi fee schedule (July 2026 PDF)", "https://kalshi.com/docs/kalshi-fee-schedule.pdf"),
@@ -442,7 +618,8 @@ document.getElementById(i).addEventListener('input',fee);});});
 def render_same_bet(site: Site) -> str:
     body = (
         "<h1>Same event, same bet? Usually not quite.</h1>"
-        "<p>Two contracts can share a headline and still pay out differently. Three real cases:</p>"
+        "<p class=\"lede\">Two contracts can share a headline and still pay out differently. "
+        "Three real cases:</p>"
         "<h2>1. Cardi B at the Super Bowl (February 2026)</h2>"
         "<p>Both venues listed whether Cardi B would perform at halftime. She appeared in another "
         "artist's set. Polymarket resolved <strong>YES</strong>. Kalshi ruled the question "
@@ -471,32 +648,78 @@ def render_same_bet(site: Site) -> str:
                  "settle differently, with real cases.")
 
 
+_LEGAL_BADGE = {
+    NO_STATE_ACTION: "dim",
+    "Court ruling favoring the venue": "ok",
+}
+
+
+def _legal_states_table(data: dict) -> str:
+    rows = ""
+    for row in sorted(data.get("states", []), key=lambda r: str(r.get("state"))):
+        status = str(row.get("status") or NO_STATE_ACTION)
+        kind = _LEGAL_BADGE.get(status, "no")
+        cats = ", ".join(str(c) for c in row.get("categories") or [])
+        srcs = " ".join(
+            f"<a href=\"{_esc(u)}\" rel=\"nofollow noopener\">[{i + 1}]</a>"
+            for i, u in enumerate(row.get("sources") or [])
+        )
+        rows += (
+            f"<tr><td><strong>{_esc(row.get('state'))}</strong></td>"
+            f"<td><span class=\"badge {kind}\">{_esc(status)}</span></td>"
+            f"<td>{_esc(row.get('summary') or '')}"
+            + (f"<div class=\"muted\">Affects: {_esc(cats)}</div>" if cats else "")
+            + (f"<div class=\"muted\">Sources: {srcs}</div>" if srcs else "")
+            + "</td></tr>"
+        )
+    return (
+        "<table><thead><tr><th>State</th><th>Status</th><th>What has happened</th></tr></thead>"
+        f"<tbody>{rows}</tbody></table>"
+    )
+
+
 def render_legal(site: Site) -> str:
+    data = site.legal_states or {}
+    as_of = str(data.get("as_of") or "September 2026")
+    actions = [r for r in data.get("states", []) if str(r.get("status")) != NO_STATE_ACTION]
+    if data.get("states"):
+        table = (
+            f"<h2>All 50 states and DC (as of {_esc(as_of)})</h2>"
+            f"<p>{len(actions)} states have taken some public action; the rest have none reported. "
+            "\"None reported\" means we found no regulator letter, suit, or court order — not that "
+            "a state has approved anything.</p>"
+            + _legal_states_table(data)
+        )
+    else:
+        table = (
+            "<h2>Where states have pushed back on sports contracts</h2>"
+            "<table><thead><tr><th>State</th><th>What has happened</th></tr></thead><tbody>"
+            "<tr><td>New York</td><td>The Attorney General filed a civil suit calling Kalshi's sports "
+            "contracts illegal gambling.</td></tr>"
+            "<tr><td>Massachusetts</td><td>A Superior Court judge issued a preliminary injunction "
+            "barring in-state sports contracts without a gaming license (January 2026).</td></tr>"
+            "<tr><td>Nevada</td><td>A temporary restraining order covered sports, election, and "
+            "entertainment contracts; Kalshi removed those categories for Nevada users.</td></tr>"
+            "<tr><td>New Jersey</td><td>A federal appellate court held the state cannot enforce its "
+            "sports-betting laws against Kalshi while the case proceeds.</td></tr>"
+            "</tbody></table>"
+        )
     body = (
-        "<h1>Where Kalshi and Polymarket stand legally (as of September 2026)</h1>"
+        f"<h1>Is Kalshi legal? Is Polymarket legal in the US? State by state, as of {_esc(as_of)}</h1>"
         "<p class=\"muted\">A factual tracker of public rulings and filings, not legal advice. "
-        "This area is changing month to month; check the sources for the current state.</p>"
+        "This area changes month to month; every row links its sources.</p>"
         "<h2>The federal picture</h2>"
         "<p>Kalshi is a CFTC-regulated exchange. Polymarket US operates a separately regulated US "
-        "venue; Polymarket's original global platform is not available to US accounts. Federal "
-        "courts have generally treated Kalshi's event contracts as swaps under the Commodity "
-        "Exchange Act, which would preempt state gambling law — a US appellate court allowed Kalshi "
-        "to keep offering sports contracts in New Jersey while litigation continues.</p>"
-        "<h2>Where states have pushed back on sports contracts</h2>"
-        "<table><thead><tr><th>State</th><th>What has happened</th></tr></thead><tbody>"
-        "<tr><td>New York</td><td>The Attorney General filed a civil suit calling Kalshi's sports "
-        "contracts illegal gambling.</td></tr>"
-        "<tr><td>Massachusetts</td><td>A Superior Court judge issued a preliminary injunction "
-        "barring in-state sports contracts without a gaming license (January 2026).</td></tr>"
-        "<tr><td>Nevada</td><td>A temporary restraining order covered sports, election, and "
-        "entertainment contracts; Kalshi removed those categories for Nevada users.</td></tr>"
-        "<tr><td>New Jersey</td><td>A federal appellate court held the state cannot enforce its "
-        "sports-betting laws against Kalshi while the case proceeds.</td></tr>"
-        "</tbody></table>"
-        "<p>The pattern so far: federal courts lean toward CFTC jurisdiction; several state courts "
-        "and regulators treat sports contracts as gambling. Economic and political contracts have "
-        "drawn less state action than sports contracts. Your own state's status can change with a "
-        "single ruling.</p>"
+        "venue; Polymarket's original global platform is not available to US accounts. The core "
+        "legal question is whether event contracts are federal \"swaps\" under the Commodity "
+        "Exchange Act, which would preempt state gambling law. <strong>Federal appeals courts are "
+        "now split.</strong> The Third Circuit sided with Kalshi in April 2026 (New Jersey cannot "
+        "enforce its gambling laws against Kalshi's sports contracts); the Ninth Circuit sided with "
+        "Nevada in August 2026. New Jersey asked the U.S. Supreme Court to take the case on "
+        "September 2, 2026. Until that is resolved, the answer genuinely depends on the state. "
+        "Sports contracts are the target in nearly every action; elections and entertainment "
+        "contracts are named in several. Economic contracts have drawn the least state action.</p>"
+        + table
         + _sources([
             ("Holland & Knight — Prediction Markets at a Crossroads (Feb 2026)",
              "https://www.hklaw.com/en/insights/publications/2026/02/prediction-markets-at-a-crossroads-the-continued-jurisdictional-battle"),
@@ -510,8 +733,8 @@ def render_legal(site: Site) -> str:
     )
     return _page(site, title="Is Kalshi legal? Is Polymarket legal in the US? State-by-state tracker",
                  path="legal.html", body=body,
-                 description="Factual tracker of the court rulings and state actions affecting "
-                 "Kalshi and Polymarket in 2026. Not legal advice.")
+                 description="Factual, sourced tracker of court rulings and state actions affecting "
+                 "Kalshi and Polymarket in every US state. Not legal advice.")
 
 
 def render_taxes(site: Site) -> str:
@@ -586,16 +809,46 @@ def render_methodology(site: Site) -> str:
         "venues' settlement terms are complete.</p>"
         "<p>The system behind it is a paper-only research instrument. It has never placed a trade, "
         "and its research record — including four pre-registered hypotheses that each returned a "
-        "negative result — is public. That record is the reason to trust a page that says "
-        "\"not verified\": the instrument is built to say no.</p>"
+        f"negative result — is public at <a href=\"{REPO_URL}\" rel=\"noopener\">{_esc(REPO_URL)}</a>. "
+        "That record is the reason to trust a page that says \"not verified\": the instrument is "
+        "built to say no.</p>"
         "<h2>What is and isn't here</h2>"
-        "<ul><li>Facts about published rules, fees, legal filings, and program terms — with sources "
-        "and dates.</li><li>No picks, no probabilities, no strategies, no advice.</li>"
+        "<ul><li>Facts about published rules, fees, prices, legal filings, and program terms — "
+        "with sources and dates.</li><li>No picks, no probabilities, no strategies, no advice.</li>"
         "<li>Affiliate relationships, disclosed on every page, that never affect a verdict.</li></ul>"
+        "<p>Prices shown are the best ask at the moment of the nightly rebuild. Fees are computed "
+        "from each venue's published formula at that price, not copied from a screen.</p>"
     )
     return _page(site, title="How this site works", path="methodology.html", body=body,
                  description="How the Kalshi vs Polymarket comparison pages are generated, "
                  "and what they deliberately are not.")
+
+
+def render_about(site: Site) -> str:
+    body = (
+        "<h1>About</h1>"
+        "<p class=\"lede\">This site is one person's project, generated by software they wrote, "
+        "published because the answer it gives — \"usually not the same bet\" — was worth sharing.</p>"
+        "<p><strong>Who.</strong> Omar (GitHub: <a href=\"https://github.com/omac049\" "
+        "rel=\"noopener\">omac049</a>), a marketing-analytics professional. Not affiliated with, "
+        "employed by, or sponsored by Kalshi or Polymarket. Not a lawyer, accountant, or financial "
+        "adviser.</p>"
+        "<p><strong>What.</strong> Over six weeks in 2026 I tested four ideas for making money in "
+        "prediction markets, with pass/fail thresholds fixed before looking at data. All four "
+        "failed, and the write-ups are public. What survived was the instrument: a deterministic "
+        "checker that reads both venues' rulebooks and says whether two contracts actually settle "
+        "the same way. This site publishes what it finds, every night.</p>"
+        "<p><strong>Corrections.</strong> If a page is wrong — a rule text out of date, a fee "
+        "formula changed, a legal status moved — open an issue at "
+        f"<a href=\"{REPO_URL}/issues\" rel=\"noopener\">{_esc(REPO_URL)}/issues</a>. Every claim on a "
+        "pillar page carries a source; a correction that cites a better one is applied.</p>"
+        "<p><strong>Money.</strong> The site may earn referral revenue, disclosed on every page. "
+        "Referral relationships never change a verdict, a price, or a fee; those come from the "
+        "venues' own published data and the method is public.</p>"
+        "<p><a href=\"methodology\">How the pages are made →</a></p>"
+    )
+    return _page(site, title="About Same bet or not?", path="about.html", body=body,
+                 description="Who makes this site, why, and how to send a correction.")
 
 
 # --- build -----------------------------------------------------------------
@@ -610,6 +863,7 @@ def render_all(site: Site) -> dict[str, str]:
         "taxes.html": render_taxes(site),
         "referrals.html": render_referrals(site),
         "methodology.html": render_methodology(site),
+        "about.html": render_about(site),
     }
     for page in site.pairs:
         pages[f"compare/{page.slug}.html"] = render_pair(site, page)
@@ -632,6 +886,10 @@ def render_all(site: Site) -> dict[str, str]:
             "pairs": len(site.pairs),
             "same_bet_pairs": sum(1 for p in site.pairs if p.same_bet),
             "tradeable_pairs": sum(1 for p in site.pairs if p.tradeable),
+            "pairs_with_quotes": sum(
+                1 for p in site.pairs if p.kalshi_quote and p.polymarket_quote
+            ),
+            "legal_states": len((site.legal_states or {}).get("states", [])),
         },
         indent=2,
     ) + "\n"
@@ -661,12 +919,25 @@ def verify_pages(pages: dict[str, str]) -> list[str]:
     return problems
 
 
+def verify_legal_states(data: dict | None) -> list[str]:
+    """A state row asserting action without a loaded source is not publishable."""
+    if not data:
+        return []
+    problems = []
+    for row in data.get("states", []):
+        if str(row.get("status") or NO_STATE_ACTION) != NO_STATE_ACTION and not row.get("sources"):
+            problems.append(f"legal: {row.get('state')} claims '{row.get('status')}' without a source")
+    return problems
+
+
 def build_site(
     observations: list[dict],
     *,
     base_url: str,
     rules: dict[str, str] | None = None,
     grades: dict[str, dict] | None = None,
+    quotes: dict[str, dict] | None = None,
+    legal_states: dict | None = None,
     generated_at: datetime | None = None,
     analytics_id: str | None = None,
 ) -> tuple[Site, dict[str, str]]:
@@ -676,6 +947,7 @@ def build_site(
         latest[(str(obs.get("kalshi_market_id")), str(obs.get("polymarket_market_id")))] = obs
     rules = rules or {}
     grades = grades or {}
+    quotes = quotes or {}
     pairs = [
         PairPage(
             observation=obs,
@@ -683,6 +955,8 @@ def build_site(
             polymarket_rules=rules.get(str(obs.get("polymarket_market_id"))),
             kalshi_grade=grades.get(str(obs.get("kalshi_market_id"))),
             polymarket_grade=grades.get(str(obs.get("polymarket_market_id"))),
+            kalshi_quote=quotes.get(str(obs.get("kalshi_market_id"))),
+            polymarket_quote=quotes.get(str(obs.get("polymarket_market_id"))),
         )
         for obs in latest.values()
     ]
@@ -691,7 +965,11 @@ def build_site(
         generated_at=generated_at or datetime.now(UTC),
         pairs=pairs,
         analytics_id=analytics_id,
+        legal_states=legal_states,
     )
+    problems = verify_legal_states(legal_states)
+    if problems:
+        raise ValueError("site guardrails failed: " + "; ".join(problems))
     pages = render_all(site)
     problems = verify_pages(pages)
     if problems:
