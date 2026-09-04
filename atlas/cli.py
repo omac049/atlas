@@ -1655,6 +1655,7 @@ async def clarity_scan(live: bool, max_markets: int = CLARITY_MAX_MARKETS_DEFAUL
 SITE_MAX_AGE_DAYS = 3
 SITE_MAX_LIVE_FETCHES = 200
 SITE_LEGAL_STATES_PATH = Path("docs/site/legal-states.json")
+SITE_COMPARISON_PATH = Path("docs/site/kalshi-vs-polymarket.json")
 GAMMA_MARKETS_URL = "https://gamma-api.polymarket.com/markets"
 
 
@@ -1798,6 +1799,9 @@ async def site_build(
     legal_states = None
     if SITE_LEGAL_STATES_PATH.exists():
         legal_states = json.loads(SITE_LEGAL_STATES_PATH.read_text())
+    comparison = None
+    if SITE_COMPARISON_PATH.exists():
+        comparison = json.loads(SITE_COMPARISON_PATH.read_text())
     site, pages = build_site(
         observations,
         base_url=base_url,
@@ -1805,6 +1809,7 @@ async def site_build(
         grades=grades,
         quotes=quotes,
         legal_states=legal_states,
+        comparison=comparison,
         analytics_id=analytics_id,
     )
     written = write_site(pages, Path(out))
@@ -1815,6 +1820,7 @@ async def site_build(
         f"rules_excerpts={sum(1 for p in site.pairs if p.kalshi_rules and p.polymarket_rules)} "
         f"grades={len(grades)} quotes={len(quotes)} links={linked} "
         f"legal_states={len((legal_states or {}).get('states', []))} "
+        f"comparison_rows={len((comparison or {}).get('rows', []))} "
         f"live_fetches={fetches} live_failures={failures} out={out}"
     )
 

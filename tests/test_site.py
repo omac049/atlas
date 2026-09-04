@@ -240,3 +240,36 @@ def test_about_page_exists_and_is_linked_from_every_page():
     for path, html in pages.items():
         if path.endswith(".html"):
             assert re.search(r'href="(\.\./)*about"', html), path
+
+
+def test_comparison_page_renders_sourced_rows_and_faq_schema_and_rejects_unsourced():
+    data = {"as_of": "2026-09-04", "rows": [
+        {"topic": "Regulator", "kalshi": "CFTC-regulated DCM.", "polymarket_us": "CFTC-registered.",
+         "polymarket_global": "Offshore; not for US accounts.", "sources": ["https://example.test/reg"]},
+    ], "faq": [{"q": "Is Polymarket legal in the US?", "a": "Polymarket US is the US venue."}]}
+    pages = _pages(comparison=data)
+    page = pages["kalshi-vs-polymarket.html"]
+    assert "Side by side (as of 2026-09-04)" in page
+    assert "CFTC-regulated DCM." in page and 'href="https://example.test/reg"' in page
+    assert '"@type": "FAQPage"' in page and "Is Polymarket legal in the US?" in page
+    assert 'href="kalshi-vs-polymarket"' in pages["index.html"]
+    with pytest.raises(ValueError, match="Regulator"):
+        _pages(comparison={"rows": [{"topic": "Regulator", "kalshi": "x", "sources": []}]})
+    # Without data the page still exists and routes to the pillars.
+    bare = _pages()["kalshi-vs-polymarket.html"]
+    assert "Side by side" not in bare and 'href="fees"' in bare
+
+
+def test_indexnow_key_file_is_emitted_and_matches_the_constant():
+    from atlas.site import INDEXNOW_KEY
+
+    pages = _pages()
+    assert pages[f"{INDEXNOW_KEY}.txt"].strip() == INDEXNOW_KEY
+    assert f"{INDEXNOW_KEY}.txt" not in pages["sitemap.xml"]
+
+
+def test_jsonld_cannot_break_out_of_its_script_tag():
+    from atlas.site import _faq_jsonld
+
+    out = _faq_jsonld([{"q": "x</script><script>alert(1)</script>", "a": "y"}])
+    assert out.count("</script>") == 1

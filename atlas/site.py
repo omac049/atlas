@@ -40,6 +40,9 @@ SITE_VERSION = "0.2"
 SITE_NAME = "Same bet or not?"
 TRUSTED_STATUSES = {"APPROVED_EQUIVALENT", "APPROVED_INVERSE"}
 REPO_URL = "https://github.com/omac049/atlas"
+# IndexNow key: public by design (it is served at /{key}.txt so Bing can verify
+# the site owns submissions). Not a credential.
+INDEXNOW_KEY = "9c1f2a7e4b8d4e6f8a0b1c2d3e4f5a6b"
 
 # Verified 2026-09-04 against the venues' published schedules; the calculator
 # page cites both. Kalshi's per-contract ceiling is the conservative reading
@@ -249,6 +252,9 @@ class Site:
     # docs/site/legal-states.json, loaded by the CLI; None renders the short
     # federal-picture version of the legal page.
     legal_states: dict | None = None
+    # docs/site/kalshi-vs-polymarket.json: the head-term page's rows and FAQ,
+    # every row sourced; None renders the short version that links the pillars.
+    comparison: dict | None = None
 
     @property
     def stamp(self) -> str:
@@ -315,6 +321,7 @@ _METHODOLOGY_LINK = re.compile(r'href="(\.\./)*methodology"')
 
 _NAV = (
     ("index.html", "Compare"),
+    ("kalshi-vs-polymarket.html", "Kalshi vs Polymarket"),
     ("fees.html", "Fees"),
     ("same-bet.html", "Same bet?"),
     ("legal.html", "Legal"),
@@ -542,6 +549,8 @@ def render_index(site: Site) -> str:
         f"<p>Tracking <strong>{len(site.pairs)} pairs</strong> right now; <strong>{len(same)}</strong> "
         "verify as the same bet. No picks, no predictions — just what each venue says it will do.</p>"
         "<div class=\"cards\">"
+        "<div class=\"card\"><a href=\"kalshi-vs-polymarket\">Kalshi vs Polymarket, side by side</a>"
+        "<p>Regulation, funding, fees, settlement, taxes — sourced, no opinions.</p></div>"
         "<div class=\"card\"><a href=\"fees\">Fee calculator</a><p>Both venues' exact published "
         "formulas at any price.</p></div>"
         "<div class=\"card\"><a href=\"same-bet\">Why \"same event\" isn't \"same bet\"</a>"
@@ -824,6 +833,91 @@ def render_methodology(site: Site) -> str:
                  "and what they deliberately are not.")
 
 
+def _faq_jsonld(faq: list[dict]) -> str:
+    data = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": str(item.get("q") or ""),
+                "acceptedAnswer": {"@type": "Answer", "text": str(item.get("a") or "")},
+            }
+            for item in faq
+            if item.get("q") and item.get("a")
+        ],
+    }
+    # </script> inside JSON would end the tag early; escape the slash.
+    return "<script type=\"application/ld+json\">" + json.dumps(data).replace("</", "<\\/") + "</script>"
+
+
+def render_comparison(site: Site) -> str:
+    data = site.comparison or {}
+    as_of = str(data.get("as_of") or "September 2026")
+    rows = data.get("rows") or []
+    faq = data.get("faq") or []
+    table = ""
+    if rows:
+        body_rows = ""
+        for i, row in enumerate(rows):
+            srcs = " ".join(
+                f"<a href=\"{_esc(u)}\" rel=\"nofollow noopener\">[{j + 1}]</a>"
+                for j, u in enumerate(row.get("sources") or [])
+            )
+            note = f"<div class=\"muted\">Note: {_esc(row['note'])}</div>" if row.get("note") else ""
+            body_rows += (
+                f"<tr><th scope=\"row\">{_esc(row.get('topic'))}"
+                f"<div class=\"muted\">{srcs}</div></th>"
+                f"<td>{_esc(row.get('kalshi') or 'Not published')}</td>"
+                f"<td>{_esc(row.get('polymarket_us') or 'Not published')}</td>"
+                f"<td>{_esc(row.get('polymarket_global') or 'Not published')}{note}</td></tr>"
+            )
+        table = (
+            f"<h2>Side by side (as of {_esc(as_of)})</h2>"
+            "<div style=\"overflow-x:auto\"><table><thead><tr><th></th><th>Kalshi</th>"
+            "<th>Polymarket US</th><th>Polymarket (global)</th></tr></thead>"
+            f"<tbody>{body_rows}</tbody></table></div>"
+            "<p class=\"muted\">\"Not published\" means the venue does not state it in its "
+            "public documentation; we do not fill gaps with guesses. Bracketed numbers link "
+            "the source for that row.</p>"
+        )
+    faq_html = ""
+    if faq:
+        faq_html = "<h2>Questions people ask</h2>" + "".join(
+            f"<h3>{_esc(item.get('q'))}</h3><p>{_esc(item.get('a'))}</p>" for item in faq
+        )
+    same = sum(1 for p in site.pairs if p.same_bet)
+    body = (
+        "<h1>Kalshi vs Polymarket: the factual comparison</h1>"
+        "<p class=\"lede\">Kalshi is a US-regulated exchange. Polymarket runs two venues: a US "
+        "one and the original global platform, which US accounts cannot use. They list many of "
+        "the same events, charge fees on a similar curve, and settle by different rulebooks. "
+        "This page puts what each venue publishes next to each other — regulation, who can use "
+        "it, funding, fees, settlement, disputes, taxes — with a source on every row and no "
+        "opinion on which is \"better\".</p>"
+        f"<p>For the contracts themselves: we track <strong>{len(site.pairs)} matched pairs</strong> "
+        f"across both venues right now, and <strong>{same}</strong> verify as the same bet under "
+        "both rulebooks. <a href=\"./\">See every pair →</a></p>"
+        + table
+        + "<h2>The parts with their own page</h2><div class=\"cards\">"
+        "<div class=\"card\"><a href=\"fees\">Fees at any price</a><p>Both published formulas, "
+        "with a calculator.</p></div>"
+        "<div class=\"card\"><a href=\"legal\">Legal status by state</a><p>All 50 states and DC, "
+        "sourced.</p></div>"
+        "<div class=\"card\"><a href=\"taxes\">Taxes</a><p>What forms each venue sends.</p></div>"
+        "<div class=\"card\"><a href=\"referrals\">Referral programs</a><p>Credits vs cash, "
+        "honestly.</p></div>"
+        "<div class=\"card\"><a href=\"same-bet\">Same event, same bet?</a><p>Three real cases "
+        "where the answer was no.</p></div></div>"
+        + faq_html
+        + (_faq_jsonld(faq) if faq else "")
+    )
+    return _page(site, title="Kalshi vs Polymarket (2026): regulation, fees, funding, settlement, taxes — compared",
+                 path="kalshi-vs-polymarket.html", body=body,
+                 description="Kalshi vs Polymarket side by side: regulation, who can use each, "
+                 "funding, exact fees, settlement and disputes, taxes, referrals. Every row sourced.")
+
+
 def render_about(site: Site) -> str:
     body = (
         "<h1>About</h1>"
@@ -864,6 +958,7 @@ def render_all(site: Site) -> dict[str, str]:
         "referrals.html": render_referrals(site),
         "methodology.html": render_methodology(site),
         "about.html": render_about(site),
+        "kalshi-vs-polymarket.html": render_comparison(site),
     }
     for page in site.pairs:
         pages[f"compare/{page.slug}.html"] = render_pair(site, page)
@@ -879,6 +974,7 @@ def render_all(site: Site) -> dict[str, str]:
         + "</urlset>\n"
     )
     pages["robots.txt"] = f"User-agent: *\nAllow: /\nSitemap: {base}/sitemap.xml\n"
+    pages[f"{INDEXNOW_KEY}.txt"] = INDEXNOW_KEY + "\n"
     pages["manifest.json"] = json.dumps(
         {
             "site_version": SITE_VERSION,
@@ -890,6 +986,7 @@ def render_all(site: Site) -> dict[str, str]:
                 1 for p in site.pairs if p.kalshi_quote and p.polymarket_quote
             ),
             "legal_states": len((site.legal_states or {}).get("states", [])),
+            "comparison_rows": len((site.comparison or {}).get("rows", [])),
         },
         indent=2,
     ) + "\n"
@@ -930,6 +1027,17 @@ def verify_legal_states(data: dict | None) -> list[str]:
     return problems
 
 
+def verify_comparison(data: dict | None) -> list[str]:
+    """A comparison row without a loaded source is not publishable."""
+    if not data:
+        return []
+    return [
+        f"comparison: row '{row.get('topic')}' has no source"
+        for row in data.get("rows", [])
+        if not row.get("sources")
+    ]
+
+
 def build_site(
     observations: list[dict],
     *,
@@ -938,6 +1046,7 @@ def build_site(
     grades: dict[str, dict] | None = None,
     quotes: dict[str, dict] | None = None,
     legal_states: dict | None = None,
+    comparison: dict | None = None,
     generated_at: datetime | None = None,
     analytics_id: str | None = None,
 ) -> tuple[Site, dict[str, str]]:
@@ -966,8 +1075,9 @@ def build_site(
         pairs=pairs,
         analytics_id=analytics_id,
         legal_states=legal_states,
+        comparison=comparison,
     )
-    problems = verify_legal_states(legal_states)
+    problems = verify_legal_states(legal_states) + verify_comparison(comparison)
     if problems:
         raise ValueError("site guardrails failed: " + "; ".join(problems))
     pages = render_all(site)
