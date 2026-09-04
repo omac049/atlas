@@ -18,7 +18,7 @@
     <key>EnvironmentVariables</key>
     <dict>
         <key>ATLAS_SITE_BASE_URL</key>
-        <string>https://example.invalid</string>
+        <string>https://samebetornot.com</string>
         <key>ATLAS_SITE_PUBLISH_CMD</key>
         <string></string>
         <key>ATLAS_SITE_GA4_ID</key>
