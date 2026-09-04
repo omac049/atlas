@@ -154,6 +154,9 @@ class Site:
     base_url: str
     generated_at: datetime
     pairs: list[PairPage] = field(default_factory=list)
+    # A GA4 measurement id (G-XXXXXXX). None = no analytics tag at all; the
+    # demand test counts social clicks, so measurement is opt-in by the owner.
+    analytics_id: str | None = None
 
     @property
     def stamp(self) -> str:
@@ -183,6 +186,8 @@ font-size:13px;color:var(--muted)}input[type=number]{font-size:16px;padding:6px 
 background:#f0f0f0;color:#333;margin-left:6px}
 """
 
+_GA4_ID = re.compile(r"G-[A-Z0-9]{6,12}")
+
 _NAV = (
     ("index.html", "Compare"),
     ("fees.html", "Fee calculator"),
@@ -199,13 +204,21 @@ def _page(site: Site, *, title: str, path: str, body: str, description: str) -> 
     root = "../" * depth
     nav = "".join(f'<a href="{root}{href}">{_esc(label)}</a>' for href, label in _NAV)
     canonical = f"{site.base_url.rstrip('/')}/{path}"
+    analytics = ""
+    if site.analytics_id and _GA4_ID.fullmatch(site.analytics_id):
+        gid = site.analytics_id
+        analytics = (
+            f"<script async src=\"https://www.googletagmanager.com/gtag/js?id={gid}\"></script>"
+            "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}"
+            f"gtag('js',new Date());gtag('config','{gid}',{{'anonymize_ip':true}});</script>"
+        )
     return (
         "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\">"
         f"<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
         f"<title>{_esc(title)}</title>"
         f"<meta name=\"description\" content=\"{_esc(description)}\">"
         f"<link rel=\"canonical\" href=\"{_esc(canonical)}\">"
-        f"<style>{_CSS}</style></head><body>"
+        f"<style>{_CSS}</style>{analytics}</head><body>"
         f"<header><nav>{nav}</nav></header><main>{body}</main>"
         f"<footer><p>{_esc(DISCLOSURE)}</p><p>{_esc(NOT_ADVICE)}</p>"
         f"<p>Generated {_esc(site.stamp)} from published venue data. "
@@ -640,6 +653,7 @@ def build_site(
     rules: dict[str, str] | None = None,
     grades: dict[str, dict] | None = None,
     generated_at: datetime | None = None,
+    analytics_id: str | None = None,
 ) -> tuple[Site, dict[str, str]]:
     """Assemble pair pages from the latest observation per pair and render."""
     latest: dict[tuple[str, str], dict] = {}
@@ -657,7 +671,12 @@ def build_site(
         )
         for obs in latest.values()
     ]
-    site = Site(base_url=base_url, generated_at=generated_at or datetime.now(UTC), pairs=pairs)
+    site = Site(
+        base_url=base_url,
+        generated_at=generated_at or datetime.now(UTC),
+        pairs=pairs,
+        analytics_id=analytics_id,
+    )
     pages = render_all(site)
     problems = verify_pages(pages)
     if problems:

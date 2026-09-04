@@ -1656,7 +1656,9 @@ SITE_MAX_AGE_DAYS = 3
 SITE_MAX_LIVE_FETCHES = 120
 
 
-async def site_build(out: str, base_url: str, live: bool) -> None:
+async def site_build(
+    out: str, base_url: str, live: bool, analytics_id: str | None = None
+) -> None:
     """Generate the demand-test static site (docs/IDEATION.md) into `out`.
 
     Read-only consumer of gap_observations and the evidence archive; live mode
@@ -1705,7 +1707,9 @@ async def site_build(out: str, base_url: str, live: bool) -> None:
                 )
             except (httpx.HTTPError, ValueError, KeyError):
                 failures += 1
-    site, pages = build_site(observations, base_url=base_url, rules=rules, grades=grades)
+    site, pages = build_site(
+        observations, base_url=base_url, rules=rules, grades=grades, analytics_id=analytics_id
+    )
     written = write_site(pages, Path(out))
     print(
         f"site_pages={written} pairs={len(site.pairs)} "
@@ -1841,6 +1845,9 @@ def main() -> None:
     )
     site_build_parser.add_argument(
         "--live", action="store_true", help="hydrate rules text and grades from the US venues"
+    )
+    site_build_parser.add_argument(
+        "--analytics-id", default=None, help="GA4 measurement id (G-...); omit for no tag"
     )
     learning = sub.add_parser("learning")
     learning_sub = learning.add_subparsers(dest="action", required=True)
@@ -1993,7 +2000,7 @@ def main() -> None:
     elif args.command == "clarity" and args.action == "scan":
         asyncio.run(clarity_scan(args.live, max(args.max_markets, 0)))
     elif args.command == "site" and args.action == "build":
-        asyncio.run(site_build(args.out, args.base_url, args.live))
+        asyncio.run(site_build(args.out, args.base_url, args.live, args.analytics_id))
     elif args.command == "gaps" and args.action == "status":
         asyncio.run(gaps_status())
     elif args.command == "learning" and args.action == "export":
