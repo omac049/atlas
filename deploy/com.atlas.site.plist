@@ -20,7 +20,7 @@
         <key>ATLAS_SITE_BASE_URL</key>
         <string>https://samebetornot.com</string>
         <key>ATLAS_SITE_PUBLISH_CMD</key>
-        <string></string>
+        <string>sh deploy/publish_gh_pages.sh</string>
         <key>ATLAS_SITE_GA4_ID</key>
         <string></string>
         <key>PATH</key>
