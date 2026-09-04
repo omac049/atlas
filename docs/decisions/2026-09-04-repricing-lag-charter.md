@@ -184,5 +184,5 @@ justify running it once, properly, and then believing the answer.
 
 - Proposed: 2026-09-04 (Claude, having probed one game to confirm the feeds
   and nothing else).
-- Freeze commit: _pending_.
+- Freeze commit: `9a87d20df3da2d6d7691c3463145f3cf975c5e9a` (2026-09-04, instrument + tests + runner; validated on the excluded game only; no sample tape read before this hash).
 - Owner signature: _pending — merging this file constitutes sign-off._
