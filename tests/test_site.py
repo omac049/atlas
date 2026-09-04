@@ -99,11 +99,18 @@ def test_global_venue_pairs_are_labelled_not_tradeable():
     assert "Global only" in pages["index.html"]
 
 
-def test_sitemap_lists_every_html_page_with_the_base_url():
+def test_sitemap_and_links_use_clean_urls_while_files_keep_html():
+    """Static hosts serve /legal for legal.html and redirect /legal.html; a
+    link with the extension is a redirect on every click."""
     _, pages = build_site([_obs()], base_url="https://example.test/", generated_at=AT)
-    for path in pages:
-        if path.endswith(".html"):
-            assert f"https://example.test/{path}" in pages["sitemap.xml"]
+    assert "<loc>https://example.test/</loc>" in pages["sitemap.xml"]
+    assert "<loc>https://example.test/legal</loc>" in pages["sitemap.xml"]
+    assert ".html</loc>" not in pages["sitemap.xml"]
+    assert 'rel="canonical" href="https://example.test/fees"' in pages["fees.html"]
+    compare = next(p for p in pages if p.startswith("compare/"))
+    assert compare.endswith(".html")
+    assert f'href="{compare.removesuffix(".html")}"' in pages["index.html"]
+    assert '.html"' not in pages["index.html"]
     assert "Sitemap: https://example.test/sitemap.xml" in pages["robots.txt"]
 
 

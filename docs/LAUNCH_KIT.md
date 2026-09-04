@@ -11,15 +11,19 @@ DNS is handled by the host in step 2.
 
 ## 2. Host — Cloudflare Pages (free)
 
+`--branch main` is required: wrangler otherwise infers the branch from the git
+checkout, and a deploy from a feature branch lands on a preview alias, not
+production (this happened on 2026-09-04).
+
 Wrangler on this Mac is already logged in to the owner's Cloudflare account
 (checked 2026-09-04 with `npx wrangler whoami`), so no login step is needed.
 
 ```bash
-npx wrangler pages project create atlas-site --production-branch main
+npx wrangler pages project create samebetornot --production-branch main
 ```
 
 ```bash
-npx wrangler pages deploy dist/site --project-name atlas-site
+npx wrangler pages deploy dist/site --project-name samebetornot --branch main --commit-dirty=true
 ```
 
 Then in the Cloudflare dashboard: Pages → atlas-site → Custom domains → add
@@ -29,7 +33,7 @@ Now fill in the nightly agent so it publishes on its own. Edit
 `deploy/com.atlas.site.plist`:
 
 - `ATLAS_SITE_BASE_URL` → `https://samebetornot.com`
-- `ATLAS_SITE_PUBLISH_CMD` → `npx wrangler pages deploy dist/site --project-name atlas-site`
+- `ATLAS_SITE_PUBLISH_CMD` → `npx wrangler pages deploy dist/site --project-name samebetornot --branch main --commit-dirty=true`
 - `ATLAS_SITE_GA4_ID` → the GA4 measurement id from step 3 (optional)
 
 Then reinstall it:
