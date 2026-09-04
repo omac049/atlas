@@ -1090,3 +1090,4 @@ evidence. The point of the 90 days is to let this accumulate.
 
 - [ ] Delete 3 stale `worktree-agent-*` branches (core PCE, GDP, payrolls) — their
   families are already on `main` with tests; the branches are dead duplicates.
+- [x] Demand-test site generator (`atlas site build`, `docs/SITE.md`) — owner: domain, hosting, Search Console, affiliate applications

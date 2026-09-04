@@ -1652,6 +1652,69 @@ async def clarity_scan(live: bool, max_markets: int = CLARITY_MAX_MARKETS_DEFAUL
     print(f"clarity_scan_written={target}")
 
 
+SITE_MAX_AGE_DAYS = 3
+SITE_MAX_LIVE_FETCHES = 120
+
+
+async def site_build(out: str, base_url: str, live: bool) -> None:
+    """Generate the demand-test static site (docs/IDEATION.md) into `out`.
+
+    Read-only consumer of gap_observations and the evidence archive; live mode
+    only hydrates rules text and fine-print grades for legs on the two US venues,
+    under a fetch cap, so an outage degrades to fewer excerpts, never a stale
+    verdict — verdicts come from the stored observation.
+    """
+    from atlas.clarity import clarity_score
+    from atlas.site import build_site, write_site
+
+    store = AtlasStore()
+    cutoff = datetime.now(UTC) - timedelta(days=SITE_MAX_AGE_DAYS)
+    observations = [
+        obs
+        for obs in await store.all_gap_observations()
+        if datetime.fromisoformat(str(obs.get("observed_at"))) >= cutoff
+    ]
+    ids = sorted(
+        {str(o["kalshi_market_id"]) for o in observations}
+        | {str(o["polymarket_market_id"]) for o in observations}
+    )
+    rules = await store.latest_rules_text(ids)
+    grades: dict[str, dict] = {}
+    fetches = failures = 0
+    if live:
+        kalshi, pm_us = KalshiVenue(fixture=False), PolymarketUSVenue(fixture=False)
+        series_cache: dict[str, list[str]] = {}
+        for market_id in ids:
+            if fetches >= SITE_MAX_LIVE_FETCHES:
+                break
+            venue_name, _, venue_market_id = market_id.partition(":")
+            if venue_name not in {"kalshi", "polymarket_us"}:
+                continue
+            fetches += 1
+            try:
+                venue = kalshi if venue_name == "kalshi" else pm_us
+                market = await venue.get_market(venue_market_id)
+                if market.raw_rules_text:
+                    rules[market_id] = market.raw_rules_text
+                series_sources = None
+                if venue_name == "kalshi":
+                    evidence = await _kalshi_series_evidence(kalshi, [market], series_cache)
+                    series_sources = evidence.get(market.market_id)
+                grades[market_id] = clarity_score(
+                    market, series_settlement_sources=series_sources
+                )
+            except (httpx.HTTPError, ValueError, KeyError):
+                failures += 1
+    site, pages = build_site(observations, base_url=base_url, rules=rules, grades=grades)
+    written = write_site(pages, Path(out))
+    print(
+        f"site_pages={written} pairs={len(site.pairs)} "
+        f"same_bet={sum(1 for p in site.pairs if p.same_bet)} "
+        f"rules_excerpts={sum(1 for p in site.pairs if p.kalshi_rules and p.polymarket_rules)} "
+        f"grades={len(grades)} live_fetches={fetches} live_failures={failures} out={out}"
+    )
+
+
 def latest_clarity_scan(directory: str = "data/clarity") -> dict | None:
     """The most recent dated clarity scan on disk, or ``None`` when none exists.
 
@@ -1768,6 +1831,16 @@ def main() -> None:
         type=int,
         default=CLARITY_MAX_MARKETS_DEFAULT,
         help="per-venue cap; 0 grades the whole bounded sweep",
+    )
+    site = sub.add_parser("site", help="static demand-test site generated from Atlas data")
+    site_sub = site.add_subparsers(dest="action", required=True)
+    site_build_parser = site_sub.add_parser("build", help="write the static site to --out")
+    site_build_parser.add_argument("--out", default="dist/site")
+    site_build_parser.add_argument(
+        "--base-url", default="https://example.invalid", help="canonical origin for sitemap/links"
+    )
+    site_build_parser.add_argument(
+        "--live", action="store_true", help="hydrate rules text and grades from the US venues"
     )
     learning = sub.add_parser("learning")
     learning_sub = learning.add_subparsers(dest="action", required=True)
@@ -1919,6 +1992,8 @@ def main() -> None:
         asyncio.run(clarity_grade(args.venue, args.market, live=not args.fixture))
     elif args.command == "clarity" and args.action == "scan":
         asyncio.run(clarity_scan(args.live, max(args.max_markets, 0)))
+    elif args.command == "site" and args.action == "build":
+        asyncio.run(site_build(args.out, args.base_url, args.live))
     elif args.command == "gaps" and args.action == "status":
         asyncio.run(gaps_status())
     elif args.command == "learning" and args.action == "export":

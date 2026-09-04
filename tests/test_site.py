@@ -1,0 +1,134 @@
+"""The demand-test site: guardrails a page cannot ship without.
+
+Protects what the site is allowed to SAY, not how it looks: a pair is "the
+same bet" only on the verifier's word, every page carries the disclosure and
+the not-advice notice, fees on the calculator page are the venues' formulas
+and not a copywriter's memory of them, and the build is deterministic.
+"""
+
+from datetime import UTC, datetime
+from decimal import Decimal
+
+from atlas.gap_radar import kalshi_taker_fee_per_contract
+from atlas.site import (
+    DISCLOSURE,
+    NOT_ADVICE,
+    PairPage,
+    build_site,
+    render_fees,
+    slugify,
+    verify_pages,
+)
+
+AT = datetime(2026, 9, 4, 12, 0, tzinfo=UTC)
+
+
+def _obs(status="REVIEW_REQUIRED", codes=None, venue="polymarket_us", kid="kalshi:KXCPIYOY-26AUG-T3.0",
+         pid="polymarket_us:cpic-uscpi-august-yoy-2026-09-11-gt3pt0pct", at="2026-09-04T10:00:00+00:00"):
+    return {
+        "observed_at": at,
+        "event_subject": "us_cpi_yoy|2026-08",
+        "kalshi_market_id": kid, "kalshi_title": "CPI above 3.0%?",
+        "polymarket_market_id": pid, "polymarket_title": "Above 3.0%",
+        "verification_status": status,
+        "mismatch_codes": codes if codes is not None else ["SETTLEMENT_POLICY_MISMATCH"],
+        "polymarket_venue": venue,
+        "tradeable_venue_pair": venue == "polymarket_us",
+        "best_basket": "kalshi_yes+polymarket_no",
+        "baskets": [{"legs": "kalshi_yes+polymarket_no", "cost": "0.99", "kalshi_fee": "0.01",
+                     "polymarket_fee": "0.0126", "gap": "-0.0126"}],
+        "settlement_timing": {"asymmetric": False, "days_to_settlement": "7.0"},
+    }
+
+
+def test_a_pair_is_called_the_same_bet_only_on_the_verifiers_word():
+    """The site can never be more confident than the deterministic verifier."""
+    review = PairPage(observation=_obs())
+    assert review.same_bet is False
+    assert ("SETTLEMENT_POLICY_MISMATCH", "both venues publish settlement policy, but the published texts diverge") in review.reasons
+    approved = PairPage(observation=_obs(status="APPROVED_EQUIVALENT", codes=[]))
+    assert approved.same_bet is True
+    _, pages = build_site([_obs(), _obs(status="APPROVED_EQUIVALENT", codes=[], kid="kalshi:X")],
+                          base_url="https://example.test", generated_at=AT)
+    review_html = next(html for path, html in pages.items() if "kxcpiyoy" in path)
+    assert "Not verified as the same bet" in review_html
+    assert "Verified as the same bet" not in review_html
+
+
+def test_every_html_page_carries_disclosure_notice_and_methodology_link():
+    _, pages = build_site([_obs()], base_url="https://example.test", generated_at=AT)
+    assert verify_pages(pages) == []
+    for path, html in pages.items():
+        if path.endswith(".html"):
+            assert DISCLOSURE[:40] in html and NOT_ADVICE[:40] in html, path
+
+
+def test_a_page_missing_the_disclosure_fails_the_build_not_the_style_review():
+    _, pages = build_site([_obs()], base_url="https://example.test", generated_at=AT)
+    pages["index.html"] = pages["index.html"].replace(DISCLOSURE[:40], "")
+    assert verify_pages(pages) == ["index.html: missing affiliate disclosure"]
+
+
+def test_calculator_page_uses_the_venues_formulas_not_a_remembered_rate():
+    from atlas.site import Site
+
+    html = render_fees(Site(base_url="https://example.test", generated_at=AT))
+    # The at-a-glance table is computed from atlas.gap_radar's Kalshi formula.
+    fifty = kalshi_taker_fee_per_contract(Decimal("0.50"))
+    assert f"{fifty * 100:.1f}¢" in html  # 2.0¢ (ceil of 1.75¢ per contract)
+    assert "0.06 × price × (1 − price)" in html
+    assert "help.kalshi.com" in html and "docs.polymarket.us/fees" in html
+
+
+def test_latest_observation_per_pair_wins_and_the_build_is_deterministic():
+    older = _obs(at="2026-09-03T10:00:00+00:00")
+    newer = _obs(at="2026-09-04T10:00:00+00:00")
+    newer["kalshi_title"] = "NEWER TITLE"
+    site, pages = build_site([older, newer], base_url="https://example.test", generated_at=AT)
+    assert len(site.pairs) == 1
+    assert "NEWER TITLE" in next(h for p, h in pages.items() if p.startswith("compare/"))
+    _, again = build_site([older, newer], base_url="https://example.test", generated_at=AT)
+    assert pages == again
+
+
+def test_global_venue_pairs_are_labelled_not_tradeable():
+    _, pages = build_site([_obs(venue="polymarket_global", pid="polymarket_global:123")],
+                          base_url="https://example.test", generated_at=AT)
+    html = next(h for p, h in pages.items() if p.startswith("compare/"))
+    assert "cannot trade" in html
+    assert "Global only" in pages["index.html"]
+
+
+def test_sitemap_lists_every_html_page_with_the_base_url():
+    _, pages = build_site([_obs()], base_url="https://example.test/", generated_at=AT)
+    for path in pages:
+        if path.endswith(".html"):
+            assert f"https://example.test/{path}" in pages["sitemap.xml"]
+    assert "Sitemap: https://example.test/sitemap.xml" in pages["robots.txt"]
+
+
+def test_slugs_are_filesystem_and_url_safe():
+    assert slugify("us_cpi_yoy|2026-08--kalshi:KXCPIYOY-26AUG-T3.0") == "us-cpi-yoy-2026-08-kalshi-kxcpiyoy-26aug-t3-0"
+    assert len(slugify("x" * 500)) <= 120
+
+
+def test_hostile_market_ids_are_escaped_and_slugged_safely():
+    """Titles and ids come from venue payloads; they must never become markup."""
+    obs = _obs(kid="kalshi:<script>alert(1)</script>")
+    obs["kalshi_title"] = "<img src=x onerror=alert(1)>"
+    _, pages = build_site([obs], base_url="https://example.test", generated_at=AT)
+    html = next(h for p, h in pages.items() if p.startswith("compare/"))
+    assert "<script>alert" not in html and "<img src=x" not in html
+    assert all("<" not in p and ">" not in p for p in pages)
+
+
+def test_the_approval_pipeline_never_imports_the_site_generator():
+    import importlib
+    import sys
+
+    for name in list(sys.modules):
+        if name.startswith("atlas.site"):
+            del sys.modules[name]
+    for module in ("atlas.normalization", "atlas.settlement", "atlas.verification"):
+        importlib.import_module(module)
+    assert not any(name.startswith("atlas.site") for name in sys.modules)
