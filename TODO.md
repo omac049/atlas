@@ -1,12 +1,42 @@
 # Atlas continuation checklist
 
-Last updated: 2026-09-04 (**fourth hypothesis charter drafted — repricing lag**: does Kalshi's in-game MLB moneyline keep trading at pre-play prices for a human-actionable window after a lead change, at size, by more than fees? Retrospective over the public trade tape + MLB play-by-play; both feeds verified live; paper-only; awaiting owner sign-off)
+Last updated: 2026-09-04 (**fourth hypothesis DISPROVEN — the in-game price LEADS the game.** 676 lead changes across 262 games: median repricing lag −10.6s, 91% repriced before MLB's official timestamp, median stale liquidity in the human window zero contracts. The move is real (+11.2c net median) and already gone. Four hypotheses, four pre-registered negatives; the prediction-market edge search is complete. 658 tests green)
 
 Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
 Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, bounded retry metadata; 450 tests green; 72 trusted labels)
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
+
+## 2026-09-04 (b) — fourth hypothesis: DISPROVEN. The search is complete.
+
+- [x] Instrument frozen at `9a87d20` (13 tests; one flaw caught by its own
+  test pre-freeze — P0 absorbed fast-maker pre-play moves so negative lags
+  could never register; fixed, cuts against the theory). Validated on the
+  excluded game only. Full run on the frozen code: 262 games, all joined,
+  678 lead changes, 676 measurable.
+- [x] **Verdict:** median repricing lag **−10.6s** (required ≥5s); stale
+  fills ≥20 contracts in the 5–60s window on **9%** of plays (required 50%);
+  median net gap **+11.2c** (required 3c — passes). Two of three fail on a
+  sample 6x the minimum → DISPROVEN. In 91% of lead changes the market had
+  repriced BEFORE MLB's official play timestamp. The profit is real and already
+  gone: makers on sub-second feeds take it before the public stringer
+  finalizes the play. The public feed's latency is the mechanism, not a
+  measurement artifact.
+- [x] Instrument validity checked before the verdict: 0 unjoined games, 2
+  unmeasurable plays, 92% of moves in the predicted direction. No correction
+  existed that would have helped the theory; none applied.
+- [x] **Four hypotheses, four pre-registered negatives, ~6 weeks, $0 of
+  principal.** Cross-venue price, machinery-predicts-disputes,
+  ambiguity-predicts-disputes, price-lags-game. The accessible edge space for
+  an outsider with public data is covered. Stated in advance as the last
+  prediction-market hypothesis; it was.
+
+- [ ] Remaining scheduled instrumentation runs itself: Sep 11 CPI window, Sep
+  16 FOMC + C6 (label-loop test), Nov 17 study decision (already NO-GO).
+- [ ] OWNER DECISION, not urgent: drop Atlas to cheap-monitor mode and point
+  the method at a demand-first question in a different domain — or keep it as
+  a research instrument. No fifth market hypothesis.
 
 ## 2026-09-04 — fourth hypothesis: repricing lag (charter proposed)
 

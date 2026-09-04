@@ -176,6 +176,64 @@ hypotheses to test — one to two days, entirely retrospective, no credentials �
 and it is the one that actually matches what the owner saw. That is enough to
 justify running it once, properly, and then believing the answer.
 
+## RESULT — run 2026-09-04 on the frozen instrument: DISPROVEN.
+
+Runner `docs/proof/run_repricing.py` at freeze commit `9a87d20`; evidence with
+every per-play row and its deciding trade ids in
+`docs/proof/repricing-result.json`. Sample: **262 games, all 262 joined to
+MLB, 678 lead-changing plays, 676 measurable** (2 with insufficient post-play
+tape, reported) — over six times the charter's minimum on both axes. Games
+settled through 2026-09-03; the window's later dates had not yet been played.
+
+| Criterion | Required | Measured | |
+|---|---|---|---|
+| Median repricing lag | ≥ 5 s | **−10.6 s** | **fail** |
+| Plays with ≥ 20 stale contracts in the 5–60 s window | ≥ 50% | **9%** (61 of 676) | **fail** |
+| Median net gap after fees | ≥ 3¢ | **+11.2¢** | pass |
+
+**What the tape says, plainly.** In **91% of lead changes (612 of 676) the
+market had already repriced before MLB's official play timestamp** — by a
+median of 10.6 seconds, and by 22 seconds or more in a quarter of plays. The
+move itself is large and real: the benefiting contract gains a median 11¢ net
+of fees, in 92% of plays. But by the time the public feed reports the play, the
+move is over. Median stale liquidity in the human window: **zero contracts.**
+The 8% of plays that did lag five seconds or more carried almost no stale size
+either.
+
+Criterion 3 passing while 1 and 2 fail is the precise shape of the owner's
+observation and its refutation in one line: **the profit is real, and it is
+already gone.** Market makers quoting off licensed sub-second feeds capture
+the reprice before the public stringer has finalized the play. The confound §7
+named — the public feed's own latency — is not a measurement artifact here;
+it is the mechanism. A participant whose information arrives with the public
+feed is, structurally, ten to twenty-five seconds behind the price.
+
+**Instrument validity, checked before the verdict.** Zero unjoined games, two
+unmeasurable plays, and 92% of plays moving in the predicted direction — the
+direction logic, joins, and tapes behaved. No correction was available that
+would have moved the result toward the theory, and none was applied.
+
+Per the decision rule: DISPROVEN on an adequate sample. No shadow charter
+follows. The owner's original idea has now been tested in its strongest form.
+
+## The end of the search
+
+Four hypotheses, four pre-registered negatives, six weeks, zero dollars of
+principal spent:
+
+1. Cross-venue arbitrage — the tradeable venues agree on price; the gaps were
+   dust, locked for months.
+2. Settlement-machinery gaps predict disputes — disputed markets graded
+   identically to controls.
+3. Predicate ambiguity predicts disputes — the instrument caught 4 of 15;
+   disputes turned out to be three different things.
+4. The in-game price lags the game — it leads it, by ten seconds.
+
+These four cover the space an outsider with public data can reach: whether the
+price is right across venues, whether the text predicts trouble two different
+ways, and whether the price is slow. The charter stated in advance that this
+was the last prediction-market hypothesis. It was.
+
 ## 10. Sequence and sign-off
 
 1. Owner merges this charter (sign-off).
