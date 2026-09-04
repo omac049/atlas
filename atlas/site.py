@@ -579,9 +579,9 @@ function fee(){var p=Math.min(99,Math.max(1,Number(document.getElementById('p').
 var n=Math.max(1,Number(document.getElementById('n').value));
 var k=Math.ceil(0.07*p*(1-p)*100)/100;var pm=0.06*p*(1-p);
 document.getElementById('k').textContent='$'+(k*n).toFixed(2)+' ('+(k*100).toFixed(2)+'¢ each)';
-document.getElementById('km').textContent='$'+(k*0.25*n).toFixed(2);
+document.getElementById('km').textContent='$'+(k*0.25*n).toFixed(2)+' where the schedule sets a maker fee; otherwise $0.00';
 document.getElementById('pm').textContent='$'+(pm*n).toFixed(2)+' ('+(pm*100).toFixed(2)+'¢ each)';
-document.getElementById('pmm').textContent='$'+(0.0125*p*(1-p)*n).toFixed(2);}
+document.getElementById('pmm').textContent='rebate of $'+(0.0125*p*(1-p)*n).toFixed(2)+' paid to you';}
 document.addEventListener('DOMContentLoaded',function(){fee();['p','n'].forEach(function(i){
 document.getElementById(i).addEventListener('input',fee);});});
 """
@@ -595,27 +595,37 @@ document.getElementById(i).addEventListener('input',fee);});});
         "value=\"100\"></label></div>"
         "<table><thead><tr><th></th><th>Kalshi</th><th>Polymarket US</th></tr></thead><tbody>"
         "<tr><th>Taker fee (you take the displayed price)</th><td id=\"k\"></td><td id=\"pm\"></td></tr>"
-        "<tr><th>Maker fee (your resting order fills)</th><td id=\"km\"></td><td id=\"pmm\"></td></tr>"
+        "<tr><th>Maker side (your resting order fills)</th><td id=\"km\"></td><td id=\"pmm\"></td></tr>"
         "</tbody></table>"
         f"<script>{calc_js}</script>"
         "<h2>The formulas, as published</h2>"
-        "<ul><li><strong>Kalshi taker:</strong> 0.07 × price × (1 − price) per contract, rounded up "
-        "to the cent per contract here (the venue rounds per order, so this is the conservative "
-        "reading). Maker fee is 25% of the taker fee. A higher multiplier applies to some premium "
-        "categories such as crypto.</li>"
-        "<li><strong>Polymarket US taker:</strong> 0.06 × price × (1 − price) per share, per the "
-        "schedule effective July 1, 2026. Maker fee coefficient 0.0125.</li>"
-        "<li><strong>Polymarket (global):</strong> fees are set per market and published on each "
-        "market; economics markets have carried a 0.05 taker rate. Not available to US accounts.</li></ul>"
+        "<ul><li><strong>Kalshi taker:</strong> 0.07 × price × (1 − price) per contract, times a "
+        "per-series multiplier that the schedule (effective July 7, 2026) sets to 1 for nearly "
+        "every series and 0 for a few fee-free ones (some crypto year-end ranges and geopolitical "
+        "questions). Rounded up to the cent per contract here; the venue rounds per order, so "
+        "this is the conservative reading. <strong>Maker fee:</strong> 0 by default; on series "
+        "where the schedule sets a maker multiplier of 1 (most sports, CPI, Fed decisions, jobs, "
+        "GDP) it is 0.0175 × price × (1 − price), which is 25% of the taker rate.</li>"
+        "<li><strong>Polymarket US taker:</strong> 0.06 × price × (1 − price) per contract, per the "
+        "schedule effective July 1, 2026 (maximum $1.50 per 100 contracts at 50¢). "
+        "<strong>Makers are paid, not charged:</strong> a rebate of 0.0125 × price × (1 − price), "
+        "up to $0.31 per 100 contracts. Large takers get volume rebates above $250,000 a month.</li>"
+        "<li><strong>Polymarket (global):</strong> takers only, at a rate by category — crypto 0.07, "
+        "sports/economics/culture/weather 0.05, finance/politics/tech 0.04, geopolitics 0. Makers "
+        "are never charged. Not available to US accounts.</li></ul>"
         "<h2>At a glance</h2><table><thead><tr><th>Price</th><th>Kalshi taker</th>"
         f"<th>Polymarket US taker</th></tr></thead><tbody>{rows}</tbody></table>"
         "<p class=\"muted\">Both peak at 50¢: 1.75¢ (Kalshi, shown rounded up to 2¢ per contract) vs "
         "1.5¢ (Polymarket US). At 90¢ they are 0.63¢ (rounded to 1¢) and 0.54¢. "
-        "Deposits, withdrawals, and any crypto on-ramp costs are separate and not modeled here.</p>"
+        "Deposits, withdrawals, and any crypto on-ramp costs are separate and not modeled here. "
+        "Corrected 2026-09-04 against the current schedules: an earlier version of this page "
+        "said Kalshi charged a higher multiplier on some categories and that Polymarket US "
+        "charged makers; neither is what the schedules say.</p>"
         + _sources([
             ("Kalshi Help Center — Fees", "https://help.kalshi.com/en/articles/13823805-fees"),
-            ("Kalshi fee schedule (July 2026 PDF)", "https://kalshi.com/docs/kalshi-fee-schedule.pdf"),
+            ("Kalshi fee schedule (effective July 7, 2026, PDF)", "https://kalshi.com/docs/kalshi-fee-schedule.pdf"),
             ("Polymarket US — Fee Schedule", "https://docs.polymarket.us/fees"),
+            ("Polymarket (global) — Fees", "https://docs.polymarket.com/polymarket-learn/trading/fees"),
         ])
     )
     return _page(site, title="Kalshi vs Polymarket fees calculator (exact published formulas)",
@@ -753,9 +763,13 @@ def render_taxes(site: Site) -> str:
         "guidance on event contracts; talk to a CPA who knows trader taxation.</p>"
         "<h2>What forms you get</h2>"
         "<table><thead><tr><th>Venue</th><th>Forms reported by tax practitioners</th></tr></thead>"
-        "<tbody><tr><td>Kalshi</td><td>1099-INT for interest and 1099-MISC for rewards; no form "
-        "for trading profit itself.</td></tr>"
-        "<tr><td>Polymarket</td><td>No tax forms; the on-chain record is the audit trail.</td></tr>"
+        "<tbody><tr><td>Kalshi</td><td>When IRS thresholds are met: 1099-INT (interest), 1099-MISC "
+        "(credits and rewards), and 1099-B / 1099-DA for crypto transfers. Trading gains are not "
+        "on any 1099; Kalshi provides a FIFO profit-and-loss statement instead.</td></tr>"
+        "<tr><td>Polymarket US</td><td>Not published. The venue's documentation has no tax-forms "
+        "page; accounts are identity-verified under CFTC rules.</td></tr>"
+        "<tr><td>Polymarket (global)</td><td>No forms issued, per tax practitioners; the on-chain "
+        "record is the audit trail. Not available to US accounts.</td></tr>"
         "</tbody></table>"
         "<h2>What that means</h2>"
         "<p>The absence of a form does not remove the obligation to report. Practitioners describe "
@@ -764,6 +778,8 @@ def render_taxes(site: Site) -> str:
         "income, or ordinary income), on which the profession has not settled. Pick one reasonable "
         "treatment, apply it consistently, and document it.</p>"
         + _sources([
+            ("Kalshi Help Center — what tax documentation Kalshi provides",
+             "https://help.kalshi.com/en/articles/13823849-what-tax-documentation-does-kalshi-provide"),
             ("Keeper — filing taxes on Polymarket and Kalshi (2026)",
              "https://www.keepertax.com/posts/how-to-file-taxes-on-kalshi-and-polymarket"),
             ("NATP — prediction market contracts on client returns",
@@ -782,30 +798,49 @@ def render_referrals(site: Site) -> str:
         "<h1>Kalshi and Polymarket referral programs, compared honestly</h1>"
         "<p class=\"muted\">Terms verified 2026-09-04 from the programs' own pages. Venues change "
         "these at will; the sources are linked.</p>"
-        "<table><thead><tr><th></th><th>Kalshi</th><th>Polymarket</th></tr></thead><tbody>"
-        "<tr><th>What a referred user gets</th><td>Trading credits on completing the sign-up "
-        "requirements ($25 has been the published amount).</td><td>Program-dependent; the "
-        "affiliate program pays the referrer, not the user.</td></tr>"
-        "<tr><th>What the referrer gets</th><td><strong>Trading credits, not cash.</strong> Credits "
-        "can only be used to trade; only trading returns are withdrawable.</td>"
-        "<td><strong>Cash.</strong> The partner program lists $10 per referral's first deposit, a "
-        "20% share of their perpetuals trading fees, and $0.01 per click, with revenue bounties.</td></tr>"
-        "<tr><th>Who can refer</th><td>Any account.</td><td>Approved affiliates; Polymarket US runs a "
-        "separate approved-affiliate program by application.</td></tr>"
-        "</tbody></table>"
+        "<div style=\"overflow-x:auto\"><table><thead><tr><th></th><th>Kalshi</th>"
+        "<th>Polymarket US</th><th>Polymarket (global)</th></tr></thead><tbody>"
+        "<tr><th>What the referrer gets</th>"
+        "<td><strong>Trading credits, not cash.</strong> Amounts and caps are set per account "
+        "and shown in-app; credits must be used within 7 days; only profits made with them "
+        "become withdrawable. US users only.</td>"
+        "<td><strong>Bonus credits, not cash:</strong> $25 per qualifying referral, up to 14 "
+        "referrals. Credits can only be used to trade and are withdrawable after the position "
+        "settles.</td>"
+        "<td><strong>A share of fees, paid daily in pUSD:</strong> 10% of direct referrals' net "
+        "trading fees (5% indirect) for 30 days, for referrers with $10,000+ lifetime volume. "
+        "Not available to US accounts.</td></tr>"
+        "<tr><th>What the referred user gets</th>"
+        "<td>Trading credits after identity verification and a trading requirement shown in-app.</td>"
+        "<td>$25 bonus credit after signing up with the code and depositing at least $10.</td>"
+        "<td>Nothing published beyond the referrer's fee share.</td></tr>"
+        "<tr><th>Separate affiliate programs</th>"
+        "<td>None reachable publicly (the affiliate hub returned an error when checked).</td>"
+        "<td>An approved-affiliate program exists by application; payout terms are not "
+        "published.</td>"
+        "<td>The public partner program on Dub lists $10 per referral's first deposit, 20% of "
+        "their perpetuals trading fees, and $0.01 per click; the payout method is not stated "
+        "on that page.</td></tr>"
+        "</tbody></table></div>"
+        "<p class=\"muted\">Corrected 2026-09-04: an earlier version framed this as \"Kalshi "
+        "credits vs Polymarket cash.\" Polymarket US's own program also pays credits; only the "
+        "global venue's programs pay in a currency, and that venue is closed to US accounts.</p>"
         "<p>This site may participate in these programs — see the disclosure below. The comparison "
         "above is the same whether or not you use a link here.</p>"
         + _sources([
-            ("Polymarket partner program (Dub)", "https://partners.dub.co/polymarket"),
+            ("Kalshi Help Center — Referral Program FAQ",
+             "https://help.kalshi.com/en/articles/13823783-kalshi-referral-program-faq"),
+            ("Polymarket US — Refer-A-Friend FAQs", "https://docs.polymarket.us/faqs/refer-a-friend-faqs"),
             ("Polymarket US — Referral Incentive Program", "https://docs.polymarket.us/incentives/referral"),
+            ("Polymarket partner program (Dub)", "https://partners.dub.co/polymarket"),
             ("iGaming Future — Kalshi referral code, credits not cash",
              "https://igamingfuture.com/prediction-markets/news/kalshi-referral-code/"),
         ])
     )
     return _page(site, title="Kalshi referral code vs Polymarket referral code: what each actually pays",
                  path="referrals.html", body=body,
-                 description="Kalshi pays referral rewards in trading credits; Polymarket's partner "
-                 "program pays cash. Terms compared, with sources.")
+                 description="Kalshi and Polymarket US both pay referral rewards in trading credits; "
+                 "only Polymarket's global programs pay a fee share. Terms compared, with sources.")
 
 
 def render_methodology(site: Site) -> str:
