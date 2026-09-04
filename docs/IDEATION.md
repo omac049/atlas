@@ -152,6 +152,7 @@ generation, pages, calculators, the disclosure language — is build work.
   `com.atlas.site` added. The demand-test clock has **not** started: it starts
   the day the site is live on a domain and the sitemap is submitted, which are
   the owner's steps in `docs/SITE.md`.
+- 2026-09-04: domain purchased — `samebetornot.com`. Hosting next.
 
 ## Deprioritized, not forgotten
 

@@ -4,18 +4,15 @@ Everything the assistant cannot do because it involves accounts, payments,
 or posting from a personal handle. Each step is short; the whole list is an
 evening. The six-week demand clock (`docs/IDEATION.md`) starts at step 4.
 
-## 1. Domain (≈$10–12/year)
+## 1. Domain — DONE 2026-09-04: `samebetornot.com`
 
-Any plain, descriptive `.com`. Buy it at any registrar. Nothing else to do
-there; DNS is handled by the host in step 2.
+Chosen over the venue-name domains because it contains neither trademark.
+DNS is handled by the host in step 2.
 
 ## 2. Host — Cloudflare Pages (free)
 
-One-time, at the keyboard:
-
-```bash
-npx wrangler login
-```
+Wrangler on this Mac is already logged in to the owner's Cloudflare account
+(checked 2026-09-04 with `npx wrangler whoami`), so no login step is needed.
 
 ```bash
 npx wrangler pages project create atlas-site --production-branch main
@@ -31,7 +28,7 @@ the domain from step 1 (it walks you through pointing DNS at Cloudflare).
 Now fill in the nightly agent so it publishes on its own. Edit
 `deploy/com.atlas.site.plist`:
 
-- `ATLAS_SITE_BASE_URL` → `https://YOUR-DOMAIN`
+- `ATLAS_SITE_BASE_URL` → `https://samebetornot.com`
 - `ATLAS_SITE_PUBLISH_CMD` → `npx wrangler pages deploy dist/site --project-name atlas-site`
 - `ATLAS_SITE_GA4_ID` → the GA4 measurement id from step 3 (optional)
 
@@ -46,8 +43,8 @@ Check `~/Library/Logs/atlas-site.log` for `built … ` followed by `published`.
 ## 3. Measurement
 
 - **Search Console** (required — it is the pass/fail instrument): add a
-  *Domain* property for YOUR-DOMAIN, verify by the DNS TXT record (Cloudflare
-  DNS → add record), then Sitemaps → submit `https://YOUR-DOMAIN/sitemap.xml`.
+  *Domain* property for samebetornot.com, verify by the DNS TXT record (Cloudflare
+  DNS → add record), then Sitemaps → submit `https://samebetornot.com/sitemap.xml`.
 - **GA4** (optional — needed only to count the ≥300-social-clicks criterion):
   create a property, copy the `G-…` id into the plist above. The tag is
   omitted entirely when the id is unset, and anonymizes IPs when set.
@@ -63,14 +60,14 @@ Send these yourself; the site already discloses on every page.
 
 **Polymarket US — email to affiliate@polymarket.com**
 
-> Subject: Affiliate program application — YOUR-DOMAIN
+> Subject: Affiliate program application — samebetornot.com
 >
-> I run YOUR-DOMAIN, a factual comparison site for Kalshi and Polymarket:
+> I run samebetornot.com, a factual comparison site for Kalshi and Polymarket:
 > contract-by-contract rule comparisons generated from both venues' published
 > terms, an exact fee calculator using your published fee schedule, and sourced
 > legal/tax reference pages. No picks, no advice, affiliate relationships
 > disclosed on every page. I'd like to apply for the Polymarket US affiliate
-> program. Site: https://YOUR-DOMAIN. Thanks — YOUR NAME
+> program. Site: https://samebetornot.com. Thanks — YOUR NAME
 
 **Polymarket (global) partner program** — apply at partners.dub.co/polymarket
 with the same description. Note: this program pays on the global platform,
