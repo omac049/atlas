@@ -30,6 +30,8 @@ static files. Preview locally with the `atlas-site` entry in
 
 ## Owner steps (not automatable by the assistant)
 
+Step-by-step, with commands, email drafts, and post drafts: `docs/LAUNCH_KIT.md`.
+
 1. Register the domain; pass it as `--base-url` so canonicals and the sitemap
    are right.
 2. Host `dist/site/` (Cloudflare Pages, Netlify, GitHub Pages — any static host).

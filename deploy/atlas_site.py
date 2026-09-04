@@ -8,6 +8,7 @@ hosting credential and never chooses where the site goes.
 
 Environment (all optional; unset means "build locally, publish nothing"):
   ATLAS_SITE_BASE_URL     canonical origin for sitemap/links
+  ATLAS_SITE_GA4_ID       GA4 measurement id; unset = no analytics tag
   ATLAS_SITE_PUBLISH_CMD  shell command run after a successful build,
                           with the cwd at the repo root, e.g.
                           "npx wrangler pages deploy dist/site --project-name x"
@@ -37,11 +38,15 @@ def log(message: str) -> None:
 
 def main() -> None:
     base_url = os.environ.get("ATLAS_SITE_BASE_URL", "https://example.invalid")
+    args = [
+        str(PYTHON), "-m", "atlas.cli", "site", "build",
+        "--out", str(OUT), "--live", "--base-url", base_url,
+    ]
+    ga4_id = os.environ.get("ATLAS_SITE_GA4_ID", "").strip()
+    if ga4_id:
+        args += ["--analytics-id", ga4_id]
     build = subprocess.run(
-        [
-            str(PYTHON), "-m", "atlas.cli", "site", "build",
-            "--out", str(OUT), "--live", "--base-url", base_url,
-        ],
+        args,
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,

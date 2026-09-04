@@ -132,3 +132,18 @@ def test_the_approval_pipeline_never_imports_the_site_generator():
     for module in ("atlas.normalization", "atlas.settlement", "atlas.verification"):
         importlib.import_module(module)
     assert not any(name.startswith("atlas.site") for name in sys.modules)
+
+
+def test_analytics_tag_is_opt_in_and_validated():
+    """No measurement id, no tag at all; a malformed id is dropped, not injected."""
+    _, plain = build_site([_obs()], base_url="https://example.test", generated_at=AT)
+    assert "googletagmanager" not in plain["index.html"]
+    _, tagged = build_site(
+        [_obs()], base_url="https://example.test", generated_at=AT, analytics_id="G-ABC1234567"
+    )
+    assert "gtag/js?id=G-ABC1234567" in tagged["index.html"]
+    assert "anonymize_ip" in tagged["index.html"]
+    _, bad = build_site(
+        [_obs()], base_url="https://example.test", generated_at=AT, analytics_id="<script>"
+    )
+    assert "googletagmanager" not in bad["index.html"]

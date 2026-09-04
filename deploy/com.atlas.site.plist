@@ -21,6 +21,8 @@
         <string>https://example.invalid</string>
         <key>ATLAS_SITE_PUBLISH_CMD</key>
         <string></string>
+        <key>ATLAS_SITE_GA4_ID</key>
+        <string></string>
         <key>PATH</key>
         <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
     </dict>
