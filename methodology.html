@@ -1,21 +1,44 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How this site works</title><meta name="description" content="How the Kalshi vs Polymarket comparison pages are generated, and what they deliberately are not."><link rel="canonical" href="https://samebetornot.com/methodology"><style>
-:root{--ink:#1a1a1a;--muted:#5c5c5c;--line:#e3e3e3;--ok:#1f7a3a;--warn:#9a4a00;--bg:#fff}
-*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,
-sans-serif;color:var(--ink);background:var(--bg)}main{max-width:860px;margin:0 auto;
-padding:24px 20px 60px}header nav{display:flex;flex-wrap:wrap;gap:14px;padding:14px 20px;
-border-bottom:1px solid var(--line);font-size:14px}header nav a{color:var(--ink);
-text-decoration:none}h1{font-size:1.7rem;line-height:1.2;margin:.2em 0 .4em}h2{font-size:1.2rem;
-margin:1.6em 0 .5em}table{border-collapse:collapse;width:100%;margin:.6em 0}th,td{text-align:left;
-padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;font-size:15px}
-th{font-weight:600}.verdict{padding:14px 16px;border-radius:8px;margin:1em 0;font-weight:600}
-.verdict.ok{background:#e9f6ee;color:var(--ok)}.verdict.no{background:#fbf1e6;color:var(--warn)}
-.muted{color:var(--muted);font-size:14px}blockquote{margin:.6em 0;padding:.6em 1em;
-border-left:3px solid var(--line);color:#333;font-size:14px;white-space:pre-wrap}
-footer{max-width:860px;margin:0 auto;padding:20px;border-top:1px solid var(--line);
-font-size:13px;color:var(--muted)}input[type=number]{font-size:16px;padding:6px 8px;width:110px}
-.calc{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1em 0}
-@media(max-width:600px){.calc{grid-template-columns:1fr}}
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How this site works</title><meta name="description" content="How the Kalshi vs Polymarket comparison pages are generated, and what they deliberately are not."><link rel="canonical" href="https://samebetornot.com/methodology"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Ccircle cx='12' cy='16' r='6.5' fill='none' stroke='%23fff' stroke-width='2.5'/%3E%3Ccircle cx='20' cy='16' r='6.5' fill='none' stroke='%23fff' stroke-width='2.5'/%3E%3C/svg%3E"><meta property="og:title" content="How this site works"><meta property="og:description" content="How the Kalshi vs Polymarket comparison pages are generated, and what they deliberately are not."><meta property="og:url" content="https://samebetornot.com/methodology"><meta property="og:site_name" content="Same bet or not?"><style>
+:root{--ink:#17181a;--muted:#5f6368;--line:#e6e6e8;--soft:#f6f6f7;--ok:#146c3a;--ok-bg:#e6f4ea;
+--warn:#8a4b00;--warn-bg:#fdf1e3;--accent:#1d4ed8;--bg:#fff}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,
+sans-serif;color:var(--ink);background:var(--bg)}
+a{color:var(--accent)}main{max-width:880px;margin:0 auto;padding:28px 20px 64px}
+header{border-bottom:1px solid var(--line)}
+.top{max-width:880px;margin:0 auto;padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px 18px;
+align-items:baseline}
+.brand{font-weight:800;font-size:1.05rem;letter-spacing:-.01em;color:var(--ink);
+text-decoration:none;margin-right:auto}.brand span{color:var(--accent)}
+.top nav{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px}.top nav a{color:var(--ink);
+text-decoration:none;padding:2px 0;border-bottom:2px solid transparent}
+.top nav a:hover{border-color:var(--accent)}
+h1{font-size:1.85rem;line-height:1.2;letter-spacing:-.015em;margin:.2em 0 .4em}
+h2{font-size:1.2rem;margin:1.8em 0 .5em}h3{font-size:1rem;margin:1.4em 0 .4em}
+p{margin:.55em 0}.lede{font-size:1.08rem;color:#333}.muted{color:var(--muted);font-size:14px}
+table{border-collapse:collapse;width:100%;margin:.7em 0;font-size:15px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;background:var(--soft)}tbody tr:hover{background:#fafafa}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12.5px;font-weight:600;
+white-space:nowrap}.badge.ok{background:var(--ok-bg);color:var(--ok)}
+.badge.no{background:var(--warn-bg);color:var(--warn)}.badge.dim{background:var(--soft);
+color:var(--muted);font-weight:500}
+.verdict{padding:16px 18px;border-radius:10px;margin:1em 0;font-weight:600;line-height:1.45}
+.verdict.ok{background:var(--ok-bg);color:var(--ok)}.verdict.no{background:var(--warn-bg);
+color:var(--warn)}
+.summary{background:var(--soft);border-radius:10px;padding:14px 18px;margin:1em 0}
+blockquote{margin:.6em 0;padding:.7em 1em;border-left:3px solid var(--line);color:#333;
+font-size:14px;white-space:pre-wrap;background:#fcfcfc}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;
+margin:1em 0}.card{border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card a{font-weight:600;text-decoration:none}.card p{margin:.3em 0 0;font-size:14px;
+color:var(--muted)}
+footer{max-width:880px;margin:0 auto;padding:22px 20px;border-top:1px solid var(--line);
+font-size:13px;color:var(--muted)}
+input[type=number]{font-size:16px;padding:7px 9px;width:120px;border:1px solid #bbb;
+border-radius:6px}.calc{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1em 0}
+@media(max-width:600px){.calc{grid-template-columns:1fr}h1{font-size:1.5rem}}
 .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;
-background:#f0f0f0;color:#333;margin-left:6px}
-</style></head><body><header><nav><a href="./">Compare</a><a href="fees">Fee calculator</a><a href="same-bet">Same bet or not?</a><a href="legal">Legal status</a><a href="taxes">Taxes</a><a href="referrals">Referral terms</a><a href="methodology">How this works</a></nav></header><main><h1>How these pages are made</h1><p>Every comparison page is generated by software that reads each venue's published contract rules and prices, extracts the economic terms deterministically, and compares them field by field. No page is written by hand, no model guesses at meaning, and a pair is called the same bet only when the published terms match on every field and both venues' settlement terms are complete.</p><p>The system behind it is a paper-only research instrument. It has never placed a trade, and its research record — including four pre-registered hypotheses that each returned a negative result — is public. That record is the reason to trust a page that says "not verified": the instrument is built to say no.</p><h2>What is and isn't here</h2><ul><li>Facts about published rules, fees, legal filings, and program terms — with sources and dates.</li><li>No picks, no probabilities, no strategies, no advice.</li><li>Affiliate relationships, disclosed on every page, that never affect a verdict.</li></ul></main><footer><p>Disclosure: this site may earn referral or affiliate revenue when you open an account through a link here. That never changes what a page says — every comparison is generated from the venues&#x27; own published rules and prices, and the method is public.</p><p>Nothing here is financial, legal, or tax advice, and nothing here is a recommendation to trade. These pages describe what two venues publish; they do not tell you what to do with it.</p><p>Generated 2026-09-04 20:19 UTC from published venue data. <a href="methodology">How these pages are made.</a></p></footer></body></html>
+background:var(--soft);color:#333;margin-left:6px}.ext::after{content:" ↗";font-size:.85em}
+</style></head><body><header><div class="top"><a class="brand" href="./">Same bet <span>or not?</span></a><nav><a href="./">Compare</a><a href="fees">Fees</a><a href="same-bet">Same bet?</a><a href="legal">Legal</a><a href="taxes">Taxes</a><a href="referrals">Referrals</a><a href="about">About</a></nav></div></header><main><h1>How these pages are made</h1><p>Every comparison page is generated by software that reads each venue's published contract rules and prices, extracts the economic terms deterministically, and compares them field by field. No page is written by hand, no model guesses at meaning, and a pair is called the same bet only when the published terms match on every field and both venues' settlement terms are complete.</p><p>The system behind it is a paper-only research instrument. It has never placed a trade, and its research record — including four pre-registered hypotheses that each returned a negative result — is public at <a href="https://github.com/omac049/atlas" rel="noopener">https://github.com/omac049/atlas</a>. That record is the reason to trust a page that says "not verified": the instrument is built to say no.</p><h2>What is and isn't here</h2><ul><li>Facts about published rules, fees, prices, legal filings, and program terms — with sources and dates.</li><li>No picks, no probabilities, no strategies, no advice.</li><li>Affiliate relationships, disclosed on every page, that never affect a verdict.</li></ul><p>Prices shown are the best ask at the moment of the nightly rebuild. Fees are computed from each venue's published formula at that price, not copied from a screen.</p></main><footer><p>Disclosure: this site may earn referral or affiliate revenue when you open an account through a link here. That never changes what a page says — every comparison is generated from the venues&#x27; own published rules and prices, and the method is public.</p><p>Nothing here is financial, legal, or tax advice, and nothing here is a recommendation to trade. These pages describe what two venues publish; they do not tell you what to do with it.</p><p>Generated 2026-09-04 20:45 UTC from published venue data. <a href="methodology">How these pages are made</a> · <a href="about">About</a></p></footer></body></html>

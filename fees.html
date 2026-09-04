@@ -1,24 +1,47 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kalshi vs Polymarket fees calculator (exact published formulas)</title><meta name="description" content="Exact Kalshi and Polymarket US taker and maker fees at any price, from the venues&#x27; published formulas."><link rel="canonical" href="https://samebetornot.com/fees"><style>
-:root{--ink:#1a1a1a;--muted:#5c5c5c;--line:#e3e3e3;--ok:#1f7a3a;--warn:#9a4a00;--bg:#fff}
-*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,
-sans-serif;color:var(--ink);background:var(--bg)}main{max-width:860px;margin:0 auto;
-padding:24px 20px 60px}header nav{display:flex;flex-wrap:wrap;gap:14px;padding:14px 20px;
-border-bottom:1px solid var(--line);font-size:14px}header nav a{color:var(--ink);
-text-decoration:none}h1{font-size:1.7rem;line-height:1.2;margin:.2em 0 .4em}h2{font-size:1.2rem;
-margin:1.6em 0 .5em}table{border-collapse:collapse;width:100%;margin:.6em 0}th,td{text-align:left;
-padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;font-size:15px}
-th{font-weight:600}.verdict{padding:14px 16px;border-radius:8px;margin:1em 0;font-weight:600}
-.verdict.ok{background:#e9f6ee;color:var(--ok)}.verdict.no{background:#fbf1e6;color:var(--warn)}
-.muted{color:var(--muted);font-size:14px}blockquote{margin:.6em 0;padding:.6em 1em;
-border-left:3px solid var(--line);color:#333;font-size:14px;white-space:pre-wrap}
-footer{max-width:860px;margin:0 auto;padding:20px;border-top:1px solid var(--line);
-font-size:13px;color:var(--muted)}input[type=number]{font-size:16px;padding:6px 8px;width:110px}
-.calc{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1em 0}
-@media(max-width:600px){.calc{grid-template-columns:1fr}}
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kalshi vs Polymarket fees calculator (exact published formulas)</title><meta name="description" content="Exact Kalshi and Polymarket US taker and maker fees at any price, from the venues&#x27; published formulas."><link rel="canonical" href="https://samebetornot.com/fees"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Ccircle cx='12' cy='16' r='6.5' fill='none' stroke='%23fff' stroke-width='2.5'/%3E%3Ccircle cx='20' cy='16' r='6.5' fill='none' stroke='%23fff' stroke-width='2.5'/%3E%3C/svg%3E"><meta property="og:title" content="Kalshi vs Polymarket fees calculator (exact published formulas)"><meta property="og:description" content="Exact Kalshi and Polymarket US taker and maker fees at any price, from the venues&#x27; published formulas."><meta property="og:url" content="https://samebetornot.com/fees"><meta property="og:site_name" content="Same bet or not?"><style>
+:root{--ink:#17181a;--muted:#5f6368;--line:#e6e6e8;--soft:#f6f6f7;--ok:#146c3a;--ok-bg:#e6f4ea;
+--warn:#8a4b00;--warn-bg:#fdf1e3;--accent:#1d4ed8;--bg:#fff}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,
+sans-serif;color:var(--ink);background:var(--bg)}
+a{color:var(--accent)}main{max-width:880px;margin:0 auto;padding:28px 20px 64px}
+header{border-bottom:1px solid var(--line)}
+.top{max-width:880px;margin:0 auto;padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px 18px;
+align-items:baseline}
+.brand{font-weight:800;font-size:1.05rem;letter-spacing:-.01em;color:var(--ink);
+text-decoration:none;margin-right:auto}.brand span{color:var(--accent)}
+.top nav{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px}.top nav a{color:var(--ink);
+text-decoration:none;padding:2px 0;border-bottom:2px solid transparent}
+.top nav a:hover{border-color:var(--accent)}
+h1{font-size:1.85rem;line-height:1.2;letter-spacing:-.015em;margin:.2em 0 .4em}
+h2{font-size:1.2rem;margin:1.8em 0 .5em}h3{font-size:1rem;margin:1.4em 0 .4em}
+p{margin:.55em 0}.lede{font-size:1.08rem;color:#333}.muted{color:var(--muted);font-size:14px}
+table{border-collapse:collapse;width:100%;margin:.7em 0;font-size:15px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;background:var(--soft)}tbody tr:hover{background:#fafafa}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12.5px;font-weight:600;
+white-space:nowrap}.badge.ok{background:var(--ok-bg);color:var(--ok)}
+.badge.no{background:var(--warn-bg);color:var(--warn)}.badge.dim{background:var(--soft);
+color:var(--muted);font-weight:500}
+.verdict{padding:16px 18px;border-radius:10px;margin:1em 0;font-weight:600;line-height:1.45}
+.verdict.ok{background:var(--ok-bg);color:var(--ok)}.verdict.no{background:var(--warn-bg);
+color:var(--warn)}
+.summary{background:var(--soft);border-radius:10px;padding:14px 18px;margin:1em 0}
+blockquote{margin:.6em 0;padding:.7em 1em;border-left:3px solid var(--line);color:#333;
+font-size:14px;white-space:pre-wrap;background:#fcfcfc}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;
+margin:1em 0}.card{border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card a{font-weight:600;text-decoration:none}.card p{margin:.3em 0 0;font-size:14px;
+color:var(--muted)}
+footer{max-width:880px;margin:0 auto;padding:22px 20px;border-top:1px solid var(--line);
+font-size:13px;color:var(--muted)}
+input[type=number]{font-size:16px;padding:7px 9px;width:120px;border:1px solid #bbb;
+border-radius:6px}.calc{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1em 0}
+@media(max-width:600px){.calc{grid-template-columns:1fr}h1{font-size:1.5rem}}
 .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;
-background:#f0f0f0;color:#333;margin-left:6px}
-</style></head><body><header><nav><a href="./">Compare</a><a href="fees">Fee calculator</a><a href="same-bet">Same bet or not?</a><a href="legal">Legal status</a><a href="taxes">Taxes</a><a href="referrals">Referral terms</a><a href="methodology">How this works</a></nav></header><main><h1>Kalshi vs Polymarket fees, at your price</h1><p>Both venues charge more when a contract is near 50¢ and almost nothing near the extremes — the fee is a curve, not a flat rate. The headline numbers ("7%" vs "6%") are the coefficients in that curve. Enter a price and a size:</p><div class="calc"><label>Price (¢) <input id="p" type="number" min="1" max="99" value="50"></label><label>Contracts <input id="n" type="number" min="1" value="100"></label></div><table><thead><tr><th></th><th>Kalshi</th><th>Polymarket US</th></tr></thead><tbody><tr><th>Taker fee (you take the displayed price)</th><td id="k"></td><td id="pm"></td></tr><tr><th>Maker fee (your resting order fills)</th><td id="km"></td><td id="pmm"></td></tr></tbody></table><script>
+background:var(--soft);color:#333;margin-left:6px}.ext::after{content:" ↗";font-size:.85em}
+</style></head><body><header><div class="top"><a class="brand" href="./">Same bet <span>or not?</span></a><nav><a href="./">Compare</a><a href="fees">Fees</a><a href="same-bet">Same bet?</a><a href="legal">Legal</a><a href="taxes">Taxes</a><a href="referrals">Referrals</a><a href="about">About</a></nav></div></header><main><h1>Kalshi vs Polymarket fees, at your price</h1><p class="lede">Both venues charge more when a contract is near 50¢ and almost nothing near the extremes — the fee is a curve, not a flat rate. The headline numbers ("7%" vs "6%") are the coefficients in that curve. Enter a price and a size:</p><div class="calc"><label>Price (¢) <input id="p" type="number" min="1" max="99" value="50"></label><label>Contracts <input id="n" type="number" min="1" value="100"></label></div><table><thead><tr><th></th><th>Kalshi</th><th>Polymarket US</th></tr></thead><tbody><tr><th>Taker fee (you take the displayed price)</th><td id="k"></td><td id="pm"></td></tr><tr><th>Maker fee (your resting order fills)</th><td id="km"></td><td id="pmm"></td></tr></tbody></table><script>
 function fee(){var p=Math.min(99,Math.max(1,Number(document.getElementById('p').value)))/100;
 var n=Math.max(1,Number(document.getElementById('n').value));
 var k=Math.ceil(0.07*p*(1-p)*100)/100;var pm=0.06*p*(1-p);
@@ -28,4 +51,4 @@ document.getElementById('pm').textContent='$'+(pm*n).toFixed(2)+' ('+(pm*100).to
 document.getElementById('pmm').textContent='$'+(0.0125*p*(1-p)*n).toFixed(2);}
 document.addEventListener('DOMContentLoaded',function(){fee();['p','n'].forEach(function(i){
 document.getElementById(i).addEventListener('input',fee);});});
-</script><h2>The formulas, as published</h2><ul><li><strong>Kalshi taker:</strong> 0.07 × price × (1 − price) per contract, rounded up to the cent per contract here (the venue rounds per order, so this is the conservative reading). Maker fee is 25% of the taker fee. A higher multiplier applies to some premium categories such as crypto.</li><li><strong>Polymarket US taker:</strong> 0.06 × price × (1 − price) per share, per the schedule effective July 1, 2026. Maker fee coefficient 0.0125.</li><li><strong>Polymarket (global):</strong> fees are set per market and published on each market; economics markets have carried a 0.05 taker rate. Not available to US accounts.</li></ul><h2>At a glance</h2><table><thead><tr><th>Price</th><th>Kalshi taker</th><th>Polymarket US taker</th></tr></thead><tbody><tr><td>5¢</td><td>1.0¢</td><td>0.3¢</td></tr><tr><td>10¢</td><td>1.0¢</td><td>0.5¢</td></tr><tr><td>20¢</td><td>2.0¢</td><td>1.0¢</td></tr><tr><td>30¢</td><td>2.0¢</td><td>1.3¢</td></tr><tr><td>40¢</td><td>2.0¢</td><td>1.4¢</td></tr><tr><td>50¢</td><td>2.0¢</td><td>1.5¢</td></tr><tr><td>60¢</td><td>2.0¢</td><td>1.4¢</td></tr><tr><td>70¢</td><td>2.0¢</td><td>1.3¢</td></tr><tr><td>80¢</td><td>2.0¢</td><td>1.0¢</td></tr><tr><td>90¢</td><td>1.0¢</td><td>0.5¢</td></tr><tr><td>95¢</td><td>1.0¢</td><td>0.3¢</td></tr></tbody></table><p class="muted">Both peak at 50¢: 1.75¢ (Kalshi, shown rounded up to 2¢ per contract) vs 1.5¢ (Polymarket US). At 90¢ they are 0.63¢ (rounded to 1¢) and 0.54¢. Deposits, withdrawals, and any crypto on-ramp costs are separate and not modeled here.</p><h2>Sources</h2><ul><li><a href="https://help.kalshi.com/en/articles/13823805-fees" rel="nofollow noopener">Kalshi Help Center — Fees</a></li><li><a href="https://kalshi.com/docs/kalshi-fee-schedule.pdf" rel="nofollow noopener">Kalshi fee schedule (July 2026 PDF)</a></li><li><a href="https://docs.polymarket.us/fees" rel="nofollow noopener">Polymarket US — Fee Schedule</a></li></ul></main><footer><p>Disclosure: this site may earn referral or affiliate revenue when you open an account through a link here. That never changes what a page says — every comparison is generated from the venues&#x27; own published rules and prices, and the method is public.</p><p>Nothing here is financial, legal, or tax advice, and nothing here is a recommendation to trade. These pages describe what two venues publish; they do not tell you what to do with it.</p><p>Generated 2026-09-04 20:19 UTC from published venue data. <a href="methodology">How these pages are made.</a></p></footer></body></html>
+</script><h2>The formulas, as published</h2><ul><li><strong>Kalshi taker:</strong> 0.07 × price × (1 − price) per contract, rounded up to the cent per contract here (the venue rounds per order, so this is the conservative reading). Maker fee is 25% of the taker fee. A higher multiplier applies to some premium categories such as crypto.</li><li><strong>Polymarket US taker:</strong> 0.06 × price × (1 − price) per share, per the schedule effective July 1, 2026. Maker fee coefficient 0.0125.</li><li><strong>Polymarket (global):</strong> fees are set per market and published on each market; economics markets have carried a 0.05 taker rate. Not available to US accounts.</li></ul><h2>At a glance</h2><table><thead><tr><th>Price</th><th>Kalshi taker</th><th>Polymarket US taker</th></tr></thead><tbody><tr><td>5¢</td><td>1.0¢</td><td>0.3¢</td></tr><tr><td>10¢</td><td>1.0¢</td><td>0.5¢</td></tr><tr><td>20¢</td><td>2.0¢</td><td>1.0¢</td></tr><tr><td>30¢</td><td>2.0¢</td><td>1.3¢</td></tr><tr><td>40¢</td><td>2.0¢</td><td>1.4¢</td></tr><tr><td>50¢</td><td>2.0¢</td><td>1.5¢</td></tr><tr><td>60¢</td><td>2.0¢</td><td>1.4¢</td></tr><tr><td>70¢</td><td>2.0¢</td><td>1.3¢</td></tr><tr><td>80¢</td><td>2.0¢</td><td>1.0¢</td></tr><tr><td>90¢</td><td>1.0¢</td><td>0.5¢</td></tr><tr><td>95¢</td><td>1.0¢</td><td>0.3¢</td></tr></tbody></table><p class="muted">Both peak at 50¢: 1.75¢ (Kalshi, shown rounded up to 2¢ per contract) vs 1.5¢ (Polymarket US). At 90¢ they are 0.63¢ (rounded to 1¢) and 0.54¢. Deposits, withdrawals, and any crypto on-ramp costs are separate and not modeled here.</p><h2>Sources</h2><ul><li><a href="https://help.kalshi.com/en/articles/13823805-fees" rel="nofollow noopener">Kalshi Help Center — Fees</a></li><li><a href="https://kalshi.com/docs/kalshi-fee-schedule.pdf" rel="nofollow noopener">Kalshi fee schedule (July 2026 PDF)</a></li><li><a href="https://docs.polymarket.us/fees" rel="nofollow noopener">Polymarket US — Fee Schedule</a></li></ul></main><footer><p>Disclosure: this site may earn referral or affiliate revenue when you open an account through a link here. That never changes what a page says — every comparison is generated from the venues&#x27; own published rules and prices, and the method is public.</p><p>Nothing here is financial, legal, or tax advice, and nothing here is a recommendation to trade. These pages describe what two venues publish; they do not tell you what to do with it.</p><p>Generated 2026-09-04 20:45 UTC from published venue data. <a href="methodology">How these pages are made</a> · <a href="about">About</a></p></footer></body></html>
