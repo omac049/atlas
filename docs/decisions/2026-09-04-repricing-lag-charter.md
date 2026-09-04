@@ -70,10 +70,16 @@ from either side, and a change to a tie counts), with `T0 = about.endTime`:
 - **Direction.** The contract for the team that benefits is expected to rise.
   Both team contracts are analyzed; the benefiting side is the one measured.
 - **Pre-play price** `P0`: the volume-weighted `yes_price_dollars` of the last
-  20 trades (non-block) before `T0` on the benefiting contract.
-- **Repricing lag** `L`: seconds from `T0` to the first non-block trade at a
-  price at least **5¢** above `P0`. Undefined (recorded as `NO_REPRICE`) if no
-  such trade prints within 300s.
+  20 non-block trades on the benefiting contract printed **more than 30
+  seconds before `T0`**. *(Pre-freeze clarification, 2026-09-04, recorded
+  under §7: without the 30-second exclusion, a maker who reprices seconds
+  before the stringer finalizes the play is absorbed into `P0`, the move
+  vanishes, and the theory is credited for a lag it lost. The exclusion makes
+  §7's negative lags measurable. It cuts against the theory.)*
+- **Repricing lag** `L`: seconds from `T0` to the first non-block trade, from
+  30 seconds before `T0` onward, at a price at least **5¢** above `P0` —
+  **negative when the move preceded `T0`**. Undefined (recorded as
+  `NO_REPRICE`) if no such trade prints within 300s after `T0`.
 - **Stale fills** `S`: total `count_fp` of non-block trades on the benefiting
   contract printed in the window **[5s, 60s]** after `T0` at a price within
   **2¢** of `P0`. The 5-second floor is the charter's estimate of the fastest
