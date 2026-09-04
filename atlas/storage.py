@@ -1094,6 +1094,31 @@ class AtlasStore:
             )
             await db.commit()
 
+    async def latest_rules_text(self, market_ids: list[str]) -> dict[str, str]:
+        """market_id -> the most recently archived rules text, for the site
+        generator's rules excerpts. Read-only over the evidence chain."""
+        await self.initialize()
+        ids = [str(market_id) for market_id in market_ids]
+        if not ids:
+            return {}
+        placeholders = ",".join("?" for _ in ids)
+        async with aiosqlite.connect(self.path) as db:
+            rows = await (
+                await db.execute(
+                    f"""SELECT market_id, payload_json FROM market_evidence_snapshots
+                        WHERE market_id IN ({placeholders})
+                        ORDER BY observed_at ASC""",
+                    ids,
+                )
+            ).fetchall()
+        latest: dict[str, str] = {}
+        for market_id, payload_json in rows:
+            payload = json.loads(payload_json)
+            text = payload.get("raw_rules_text") or payload.get("resolution_text")
+            if text:
+                latest[str(market_id)] = str(text)
+        return latest
+
     async def recent_gap_observations(self, limit: int = 20) -> list[dict[str, object]]:
         await self.initialize()
         limit = max(1, min(int(limit), 200))

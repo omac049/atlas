@@ -4,8 +4,26 @@
     {
       "name": "atlas-api",
       "runtimeExecutable": ".venv/bin/python",
-      "runtimeArgs": ["-m", "uvicorn", "apps.api.main:app", "--port", "8020"],
+      "runtimeArgs": [
+        "-m",
+        "uvicorn",
+        "apps.api.main:app",
+        "--port",
+        "8020"
+      ],
       "port": 8020
+    },
+    {
+      "name": "atlas-site",
+      "runtimeExecutable": ".venv/bin/python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8766",
+        "--directory",
+        "dist/site"
+      ],
+      "port": 8766
     }
   ]
 }

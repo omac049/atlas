@@ -22,3 +22,6 @@ output/
 .claude/settings.local.json
 .playwright-cli/
 .claude/worktrees/
+
+# Generated static site for the demand test (docs/IDEATION.md)
+dist/
