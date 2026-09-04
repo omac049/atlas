@@ -144,6 +144,15 @@ Search Console, and affiliate accounts (accounts and payments are the owner's,
 never the assistant's); post from their own handles. Everything else —
 generation, pages, calculators, the disclosure language — is build work.
 
+## Build status
+
+- 2026-09-04: site generator merged (#18) — 71 pages from a live build, 61
+  pairs, 4 verified same-bet, every page carrying the disclosure and the
+  not-advice notice by build-time guardrail. Nightly regeneration agent
+  `com.atlas.site` added. The demand-test clock has **not** started: it starts
+  the day the site is live on a domain and the sitemap is submitted, which are
+  the owner's steps in `docs/SITE.md`.
+
 ## Deprioritized, not forgotten
 
 B (validation as a service) is the highest-probability *income* line if the

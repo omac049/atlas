@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.atlas.site</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/ocorral/Atlas/.venv/bin/python</string>
+        <string>/Users/ocorral/Atlas/deploy/atlas_site.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/ocorral/Atlas</string>
+    <!-- Owner fills these in once a domain and host exist. Unset = the site is
+         rebuilt locally into dist/site and nothing is published. The publish
+         command is opaque to the script; any credential it needs lives in the
+         host's own CLI config, never in this repo. -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>ATLAS_SITE_BASE_URL</key>
+        <string>https://example.invalid</string>
+        <key>ATLAS_SITE_PUBLISH_CMD</key>
+        <string></string>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+    <!-- Daily at 04:00, after the 03:30 backup; runs at next wake if asleep. -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>4</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/Users/ocorral/Library/Logs/atlas-site-stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/ocorral/Library/Logs/atlas-site-stdout.log</string>
+</dict>
+</plist>
