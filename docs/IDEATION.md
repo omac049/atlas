@@ -158,6 +158,11 @@ generation, pages, calculators, the disclosure language — is build work.
   Clock still not started: Search Console property + sitemap submission are
   the owner's step in their personal Google account (the work-account
   connector must not be used).
+- 2026-09-04: owner deferred Search Console. Consequence, stated now: the
+  search criterion (≥2,000 impressions / top-20 page) cannot be measured
+  until a property exists, and the clock does not start. Google will still
+  find the site through robots.txt's sitemap line, just without us seeing
+  it. The social-clicks criterion needs an analytics tag, also unset.
 
 ## Deprioritized, not forgotten
 
