@@ -35,3 +35,25 @@ git -c user.name="atlas-site" -c user.email="atlas-site@users.noreply.github.com
   commit -q -m "site: $(date -u +%Y-%m-%dT%H:%MZ)"
 git push -q origin gh-pages:gh-pages
 echo "gh-pages published $(git rev-parse --short HEAD)"
+
+# IndexNow: tell Bing (and engines sharing the protocol) which URLs changed.
+# The key is public by design and served at /{key}.txt; Google ignores
+# IndexNow, so this never substitutes for Search Console. Best effort only.
+KEY_FILE="$(ls ./*.txt 2>/dev/null | grep -v robots | head -1 || true)"
+if [ -n "$KEY_FILE" ] && [ -f sitemap.xml ] && command -v python3 >/dev/null 2>&1; then
+  KEY="$(basename "$KEY_FILE" .txt)"
+  python3 - "$DOMAIN" "$KEY" <<'PY' || echo "indexnow submit skipped"
+import json, re, sys, urllib.request
+host, key = sys.argv[1], sys.argv[2]
+urls = re.findall(r"<loc>([^<]+)</loc>", open("sitemap.xml", encoding="utf-8").read())[:10000]
+body = json.dumps({"host": host, "key": key, "keyLocation": f"https://{host}/{key}.txt",
+                   "urlList": urls}).encode()
+req = urllib.request.Request("https://api.indexnow.org/indexnow", data=body,
+                             headers={"Content-Type": "application/json; charset=utf-8"})
+try:
+    with urllib.request.urlopen(req, timeout=20) as r:
+        print(f"indexnow submitted {len(urls)} urls status={r.status}")
+except Exception as exc:  # noqa: BLE001 - best effort, never fails the publish
+    print(f"indexnow submit failed: {exc}")
+PY
+fi

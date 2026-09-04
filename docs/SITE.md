@@ -14,6 +14,13 @@ by `atlas/site.py` from Atlas's own data; nothing on it is written by hand.
   referral terms compared (credits vs cash).
 - Every page carries the affiliate disclosure and the not-advice notice. The
   build fails if either is missing (`atlas.site.verify_pages`).
+- Two pages are data-driven from researched JSON with a source on every row —
+  `docs/site/legal-states.json` (51 jurisdictions) and
+  `docs/site/kalshi-vs-polymarket.json` (the head-term comparison + FAQ, with
+  FAQPage structured data). A row without a source fails the build.
+- The publish script pings IndexNow (Bing) with the sitemap's URLs after each
+  push; the key file at `/{key}.txt` is public by design. Google ignores
+  IndexNow, so Search Console remains the scoreboard.
 
 ## Build
 

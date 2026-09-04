@@ -40,6 +40,9 @@ SITE_VERSION = "0.2"
 SITE_NAME = "Same bet or not?"
 TRUSTED_STATUSES = {"APPROVED_EQUIVALENT", "APPROVED_INVERSE"}
 REPO_URL = "https://github.com/omac049/atlas"
+# IndexNow key: public by design (it is served at /{key}.txt so Bing can verify
+# the site owns submissions). Not a credential.
+INDEXNOW_KEY = "9c1f2a7e4b8d4e6f8a0b1c2d3e4f5a6b"
 
 # Verified 2026-09-04 against the venues' published schedules; the calculator
 # page cites both. Kalshi's per-contract ceiling is the conservative reading
@@ -249,6 +252,9 @@ class Site:
     # docs/site/legal-states.json, loaded by the CLI; None renders the short
     # federal-picture version of the legal page.
     legal_states: dict | None = None
+    # docs/site/kalshi-vs-polymarket.json: the head-term page's rows and FAQ,
+    # every row sourced; None renders the short version that links the pillars.
+    comparison: dict | None = None
 
     @property
     def stamp(self) -> str:
@@ -315,6 +321,7 @@ _METHODOLOGY_LINK = re.compile(r'href="(\.\./)*methodology"')
 
 _NAV = (
     ("index.html", "Compare"),
+    ("kalshi-vs-polymarket.html", "Kalshi vs Polymarket"),
     ("fees.html", "Fees"),
     ("same-bet.html", "Same bet?"),
     ("legal.html", "Legal"),
@@ -542,6 +549,8 @@ def render_index(site: Site) -> str:
         f"<p>Tracking <strong>{len(site.pairs)} pairs</strong> right now; <strong>{len(same)}</strong> "
         "verify as the same bet. No picks, no predictions — just what each venue says it will do.</p>"
         "<div class=\"cards\">"
+        "<div class=\"card\"><a href=\"kalshi-vs-polymarket\">Kalshi vs Polymarket, side by side</a>"
+        "<p>Regulation, funding, fees, settlement, taxes — sourced, no opinions.</p></div>"
         "<div class=\"card\"><a href=\"fees\">Fee calculator</a><p>Both venues' exact published "
         "formulas at any price.</p></div>"
         "<div class=\"card\"><a href=\"same-bet\">Why \"same event\" isn't \"same bet\"</a>"
@@ -570,9 +579,9 @@ function fee(){var p=Math.min(99,Math.max(1,Number(document.getElementById('p').
 var n=Math.max(1,Number(document.getElementById('n').value));
 var k=Math.ceil(0.07*p*(1-p)*100)/100;var pm=0.06*p*(1-p);
 document.getElementById('k').textContent='$'+(k*n).toFixed(2)+' ('+(k*100).toFixed(2)+'¢ each)';
-document.getElementById('km').textContent='$'+(k*0.25*n).toFixed(2);
+document.getElementById('km').textContent='$'+(k*0.25*n).toFixed(2)+' where the schedule sets a maker fee; otherwise $0.00';
 document.getElementById('pm').textContent='$'+(pm*n).toFixed(2)+' ('+(pm*100).toFixed(2)+'¢ each)';
-document.getElementById('pmm').textContent='$'+(0.0125*p*(1-p)*n).toFixed(2);}
+document.getElementById('pmm').textContent='rebate of $'+(0.0125*p*(1-p)*n).toFixed(2)+' paid to you';}
 document.addEventListener('DOMContentLoaded',function(){fee();['p','n'].forEach(function(i){
 document.getElementById(i).addEventListener('input',fee);});});
 """
@@ -586,27 +595,37 @@ document.getElementById(i).addEventListener('input',fee);});});
         "value=\"100\"></label></div>"
         "<table><thead><tr><th></th><th>Kalshi</th><th>Polymarket US</th></tr></thead><tbody>"
         "<tr><th>Taker fee (you take the displayed price)</th><td id=\"k\"></td><td id=\"pm\"></td></tr>"
-        "<tr><th>Maker fee (your resting order fills)</th><td id=\"km\"></td><td id=\"pmm\"></td></tr>"
+        "<tr><th>Maker side (your resting order fills)</th><td id=\"km\"></td><td id=\"pmm\"></td></tr>"
         "</tbody></table>"
         f"<script>{calc_js}</script>"
         "<h2>The formulas, as published</h2>"
-        "<ul><li><strong>Kalshi taker:</strong> 0.07 × price × (1 − price) per contract, rounded up "
-        "to the cent per contract here (the venue rounds per order, so this is the conservative "
-        "reading). Maker fee is 25% of the taker fee. A higher multiplier applies to some premium "
-        "categories such as crypto.</li>"
-        "<li><strong>Polymarket US taker:</strong> 0.06 × price × (1 − price) per share, per the "
-        "schedule effective July 1, 2026. Maker fee coefficient 0.0125.</li>"
-        "<li><strong>Polymarket (global):</strong> fees are set per market and published on each "
-        "market; economics markets have carried a 0.05 taker rate. Not available to US accounts.</li></ul>"
+        "<ul><li><strong>Kalshi taker:</strong> 0.07 × price × (1 − price) per contract, times a "
+        "per-series multiplier that the schedule (effective July 7, 2026) sets to 1 for nearly "
+        "every series and 0 for a few fee-free ones (some crypto year-end ranges and geopolitical "
+        "questions). Rounded up to the cent per contract here; the venue rounds per order, so "
+        "this is the conservative reading. <strong>Maker fee:</strong> 0 by default; on series "
+        "where the schedule sets a maker multiplier of 1 (most sports, CPI, Fed decisions, jobs, "
+        "GDP) it is 0.0175 × price × (1 − price), which is 25% of the taker rate.</li>"
+        "<li><strong>Polymarket US taker:</strong> 0.06 × price × (1 − price) per contract, per the "
+        "schedule effective July 1, 2026 (maximum $1.50 per 100 contracts at 50¢). "
+        "<strong>Makers are paid, not charged:</strong> a rebate of 0.0125 × price × (1 − price), "
+        "up to $0.31 per 100 contracts. Large takers get volume rebates above $250,000 a month.</li>"
+        "<li><strong>Polymarket (global):</strong> takers only, at a rate by category — crypto 0.07, "
+        "sports/economics/culture/weather 0.05, finance/politics/tech 0.04, geopolitics 0. Makers "
+        "are never charged. Not available to US accounts.</li></ul>"
         "<h2>At a glance</h2><table><thead><tr><th>Price</th><th>Kalshi taker</th>"
         f"<th>Polymarket US taker</th></tr></thead><tbody>{rows}</tbody></table>"
         "<p class=\"muted\">Both peak at 50¢: 1.75¢ (Kalshi, shown rounded up to 2¢ per contract) vs "
         "1.5¢ (Polymarket US). At 90¢ they are 0.63¢ (rounded to 1¢) and 0.54¢. "
-        "Deposits, withdrawals, and any crypto on-ramp costs are separate and not modeled here.</p>"
+        "Deposits, withdrawals, and any crypto on-ramp costs are separate and not modeled here. "
+        "Corrected 2026-09-04 against the current schedules: an earlier version of this page "
+        "said Kalshi charged a higher multiplier on some categories and that Polymarket US "
+        "charged makers; neither is what the schedules say.</p>"
         + _sources([
             ("Kalshi Help Center — Fees", "https://help.kalshi.com/en/articles/13823805-fees"),
-            ("Kalshi fee schedule (July 2026 PDF)", "https://kalshi.com/docs/kalshi-fee-schedule.pdf"),
+            ("Kalshi fee schedule (effective July 7, 2026, PDF)", "https://kalshi.com/docs/kalshi-fee-schedule.pdf"),
             ("Polymarket US — Fee Schedule", "https://docs.polymarket.us/fees"),
+            ("Polymarket (global) — Fees", "https://docs.polymarket.com/polymarket-learn/trading/fees"),
         ])
     )
     return _page(site, title="Kalshi vs Polymarket fees calculator (exact published formulas)",
@@ -744,9 +763,13 @@ def render_taxes(site: Site) -> str:
         "guidance on event contracts; talk to a CPA who knows trader taxation.</p>"
         "<h2>What forms you get</h2>"
         "<table><thead><tr><th>Venue</th><th>Forms reported by tax practitioners</th></tr></thead>"
-        "<tbody><tr><td>Kalshi</td><td>1099-INT for interest and 1099-MISC for rewards; no form "
-        "for trading profit itself.</td></tr>"
-        "<tr><td>Polymarket</td><td>No tax forms; the on-chain record is the audit trail.</td></tr>"
+        "<tbody><tr><td>Kalshi</td><td>When IRS thresholds are met: 1099-INT (interest), 1099-MISC "
+        "(credits and rewards), and 1099-B / 1099-DA for crypto transfers. Trading gains are not "
+        "on any 1099; Kalshi provides a FIFO profit-and-loss statement instead.</td></tr>"
+        "<tr><td>Polymarket US</td><td>Not published. The venue's documentation has no tax-forms "
+        "page; accounts are identity-verified under CFTC rules.</td></tr>"
+        "<tr><td>Polymarket (global)</td><td>No forms issued, per tax practitioners; the on-chain "
+        "record is the audit trail. Not available to US accounts.</td></tr>"
         "</tbody></table>"
         "<h2>What that means</h2>"
         "<p>The absence of a form does not remove the obligation to report. Practitioners describe "
@@ -755,6 +778,8 @@ def render_taxes(site: Site) -> str:
         "income, or ordinary income), on which the profession has not settled. Pick one reasonable "
         "treatment, apply it consistently, and document it.</p>"
         + _sources([
+            ("Kalshi Help Center — what tax documentation Kalshi provides",
+             "https://help.kalshi.com/en/articles/13823849-what-tax-documentation-does-kalshi-provide"),
             ("Keeper — filing taxes on Polymarket and Kalshi (2026)",
              "https://www.keepertax.com/posts/how-to-file-taxes-on-kalshi-and-polymarket"),
             ("NATP — prediction market contracts on client returns",
@@ -773,30 +798,49 @@ def render_referrals(site: Site) -> str:
         "<h1>Kalshi and Polymarket referral programs, compared honestly</h1>"
         "<p class=\"muted\">Terms verified 2026-09-04 from the programs' own pages. Venues change "
         "these at will; the sources are linked.</p>"
-        "<table><thead><tr><th></th><th>Kalshi</th><th>Polymarket</th></tr></thead><tbody>"
-        "<tr><th>What a referred user gets</th><td>Trading credits on completing the sign-up "
-        "requirements ($25 has been the published amount).</td><td>Program-dependent; the "
-        "affiliate program pays the referrer, not the user.</td></tr>"
-        "<tr><th>What the referrer gets</th><td><strong>Trading credits, not cash.</strong> Credits "
-        "can only be used to trade; only trading returns are withdrawable.</td>"
-        "<td><strong>Cash.</strong> The partner program lists $10 per referral's first deposit, a "
-        "20% share of their perpetuals trading fees, and $0.01 per click, with revenue bounties.</td></tr>"
-        "<tr><th>Who can refer</th><td>Any account.</td><td>Approved affiliates; Polymarket US runs a "
-        "separate approved-affiliate program by application.</td></tr>"
-        "</tbody></table>"
+        "<div style=\"overflow-x:auto\"><table><thead><tr><th></th><th>Kalshi</th>"
+        "<th>Polymarket US</th><th>Polymarket (global)</th></tr></thead><tbody>"
+        "<tr><th>What the referrer gets</th>"
+        "<td><strong>Trading credits, not cash.</strong> Amounts and caps are set per account "
+        "and shown in-app; credits must be used within 7 days; only profits made with them "
+        "become withdrawable. US users only.</td>"
+        "<td><strong>Bonus credits, not cash:</strong> $25 per qualifying referral, up to 14 "
+        "referrals. Credits can only be used to trade and are withdrawable after the position "
+        "settles.</td>"
+        "<td><strong>A share of fees, paid daily in pUSD:</strong> 10% of direct referrals' net "
+        "trading fees (5% indirect) for 30 days, for referrers with $10,000+ lifetime volume. "
+        "Not available to US accounts.</td></tr>"
+        "<tr><th>What the referred user gets</th>"
+        "<td>Trading credits after identity verification and a trading requirement shown in-app.</td>"
+        "<td>$25 bonus credit after signing up with the code and depositing at least $10.</td>"
+        "<td>Nothing published beyond the referrer's fee share.</td></tr>"
+        "<tr><th>Separate affiliate programs</th>"
+        "<td>None reachable publicly (the affiliate hub returned an error when checked).</td>"
+        "<td>An approved-affiliate program exists by application; payout terms are not "
+        "published.</td>"
+        "<td>The public partner program on Dub lists $10 per referral's first deposit, 20% of "
+        "their perpetuals trading fees, and $0.01 per click; the payout method is not stated "
+        "on that page.</td></tr>"
+        "</tbody></table></div>"
+        "<p class=\"muted\">Corrected 2026-09-04: an earlier version framed this as \"Kalshi "
+        "credits vs Polymarket cash.\" Polymarket US's own program also pays credits; only the "
+        "global venue's programs pay in a currency, and that venue is closed to US accounts.</p>"
         "<p>This site may participate in these programs — see the disclosure below. The comparison "
         "above is the same whether or not you use a link here.</p>"
         + _sources([
-            ("Polymarket partner program (Dub)", "https://partners.dub.co/polymarket"),
+            ("Kalshi Help Center — Referral Program FAQ",
+             "https://help.kalshi.com/en/articles/13823783-kalshi-referral-program-faq"),
+            ("Polymarket US — Refer-A-Friend FAQs", "https://docs.polymarket.us/faqs/refer-a-friend-faqs"),
             ("Polymarket US — Referral Incentive Program", "https://docs.polymarket.us/incentives/referral"),
+            ("Polymarket partner program (Dub)", "https://partners.dub.co/polymarket"),
             ("iGaming Future — Kalshi referral code, credits not cash",
              "https://igamingfuture.com/prediction-markets/news/kalshi-referral-code/"),
         ])
     )
     return _page(site, title="Kalshi referral code vs Polymarket referral code: what each actually pays",
                  path="referrals.html", body=body,
-                 description="Kalshi pays referral rewards in trading credits; Polymarket's partner "
-                 "program pays cash. Terms compared, with sources.")
+                 description="Kalshi and Polymarket US both pay referral rewards in trading credits; "
+                 "only Polymarket's global programs pay a fee share. Terms compared, with sources.")
 
 
 def render_methodology(site: Site) -> str:
@@ -822,6 +866,91 @@ def render_methodology(site: Site) -> str:
     return _page(site, title="How this site works", path="methodology.html", body=body,
                  description="How the Kalshi vs Polymarket comparison pages are generated, "
                  "and what they deliberately are not.")
+
+
+def _faq_jsonld(faq: list[dict]) -> str:
+    data = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": str(item.get("q") or ""),
+                "acceptedAnswer": {"@type": "Answer", "text": str(item.get("a") or "")},
+            }
+            for item in faq
+            if item.get("q") and item.get("a")
+        ],
+    }
+    # </script> inside JSON would end the tag early; escape the slash.
+    return "<script type=\"application/ld+json\">" + json.dumps(data).replace("</", "<\\/") + "</script>"
+
+
+def render_comparison(site: Site) -> str:
+    data = site.comparison or {}
+    as_of = str(data.get("as_of") or "September 2026")
+    rows = data.get("rows") or []
+    faq = data.get("faq") or []
+    table = ""
+    if rows:
+        body_rows = ""
+        for i, row in enumerate(rows):
+            srcs = " ".join(
+                f"<a href=\"{_esc(u)}\" rel=\"nofollow noopener\">[{j + 1}]</a>"
+                for j, u in enumerate(row.get("sources") or [])
+            )
+            note = f"<div class=\"muted\">Note: {_esc(row['note'])}</div>" if row.get("note") else ""
+            body_rows += (
+                f"<tr><th scope=\"row\">{_esc(row.get('topic'))}"
+                f"<div class=\"muted\">{srcs}</div></th>"
+                f"<td>{_esc(row.get('kalshi') or 'Not published')}</td>"
+                f"<td>{_esc(row.get('polymarket_us') or 'Not published')}</td>"
+                f"<td>{_esc(row.get('polymarket_global') or 'Not published')}{note}</td></tr>"
+            )
+        table = (
+            f"<h2>Side by side (as of {_esc(as_of)})</h2>"
+            "<div style=\"overflow-x:auto\"><table><thead><tr><th></th><th>Kalshi</th>"
+            "<th>Polymarket US</th><th>Polymarket (global)</th></tr></thead>"
+            f"<tbody>{body_rows}</tbody></table></div>"
+            "<p class=\"muted\">\"Not published\" means the venue does not state it in its "
+            "public documentation; we do not fill gaps with guesses. Bracketed numbers link "
+            "the source for that row.</p>"
+        )
+    faq_html = ""
+    if faq:
+        faq_html = "<h2>Questions people ask</h2>" + "".join(
+            f"<h3>{_esc(item.get('q'))}</h3><p>{_esc(item.get('a'))}</p>" for item in faq
+        )
+    same = sum(1 for p in site.pairs if p.same_bet)
+    body = (
+        "<h1>Kalshi vs Polymarket: the factual comparison</h1>"
+        "<p class=\"lede\">Kalshi is a US-regulated exchange. Polymarket runs two venues: a US "
+        "one and the original global platform, which US accounts cannot use. They list many of "
+        "the same events, charge fees on a similar curve, and settle by different rulebooks. "
+        "This page puts what each venue publishes next to each other — regulation, who can use "
+        "it, funding, fees, settlement, disputes, taxes — with a source on every row and no "
+        "opinion on which is \"better\".</p>"
+        f"<p>For the contracts themselves: we track <strong>{len(site.pairs)} matched pairs</strong> "
+        f"across both venues right now, and <strong>{same}</strong> verify as the same bet under "
+        "both rulebooks. <a href=\"./\">See every pair →</a></p>"
+        + table
+        + "<h2>The parts with their own page</h2><div class=\"cards\">"
+        "<div class=\"card\"><a href=\"fees\">Fees at any price</a><p>Both published formulas, "
+        "with a calculator.</p></div>"
+        "<div class=\"card\"><a href=\"legal\">Legal status by state</a><p>All 50 states and DC, "
+        "sourced.</p></div>"
+        "<div class=\"card\"><a href=\"taxes\">Taxes</a><p>What forms each venue sends.</p></div>"
+        "<div class=\"card\"><a href=\"referrals\">Referral programs</a><p>Credits vs cash, "
+        "honestly.</p></div>"
+        "<div class=\"card\"><a href=\"same-bet\">Same event, same bet?</a><p>Three real cases "
+        "where the answer was no.</p></div></div>"
+        + faq_html
+        + (_faq_jsonld(faq) if faq else "")
+    )
+    return _page(site, title="Kalshi vs Polymarket (2026): regulation, fees, funding, settlement, taxes — compared",
+                 path="kalshi-vs-polymarket.html", body=body,
+                 description="Kalshi vs Polymarket side by side: regulation, who can use each, "
+                 "funding, exact fees, settlement and disputes, taxes, referrals. Every row sourced.")
 
 
 def render_about(site: Site) -> str:
@@ -864,6 +993,7 @@ def render_all(site: Site) -> dict[str, str]:
         "referrals.html": render_referrals(site),
         "methodology.html": render_methodology(site),
         "about.html": render_about(site),
+        "kalshi-vs-polymarket.html": render_comparison(site),
     }
     for page in site.pairs:
         pages[f"compare/{page.slug}.html"] = render_pair(site, page)
@@ -879,6 +1009,7 @@ def render_all(site: Site) -> dict[str, str]:
         + "</urlset>\n"
     )
     pages["robots.txt"] = f"User-agent: *\nAllow: /\nSitemap: {base}/sitemap.xml\n"
+    pages[f"{INDEXNOW_KEY}.txt"] = INDEXNOW_KEY + "\n"
     pages["manifest.json"] = json.dumps(
         {
             "site_version": SITE_VERSION,
@@ -890,6 +1021,7 @@ def render_all(site: Site) -> dict[str, str]:
                 1 for p in site.pairs if p.kalshi_quote and p.polymarket_quote
             ),
             "legal_states": len((site.legal_states or {}).get("states", [])),
+            "comparison_rows": len((site.comparison or {}).get("rows", [])),
         },
         indent=2,
     ) + "\n"
@@ -930,6 +1062,17 @@ def verify_legal_states(data: dict | None) -> list[str]:
     return problems
 
 
+def verify_comparison(data: dict | None) -> list[str]:
+    """A comparison row without a loaded source is not publishable."""
+    if not data:
+        return []
+    return [
+        f"comparison: row '{row.get('topic')}' has no source"
+        for row in data.get("rows", [])
+        if not row.get("sources")
+    ]
+
+
 def build_site(
     observations: list[dict],
     *,
@@ -938,6 +1081,7 @@ def build_site(
     grades: dict[str, dict] | None = None,
     quotes: dict[str, dict] | None = None,
     legal_states: dict | None = None,
+    comparison: dict | None = None,
     generated_at: datetime | None = None,
     analytics_id: str | None = None,
 ) -> tuple[Site, dict[str, str]]:
@@ -966,8 +1110,9 @@ def build_site(
         pairs=pairs,
         analytics_id=analytics_id,
         legal_states=legal_states,
+        comparison=comparison,
     )
-    problems = verify_legal_states(legal_states)
+    problems = verify_legal_states(legal_states) + verify_comparison(comparison)
     if problems:
         raise ValueError("site guardrails failed: " + "; ".join(problems))
     pages = render_all(site)

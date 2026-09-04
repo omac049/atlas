@@ -1,0 +1,320 @@
+{
+  "as_of": "2026-09-04",
+  "method": "Every cell cites only pages that were loaded during research on 2026-09-04. 'Not published' means the venue's own help center, docs, rulebook, terms or fee schedule that we loaded do not state the item; it is not a guess. Where two loaded sources disagree, the row's note says so.",
+  "rows": [
+    {
+      "topic": "Regulator / legal structure",
+      "kalshi": "KalshiEX LLC (Delaware LLC) has been a CFTC-designated contract market (DCM) since the CFTC's Order of Designation of November 4, 2020, issued under Section 5 of the Commodity Exchange Act and CFTC Regulation 38.3(a). Its Member Agreement identifies KalshiEX as 'a U.S. Commodity Futures Trading Commission (CFTC) designated contract market' and incorporates the Kalshi Klear Self-Clearing Member Agreement and Kalshi Klear Rulebook; the CFTC issued affiliate Kalshi Klear LLC an Order of Registration as a derivatives clearing organization (DCO) on August 29, 2024.",
+      "polymarket_us": "Operated by QCX LLC d/b/a Polymarket US, a Delaware LLC listed by the CFTC as a designated contract market (status 'Designated', dated 2025-07-09; 'QCX LLC is now operating under the assumed name of Polymarket US'). Its rulebook (dated August 28, 2026) names the clearinghouse as QC Clearing LLC d/b/a Polymarket Clearing, and its docs describe Polymarket US as 'a CFTC-regulated Designated Contract Market (DCM) and Derivatives Clearing Organization (DCO)'.",
+      "polymarket_global": "polymarket.com's site footer states the platform is operated by Adventure One QSS Inc. and that 'This international platform is not regulated by the CFTC and operates independently', while 'Polymarket US is operated by QCX LLC d/b/a Polymarket US, a CFTC-regulated Designated Contract Market.' Trading on polymarket.com 'is blocked in the United States'.",
+      "sources": [
+        "https://www.cftc.gov/PressRoom/PressReleases/8302-20",
+        "https://kalshi.com/docs/kalshi-member-agreement.pdf",
+        "https://www.cftc.gov/PressRoom/PressReleases/8957-24",
+        "https://www.cftc.gov/IndustryOversight/IndustryFilings/TradingOrganizations/49571",
+        "https://polymarketexchange.com/files/legal/latest/rulebook",
+        "https://docs.polymarket.us/partners/platform-model.md",
+        "https://docs.polymarket.us/learn/home.md",
+        "https://polymarket.com/tos"
+      ],
+      "note": "The polymarket.com Terms of Use body is geofenced from US connections; only the page header and footer loaded. The entity statement above is quoted from that footer."
+    },
+    {
+      "topic": "Who can use it",
+      "kalshi": "The Member Agreement requires an individual to be 'of the age of majority in Your state of residence' and lists a set of 'Restricted Jurisdictions' (countries such as Australia, Belgium, Canada, France, India, Ireland, Italy and others) whose residents may not trade event contracts; Kalshi's help center says 'you can trade on Kalshi from many countries' subject to that agreement. Kalshi's app listings say '18+ only. Restrictions and eligibility requirements apply'; Kalshi does not publish a US state-availability list on any page we loaded (Coinbase's Kalshi-powered product states it is 'available to U.S. residents only, excluding Nevada').",
+      "polymarket_us": "The Polymarket US Rulebook requires an Individual Participant to be 'at least 18 years of age and [have] attained the age of majority in their state and/or country of residence'; docs require KYC (full name, date of birth, residential address, possibly government ID and selfie) before depositing or trading. State restrictions: the docs publish no state list; the iOS App Store listing says 'CFTC regulated in the United States — in all 50 states' with Nevada 'currently unavailable', while the Google Play listing says 'Not available in all jurisdictions. See polymarket.us/tos'.",
+      "polymarket_global": "The help center lists the United States among 39 fully blocked countries (with the UK, France, Germany, Australia, Japan, Singapore and others), plus blocked regions (Ontario, Alberta, British Columbia, Quebec; Crimea, Donetsk, Luhansk) and close-only markets; 'Polymarket strictly prohibits the use of VPNs or similar tools to bypass geographic restrictions' (ToS Section 2.1.4). Minimum age: Not published on any page loadable from a US connection (the Terms of Use body is geofenced).",
+      "sources": [
+        "https://kalshi.com/docs/kalshi-member-agreement.pdf",
+        "https://help.kalshi.com/en/articles/14026044-can-i-trade-on-kalshi-from-outside-the-united-states",
+        "https://apps.apple.com/us/app/kalshi-trade-events-sports/id1632713844",
+        "https://help.coinbase.com/en/coinbase/trading-and-funding/prediction-markets/intro",
+        "https://polymarketexchange.com/files/legal/latest/rulebook",
+        "https://docs.polymarket.us/learn/get-started/signup.md",
+        "https://apps.apple.com/us/app/polymarket/id6648798962",
+        "https://play.google.com/store/apps/details?id=com.polymarket.android&hl=en_US",
+        "https://help.polymarket.com/en/articles/13364163-geographic-restrictions"
+      ],
+      "note": "Conflict: Polymarket US's App Store copy says 'all 50 states' (Nevada unavailable) while its Google Play copy says 'Not available in all jurisdictions'. Neither Kalshi nor Polymarket US publishes a state-by-state list on a page we could load; the sign-up flow is where each venue checks eligibility."
+    },
+    {
+      "topic": "Account funding methods and deposit fees",
+      "kalshi": "Deposit methods per the Transfers FAQ: 'Debit card (including Apple Pay and Google Pay), Bank transfer (ACH), PayPal, Venmo, Cash App (deposits only), Crypto, Wire transfer'; minimum deposit $10 ($1,000 for wire); ACH runs through Plaid or Aeropay with 'No fees for bank deposits'; crypto deposits (US) are processed through Zero Hash and 'typically take up to 30 minutes'. Fee schedule (effective July 7, 2026): 'Kalshi charges a maximum fee of 2% on card deposits', no ACH fee, no added Kalshi fee on wire deposits, crypto deposits 'may have associated fees charged by Kalshi's third-party payment processor', and Kalshi 'reserves the right to charge between 0% and 2% fees on all rails'.",
+      "polymarket_us": "Docs list three methods: debit card ($25,000 per transaction, $50,000 per day, $2,000,000 per rolling 60 days), bank transfer (ACH) via Aeropay ($50,000 daily), and wire ($1,000 minimum, no maximum); card and ACH deposits receive 'instant buying power' while clearing (3–4 business days), wires clear in 1 business day, and deposits must come from accounts in the user's own name. Deposit fees: none stated in the docs. Crypto/USDC, credit cards and Apple Pay are not listed as deposit methods on any loaded page.",
+      "polymarket_global": "Official docs describe crypto deposits only: USDC (native or bridged) and other assets sent from 'Ethereum, Arbitrum, Base, Optimism, and other EVM chains', Solana, Bitcoin and Tron are converted into pUSD on Polygon; 'Each asset has a minimum deposit amount' (help center examples: $20 on Ethereum, $3 on Solana) and 'Deposits below the minimum will not be processed'. Polymarket states 'There are no Polymarket fees to deposit or withdraw USDC' (third-party intermediaries may charge).",
+      "sources": [
+        "https://help.kalshi.com/en/articles/13823791-transfers-faq",
+        "https://help.kalshi.com/en/articles/13823798-bank-deposits",
+        "https://help.kalshi.com/en/articles/13823799-crypto-deposits",
+        "https://kalshi.com/docs/kalshi-fee-schedule.pdf",
+        "https://docs.polymarket.us/learn/deposits/deposit-methods/overview.md",
+        "https://docs.polymarket.us/learn/deposits/deposit-methods/debit-card.md",
+        "https://docs.polymarket.com/trading/bridge/deposit",
+        "https://help.polymarket.com/en/articles/13369887-how-to-deposit",
+        "https://docs.polymarket.com/polymarket-learn/trading/fees"
+      ],
+      "note": "Third-party guides describe card, Apple Pay and Coinbase Pay on-ramps (via MoonPay) for polymarket.com, but no official Polymarket page we loaded documents them, so they are omitted from the cell."
+    },
+    {
+      "topic": "Withdrawal methods, processing times and fees",
+      "kalshi": "Withdrawal methods: debit card ('No fees'; funds 'typically arrive back to your card within a few hours'; daily limit personalized to the account), bank/ACH ('No fees'; 'within a few business days'; US users only), crypto via Zero Hash ('No fees for crypto withdrawals'; 'typically arrive in your wallet within 30 minutes'; a prior crypto deposit is required), and PayPal/Venmo (US only). Fee schedule: no ACH withdrawal fee; 'Withdrawals by wire are not currently supported for transactions under $500,000'; recently deposited funds may be subject to security holds.",
+      "polymarket_us": "Withdrawals go back to the original funding source only (same-method rule, First-In-First-Out): debit card and ACH '3–4 business days', wire '1 business day'; deposits still clearing ('funds in flight') cannot be withdrawn. The withdrawal overview describes withdrawals as 'securely and for free'; minimums and maximums are not stated.",
+      "polymarket_global": "Withdrawals are on-chain: from the Portfolio page you enter a recipient address and choose token, amount and network; pUSD is unwrapped to USDC (or swapped to another token) and sent. Docs state 'Withdrawals are instant and free — Polymarket does not charge withdrawal fees', and suggest splitting very large withdrawals (over $50,000). No bank/fiat withdrawal is documented.",
+      "sources": [
+        "https://help.kalshi.com/en/articles/13823802-debit-card-withdrawals",
+        "https://help.kalshi.com/en/articles/13823803-bank-withdrawals",
+        "https://help.kalshi.com/en/articles/13823804-crypto-withdrawals",
+        "https://help.kalshi.com/en/articles/13823791-transfers-faq",
+        "https://kalshi.com/docs/kalshi-fee-schedule.pdf",
+        "https://docs.polymarket.us/learn/deposits/withdraw-funds/overview.md",
+        "https://docs.polymarket.us/learn/deposits/withdraw-funds/rules.md",
+        "https://help.polymarket.com/en/articles/13369898-how-to-withdraw",
+        "https://docs.polymarket.com/trading/bridge/withdraw"
+      ],
+      "note": ""
+    },
+    {
+      "topic": "Trading fees (published formulas)",
+      "kalshi": "Fee schedule 'Last updated and effective: July 7, 2026': taker fee = round up(M × 0.07 × C × P × (1−P)) with M 'default is 1 unless otherwise indicated'; maker fee = round up(M × 0.0175 × C × P × (1−P)) with M 'default is 0 unless otherwise indicated' (so 0.0175 is exactly 25% of 0.07, but it applies only to series whose maker multiplier is set to 1). The Non-Standard Fees table lists many series at maker 1 / taker 1 (e.g., NFL, NBA, MLB, NHL, NCAA games and championships, CPI, Fed decisions, jobs, GDP, Emmys, PGA, tennis) and some at 0 / 0 (e.g., BTC and ETH year-end price ranges, several geopolitical questions). Maximum general taker fee is $1.75 per 100 contracts at $0.50; there is no settlement fee and no membership fee. Perpetual futures use separate volume-tiered bps schedules (taker 12.0 bps down to 2.6 bps; maker 5.0 bps down to 0.6 bps).",
+      "polymarket_us": "Fee schedule 'Effective exchange-wide from 12 AM ET, Wednesday July 1, 2026': Fee = Θ × C × p × (1−p), where C is contracts and p is the decimal price ($0.01–$0.99); taker Θ = 0.06 (maximum $1.50 per 100-contract lot at p = $0.50); maker rebate Θ = −0.0125 (maximum $0.31 rebate per 100 contracts). Volume-based taker rebates apply above $250,000 of prior-month taker volume (10%), $1,000,000 (25%) and $10,000,000 (50%). Fees and rebates are rounded to the nearest $0.01 using banker's rounding.",
+      "polymarket_global": "Only takers pay: fee = C × feeRate × p × (1−p), where the rate depends on category — Crypto 0.07 (peak $1.75 per 100 shares); Sports, Economics, Culture, Weather and Other 0.05 (peak $1.25); Finance, Politics, Mentions and Tech 0.04 (peak $1.00); Geopolitics 0 (fee-free). 'Makers are never charged fees'; the Maker Rebates Program redistributes a share of taker fees daily in pUSD (Crypto 20%, Sports 15%, other fee-enabled categories 25%; $1 pUSD minimum payout).",
+      "sources": [
+        "https://kalshi.com/docs/kalshi-fee-schedule.pdf",
+        "https://help.kalshi.com/en/articles/13823805-fees",
+        "https://docs.polymarket.us/fees",
+        "https://docs.polymarket.com/polymarket-learn/trading/fees",
+        "https://docs.polymarket.com/programs/maker-rebates"
+      ],
+      "note": "The brief's premise that Kalshi applies a 'higher multiplier for some categories' is not supported by the July 7, 2026 schedule we loaded: every listed series carries a multiplier of 1 or 0 (a combo series is listed separately). Kalshi's help center says 'Trading fees are not charged for orders... left as resting orders... unless they are included in our Maker Fees section', which is consistent with the schedule's maker default of 0."
+    },
+    {
+      "topic": "Market categories offered",
+      "kalshi": "Loaded pages show event contracts on sports (NFL, NBA, MLB, NHL, NCAA football and basketball, soccer, tennis, golf), politics/elections, economics (CPI, Fed funds, jobs, GDP, unemployment, gas and egg prices), entertainment/awards (Emmys, Ballon d'Or, Super Bowl headliner), crypto price events (BTC, ETH), weather, science/tech (year-end top LLM, IPOs), plus perpetual futures; its app listings say 'elections, sports, crypto, and weather'. No category is stated as withheld from US users on any loaded page (Coinbase's Kalshi-powered product notes Nevada is excluded entirely).",
+      "polymarket_us": "Docs state 'Polymarket US currently offers professional football, professional basketball, professional hockey, and college football markets' with 'Additional categories will open as they complete testing and regulatory review'; a Weather FAQ documents Temperature Contracts for New York City, San Francisco, Miami, Chicago and Los Angeles settled on the NWS Daily Climate Report; the market-creation page says markets 'cover major categories such as politics, sports, and news events'. The app-store listings advertise 'sports, geopolitics, elections, news, tech, culture, crypto, & more'. No explicit list of categories withheld from US users is published.",
+      "polymarket_global": "Fee-schedule categories: Crypto, Sports, Finance, Politics, Economics, Culture, Weather, Tech, Mentions, Geopolitics and Other/General, plus perpetual futures ('Perps'). Not offered to US users: all trading — the United States is a blocked country on polymarket.com.",
+      "sources": [
+        "https://kalshi.com/docs/kalshi-fee-schedule.pdf",
+        "https://apps.apple.com/us/app/kalshi-trade-events-sports/id1632713844",
+        "https://play.google.com/store/apps/details?id=com.kalshi.mobile&hl=en_US",
+        "https://help.coinbase.com/en/coinbase/trading-and-funding/prediction-markets/intro",
+        "https://docs.polymarket.us/learn/get-started/browse.md",
+        "https://docs.polymarket.us/faqs/weather-faqs.md",
+        "https://docs.polymarket.us/learn/markets/how-markets-are-created.md",
+        "https://apps.apple.com/us/app/polymarket/id6648798962",
+        "https://docs.polymarket.com/polymarket-learn/trading/fees",
+        "https://help.polymarket.com/en/articles/13364163-geographic-restrictions"
+      ],
+      "note": "Conflict: Polymarket US's browse/home docs list only four sports categories (plus weather in a separate FAQ), while its app-store copy lists elections, crypto, tech and culture. The docs pages carry the narrower statement."
+    },
+    {
+      "topic": "Contract structure, price range, minimum size, tick size",
+      "kalshi": "Binary YES/NO event contracts that pay a Settlement Value (e.g., $1.00) to the winning side; the KalshiEX Rulebook (v1.15, January 17, 2025) states 'The minimum unit of trading is one Contract' and prices are 'quoted in U.S. Dollars and cents per Contract' with a minimum quote increment of $0.01. Kalshi's API documentation (last updated August 20, 2026) now defines per-market price structures whose center-range ticks are $0.01, $0.005, $0.002, $0.001 or $0.0001, with 'tapered' structures applying a finer tick near the edges of the price range (roughly below $0.10 and above $0.90).",
+      "polymarket_us": "Contracts are 'priced between $0 and $1'; winning contracts 'settle at $1.00', losing at '$0.00' (some markets have other predefined settlement terms). Docs: 'All trades are executed in whole event contracts' and 'Polymarket US does not set trading size limits'; the Rulebook (Aug 28, 2026) Rule 10.1 states 'Contracts may be traded in fractional units' and 'The minimum quote increment for each Contract is $0.001 per Contract unless otherwise specified'. A minimum order size is not published.",
+      "polymarket_global": "Outcome shares priced between $0 and $1 that pay $1.00 (USDC/pUSD) per winning share. Each market has its own tick size ('minimum price increment') of 0.01 or 0.001 (the CLOB can also use 0.0001 or 0.1) and its own minimum order size, both returned by the order-book API before order placement.",
+      "sources": [
+        "https://cdn.robinhood.com/assets/robinhood/legal/KalshiEX_LLC_Rulebook.pdf",
+        "https://docs.kalshi.com/getting_started/fixed_point_migration",
+        "https://docs.polymarket.us/concepts/market-data.md",
+        "https://docs.polymarket.us/learn/markets/contract-settlement.md",
+        "https://docs.polymarket.us/learn/trading/basics/fractional-shares.md",
+        "https://docs.polymarket.us/learn/trading/access-and-limits/trading-limits.md",
+        "https://polymarketexchange.com/files/legal/latest/rulebook",
+        "https://docs.polymarket.com/trading/orders/create",
+        "https://help.polymarket.com/en/articles/13364060-what-is-polymarket"
+      ],
+      "note": "Conflict: Polymarket US's user docs say whole contracts only, while its rulebook permits fractional units and a $0.001 quote increment. For Kalshi, the January 2025 rulebook (hosted by Robinhood; kalshi.com rate-limited direct download) says $0.01 while the current API docs describe sub-cent tick structures that vary by market."
+    },
+    {
+      "topic": "How markets are settled and who decides",
+      "kalshi": "'A market settles when the official outcome is confirmed and our markets team finalizes the result'; Kalshi relies on 'a source agency (for example, official league statistics, government releases, or other event authorities)' named in each market's rules, and most markets settle 'within approximately 3 hours' of the outcome becoming known. Under Rulebook Rule 6.3, if the outcome cannot be determined Kalshi may settle at the last traded price or refer the matter to its Outcome Review Committee, a committee of the board.",
+      "polymarket_us": "'The Exchange determines the result using publicly verifiable information' from the sources listed in each market's rules — government data, results 'published by the governing league or competition organizer', or named news outlets — and 'Unlisted sources have no effect on market resolution'. 'Polymarket Clearing processes the settlement and updates balances automatically' at $1.00/$0.00; 'All resolutions are final in accordance with the Polymarket US Exchange Rulebook'. No oracle is used.",
+      "polymarket_global": "'Markets are resolved by the UMA Optimistic Oracle': anyone may propose an outcome by posting a bond ('typically $750 pUSD'); the proposal enters a 2-hour challenge period; if undisputed it finalizes and winning shares pay $1. If disputed, a second proposal round follows, and a second dispute escalates to UMA's Data Verification Mechanism where UMA token holders vote (roughly 24–48 hours of debate plus about 48 hours of voting); the losing party's bond is split with the winner.",
+      "sources": [
+        "https://help.kalshi.com/markets/market-faqs",
+        "https://help.kalshi.com/markets/markets-101/market-rules",
+        "https://cdn.robinhood.com/assets/robinhood/legal/KalshiEX_LLC_Rulebook.pdf",
+        "https://docs.polymarket.us/learn/markets/market-resolution.md",
+        "https://docs.polymarket.us/learn/markets/contract-settlement.md",
+        "https://docs.polymarket.com/concepts/resolution",
+        "https://help.polymarket.com/en/articles/13364518-how-are-prediction-markets-resolved"
+      ],
+      "note": ""
+    },
+    {
+      "topic": "How disputes and errors are handled",
+      "kalshi": "Traders can use the 'Request to Settle' option on a market page (reviewed by the markets team) and are told to contact support via in-app chat if a standard market has not settled roughly 12 hours after the event. Rulebook Rule 7.1: Kalshi may open a Market Outcome Review before settlement, posts that the market is under review, and 'The Outcome Review Committee shall review all relevant evidence and determine a final Market Outcome within a 24 hour period'; its determinations 'are final'.",
+      "polymarket_us": "Rulebook Rule 10.4: before settlement the CEO, CCO, COO, Head of Markets or designate 'may at their sole discretion undertake a review process', the Company 'may also reverse the final outcome of a Contract in the case of obvious error', Participants are notified via the website and system notifications, and 'Determinations made by the Company are final'. A participant-initiated dispute procedure and review timelines are not published in the user docs.",
+      "polymarket_global": "Anyone can dispute a proposed outcome during the 2-hour challenge window by posting a matching bond; an incorrect proposer 'will lose all of your $750 bond'. Disputes escalate through a second proposal and then a UMA token-holder vote; docs state disputed markets take '4-6 days total' to resolve. There is no Polymarket staff appeal process described.",
+      "sources": [
+        "https://help.kalshi.com/markets/markets-101/request-to-settle-market",
+        "https://help.kalshi.com/markets/market-faqs",
+        "https://cdn.robinhood.com/assets/robinhood/legal/KalshiEX_LLC_Rulebook.pdf",
+        "https://polymarketexchange.com/files/legal/latest/rulebook",
+        "https://docs.polymarket.us/learn/markets/market-resolution.md",
+        "https://docs.polymarket.com/concepts/resolution",
+        "https://help.polymarket.com/en/articles/13364518-how-are-prediction-markets-resolved"
+      ],
+      "note": ""
+    },
+    {
+      "topic": "Referral / promotions",
+      "kalshi": "Refer-a-friend pays trading credits, not cash: 'Referral credits aren't cash... Only the profits you make from using referral credits become withdrawable cash.' The friend must sign up via link/code, pass identity verification and meet the trading requirement shown in the Rewards section; amounts, lifetime cap and requirements vary by account and are shown in-app; credits 'must be used within 7 days of issuance, unless otherwise specified'; 'Referral incentives are only available to U.S. users at this time.'",
+      "polymarket_us": "Refer-A-Friend: the referrer gets a '$25 bonus credit for each qualifying referral' and the friend gets a '$25 bonus credit' after signing up with the code and depositing at least $10; 'Each user can earn up to 14 referral bonuses'; credits 'can only be used towards trades, and may be withdrawn upon position settlement or liquidation'. A separate affiliate Referral Incentive Program exists (affiliate@polymarket.com) whose payout terms are not published.",
+      "polymarket_global": "Referral Program (updated terms effective Thursday, May 28, 2026): referrers with at least $10,000 lifetime trading volume earn '10% of net trading fees' from direct referrals and '5%' from indirect referrals, 'paid every day at midnight UTC' in pUSD, for 30 days after the referral signs up or until they reach Platinum tier. The public affiliate program on Dub advertises '$0.01 per click' and '$10 when your referral makes their first deposit + 20% revshare on their Perps trading fees'; the payout rail is not stated on that page.",
+      "sources": [
+        "https://help.kalshi.com/en/articles/13823783-kalshi-referral-program-faq",
+        "https://docs.polymarket.us/faqs/refer-a-friend-faqs.md",
+        "https://docs.polymarket.us/incentives/referral.md",
+        "https://docs.polymarket.com/programs/referral-program",
+        "https://partners.dub.co/polymarket"
+      ],
+      "note": "The brief's statement that Polymarket's Dub affiliates are paid in cash could not be confirmed on the Dub page we loaded (it lists amounts, not the payout method)."
+    },
+    {
+      "topic": "Tax reporting",
+      "kalshi": "Kalshi issues, when IRS thresholds are met: Form 1099-INT ('interest payments from Kalshi'), Form 1099-MISC ('credit/rewards from Kalshi'), Form 1099-B ('transaction proceeds from broker transactions (crypto transfers)') and Form 1099-DA ('digital asset transaction reporting from ZeroHash'). Trading gains are not on a 1099; Kalshi provides a FIFO Profit and Loss statement.",
+      "polymarket_us": "Not published — the Polymarket US documentation index contains no tax-documents page and the General FAQs do not mention tax forms.",
+      "polymarket_global": "Not published by Polymarket. A CPA source states 'Polymarket's on-chain platform does not issue Form 1099-B, 1099-DA, or W-2G' and that the regulated US platform's 'reporting practices should be confirmed directly'.",
+      "sources": [
+        "https://help.kalshi.com/en/articles/13823849-what-tax-documentation-does-kalshi-provide",
+        "https://docs.polymarket.us/llms.txt",
+        "https://docs.polymarket.us/faqs/general-faqs.md",
+        "https://camusocpa.com/polymarket-taxes/"
+      ],
+      "note": "Polymarket US operates with mandatory KYC (SSN-level identity checks) under CFTC rules, but we found no venue page stating which forms, if any, it issues."
+    },
+    {
+      "topic": "Apps, platforms and broker access",
+      "kalshi": "Web (kalshi.com), iOS app 'Kalshi: Trade Events & Sports' by KalshiEX LLC (iPhone; also Mac with Apple silicon), and Android on Google Play (updated Sep 2, 2026). Broker access: Robinhood Derivatives, LLC offers event contracts 'through KalshiEX LLC' (launched March 17, 2025); Webull Financial LLC offers 'short-term cash-settled event contracts... provided by Kalshi' (announced February 12, 2025); Coinbase's prediction markets are 'operated by Kalshi, a CFTC-regulated exchange' via Coinbase Financial Markets, for US residents excluding Nevada.",
+      "polymarket_us": "iOS App Store app 'Polymarket' by Blockratize Inc (iOS 18+, iPad, Mac; waitlist removed May 12, 2026) and Google Play app com.polymarket.android (updated Aug 29, 2026; 'The Polymarket US App serves as an independent software provider and affiliate of Polymarket US and Polymarket Clearing'). Docs say deposits are made 'through the Polymarket US app'; the help center says 'US users cannot deposit funds or place trades on the website'. Broker access: Not published (docs describe an IB/ISV partner integration model, not named brokers).",
+      "polymarket_global": "Browser only: 'Polymarket.com is available to users outside the United States... No installation required - just visit polymarket.com'; the native App Store/Google Play apps are the separate Polymarket US product and 'accounts are not connected'. Broker access: Not published.",
+      "sources": [
+        "https://apps.apple.com/us/app/kalshi-trade-events-sports/id1632713844",
+        "https://play.google.com/store/apps/details?id=com.kalshi.mobile&hl=en_US",
+        "https://robinhood.com/us/en/newsroom/robinhood-prediction-markets-hub/",
+        "https://www.prnewswire.com/news-releases/webull-connects-to-kalshi-to-offer-investors-innovative-prediction-markets-302373541.html",
+        "https://help.coinbase.com/en/coinbase/trading-and-funding/prediction-markets/intro",
+        "https://apps.apple.com/us/app/polymarket/id6648798962",
+        "https://play.google.com/store/apps/details?id=com.polymarket.android&hl=en_US",
+        "https://www.covers.com/industry/polymarket-removes-waitlist-launches-for-american-ios-users-may-12-2026",
+        "https://help.polymarket.com/en/articles/15458828-website-vs-app-what-s-the-difference",
+        "https://docs.polymarket.us/faqs/general-faqs.md",
+        "https://docs.polymarket.us/partners/platform-model.md"
+      ],
+      "note": "Conflict: Polymarket's help article still says 'The Polymarket Android app is coming soon on the Google Play Store', while the Google Play listing is live and was updated Aug 29, 2026."
+    },
+    {
+      "topic": "Order types, resting orders and maker rebates",
+      "kalshi": "Limit orders (buy/sell at a specified price or better) and Quick Orders (market orders at the best available price); an unfilled limit order becomes a resting order on the book. Resting orders pay no fee unless the series is in the fee schedule's Maker Fees table, in which case the 0.0175 maker formula applies; no maker rebate is published.",
+      "polymarket_us": "Limit orders ('sits on the book until someone trades against it, or you cancel it') and market orders ('Fills immediately at the best available price'), with time-in-force GTC, GTD, IOC and FOK; the rulebook also defines Fill-and-Kill. Resting orders earn the maker rebate (Θ = −0.0125).",
+      "polymarket_global": "Limit orders (GTC or GTD) and market orders (Fill-and-Kill or Fill-or-Kill) on a central limit order book; makers pay no fees and receive daily pUSD maker rebates in fee-enabled categories.",
+      "sources": [
+        "https://help.kalshi.com/en/articles/13823811-limit-orders",
+        "https://kalshi.com/docs/kalshi-fee-schedule.pdf",
+        "https://docs.polymarket.us/concepts/orders.md",
+        "https://docs.polymarket.us/learn/trading/basics/order-types.md",
+        "https://polymarketexchange.com/files/legal/latest/rulebook",
+        "https://docs.polymarket.us/fees",
+        "https://docs.polymarket.com/trading/orders/create",
+        "https://docs.polymarket.com/programs/maker-rebates"
+      ],
+      "note": ""
+    },
+    {
+      "topic": "Interest on idle cash",
+      "kalshi": "Kalshi's APY program currently pays 3.25% APY (variable, 'subject to change at any time') on 'cash and open positions', calculated daily on the net portfolio value at 12am ET and paid monthly; a $250 minimum balance is required and the program is limited to eligible users in the United States and its territories.",
+      "polymarket_us": "Not published — the cash-balance documentation describes deposits, withdrawals and available funds but says nothing about interest or yield.",
+      "polymarket_global": "No interest on idle pUSD balances is published. Holding Rewards pays a '3.25% annualized Holding Reward' (variable) on the value of positions held in 19 designated long-dated markets (e.g., 2026 midterms, 2028 presidential race, foreign leadership and crypto price markets), sampled hourly and distributed daily.",
+      "sources": [
+        "https://help.kalshi.com/en/articles/13823847-apy-on-kalshi",
+        "https://docs.polymarket.us/learn/get-started/cash.md",
+        "https://help.polymarket.com/en/articles/13364459-holding-rewards"
+      ],
+      "note": "Both published rates are variable; search-result snippets from news coverage cited earlier figures (Kalshi 4.05%, Polymarket 4%) that no longer match the venues' current help pages."
+    },
+    {
+      "topic": "Customer support channels",
+      "kalshi": "'The best and fastest way to get help is through the support messenger while logged in to your Kalshi account'; email support@kalshi.com is available if chat is unreachable; 'Kalshi does not offer phone call or text support at this time'; hours are not published and 'Response times can vary'.",
+      "polymarket_us": "Email support@polymarket.us or 'the in-app chat in your account settings'; no phone number or hours are published (the Google Play listing advertises '24/7 live customer support').",
+      "polymarket_global": "Click the blue chat icon at the bottom right of polymarket.com to start a chat, or email support@polymarket.com (support@polymarket.us is for the US app); hours are not published.",
+      "sources": [
+        "https://help.kalshi.com/en/articles/13823855-contact-kalshi-support",
+        "https://docs.polymarket.us/learn/faq/contact-support.md",
+        "https://play.google.com/store/apps/details?id=com.polymarket.android&hl=en_US",
+        "https://help.polymarket.com/en/articles/13364256-how-do-i-contact-support"
+      ],
+      "note": ""
+    }
+  ],
+  "faq": [
+    {
+      "q": "Is Polymarket legal in the US?",
+      "a": "There are two separate platforms. polymarket.com blocks trading in the United States and lists the US among its fully blocked countries; Polymarket US (QCX LLC d/b/a Polymarket US) is a CFTC-designated contract market that serves US residents through its own app and separate accounts.",
+      "sources": [
+        "https://help.polymarket.com/en/articles/13364163-geographic-restrictions",
+        "https://www.cftc.gov/IndustryOversight/IndustryFilings/TradingOrganizations/49571",
+        "https://help.polymarket.com/en/articles/15458828-website-vs-app-what-s-the-difference"
+      ]
+    },
+    {
+      "q": "Can I use Polymarket in the US?",
+      "a": "US users can use the Polymarket US app (iOS and Google Play, KYC required, 18+ and age of majority in your state) but 'cannot deposit funds or place trades on the website'; the app-store listings note availability restrictions (Nevada is named as unavailable on the iOS listing). Polymarket US accounts are 'entirely separate' from polymarket.com accounts.",
+      "sources": [
+        "https://help.polymarket.com/en/articles/15458828-website-vs-app-what-s-the-difference",
+        "https://polymarketexchange.com/files/legal/latest/rulebook",
+        "https://apps.apple.com/us/app/polymarket/id6648798962"
+      ]
+    },
+    {
+      "q": "Is Kalshi regulated?",
+      "a": "Yes. KalshiEX LLC received a CFTC Order of Designation as a designated contract market on November 4, 2020, and its affiliate Kalshi Klear LLC is a CFTC-registered derivatives clearing organization.",
+      "sources": [
+        "https://www.cftc.gov/PressRoom/PressReleases/8302-20",
+        "https://www.cftc.gov/PressRoom/PressReleases/8957-24"
+      ]
+    },
+    {
+      "q": "Which has lower fees, Kalshi or Polymarket?",
+      "a": "Published taker formulas at a $0.50 price: Kalshi 0.07 × P × (1−P) = $1.75 per 100 contracts (July 7, 2026 schedule); Polymarket US 0.06 × p × (1−p) = $1.50 per 100 contracts plus a maker rebate of up to $0.31 per 100 (July 1, 2026); polymarket.com charges takers 0.04–0.07 depending on category ($1.00–$1.75 per 100 shares) and 0 in Geopolitics, with makers paying nothing. Which is cheapest for a given trade depends on price, category and whether the order is a maker or taker.",
+      "sources": [
+        "https://kalshi.com/docs/kalshi-fee-schedule.pdf",
+        "https://docs.polymarket.us/fees",
+        "https://docs.polymarket.com/polymarket-learn/trading/fees"
+      ]
+    },
+    {
+      "q": "Does Kalshi send a 1099?",
+      "a": "Kalshi issues Form 1099-INT for interest, 1099-MISC for credits/rewards, 1099-B for crypto-transfer proceeds and 1099-DA for digital-asset reporting via ZeroHash when IRS thresholds are met; trading profit and loss is provided as a FIFO PnL statement rather than on a 1099.",
+      "sources": [
+        "https://help.kalshi.com/en/articles/13823849-what-tax-documentation-does-kalshi-provide"
+      ]
+    },
+    {
+      "q": "Does Polymarket send a 1099?",
+      "a": "Polymarket publishes no tax-form page for either platform. A CPA source states the on-chain platform 'does not issue Form 1099-B, 1099-DA, or W-2G'; Polymarket US's documentation index has no tax-documents page.",
+      "sources": [
+        "https://camusocpa.com/polymarket-taxes/",
+        "https://docs.polymarket.us/llms.txt"
+      ]
+    },
+    {
+      "q": "Are Kalshi and Polymarket the same markets?",
+      "a": "No. They are separate exchanges with separate contracts, rules and settlement processes: Kalshi's markets team settles each contract from the source agency named in its rules, Polymarket US's exchange settles from sources listed in each market's rules and clears through Polymarket Clearing, and polymarket.com resolves through the UMA Optimistic Oracle with bonded proposals and a 2-hour challenge period. Prices on one venue do not settle contracts on another.",
+      "sources": [
+        "https://help.kalshi.com/markets/market-faqs",
+        "https://docs.polymarket.us/learn/markets/market-resolution.md",
+        "https://docs.polymarket.com/concepts/resolution"
+      ]
+    },
+    {
+      "q": "Can I trade Kalshi markets through my broker?",
+      "a": "Kalshi contracts are offered through Robinhood Derivatives, LLC ('through KalshiEX LLC'), Webull Financial LLC ('provided by Kalshi') and Coinbase Financial Markets ('operated by Kalshi'); Coinbase's product is limited to US residents excluding Nevada. Users trading via a futures commission merchant may be charged fees that differ from Kalshi's own schedule.",
+      "sources": [
+        "https://robinhood.com/us/en/newsroom/robinhood-prediction-markets-hub/",
+        "https://www.prnewswire.com/news-releases/webull-connects-to-kalshi-to-offer-investors-innovative-prediction-markets-302373541.html",
+        "https://help.coinbase.com/en/coinbase/trading-and-funding/prediction-markets/intro",
+        "https://kalshi.com/docs/kalshi-fee-schedule.pdf"
+      ]
+    }
+  ]
+}
