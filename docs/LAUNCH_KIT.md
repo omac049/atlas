@@ -37,7 +37,8 @@ deleted from the Cloudflare dashboard; nothing depends on it.
 
 ## 3. Measurement
 
-- **Search Console** (required — it is the pass/fail instrument): add a
+- **Search Console** (required — it is the pass/fail instrument). Use your
+  **personal** Google account, not the work one the MCP connector is on. Add a
   *Domain* property for samebetornot.com, verify by the DNS TXT record (Cloudflare
   DNS → add record), then Sitemaps → submit `https://samebetornot.com/sitemap.xml`.
 - **GA4** (optional — needed only to count the ≥300-social-clicks criterion):

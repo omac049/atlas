@@ -152,7 +152,12 @@ generation, pages, calculators, the disclosure language — is build work.
   `com.atlas.site` added. The demand-test clock has **not** started: it starts
   the day the site is live on a domain and the sitemap is submitted, which are
   the owner's steps in `docs/SITE.md`.
-- 2026-09-04: domain purchased — `samebetornot.com`. Hosting next.
+- 2026-09-04: domain purchased — `samebetornot.com`.
+- 2026-09-04: **live** at https://samebetornot.com on GitHub Pages (gh-pages
+  branch, HTTPS enforced, www → apex, clean URLs, nightly publish proven).
+  Clock still not started: Search Console property + sitemap submission are
+  the owner's step in their personal Google account (the work-account
+  connector must not be used).
 
 ## Deprioritized, not forgotten
 
