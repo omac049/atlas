@@ -6,17 +6,23 @@ the not-advice notice, fees on the calculator page are the venues' formulas
 and not a copywriter's memory of them, and the build is deterministic.
 """
 
+import re
 from datetime import UTC, datetime
 from decimal import Decimal
+
+import pytest
 
 from atlas.gap_radar import kalshi_taker_fee_per_contract
 from atlas.site import (
     DISCLOSURE,
+    NO_STATE_ACTION,
     NOT_ADVICE,
     PairPage,
     build_site,
+    family_label,
     render_fees,
     slugify,
+    taker_fee_at,
     verify_pages,
 )
 
@@ -96,7 +102,7 @@ def test_global_venue_pairs_are_labelled_not_tradeable():
                           base_url="https://example.test", generated_at=AT)
     html = next(h for p, h in pages.items() if p.startswith("compare/"))
     assert "cannot trade" in html
-    assert "Global only" in pages["index.html"]
+    assert "global only" in pages["index.html"]
 
 
 def test_sitemap_and_links_use_clean_urls_while_files_keep_html():
@@ -154,3 +160,83 @@ def test_analytics_tag_is_opt_in_and_validated():
         [_obs()], base_url="https://example.test", generated_at=AT, analytics_id="<script>"
     )
     assert "googletagmanager" not in bad["index.html"]
+
+
+def _pages(**kw):
+    return build_site([_obs()], base_url="https://example.test", generated_at=AT, **kw)[1]
+
+
+def _compare(pages):
+    return next(h for p, h in pages.items() if p.startswith("compare/"))
+
+
+def test_prices_links_and_fees_appear_only_when_a_quote_exists():
+    """No quote = no price and no guessed link; a quote = price, fee from the
+    venue formula at that price, and an outbound link to the contract."""
+    bare = _compare(_pages())
+    assert "Open on Kalshi" not in bare and "Open on Polymarket" not in bare
+    quotes = {
+        "kalshi:KXCPIYOY-26AUG-T3.0": {"yes_ask": "0.42", "url": "https://kalshi.com/markets/x/y/z"},
+        "polymarket_us:cpic-uscpi-august-yoy-2026-09-11-gt3pt0pct": {
+            "yes_ask": "0.40", "url": "https://polymarket.us/event/e"},
+    }
+    html = _compare(_pages(quotes=quotes))
+    assert "Open on Kalshi" in html and 'href="https://kalshi.com/markets/x/y/z"' in html
+    assert "Open on Polymarket US" in html and 'href="https://polymarket.us/event/e"' in html
+    assert "<td>42¢</td>" in html and "<td>40¢</td>" in html
+    kalshi_fee = kalshi_taker_fee_per_contract(Decimal("0.42"))
+    assert f"{kalshi_fee * 100:.1f}¢" in html
+    assert taker_fee_at("polymarket_us", Decimal("0.40")) == Decimal("0.06") * Decimal("0.40") * Decimal("0.60")
+    assert taker_fee_at("polymarket_global", Decimal("0.40")) is None
+
+
+def test_human_summary_is_composed_from_codes_and_findings_not_written():
+    page = PairPage(
+        observation=_obs(),
+        kalshi_grade={"grade": "B", "score": 85, "findings": [
+            {"code": "MISSING_REVISION_POLICY", "points": 15, "prose": "the rules never say what a revision does"}]},
+    )
+    text = page.human_summary()
+    assert text.startswith("Where they differ: both venues publish settlement policy")
+    assert "Kalshi's fine print: the rules never say what a revision does." in text
+    assert "delayed release" in text
+    approved = PairPage(observation=_obs(status="APPROVED_INVERSE", codes=[]))
+    assert "same outcome in every case" in approved.human_summary()
+
+
+def test_index_groups_by_readable_family_with_verified_pairs_first():
+    fomc = _obs(kid="kalshi:KXFEDDECISION-26SEP-H0", status="APPROVED_EQUIVALENT", codes=[])
+    fomc["event_subject"] = "us_fomc_rate_decision|2026-09"
+    fomc["kalshi_title"] = "Will the Fed hold rates in September?"
+    _, pages = build_site([_obs(), fomc], base_url="https://example.test", generated_at=AT)
+    index = pages["index.html"]
+    assert index.index("Verified: the same bet on both venues") < index.index("<h2>CPI inflation, year over year</h2>")
+    assert "<h2>Fed rate decisions</h2>" in index
+    assert "us_cpi_yoy" not in index
+    assert family_label("us_made_up_thing|2026") == "Us made up thing"
+    assert "**" not in index  # markdown bold stripped from venue titles
+
+
+def test_legal_table_renders_from_data_and_unsourced_action_fails_the_build():
+    data = {"as_of": "2026-09-04", "states": [
+        {"state": "Nevada", "status": "Court order restricting (TRO/injunction)",
+         "summary": "A TRO covered sports contracts.", "categories": ["sports"],
+         "sources": ["https://example.test/nv"]},
+        {"state": "Wyoming", "status": NO_STATE_ACTION, "summary": "", "categories": [], "sources": []},
+    ]}
+    legal = _pages(legal_states=data)["legal.html"]
+    assert "All 50 states and DC (as of 2026-09-04)" in legal
+    assert "<strong>Nevada</strong>" in legal and 'href="https://example.test/nv"' in legal
+    assert "<strong>Wyoming</strong>" in legal
+    bad = {"as_of": "x", "states": [{"state": "Texas", "status": "Litigation pending", "sources": []}]}
+    with pytest.raises(ValueError, match="Texas"):
+        _pages(legal_states=bad)
+
+
+def test_about_page_exists_and_is_linked_from_every_page():
+    pages = _pages()
+    assert "about.html" in pages
+    assert "Not affiliated with" in pages["about.html"]
+    for path, html in pages.items():
+        if path.endswith(".html"):
+            assert re.search(r'href="(\.\./)*about"', html), path

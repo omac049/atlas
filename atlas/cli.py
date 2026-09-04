@@ -1653,7 +1653,46 @@ async def clarity_scan(live: bool, max_markets: int = CLARITY_MAX_MARKETS_DEFAUL
 
 
 SITE_MAX_AGE_DAYS = 3
-SITE_MAX_LIVE_FETCHES = 120
+SITE_MAX_LIVE_FETCHES = 200
+SITE_LEGAL_STATES_PATH = Path("docs/site/legal-states.json")
+GAMMA_MARKETS_URL = "https://gamma-api.polymarket.com/markets"
+
+
+def _kalshi_market_url(series_ticker: str, series_title: str, event_ticker: str) -> str:
+    """Kalshi's site URL shape, verified 2026-09-04 on the live series page:
+    /markets/{series}/{slug of series title}/{event ticker}, all lower-case."""
+    from atlas.site import slugify
+
+    return (
+        f"https://kalshi.com/markets/{series_ticker.lower()}/{slugify(series_title)}/"
+        f"{event_ticker.lower()}"
+    )
+
+
+async def _polymarket_us_event_slugs(venue: PolymarketUSVenue) -> dict[str, str]:
+    """market slug -> event slug for the radar's PM-US scope. The gateway's
+    market object carries no event reference; the events list does."""
+    found: dict[str, str] = {}
+    limit, offset = 100, 0
+    for _ in range(20):
+        params: list[tuple[str, str]] = [
+            ("active", "true"),
+            ("closed", "false"),
+            ("with_nested_markets", "true"),
+            ("limit", str(limit)),
+            ("offset", str(offset)),
+        ]
+        params.extend(("categories", c) for c in GAP_RADAR_PMUS_CATEGORIES)
+        payload = await venue._get("/v1/events", params=params)
+        events = payload.get("events", []) if isinstance(payload, dict) else []
+        if not events:
+            break
+        for event in events:
+            for item in event.get("markets", []):
+                if item.get("slug") and event.get("slug"):
+                    found[str(item["slug"])] = str(event["slug"])
+        offset += limit
+    return found
 
 
 async def site_build(
@@ -1662,9 +1701,9 @@ async def site_build(
     """Generate the demand-test static site (docs/IDEATION.md) into `out`.
 
     Read-only consumer of gap_observations and the evidence archive; live mode
-    only hydrates rules text and fine-print grades for legs on the two US venues,
-    under a fetch cap, so an outage degrades to fewer excerpts, never a stale
-    verdict — verdicts come from the stored observation.
+    hydrates rules text, fine-print grades, quotes, and venue links under a
+    fetch cap, so an outage degrades to fewer excerpts and no price, never a
+    stale verdict — verdicts come from the stored observation.
     """
     from atlas.clarity import clarity_score
     from atlas.site import build_site, write_site
@@ -1682,42 +1721,102 @@ async def site_build(
     )
     rules = await store.latest_rules_text(ids)
     grades: dict[str, dict] = {}
+    quotes: dict[str, dict] = {}
     fetches = failures = 0
     if live:
         kalshi, pm_us = KalshiVenue(fixture=False), PolymarketUSVenue(fixture=False)
         series_cache: dict[str, list[str]] = {}
-        for market_id in ids:
-            if fetches >= SITE_MAX_LIVE_FETCHES:
-                break
-            venue_name, _, venue_market_id = market_id.partition(":")
-            if venue_name not in {"kalshi", "polymarket_us"}:
-                continue
-            fetches += 1
-            try:
-                venue = kalshi if venue_name == "kalshi" else pm_us
-                market = await venue.get_market(venue_market_id)
-                if market.raw_rules_text:
-                    rules[market_id] = market.raw_rules_text
-                series_sources = None
-                if venue_name == "kalshi":
-                    evidence = await _kalshi_series_evidence(kalshi, [market], series_cache)
-                    series_sources = evidence.get(market.market_id)
-                grades[market_id] = clarity_score(
-                    market, series_settlement_sources=series_sources
-                )
-            except (httpx.HTTPError, ValueError, KeyError):
-                failures += 1
+        series_titles: dict[str, str] = {}
+        try:
+            pm_events = await _polymarket_us_event_slugs(pm_us)
+        except (httpx.HTTPError, ValueError):
+            pm_events = {}
+        async with httpx.AsyncClient(timeout=20) as gamma:
+            for market_id in ids:
+                if fetches >= SITE_MAX_LIVE_FETCHES:
+                    break
+                venue_name, _, venue_market_id = market_id.partition(":")
+                fetches += 1
+                try:
+                    if venue_name == "kalshi":
+                        market = await kalshi.get_market(venue_market_id)
+                        raw = market.raw_market_json or {}
+                        if market.raw_rules_text:
+                            rules[market_id] = market.raw_rules_text
+                        evidence = await _kalshi_series_evidence(kalshi, [market], series_cache)
+                        grades[market_id] = clarity_score(
+                            market, series_settlement_sources=evidence.get(market.market_id)
+                        )
+                        series = _kalshi_series_ticker(market)
+                        if series not in series_titles:
+                            payload = await kalshi._get(f"/series/{series}")
+                            series_titles[series] = str(
+                                (payload.get("series", payload) or {}).get("title") or series
+                            )
+                        event_ticker = str(raw.get("event_ticker") or "")
+                        quotes[market_id] = {
+                            "yes_ask": raw.get("yes_ask_dollars"),
+                            "yes_bid": raw.get("yes_bid_dollars"),
+                            "last": raw.get("last_price_dollars"),
+                            "url": _kalshi_market_url(series, series_titles[series], event_ticker)
+                            if event_ticker
+                            else None,
+                        }
+                    elif venue_name == "polymarket_us":
+                        market = await pm_us.get_market(venue_market_id)
+                        raw = market.raw_market_json or {}
+                        if market.raw_rules_text:
+                            rules[market_id] = market.raw_rules_text
+                        grades[market_id] = clarity_score(market)
+                        ask = raw.get("bestAskQuote") or {}
+                        bid = raw.get("bestBidQuote") or {}
+                        event_slug = pm_events.get(venue_market_id)
+                        quotes[market_id] = {
+                            "yes_ask": ask.get("value") if isinstance(ask, dict) else ask,
+                            "yes_bid": bid.get("value") if isinstance(bid, dict) else bid,
+                            "last": (raw.get("outcomePrices") or [None])[0],
+                            "url": f"https://polymarket.us/event/{event_slug}" if event_slug else None,
+                        }
+                    elif venue_name == "polymarket_global":
+                        response = await gamma.get(GAMMA_MARKETS_URL, params={"id": venue_market_id})
+                        response.raise_for_status()
+                        items = response.json()
+                        item = items[0] if isinstance(items, list) and items else {}
+                        events = item.get("events") or []
+                        event_slug = events[0].get("slug") if events else None
+                        prices = item.get("outcomePrices")
+                        if isinstance(prices, str):
+                            prices = json.loads(prices)
+                        quotes[market_id] = {
+                            "yes_ask": item.get("bestAsk"),
+                            "yes_bid": item.get("bestBid"),
+                            "last": (prices or [None])[0],
+                            "url": f"https://polymarket.com/event/{event_slug}" if event_slug else None,
+                        }
+                except (httpx.HTTPError, ValueError, KeyError, IndexError, TypeError):
+                    failures += 1
+    legal_states = None
+    if SITE_LEGAL_STATES_PATH.exists():
+        legal_states = json.loads(SITE_LEGAL_STATES_PATH.read_text())
     site, pages = build_site(
-        observations, base_url=base_url, rules=rules, grades=grades, analytics_id=analytics_id
+        observations,
+        base_url=base_url,
+        rules=rules,
+        grades=grades,
+        quotes=quotes,
+        legal_states=legal_states,
+        analytics_id=analytics_id,
     )
     written = write_site(pages, Path(out))
+    linked = sum(1 for q in quotes.values() if q.get("url"))
     print(
         f"site_pages={written} pairs={len(site.pairs)} "
         f"same_bet={sum(1 for p in site.pairs if p.same_bet)} "
         f"rules_excerpts={sum(1 for p in site.pairs if p.kalshi_rules and p.polymarket_rules)} "
-        f"grades={len(grades)} live_fetches={fetches} live_failures={failures} out={out}"
+        f"grades={len(grades)} quotes={len(quotes)} links={linked} "
+        f"legal_states={len((legal_states or {}).get('states', []))} "
+        f"live_fetches={fetches} live_failures={failures} out={out}"
     )
-
 
 def latest_clarity_scan(directory: str = "data/clarity") -> dict | None:
     """The most recent dated clarity scan on disk, or ``None`` when none exists.
