@@ -26,6 +26,13 @@ This is an intentional safety invariant, not a temporary UI setting:
 
 Do not add a live order client casually. Any future execution capability must be a separate module with an explicit promotion gate, default-off feature flag, independent risk controls, audit records, and a deliberate human authorization step.
 
+## The research phase is complete — read this first
+
+Four pre-registered hypotheses, four negatives, six weeks, no principal spent.
+The one-page record, with every verdict linked to its charter and evidence:
+**[docs/FINDINGS.md](docs/FINDINGS.md)**. The system keeps running as a
+paper-only instrument; the sections below describe how.
+
 ## Where we stand
 
 > **2026-08-20 — the study was measuring an untradeable venue, and the answer
