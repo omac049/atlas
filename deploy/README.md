@@ -61,9 +61,9 @@ reads the installed copy in `~/Library/LaunchAgents`, not the one in this repo.
   and the holds follow.
 - **`com.atlas.site.plist` + `atlas_site.py`** — daily 04:00 (after the backup),
   rebuilds the demand-test site (`docs/SITE.md`) into `dist/site` with
-  `atlas site build --live`. Publishing is an opaque command the owner sets in the
-  plist's `ATLAS_SITE_PUBLISH_CMD` once a host exists (with `ATLAS_SITE_BASE_URL`
-  for canonicals); unset, the build stays local and the log says so. Hosting
+  `atlas site build --live`. Publishing runs `deploy/publish_gh_pages.sh` (set as the plist's
+  `ATLAS_SITE_PUBLISH_CMD`), which pushes the built site to the `gh-pages`
+  branch for GitHub Pages at samebetornot.com and commits only on change. Hosting
   credentials live in the host CLI's own config, never in this repo.
 - **`com.atlas.healthcheck.plist` + `atlas_healthcheck.py`** — a 60s liveness probe
   covering what `KeepAlive` cannot see: a process that is alive but wedged.

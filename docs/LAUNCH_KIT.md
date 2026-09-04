@@ -9,51 +9,43 @@ evening. The six-week demand clock (`docs/IDEATION.md`) starts at step 4.
 Chosen over the venue-name domains because it contains neither trademark.
 DNS is handled by the host in step 2.
 
-## 2. Host — Cloudflare Pages (free)
+## 2. Host — GitHub Pages (chosen 2026-09-04; the repo is public, so it's free)
 
-`--branch main` is required: wrangler otherwise infers the branch from the git
-checkout, and a deploy from a feature branch lands on a preview alias, not
-production (this happened on 2026-09-04).
+The site lives on the `gh-pages` branch of `omac049/atlas`, built site only,
+with a `CNAME` file naming the domain. `deploy/publish_gh_pages.sh` pushes a
+fresh build there and commits only when something changed; the nightly agent
+runs it after each build (`ATLAS_SITE_PUBLISH_CMD` in
+`deploy/com.atlas.site.plist`). Pages was enabled through the GitHub API with
+source `gh-pages` / root.
 
-Wrangler on this Mac is already logged in to the owner's Cloudflare account
-(checked 2026-09-04 with `npx wrangler whoami`), so no login step is needed.
+**DNS at Cloudflare (owner, one time).** DNS → Records, add five records, all
+with the proxy OFF (grey cloud) so GitHub can issue the HTTPS certificate:
 
-```bash
-npx wrangler pages project create samebetornot --production-branch main
-```
+| Type | Name | Content |
+|---|---|---|
+| A | @ | 185.199.108.153 |
+| A | @ | 185.199.109.153 |
+| A | @ | 185.199.110.153 |
+| A | @ | 185.199.111.153 |
+| CNAME | www | omac049.github.io |
 
-```bash
-npx wrangler pages deploy dist/site --project-name samebetornot --branch main --commit-dirty=true
-```
+Then GitHub → repo Settings → Pages → Custom domain shows `samebetornot.com`
+(set by the CNAME file); once the DNS check passes, tick "Enforce HTTPS".
 
-Then in the Cloudflare dashboard: Pages → atlas-site → Custom domains → add
-the domain from step 1 (it walks you through pointing DNS at Cloudflare).
-
-Now fill in the nightly agent so it publishes on its own. Edit
-`deploy/com.atlas.site.plist`:
-
-- `ATLAS_SITE_BASE_URL` → `https://samebetornot.com`
-- `ATLAS_SITE_PUBLISH_CMD` → `npx wrangler pages deploy dist/site --project-name samebetornot --branch main --commit-dirty=true`
-- `ATLAS_SITE_GA4_ID` → the GA4 measurement id from step 3 (optional)
-
-Then reinstall it:
-
-```bash
-cp deploy/com.atlas.site.plist ~/Library/LaunchAgents/ && launchctl bootout gui/$(id -u)/com.atlas.site; launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.atlas.site.plist && launchctl kickstart gui/$(id -u)/com.atlas.site
-```
-
-Check `~/Library/Logs/atlas-site.log` for `built … ` followed by `published`.
+The earlier Cloudflare Pages project (`samebetornot`, preview only) can be
+deleted from the Cloudflare dashboard; nothing depends on it.
 
 ## 3. Measurement
 
-- **Search Console** (required — it is the pass/fail instrument): add a
+- **Search Console** (required — it is the pass/fail instrument). Use your
+  **personal** Google account, not the work one the MCP connector is on. Add a
   *Domain* property for samebetornot.com, verify by the DNS TXT record (Cloudflare
   DNS → add record), then Sitemaps → submit `https://samebetornot.com/sitemap.xml`.
 - **GA4** (optional — needed only to count the ≥300-social-clicks criterion):
   create a property, copy the `G-…` id into the plist above. The tag is
   omitted entirely when the id is unset, and anonymizes IPs when set.
 
-## 4. Start the clock
+## 4. Start the clock — DONE 2026-09-04 (sitemap accepted, 68 URLs; verdict 2026-10-16)
 
 The day the sitemap is accepted, write the date at the top of
 `docs/IDEATION.md` under "Build status". Week-6 verdict date = that + 42 days.

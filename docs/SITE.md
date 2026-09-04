@@ -34,7 +34,7 @@ Step-by-step, with commands, email drafts, and post drafts: `docs/LAUNCH_KIT.md`
 
 1. Register the domain; pass it as `--base-url` so canonicals and the sitemap
    are right.
-2. Host `dist/site/` (Cloudflare Pages, Netlify, GitHub Pages — any static host).
+2. Host: GitHub Pages from the `gh-pages` branch (`deploy/publish_gh_pages.sh`).
 3. Add the property in Search Console and submit `/sitemap.xml`.
 4. Apply to the affiliate programs listed on `referrals.html`; add links only
    once approved. The disclosure is already on every page.
