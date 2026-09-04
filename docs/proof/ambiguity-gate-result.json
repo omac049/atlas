@@ -1,0 +1,559 @@
+{
+  "gate": "charter-4-feasibility",
+  "charter": "docs/decisions/2026-09-02-predicate-ambiguity-charter.md",
+  "NOT_EVIDENCE": "Development-set separation measures FIT: the instrument's author read these disputes before writing it. Only the post-freeze holdout can support a claim. See charter sections 2 and 6.",
+  "scored_at": "2026-09-02T19:02:41.693370+00:00",
+  "flag_threshold": 50,
+  "thresholds": {
+    "min_median_gap": 15,
+    "min_flag_rate": "0.60",
+    "min_flag_ratio": "2"
+  },
+  "disputed": {
+    "markets": 15,
+    "measurable": 15,
+    "unmeasurable": 0,
+    "median_score": 45,
+    "flag_rate": "0.267",
+    "scores": [
+      {
+        "market_id": "polymarket_global:546814",
+        "score": 55,
+        "flagged": true,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:521607",
+        "score": 0,
+        "flagged": false,
+        "features": []
+      },
+      {
+        "market_id": "polymarket_global:2169995",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:2099029",
+        "score": 60,
+        "flagged": true,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION",
+          "EDGE_CASES_ENUMERATED"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:589648",
+        "score": 0,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "DEFINITION_CLAUSE_PRESENT"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:502006",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:507276",
+        "score": 75,
+        "flagged": true,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:502710",
+        "score": 30,
+        "flagged": false,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:253750",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:251539",
+        "score": 0,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "DEFINITION_CLAUSE_PRESENT"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:512250",
+        "score": 0,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION",
+          "EDGE_CASES_ENUMERATED",
+          "MEASURABLE_ANCHOR"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:244625",
+        "score": 0,
+        "flagged": false,
+        "features": []
+      },
+      {
+        "market_id": "polymarket_global:537892",
+        "score": 60,
+        "flagged": true,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION",
+          "EDGE_CASES_ENUMERATED"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:673597",
+        "score": 0,
+        "flagged": false,
+        "features": []
+      },
+      {
+        "market_id": "polymarket_global:555793",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION",
+          "MEASURABLE_ANCHOR"
+        ]
+      }
+    ]
+  },
+  "controls": {
+    "markets": 45,
+    "measurable": 45,
+    "unmeasurable": 0,
+    "median_score": 30,
+    "flag_rate": "0.133",
+    "scores": [
+      {
+        "market_id": "polymarket_global:522217",
+        "score": 0,
+        "flagged": false,
+        "features": []
+      },
+      {
+        "market_id": "polymarket_global:529314",
+        "score": 75,
+        "flagged": true,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:529659",
+        "score": 0,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "EDGE_CASES_ENUMERATED",
+          "DEFINITION_CLAUSE_PRESENT"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:508190",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:512180",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:512181",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:692258",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:1259282",
+        "score": 0,
+        "flagged": false,
+        "features": [
+          "MULTI_SOURCE_DISCRETION",
+          "EDGE_CASES_ENUMERATED",
+          "DEFINITION_CLAUSE_PRESENT"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:1576154",
+        "score": 30,
+        "flagged": false,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION",
+          "EDGE_CASES_ENUMERATED",
+          "MEASURABLE_ANCHOR"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:1389831",
+        "score": 0,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "EDGE_CASES_ENUMERATED",
+          "DEFINITION_CLAUSE_PRESENT"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:1389832",
+        "score": 0,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "EDGE_CASES_ENUMERATED",
+          "DEFINITION_CLAUSE_PRESENT"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:1389833",
+        "score": 0,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "EDGE_CASES_ENUMERATED",
+          "DEFINITION_CLAUSE_PRESENT"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:515928",
+        "score": 20,
+        "flagged": false,
+        "features": [
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:516714",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:516715",
+        "score": 0,
+        "flagged": false,
+        "features": []
+      },
+      {
+        "market_id": "polymarket_global:502002",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:502003",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:502004",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:515366",
+        "score": 25,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:515368",
+        "score": 55,
+        "flagged": true,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:515369",
+        "score": 25,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:502603",
+        "score": 0,
+        "flagged": false,
+        "features": []
+      },
+      {
+        "market_id": "polymarket_global:502609",
+        "score": 30,
+        "flagged": false,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:502662",
+        "score": 0,
+        "flagged": false,
+        "features": [
+          "EDGE_CASES_ENUMERATED"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:253198",
+        "score": 75,
+        "flagged": true,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:253199",
+        "score": 20,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION",
+          "DEFINITION_CLAUSE_PRESENT"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:253485",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:248579",
+        "score": 75,
+        "flagged": true,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:249407",
+        "score": 25,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:248840",
+        "score": 0,
+        "flagged": false,
+        "features": []
+      },
+      {
+        "market_id": "polymarket_global:524312",
+        "score": 0,
+        "flagged": false,
+        "features": []
+      },
+      {
+        "market_id": "polymarket_global:527702",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:528854",
+        "score": 0,
+        "flagged": false,
+        "features": []
+      },
+      {
+        "market_id": "polymarket_global:243548",
+        "score": 0,
+        "flagged": false,
+        "features": []
+      },
+      {
+        "market_id": "polymarket_global:247020",
+        "score": 20,
+        "flagged": false,
+        "features": [
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:243919",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:516885",
+        "score": 75,
+        "flagged": true,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:516886",
+        "score": 75,
+        "flagged": true,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:516887",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:673594",
+        "score": 0,
+        "flagged": false,
+        "features": []
+      },
+      {
+        "market_id": "polymarket_global:673595",
+        "score": 0,
+        "flagged": false,
+        "features": []
+      },
+      {
+        "market_id": "polymarket_global:673596",
+        "score": 0,
+        "flagged": false,
+        "features": []
+      },
+      {
+        "market_id": "polymarket_global:555781",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION",
+          "MEASURABLE_ANCHOR"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:555782",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION",
+          "MEASURABLE_ANCHOR"
+        ]
+      },
+      {
+        "market_id": "polymarket_global:555783",
+        "score": 45,
+        "flagged": false,
+        "features": [
+          "OPERATIVE_TERM_UNDEFINED",
+          "JUDGMENT_QUALIFIER",
+          "MULTI_SOURCE_DISCRETION",
+          "MEASURABLE_ANCHOR"
+        ]
+      }
+    ]
+  },
+  "median_gap": 15,
+  "flag_rate_ratio": "2.01",
+  "criteria": {
+    "median_gap_ge_15": true,
+    "flag_rate_60pct_and_2x": false
+  },
+  "outcome": "ABANDON_BEFORE_HOLDOUT"
+}

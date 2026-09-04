@@ -1,12 +1,45 @@
 # Atlas continuation checklist
 
-Last updated: 2026-09-02 (**third hypothesis charter drafted** — Predicate Ambiguity Score, pre-registered with a development/holdout split because the drafter has seen the Test A disputes; feasibility gate on the dev set, then a systematic UMA-escalation holdout; awaiting owner sign-off)
+Last updated: 2026-09-02 (**third hypothesis abandoned at the feasibility gate** — the Predicate Ambiguity Score separates in the right direction (median 45 vs 30, ratio 2.01x) but flags only 4 of 15 disputes vs 60% required. No holdout assembled, no freeze commit, per charter §4. The finding that outlives it: disputes are at least three distinct classes and the theory addressed only one. 645 tests green)
 
 Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
 Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, bounded retry metadata; 450 tests green; 72 trusted labels)
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
+
+## 2026-09-02 (b) — third hypothesis: ABANDONED at the feasibility gate
+
+- [x] Instrument built (`atlas/ambiguity.py`, 8 tests): deterministic 0-100
+  predicate-ambiguity score, scale deliberately INVERTED vs clarity so the two
+  can never be confused, title excluded from scoring, bounded weights so no
+  single feature can flag alone, one-way import boundary pinned.
+- [x] **Gate FAILED (charter §4).** Disputed median 45 vs control 30 = gap 15
+  (pass, exactly at threshold); flag-rate ratio 2.01x (pass); **disputed flag
+  rate 26.7% — 4 of 15 — against 60% required (FAIL)**. An instrument that
+  misses three-quarters of its targets cannot carry a product claim whatever
+  its ratio. Hypothesis abandoned BEFORE a holdout was assembled; no holdout
+  exists, no freeze commit was ever recorded.
+- [x] **The finding that outlives the hypothesis:** reading the misses showed
+  the corpus holds at least THREE dispute classes — (1) predicate ambiguity
+  (the theory's target; instrument scores these 45-75), (2) oracle governance
+  (minerals-deal whale vote, Barron override — rules text was not the problem),
+  (3) precisely-worded rules nobody read (the shutdown market defined OPM
+  announcement explicitly and even pre-empted the confusion; instrument
+  correctly scored it 0). A theory aimed at class 1 was tested on a corpus
+  where 2 and 3 are the majority — a design flaw in the test, invisible until
+  the misses were read individually.
+- [x] **One bug recorded and deliberately NOT fixed:** `_JUDGMENT_LADEN_TERMS`
+  matches literal "involved", so "explicitly involves" did not fire. Stemming
+  would be a real correction — and every fix available after seeing a failing
+  dev-set result moves TOWARD the theory, which is the fit trap §2 exists to
+  prevent. In Test A the analogous fix moved AGAINST the theory; that asymmetry
+  is the tell. Recorded so a re-charter starts corrected.
+
+- [ ] OWNER DECISION: a fourth charter would need blind dispute classification,
+  a corrected instrument, a fresh holdout, thresholds fixed first — and it must
+  NOT simply narrow the theory to the class it already explains. Honest input:
+  three hypotheses, three negatives.
 
 ## 2026-09-02 — third hypothesis: predicate ambiguity (charter proposed)
 
