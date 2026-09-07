@@ -36,7 +36,10 @@ from pathlib import Path
 from atlas.gap_radar import kalshi_taker_fee_per_contract
 from atlas.intel import _BLOCKER_PROSE
 
-SITE_VERSION = "0.2"
+SITE_VERSION = "0.3"
+# A pair not quoted in this many days is shown as closed rather than dropped:
+# deleting its page would 404 a URL Google may already have indexed.
+STALE_AFTER_DAYS = 3
 SITE_NAME = "Same bet or not?"
 TRUSTED_STATUSES = {"APPROVED_EQUIVALENT", "APPROVED_INVERSE"}
 REPO_URL = "https://github.com/omac049/atlas"
@@ -188,6 +191,8 @@ class PairPage:
     @property
     def tradeable(self) -> bool:
         return bool(self.observation.get("tradeable_venue_pair"))
+
+    stale: bool = False
 
     @property
     def polymarket_venue(self) -> str:
@@ -481,9 +486,18 @@ def render_pair(site: Site, page: PairPage) -> str:
         else "<p class=\"muted\">The Polymarket leg here is the global venue, which US accounts "
         "cannot trade; it is shown for the rules comparison only.</p>"
     )
+    stale_html = (
+        "<div class=\"summary\"><strong>No longer quoted.</strong> This pair stopped being "
+        "observed on the last check, which usually means the event has settled or the contracts "
+        "closed. The rules comparison below is kept as a record; the prices are historical.</div>"
+        if page.stale
+        else ""
+    )
     body = (
         f"<p class=\"muted\">{_esc(page.family)}</p>"
         f"<h1>{_esc(page.title)}</h1>"
+        + stale_html
+        +
         f"<p class=\"muted\">Last checked {_esc(str(obs.get('observed_at', ''))[:16].replace('T', ' '))} UTC. "
         "Prices move constantly; the rules comparison is the durable part.</p>"
         + verdict
@@ -528,9 +542,11 @@ def _pair_row(p: PairPage) -> str:
 
 
 def render_index(site: Site) -> str:
-    same = [p for p in site.pairs if p.same_bet]
+    open_pairs = [p for p in site.pairs if not p.stale]
+    closed = [p for p in site.pairs if p.stale]
+    same = [p for p in open_pairs if p.same_bet]
     families: dict[str, list[PairPage]] = {}
-    for p in sorted(site.pairs, key=lambda p: (p.family, not p.tradeable, p.headline)):
+    for p in sorted(open_pairs, key=lambda p: (p.family, not p.tradeable, p.headline)):
         families.setdefault(p.family, []).append(p)
     sections = ""
     if same:
@@ -545,6 +561,13 @@ def render_index(site: Site) -> str:
             "<table><thead><tr><th>Pair</th><th>Verdict</th><th>Tradeable</th></tr></thead>"
             f"<tbody>{''.join(_pair_row(p) for p in pairs)}</tbody></table>"
         )
+    if closed:
+        sections += (
+            "<h2>Recently closed</h2><p class=\"muted\">No longer quoted; kept as a record of "
+            "the rules comparison.</p>"
+            "<table><thead><tr><th>Pair</th><th>Verdict</th><th>Tradeable</th></tr></thead>"
+            f"<tbody>{''.join(_pair_row(p) for p in sorted(closed, key=lambda p: p.headline))}</tbody></table>"
+        )
     body = (
         "<h1>Is it the same bet on Kalshi and Polymarket?</h1>"
         "<p class=\"lede\">The same event is often listed on both venues. Whether it is the "
@@ -552,7 +575,7 @@ def render_index(site: Site) -> str:
         "the data is late, how the number is rounded. Every page here compares the two venues' "
         "own published terms for one matched pair, using a deterministic rule check, and shows "
         "the live price and fee on each side.</p>"
-        f"<p>Tracking <strong>{len(site.pairs)} pairs</strong> right now; <strong>{len(same)}</strong> "
+        f"<p>Tracking <strong>{len(open_pairs)} pairs</strong> right now; <strong>{len(same)}</strong> "
         "verify as the same bet. No picks, no predictions — just what each venue says it will do.</p>"
         "<div class=\"cards\">"
         "<div class=\"card\"><a href=\"kalshi-vs-polymarket\">Kalshi vs Polymarket, side by side</a>"
@@ -1053,7 +1076,7 @@ def render_referral_code(site: Site, venue: str) -> str:
 def render_arbitrage(site: Site) -> str:
     live = [
         p for p in site.pairs
-        if p.tradeable and _dec(p.observation.get("best_gap")) is not None
+        if p.tradeable and not p.stale and _dec(p.observation.get("best_gap")) is not None
     ]
     live.sort(key=lambda p: _dec(p.observation.get("best_gap")) or Decimal(0), reverse=True)
     rows = "".join(
@@ -1336,9 +1359,18 @@ def build_site(
         )
         for obs in latest.values()
     ]
+    now = generated_at or datetime.now(UTC)
+    for page in pairs:
+        try:
+            observed = datetime.fromisoformat(str(page.observation.get("observed_at")))
+        except (TypeError, ValueError):
+            continue
+        if observed.tzinfo is None:
+            observed = observed.replace(tzinfo=UTC)
+        page.stale = (now - observed).days >= STALE_AFTER_DAYS
     site = Site(
         base_url=base_url,
-        generated_at=generated_at or datetime.now(UTC),
+        generated_at=now,
         pairs=pairs,
         analytics_id=analytics_id,
         legal_states=legal_states,

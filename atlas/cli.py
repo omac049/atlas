@@ -1653,7 +1653,7 @@ async def clarity_scan(live: bool, max_markets: int = CLARITY_MAX_MARKETS_DEFAUL
     print(f"clarity_scan_written={target}")
 
 
-SITE_MAX_AGE_DAYS = 3
+SITE_MAX_AGE_DAYS = 21  # older pairs drop; within this, stale ones show as closed
 SITE_MAX_LIVE_FETCHES = 200
 SITE_LEGAL_STATES_PATH = Path("docs/site/legal-states.json")
 SITE_COMPARISON_PATH = Path("docs/site/kalshi-vs-polymarket.json")

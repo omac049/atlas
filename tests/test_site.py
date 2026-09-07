@@ -322,3 +322,15 @@ def test_legit_pages_exist_only_with_data_and_require_sources():
     bad = {"as_of": "x", "venues": {"kalshi": {"rows": [{"topic": "Custody", "fact": "FDIC insured.", "sources": []}]}}}
     with pytest.raises(ValueError, match="Custody"):
         _pages(legit=bad)
+
+
+def test_a_pair_not_quoted_for_three_days_is_shown_closed_not_deleted():
+    """Deleting a settled pair's page would 404 an indexed URL."""
+    fresh = _obs(kid="kalshi:FRESH", at="2026-09-04T10:00:00+00:00")
+    old = _obs(kid="kalshi:OLD", at="2026-08-30T10:00:00+00:00")
+    old["kalshi_title"] = "OLD SETTLED PAIR"; old["best_gap"] = "0.5"
+    _, pages = build_site([fresh, old], base_url="https://example.test", generated_at=AT)
+    old_page = next(h for p, h in pages.items() if "old" in p and p.startswith("compare/"))
+    assert "No longer quoted" in old_page
+    assert "Recently closed" in pages["index.html"] and "Tracking <strong>1 pairs" in pages["index.html"]
+    assert "OLD SETTLED PAIR" not in pages["arbitrage.html"]
