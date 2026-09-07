@@ -1,0 +1,374 @@
+{
+  "as_of": "2026-09-07",
+  "venues": {
+    "kalshi": {
+      "rows": [
+        {
+          "topic": "Legal entity and regulatory registration",
+          "fact": "Exchange: KalshiEX LLC, designated by the CFTC as a Designated Contract Market (DCM) by Order of Designation announced November 4, 2020 (a Delaware LLC then described as based in San Francisco). Clearing: Kalshi Klear LLC, registered by the CFTC as a Derivatives Clearing Organization (DCO) on August 29, 2024 (CFTC counted 18 registered DCOs at that time). Other named affiliates in public filings: Kalshi Trading LLC (a separate trading participant) and Kalshi Inc. (App Store seller).",
+          "sources": [
+            "https://www.cftc.gov/PressRoom/PressReleases/8302-20",
+            "https://www.cftc.gov/PressRoom/PressReleases/8957-24",
+            "https://news.kalshi.com/p/who-am-i-trading-against-on-kalshi"
+          ],
+          "note": "BBB lists the business address as 594 Broadway Rm 407, New York, NY and a start date of April 28, 2021; Kalshi's May 2026 funding release describes it as New York-headquartered."
+        },
+        {
+          "topic": "Where customer funds are held and how they are protected",
+          "fact": "Kalshi states that trades are novated by a CFTC-regulated clearing house (Kalshi Klear) and that 'all customer funds on Kalshi remain in a segregated United States bank account dedicated to customer funds' (May 2023). Its help center says margin 'is held in a customer-segregated account, separate from Kalshi's operating funds, as required by CFTC regulations' and earns interest at the clearinghouse (approx. 3.25% APY, subject to change). The DCM rulebook requires FCM members to keep Customer Funds in segregated accounts per CFTC regulations.",
+          "sources": [
+            "https://news.kalshi.com/p/who-am-i-trading-against-on-kalshi",
+            "https://help.kalshi.com/en/articles/15357608-your-perpetuals-margin-account",
+            "https://kalshi-public-docs.s3.amazonaws.com/regulatory/rulebook/Kalshi%20DCM%20Rulebook%20v.1.29.pdf"
+          ],
+          "note": "FDIC pass-through insurance: Not published on the Kalshi pages loaded (kalshi.com/regulatory and /about returned HTTP 429). Third-party reviews name JPMorgan Chase and BNY Mellon as custodian banks; that claim was not verified against a Kalshi-published page."
+        },
+        {
+          "topic": "Ownership and funding",
+          "fact": "Founded 2018 by Tarek Mansour (CEO) and Luana Lopes Lara; headquartered in New York. Series E: $1 billion at an $11 billion valuation led by Paradigm (reported December 2, 2025). Series F: $1 billion at a $22 billion post-money valuation led by Coatue with Sequoia, Andreessen Horowitz, IVP, Paradigm, Morgan Stanley and ARK Invest (announced May 7, 2026). TIME reported $263.5 million fee revenue for 2025; TechCrunch reported annualized revenue above $1.5 billion at the Series F.",
+          "sources": [
+            "https://news.kalshi.com/p/kalshi-raises-1-billion-22-billion-valuation-institutional-demand-surges",
+            "https://techcrunch.com/2026/05/07/kalshi-doubles-valuation-in-5-months-hitting-22-billion/",
+            "https://techcrunch.com/?p=3072051",
+            "https://time.com/collection/time100-most-influential-companies/2026/kalshi/"
+          ],
+          "note": "Date conflict: Bloomberg and Fortune headlines dated March 19-20, 2026 reported the $22B round; Kalshi's own release and TechCrunch are dated May 7, 2026. Those March articles were not loadable (HTTP 403). CoinDesk (June 24, 2026, not loaded) reported Kalshi seeking a further round at about $40B; treat as unconfirmed."
+        },
+        {
+          "topic": "Track record of paying out / withdrawal timelines",
+          "fact": "Venue-published timing: bank (ACH) withdrawals 'typically arrive in your bank account within a few business days' with no fee; debit-card withdrawals 'typically arrive back to your card within a few hours' with no fee and a personalized daily limit; recently deposited amounts may be held until settlement and up to 2 days after settlement when withdrawing to a different method, while 'earnings beyond your deposited amounts can be withdrawn immediately once they are settled cash'. Public complaint record (as of Sept 7, 2026): BBB rating F, not accredited, 239 complaints in 3 years, 218 closed in 12 months, 197 marked unanswered, 12 resolved, 4 unresolved; top categories 'Service or Repair' (80) and 'Product Issues' (76). Trustpilot: TrustScore 2.1/5 from 297 reviews (72% 1-star, 25% 5-star), profile claimed March 2023; dominant themes are blocked withdrawals/holds, unresponsive support, verification barriers and settlement disputes. Apple App Store: 4.8/5 from about 500K ratings, age rating 18+.",
+          "sources": [
+            "https://help.kalshi.com/en/articles/13823803-bank-withdrawals",
+            "https://help.kalshi.com/en/articles/13823802-debit-card-withdrawals",
+            "https://help.kalshi.com/en/articles/13823801-security-holds",
+            "https://www.bbb.org/us/ny/new-york/profile/trade-exchange/kalshi-0121-87176188/complaints",
+            "https://www.trustpilot.com/review/kalshi.com",
+            "https://apps.apple.com/us/app/kalshi-trade-events-sports/id1632713844"
+          ],
+          "note": "Review-site figures diverge sharply from app-store ratings; both are self-selected samples. A search snippet cited a Trustpilot score of 2.4; the page as loaded on Sept 7, 2026 showed 2.1."
+        },
+        {
+          "topic": "Notable disputes and how they were handled",
+          "fact": "Cardi B / Super Bowl LX halftime (Feb 8, 2026): on the 'Will Cardi B perform' market ($47.3M traded), Kalshi invoked its ambiguity rule and settled at the last traded price before the pause — $0.26 to Yes holders and $0.74 to No holders — reasoning that dancing and mouthing words without confirmed singing was ambiguous; Kalshi said it also reimbursed processing fees and added credits for delayed deposits during the record-traffic day. Polymarket's equivalent market (about $10M) initially resolved Yes and was under dispute as of Feb 11. At least one Kalshi user filed a CFTC complaint seeking $3,700. Khamenei market (Jan 8-Feb 28, 2026): after Ali Khamenei was reported killed on Feb 28, 2026, Kalshi applied the rulebook's death provision (Rule 7: if the primary subject of a contract dies before expiration, Kalshi may settle at the last traded price prior to the death) rather than resolving Yes on 'out as Supreme Leader'; the market had about $54M in trades. CEO Tarek Mansour said Kalshi would reimburse all fees from the market. Rulebook v1.29 also lets Kalshi use last traded price where an Underlying cannot be measured, with the Outcome Review Committee's determinations 'final and not subject to review'.",
+          "sources": [
+            "https://www.cbsnews.com/news/cardi-b-super-bowl-prediction-market-dispute/",
+            "https://www.fortune.com/2026/02/11/did-cardi-b-perform-at-super-bowl-prop-bet-kalshi-polymarket",
+            "https://www.classaction.org/news/kalshi-refused-to-honor-certain-prediction-contracts-with-death-carveout-class-action-lawsuit-claims",
+            "https://www.foxbusiness.com/technology/prediction-market-kalshi-sued-54m-iran-leader-bets-death-carveout-invoked",
+            "https://kalshi-public-docs.s3.amazonaws.com/regulatory/rulebook/Kalshi%20DCM%20Rulebook%20v.1.29.pdf"
+          ],
+          "note": "The plaintiffs allege the death carveout language was only added to the market page after strikes began; the rulebook version loaded (v1.29) contains the provision, but which version was in force on Jan 8, 2026 was not verified. Polymarket's final Cardi B outcome after the dispute window was reported by secondary outlets (not loaded) as Yes."
+        },
+        {
+          "topic": "Enforcement actions and lawsuits against the venue",
+          "fact": "State actions on sports contracts: Massachusetts AG sued KalshiEX LLC in Suffolk Superior Court in September 2025 (alleging unlicensed sports wagering, acceptance of wagers from 18-20 year olds and lack of deposit limits); Judge Christopher Barry-Smith granted a preliminary injunction on January 20, 2026 barring sports contracts to Massachusetts users without a license. Arizona AG filed a 20-count criminal information (16 unlawful wagering, 4 election wagering) against KalshiEX LLC and Kalshi Trading LLC in Maricopa County Superior Court on March 17, 2026 — the first criminal charges against a CFTC-registered prediction market. Federal circuit split: the 3rd Circuit (April 6, 2026) held New Jersey cannot regulate Kalshi's sports contracts; the 9th Circuit (August 28, 2026, 3-0) held the Commodity Exchange Act likely does not pre-empt Nevada's gaming-license requirement; New Jersey petitioned the U.S. Supreme Court on September 2, 2026, and at least 20 states are in litigation with Kalshi. Private suit: Risch et al. v. KalshiEX LLC et al., No. 2:26-cv-02390 (C.D. Cal., filed March 5, 2026), a class action over the Khamenei settlement.",
+          "sources": [
+            "https://www.wbur.org/news/2025/09/16/massachusetts-kalshi-lawsuit-predictions-sports-wagering",
+            "https://www.covers.com/industry/judge-allows-massachusetts-preliminary-injunction-against-kalshi-jan-20-2026",
+            "https://www.azag.gov/press-release/attorney-general-mayes-charges-kalshi-illegal-gambling-operation-election-wagering",
+            "https://www.morganlewis.com/pubs/2026/03/arizona-files-first-criminal-charges-against-a-prediction-market",
+            "https://cdcgaming.com/kalshi-cannot-block-nevadas-regulation-of-sports-event-contracts-court-rules/",
+            "https://jerseyvindicator.org/2026/09/02/new-jersey-petitions-supreme-court-to-block-kalshi-from-sidestepping-state-gambling-laws",
+            "https://www.classaction.org/news/kalshi-refused-to-honor-certain-prediction-contracts-with-death-carveout-class-action-lawsuit-claims"
+          ],
+          "note": "No CFTC enforcement action against Kalshi was found on cftc.gov searches. Massachusetts filing date: BBB lists Sept 12, 2025; WBUR's report is dated Sept 16, 2025. A Las Vegas Review-Journal summary gave the 9th Circuit date as Aug 23; CDC Gaming and the Jersey Vindicator give Friday, Aug 28, 2026, which matches the calendar."
+        },
+        {
+          "topic": "Age, identity verification, and responsible-use policies",
+          "fact": "Minimum age 18 (App Store age rating 18+; Massachusetts' suit centers on Kalshi accepting users aged 18-20 where state sports-betting law requires 21). Identity verification: KYC document checks, with Face ID on by default, selfie requests for higher-risk accounts, 2FA and an 'ID Check' feature announced May 4, 2026. Responsible-trading tools published: Voluntary Self-Exclusion for a chosen term via kalshi.com, the API or the app; 'Inner Circle' (friends/family view access with alerts); 'Health Check' (deposit-limit recommendations and possible proof-of-funds requests).",
+          "sources": [
+            "https://apps.apple.com/us/app/kalshi-trade-events-sports/id1632713844",
+            "https://www.wbur.org/news/2025/09/16/massachusetts-kalshi-lawsuit-predictions-sports-wagering",
+            "https://news.kalshi.com/p/new-customer-protection-measures-kalshi-expanded-trader-safeguards",
+            "https://help.kalshi.com/en/articles/13823789-voluntary-self-exclusion"
+          ],
+          "note": "Self-exclusion durations and whether it is irrevocable are not stated in the loaded help article. kalshi.com/policy-center pages returned HTTP 429 and were not loaded."
+        },
+        {
+          "topic": "Volume/scale as publicly reported",
+          "fact": "Third-party tracker DeFi Rate (pulled from Kalshi's public API; notional = contracts x price) shows monthly volume of $32.67B (June 2026), $41.12B (July 2026), $40.02B (August 2026) and $179.61B year-to-date as of Sept 7, 2026. Pew Research (using The Block data) put combined Kalshi + Polymarket monthly notional taker volume at under $5B in September 2025 and about $24B in April 2026. Kalshi itself reported annualized trading volume rising from $52B to $178B over six months (May 2026 release), 3 million new users during the June 11-July 19, 2026 World Cup and $1.2B traded on the World Cup winner market; TIME reported 'over 5 million users' (April 2026).",
+          "sources": [
+            "https://defirate.com/prediction-markets/volume/kalshi/",
+            "https://www.pewresearch.org/short-reads/2026/05/27/trading-volume-on-prediction-markets-has-soared-in-recent-months/",
+            "https://news.kalshi.com/p/kalshi-raises-1-billion-22-billion-valuation-institutional-demand-surges",
+            "https://finance.yahoo.com/markets/crypto/articles/kalshi-gains-3-million-users-163812357.html",
+            "https://time.com/collection/time100-most-influential-companies/2026/kalshi/"
+          ],
+          "note": "Reported monthly figures vary widely between outlets (search results showed $9.4B to about $30B for June 2026) depending on whether crypto perpetual futures and notional-vs-traded-dollar methods are used; Kalshi does not publish an official monthly volume page that was loadable."
+        },
+        {
+          "topic": "Known scam vectors that use the venue's name",
+          "fact": "Kalshi's help center warns that 'Kalshi employees will never ask for your password or one-time codes', will never ask users to send money or crypto to 'verify' an account, that account issues 'may originate from scams or phishing attempts outside of Kalshi systems', and advises logging in only at kalshi.com with 2FA via an authenticator app; suspicious activity is reported via in-app chat. Third-party security blogs (not loaded) describe fake verification-code emails and impersonation calls using the Kalshi name.",
+          "sources": [
+            "https://help.kalshi.com/en/articles/14026040-reporting-account-activity"
+          ],
+          "note": "No Kalshi-published list of specific fake apps or 'guaranteed profit' groups was found; App Store seller of record is KALSHI INC. / developer KalshiEX LLC, which can be used to spot look-alike apps."
+        },
+        {
+          "topic": "Public complaint channels and regulator complaint routes",
+          "fact": "Venue: in-app chat support; Rulebook Chapter 10 provides arbitration for claims between participants, Chapter 11 limits liability, requires actions against Kalshi within 2 years, and applies New York law. Regulator: the CFTC Reparations Program hears customer complaints against CFTC-registered professionals for Commodity Exchange Act violations (2-year filing deadline; cannot be pursued in parallel with arbitration); the CFTC has accepted at least one customer complaint about Kalshi's Cardi B settlement. Consumer routes: BBB complaint page (Kalshi profile) and state attorneys general (Massachusetts and Arizona AGs have active actions).",
+          "sources": [
+            "https://kalshi-public-docs.s3.amazonaws.com/regulatory/rulebook/Kalshi%20DCM%20Rulebook%20v.1.29.pdf",
+            "https://www.cftc.gov/LearnAndProtect/AdvisoriesAndArticles/cftc_reparation_program_resolve.htm",
+            "https://www.cbsnews.com/news/cardi-b-super-bowl-prediction-market-dispute/",
+            "https://www.bbb.org/us/ny/new-york/profile/trade-exchange/kalshi-0121-87176188"
+          ],
+          "note": "Whether a DCM/DCO (as opposed to an FCM or IB) is a 'registrant' eligible for reparations claims was not confirmed; NFA BASIC was not queried (form-based site)."
+        }
+      ]
+    },
+    "polymarket_us": {
+      "rows": [
+        {
+          "topic": "Legal entity and regulatory registration",
+          "fact": "Exchange: QCX LLC d/b/a Polymarket US, designated by the CFTC as a Designated Contract Market on July 9, 2025 (filing address 7251 W. Palmetto Park Road, Suite 102, Boca Raton, FL 33433). Clearing: QC Clearing LLC d/b/a Polymarket Clearing, a CFTC-registered Derivatives Clearing Organization. Polymarket acquired the QCEX holding company (QCX LLC + QC Clearing LLC) for $112 million, announced July 21, 2025. The CFTC's Amended Order of Designation (petition submissions Aug 14-Nov 24, 2025; announced Nov 25, 2025) removed the ban on futures commission merchants carrying customer accounts, allowing intermediated access. CFTC staff Letters 25-28 (Sept 2, 2025) and 25-48 (Dec 11, 2025) grant no-action relief on swap-reporting rules for fully collateralized 'QCEX Contracts'. Polymarket's global site states: 'Polymarket US is operated by QCX LLC d/b/a Polymarket US, a CFTC-regulated Designated Contract Market.'",
+          "sources": [
+            "https://www.cftc.gov/IndustryOversight/IndustryFilings/TradingOrganizations/49571",
+            "https://www.cftc.gov/media/12806/Polymarket%20US%20Amended%20Order%20of%20Designation/download",
+            "https://www.cftc.gov/csl/25-48/download",
+            "https://www.prnewswire.com/news-releases/polymarket-acquires-cftc-licensed-exchange-and-clearinghouse-qcex-for-112-million-302509626.html",
+            "https://www.cftc.gov/sites/default/files/filings/orgrules/25/08/rules08122528295.pdf",
+            "https://polymarket.com/tos"
+          ],
+          "note": "The App Store seller for the US app is Blockratize Inc (the entity named in the 2022 CFTC order), not QCX LLC."
+        },
+        {
+          "topic": "Where customer funds are held and how they are protected",
+          "fact": "Polymarket US documentation: 'Your funds are kept in a dedicated customer account that is separate from Polymarket US's operating funds' and 'Polymarket US cannot access or use your money.' Polymarket Clearing (the DCO) states it clears only fully collateralized positions and does not set margin or maintain a financial-resource package. The rulebook (Aug 28, 2026) defines a 'Settlement Bank' as a depository approved by the company for holding participant funds and requires FCM customer accounts to follow segregation requirements.",
+          "sources": [
+            "https://docs-polymarket-us.mintlify.app/polymarket-learn/faq/money-safety.md",
+            "https://www.polymarketexchange.com/clearing/",
+            "https://www.polymarketexchange.com/files/legal/latest/rulebook"
+          ],
+          "note": "Bank names and FDIC pass-through insurance: Not published in the loaded pages (searched the Polymarket US docs index, polymarketexchange.com and the rulebook for 'FDIC')."
+        },
+        {
+          "topic": "Ownership and funding",
+          "fact": "Owned by Polymarket (founder/CEO Shayne Coplan) via the July 2025 QCEX acquisition; QCEX founder Sergei Dobrovolskii said the DCM and DCO licences took over four years to obtain. Polymarket group funding: Intercontinental Exchange (NYSE owner) invested up to $2 billion at about $8B pre-money / $9B post-money (announced Oct 7, 2025) and became a global distributor of Polymarket data; a $1 billion round led by 1789 Capital at a $21 billion valuation was reported Sept 1, 2026 (prior valuation $15B).",
+          "sources": [
+            "https://www.prnewswire.com/news-releases/polymarket-acquires-cftc-licensed-exchange-and-clearinghouse-qcex-for-112-million-302509626.html",
+            "https://ir.theice.com/press/news-details/2025/ICE-Announces-Strategic-Investment-in-Polymarket/default.aspx",
+            "https://fortune.com/crypto/2025/10/07/polymarket-2-billion-intercontinental-exchange-new-york-stock-exchange-9-billion/",
+            "https://www.gurufocus.com/news/9061314/polymarket-secures-1-billion-funding-round-valuation-hits-21-billion"
+          ],
+          "note": "The intermediate $15B valuation (April 2026) and a $600M ICE follow-on appear in search snippets from Bloomberg/PYMNTS that were not loaded. Which Polymarket parent entity legally owns QCX LLC is not stated in the loaded sources."
+        },
+        {
+          "topic": "Track record of paying out / withdrawal timelines",
+          "fact": "Venue-published rules: debit card and ACH withdrawals '3-4 business days', wire '1 business day'; all withdrawals must return to the same payment method used to deposit; deposits are 'funds in flight' and cannot be withdrawn until cleared; withdrawals are processed first-in-first-out; withdrawals are free. App Store (US app 'Polymarket: Trade Live Sports', seller Blockratize Inc): 4.6/5 from about 54,000 ratings, age rating 18+ (as of Sept 7, 2026). Public rollout: the iOS app opened to US users without a waitlist on May 12, 2026 after an invite-only period from November 2025; no Android app at that time.",
+          "sources": [
+            "https://docs-polymarket-us.mintlify.app/polymarket-learn/deposits/withdraw-funds/rules",
+            "https://apps.apple.com/us/app/polymarket/id6648798962",
+            "https://www.covers.com/industry/polymarket-removes-waitlist-launches-for-american-ios-users-may-12-2026",
+            "https://defirate.com/news/polymarket-us-posts-256m-march-launches-politics-built-to-scale/"
+          ],
+          "note": "No separate BBB or Trustpilot profile for Polymarket US was found (BBB search returned no Polymarket listing; the polymarket.com Trustpilot page mixes US-app and global complaints)."
+        },
+        {
+          "topic": "Notable disputes and how they were handled",
+          "fact": "Not found: no publicly reported settlement dispute specific to the CFTC-regulated Polymarket US exchange was located in searches for 'Polymarket US' with outcome review, voided or settlement-controversy terms; all reported Polymarket resolution disputes (Zelensky suit, Ukraine minerals, Strategy Bitcoin) concern the global UMA-resolved platform. Polymarket US's rulebook provides an in-house 'Contract Outcome Review Process' (Rule 10.4) and 'Modification' authority to address ambiguities, rather than the UMA oracle.",
+          "sources": [
+            "https://www.polymarketexchange.com/files/legal/latest/rulebook",
+            "https://www.cryptopolitan.com/polymarket-lawsuit-strategy-bitcoin-market/"
+          ],
+          "note": "The Strategy-Bitcoin lawsuit (July 2026) names Adventure One QSS Inc. and Blockratize Inc., not QCX LLC."
+        },
+        {
+          "topic": "Enforcement actions and lawsuits against the venue",
+          "fact": "QCX LLC is a named defendant in Diego v. Blockratize Inc. et al., No. 1:26-cv-00973 (D.N.J., filed Feb 4, 2026), a class action alleging Polymarket runs unlicensed sports betting disguised as a prediction market; QCX LLC and QC Clearing LLC are also named in National Association of Consumer Advocates v. Blockratize Inc. et al., No. 2026-CAB-004388 (D.C. Superior Court, filed June 26, 2026), alleging staged influencer 'wins' of about $1.9M in 1,105 promotional videos and undisclosed payments. On June 25, 2026 Senators John Curtis and Adam Schiff asked the CFTC to investigate; reporting on July 8, 2026 described an ongoing CFTC investigation covering marketing, consumer protection, age verification and compliance practices. No CFTC enforcement order against QCX LLC or QC Clearing LLC was found on cftc.gov.",
+          "sources": [
+            "https://www.classaction.org/news/polymarket-runs-illegal-online-sports-betting-platform-class-action-lawsuit-alleges",
+            "https://openclassactions.com/lawsuits/consumer-protection/polymarket-fake-bets-influencer-marketing-lawsuit.php",
+            "https://unchainedcrypto.com/bipartisan-senators-call-for-cftc-investigation-of-polymarket-over-staged-promotions/",
+            "https://www.pymnts.com/legal/2026/cftc-investigation-of-polymarket-broadens-compliance-questions-for-prediction-markets/"
+          ],
+          "note": "Whether the reported CFTC investigation targets the US DCM, the global platform, or the group is not specified in the loaded reports. State sports-betting actions (Nevada, Massachusetts) referenced in coverage were not verified against Polymarket-US-specific court records; DeFi Rate reported the US app was blocked in Nevada by state court order as of March 2026."
+        },
+        {
+          "topic": "Age, identity verification, and responsible-use policies",
+          "fact": "Rulebook: individual participants must be 'at least 18 years of age' and have reached the age of majority in their state/country. KYC is mandatory before depositing or trading ('required to comply with federal identity and anti-money-laundering (AML) rules'); most verifications complete instantly, manual review up to 3-5 business days, with government-issued ID and selfie check when requested. Trading-restrictions guidance covers employees of financial firms and persons with material non-public information.",
+          "sources": [
+            "https://www.polymarketexchange.com/files/legal/latest/rulebook",
+            "https://docs-polymarket-us.mintlify.app/polymarket-learn/get-started/signup.md",
+            "https://docs-polymarket-us.mintlify.app/polymarket-learn/trading/access-and-limits/trading-restrictions.md"
+          ],
+          "note": "Self-exclusion or deposit-limit tools: Not found in the loaded Polymarket US documentation index; the July 2026 CFTC-investigation coverage lists 'age verification and responsible gaming tools' among areas under review."
+        },
+        {
+          "topic": "Volume/scale as publicly reported",
+          "fact": "DeFi Rate's tracking database reported Polymarket US notional volume of $255.9 million in March 2026 (weekly peak $88.8M for the week of March 30), with the market catalogue growing from 1,372 to over 4,100 markets that month. Covers reported about $50 million average daily volume in the week before the May 12, 2026 public launch and a reported waitlist of over 1.4 million.",
+          "sources": [
+            "https://defirate.com/news/polymarket-us-posts-256m-march-launches-politics-built-to-scale/",
+            "https://www.covers.com/industry/polymarket-removes-waitlist-launches-for-american-ios-users-may-12-2026"
+          ],
+          "note": "Polymarket does not publish an official US-only volume or user count; figures above are third-party estimates or press reports. User counts: Not published."
+        },
+        {
+          "topic": "Known scam vectors that use the venue's name",
+          "fact": "Polymarket US documentation warns users to 'avoid fake Google or Apple login screens', to avoid fake applications, to sign in only through the official app, to enable 2FA, and: 'Do not share Polymarket verification codes with anyone, including support.' Support is via in-app chat or support@polymarket.us.",
+          "sources": [
+            "https://docs-polymarket-us.mintlify.app/polymarket-learn/account/protect.md",
+            "https://help.polymarket.com/en/articles/13364256-how-do-i-contact-support"
+          ],
+          "note": "Phishing campaigns documented against Polymarket users (fake 'member access invitation' emails tied to the US rollout, comment-section links) are covered under the global venue; several used US-launch hype as the lure."
+        },
+        {
+          "topic": "Public complaint channels and regulator complaint routes",
+          "fact": "Venue: in-app chat and support@polymarket.us. Rulebook: Rule 2.14 establishes a Regulatory Services Agreement with the NFA; Chapter 9 provides arbitration of disputes among participants (9.1) and of claims against the exchange (9.2); FCM participants must follow NFA customer-complaint rules. Regulator: CFTC Reparations Program for complaints against CFTC-registered professionals (2-year deadline).",
+          "sources": [
+            "https://www.polymarketexchange.com/files/legal/latest/rulebook",
+            "https://help.polymarket.com/en/articles/13364256-how-do-i-contact-support",
+            "https://www.cftc.gov/LearnAndProtect/AdvisoriesAndArticles/cftc_reparation_program_resolve.htm"
+          ],
+          "note": "NFA BASIC was not queried for QCX LLC / QC Clearing LLC."
+        }
+      ]
+    },
+    "polymarket_global": {
+      "rows": [
+        {
+          "topic": "Legal entity and regulatory registration",
+          "fact": "The global site's footer identifies the operator as Adventure One QSS Inc. and states: 'Polymarket operates globally through separate legal entities... This international platform is not regulated by the CFTC and operates independently.' The original operator, Blockratize, Inc. d/b/a Polymarket (Delaware, New York City), was ordered by the CFTC on January 3, 2022 to pay a $1.4 million civil penalty for operating an unregistered facility for event-based binary options from about June 2020 (900+ markets), to wind down non-compliant markets and to cease and desist. Trading is geoblocked for the United States: the help center lists the U.S. among 39 fully blocked countries, prohibits VPN use as a Terms of Service violation (Section 2.1.4), and lists 'close-only' jurisdictions where existing positions can be exited but no new ones opened.",
+          "sources": [
+            "https://polymarket.com/tos",
+            "https://www.cftc.gov/PressRoom/PressReleases/8478-22",
+            "https://help.polymarket.com/en/articles/13364163-geographic-restrictions"
+          ],
+          "note": "The Terms of Service body is rendered by JavaScript and could not be extracted; the Panama incorporation of Adventure One QSS Inc. and the exact US-persons clause were reported by NPR/Sportico (not loadable) and appear only in search snippets. No non-US regulator licence for the global platform was found."
+        },
+        {
+          "topic": "Where customer funds are held and how they are protected",
+          "fact": "Non-custodial: 'Polymarket is non-custodial, so you're in control of your funds' and 'we never take possession of your USDC'; assets sit in the user's wallet on Polygon secured by the user's private key, which can be exported. Collateral is pUSD (Polymarket USD), 'a standard ERC-20 backed by USDC, with backing enforced onchain by the smart contract'. Security 'depends on how securely you handle your private key and passwords'. Polymarket states it is not the counterparty: 'All trades happen peer-to-peer'.",
+          "sources": [
+            "https://help.polymarket.com/en/articles/13364260-is-my-money-safe",
+            "https://docs.polymarket.com/polymarket-101",
+            "https://help.polymarket.com/en/articles/13364264-is-polymarket-the-house"
+          ],
+          "note": "No deposit insurance, clearinghouse guarantee or FDIC coverage is mentioned in the loaded pages; a December 24, 2025 incident drained 'a small number' of accounts through a third-party login provider vulnerability (see scam row)."
+        },
+        {
+          "topic": "Ownership and funding",
+          "fact": "Founded in 2020 by Shayne Coplan (CEO); the November 2024 FBI search took place at Coplan's penthouse in Soho, New York. Intercontinental Exchange announced an investment of up to $2 billion on Oct 7, 2025 (about $8B pre-money, $9B post-money) with ICE becoming global distributor of Polymarket data. A $1 billion round led by 1789 Capital at a $21 billion valuation was reported Sept 1, 2026, up from $15 billion.",
+          "sources": [
+            "https://ir.theice.com/press/news-details/2025/ICE-Announces-Strategic-Investment-in-Polymarket/default.aspx",
+            "https://fortune.com/crypto/2025/10/07/polymarket-2-billion-intercontinental-exchange-new-york-stock-exchange-9-billion/",
+            "https://crypto.news/doj-cftc-close-polymarket-case-months-after-fbi-raid-no-charges-filed/",
+            "https://www.gurufocus.com/news/9061314/polymarket-secures-1-billion-funding-round-valuation-hits-21-billion"
+          ],
+          "note": "Formal headquarters: the operating entity is described in search snippets as Panama-incorporated while staff are New York-based (NPR, May 5, 2026, not loadable). Earlier rounds (Founders Fund $150M at $1.2B; Blockchain Capital $55M) appear only in search snippets."
+        },
+        {
+          "topic": "Track record of paying out / withdrawal timelines",
+          "fact": "Withdrawals are on-chain: from Portfolio, click Withdraw, enter a recipient address, choose token, amount and network, confirm; 'after the withdrawal is processed, your funds will be sent to the specified address' (no time estimate or fee stated in the help article). Disputed markets add delay: a 2-hour challenge window, then a 24-48 hour debate period and about 48 hours of UMA token-holder voting. Trustpilot (Sept 7, 2026): TrustScore 1.4/5 from 619 reviews, 90% 1-star, 8% 5-star, profile claimed July 2024; themes are slow/blocked withdrawals, outages, disputed payouts and support response. No BBB profile found.",
+          "sources": [
+            "https://help.polymarket.com/en/articles/13369898-how-to-withdraw",
+            "https://help.polymarket.com/en/articles/13364551-how-are-markets-disputed",
+            "https://www.trustpilot.com/review/polymarket.com"
+          ],
+          "note": "The Trustpilot page covers polymarket.com generally and, since the US app launch, mixes complaints about both platforms. App-store ratings for the international app were not separately located; the App Store listing found (4.6/5, ~54K ratings) is the US-storefront app."
+        },
+        {
+          "topic": "Notable disputes and how they were handled",
+          "fact": "Ukraine minerals deal (March 2025, ~$7M): resolved Yes before any signed deal after a holder of about 5 million UMA tokens across three accounts cast roughly 25% of the vote; Polymarket said 'because this wasn't a market failure, we are not able to issue refunds' and promised system changes. Zelensky suit (market window March 22-June 30, 2025, $237M): after a NATO appearance on June 24 in a jacket-and-trouser outfit widely described as a suit, the initial Yes proposal was disputed and UMA finalized No on July 1, 2025 citing no 'credible reporting consensus'; Polymarket did not revisit the outcome and states 'once finalized by UMA, outcomes are immutable'. Strategy Bitcoin sale (question: sells any Bitcoin by May 31, 2026; ~$60M-$301M volume reported): Strategy's June 1 8-K disclosed selling 32 BTC on May 26-31, but the market resolved No because 'confirmation achieved outside of the market's timeframe does not qualify'; two traders sued in New York state court on July 3, 2026 alleging rules were changed after the fact.",
+          "sources": [
+            "https://thedefiant.io/news/defi/polymarket-s-usd7m-ukraine-mineral-deal-debacle-traced-to-oracle-whale",
+            "https://decrypt.co/329210/polymarket-rules-no-237m-bet-zelenskyys",
+            "https://help.polymarket.com/en/articles/13364551-how-are-markets-disputed",
+            "https://thedefiant.io/news/markets/usd85m-polymarket-dispute-over-strategy-s-may-bitcoin-sale-puts-uma-s-token-voting-oracle-on",
+            "https://www.cryptopolitan.com/polymarket-lawsuit-strategy-bitcoin-market/"
+          ],
+          "note": "Volume conflict on the Strategy market: The Defiant reported $60M, Cryptopolitan $301M (likely different market/aggregation scopes). Resolution is by UMA token-holder vote, not by Polymarket staff, with a $750 proposer/disputer bond."
+        },
+        {
+          "topic": "Enforcement actions and lawsuits against the venue",
+          "fact": "CFTC order, January 3, 2022: $1.4M penalty, wind-down of non-compliant markets, cease-and-desist (Blockratize, Inc. d/b/a Polymarket). DOJ/CFTC investigation into whether Polymarket kept serving US users (FBI search of the CEO's New York home, November 2024) closed in July 2025 with no charges. Class actions: Diego v. Blockratize Inc. et al. (D.N.J. 1:26-cv-00973, Feb 4, 2026) and a Southern District of New York suit (February 2026, plaintiff Lorenzo Miro) alleging unlicensed sports betting; NACA v. Blockratize Inc. et al. (D.C. Superior Court 2026-CAB-004388, June 26, 2026) alleging staged influencer wins and undisclosed payments (about $350,000 via a personal PayPal account, per the complaint); Wood and Bush v. Adventure One QSS Inc. et al. (N.Y. Supreme Court, July 3, 2026) over the Strategy-Bitcoin resolution. Senators Curtis and Schiff requested a CFTC investigation on June 25, 2026; a CFTC probe covering marketing and consumer-protection practices was reported in July 2026.",
+          "sources": [
+            "https://www.cftc.gov/PressRoom/PressReleases/8478-22",
+            "https://unchainedcrypto.com/doj-and-cftc-drop-investigations-into-polymarket-report/",
+            "https://crypto.news/doj-cftc-close-polymarket-case-months-after-fbi-raid-no-charges-filed/",
+            "https://www.classaction.org/news/polymarket-runs-illegal-online-sports-betting-platform-class-action-lawsuit-alleges",
+            "https://www.crowdfundinsider.com/2026/02/260073-in-run-up-to-superbowl-polymarket-hit-with-class-action-lawsuit-filed-in-sdny/",
+            "https://openclassactions.com/lawsuits/consumer-protection/polymarket-fake-bets-influencer-marketing-lawsuit.php",
+            "https://www.cryptopolitan.com/polymarket-lawsuit-strategy-bitcoin-market/",
+            "https://www.pymnts.com/legal/2026/cftc-investigation-of-polymarket-broadens-compliance-questions-for-prediction-markets/"
+          ],
+          "note": "Allegations in the class actions are unproven; no judgments were found. State cease-and-desist orders (Nevada, Tennessee, Connecticut, Illinois) are referenced in coverage but were not verified against state sources."
+        },
+        {
+          "topic": "Age, identity verification, and responsible-use policies",
+          "fact": "Access is controlled by geoblocking (39 fully blocked countries including the U.S.; VPN use prohibited under ToS Section 2.1.4; close-only mode for some jurisdictions). The loaded help-center pages do not describe an identity-verification (KYC) requirement or self-exclusion tools; the money-safety page describes a non-custodial wallet model in which the user controls the private key.",
+          "sources": [
+            "https://help.polymarket.com/en/articles/13364163-geographic-restrictions",
+            "https://help.polymarket.com/en/articles/13364260-is-my-money-safe"
+          ],
+          "note": "Minimum age: Not found in the loaded official pages (the ToS body did not render); third-party guides and search snippets state 18+. KYC: third-party guides report no ID check for non-US users except under AML thresholds; not confirmed on an official page."
+        },
+        {
+          "topic": "Volume/scale as publicly reported",
+          "fact": "TRM Labs (Mar 27, 2026): prediction-market monthly volume grew from about $1.2B in early 2025 to over $20B in January 2026; Polymarket set a single-day record of $425M on Feb 28, 2026; roughly 840,000 unique wallets were active monthly across Polymarket and three smaller venues in February 2026. Pew/The Block: combined Kalshi + Polymarket monthly volume about $24B in April 2026. DeFi Rate (taker notional): $3.47B in August 2026, down 59.5% from July. A record 688,000 monthly active users was reported on Feb 17, 2026 (via CoinDesk).",
+          "sources": [
+            "https://www.trmlabs.com/resources/blog/how-prediction-markets-scaled-to-usd-21b-in-monthly-volume-in-2026",
+            "https://www.pewresearch.org/short-reads/2026/05/27/trading-volume-on-prediction-markets-has-soared-in-recent-months/",
+            "https://defirate.com/prediction-markets/volume/polymarket/",
+            "https://phemex.com/news/article/polymarket-achieves-record-688k-monthly-active-users-61052"
+          ],
+          "note": "DeFi Rate cites a Columbia University study estimating about 25% of historical Polymarket volume was wash trading. Search snippets cite a $10.57B March 2026 monthly record (BitKE) and $10.8B in June 2026, neither loadable. The Block's active-trader chart did not render."
+        },
+        {
+          "topic": "Known scam vectors that use the venue's name",
+          "fact": "Documented vectors: a phishing campaign in market comment sections (losses over $500,000 reported), a September 2024 Google-login breach, and a December 2025 incident in which 'a vulnerability introduced by a third-party authentication provider' (reported to be an email-login service) let attackers drain 'a small number' of accounts; Polymarket said it was resolved and it would contact affected users but did not disclose amounts. Fake 'member access invitation' emails and clone websites promoting fake POLY rewards are reported by security vendors. Official channels are limited to the site chat widget and support@polymarket.com / support@polymarket.us.",
+          "sources": [
+            "https://www.theblock.co/post/383711/polymarket-third-party-vulnerability-hack",
+            "https://help.polymarket.com/en/articles/13364256-how-do-i-contact-support"
+          ],
+          "note": "No Polymarket-published scam-warning article was found in the help-center collections (Getting Started, Markets, Trading, FAQs, Troubleshooting); the contact-support article does not warn about impersonation."
+        },
+        {
+          "topic": "Public complaint channels and regulator complaint routes",
+          "fact": "Venue: website chat widget and support@polymarket.com; market outcomes are disputed through the UMA oracle (2-hour challenge window, $750 bond, token-holder vote) and are 'immutable' once finalized, so Polymarket does not reverse them. Regulator: the CFTC does not regulate the international platform (per Polymarket's own footer), so the CFTC Reparations Program's registrant requirement does not apply; the 2022 CFTC order shows the CFTC can still act against the operator for serving US persons. Private litigation has been used (New York state court, D.N.J., S.D.N.Y., D.C. Superior Court).",
+          "sources": [
+            "https://help.polymarket.com/en/articles/13364256-how-do-i-contact-support",
+            "https://help.polymarket.com/en/articles/13364551-how-are-markets-disputed",
+            "https://polymarket.com/tos",
+            "https://www.cftc.gov/LearnAndProtect/AdvisoriesAndArticles/cftc_reparation_program_resolve.htm"
+          ],
+          "note": "No consumer-protection regulator in Panama or elsewhere with published jurisdiction over Adventure One QSS Inc. was found."
+        }
+      ]
+    }
+  },
+  "faq": [
+    {
+      "q": "Is Kalshi legit?",
+      "a": "Kalshi's exchange (KalshiEX LLC) has been a CFTC-designated contract market since November 2020 and its clearinghouse (Kalshi Klear LLC) a CFTC-registered derivatives clearing organization since August 2024, with customer funds held in segregated accounts under CFTC rules. It is also the subject of state actions (a Massachusetts injunction on sports contracts, Arizona criminal charges, a federal circuit split now before the Supreme Court) and has an F rating on BBB with 197 unanswered complaints alongside a 4.8/5 App Store rating."
+    },
+    {
+      "q": "Is Kalshi a scam?",
+      "a": "No regulator has alleged that Kalshi fails to pay settled contracts; the documented disputes concern how two markets (Cardi B, Khamenei) were settled under rulebook provisions, and the state cases concern whether sports contracts are gambling. Kalshi's help center warns that scammers impersonate its staff by phishing for one-time codes or asking users to send money to 'verify' accounts, which Kalshi says it never does."
+    },
+    {
+      "q": "Is Kalshi regulated?",
+      "a": "Yes, at the federal level: the CFTC designated KalshiEX LLC as a contract market (Nov 4, 2020) and registered Kalshi Klear LLC as a clearing organization (Aug 29, 2024). Whether states can additionally regulate its sports contracts is contested: the 3rd Circuit said New Jersey cannot (April 2026), the 9th Circuit said Nevada can (Aug 28, 2026), and Massachusetts and Arizona have pursued their own actions."
+    },
+    {
+      "q": "Does Kalshi actually pay out?",
+      "a": "Kalshi publishes withdrawal timing of a few hours for debit cards and a few business days for bank transfers, with no fees and holds only on recently deposited amounts. Complaint sites record a pattern of withdrawal-hold and support-response complaints (Trustpilot 2.1/5 from 297 reviews; 239 BBB complaints in three years), while app-store ratings are high; in the Khamenei case Kalshi paid the last traded price rather than $1 and said it refunded fees."
+    },
+    {
+      "q": "Can Kalshi refuse to pay?",
+      "a": "Under its CFTC-filed rulebook Kalshi may settle at the last traded price when the underlying cannot be measured or when the primary subject of a contract dies before expiration, and Outcome Review Committee decisions are final. It used those provisions in February 2026 for the Cardi B halftime market ($0.26/$0.74) and the Khamenei market, which led to a CFTC complaint and a class action (Risch v. KalshiEX, C.D. Cal.)."
+    },
+    {
+      "q": "Is Polymarket legit?",
+      "a": "There are two Polymarkets. Polymarket US (QCX LLC) has been a CFTC-designated contract market since July 9, 2025 with a CFTC-registered clearinghouse and mandatory KYC. The international platform (Adventure One QSS Inc.) states it is not regulated by the CFTC, blocks US users, holds no customer funds (self-custody on Polygon), resolves disputes by UMA token vote, paid a $1.4M CFTC penalty in 2022, and faces 2026 class actions and a reported CFTC investigation over marketing practices."
+    },
+    {
+      "q": "Is Polymarket safe?",
+      "a": "On the international platform funds never leave the user's own wallet, so safety depends on private-key handling; there is no deposit insurance or clearinghouse guarantee, and incidents in 2024-2025 (a login-provider vulnerability and comment-section phishing) drained some accounts. Market outcomes are decided by UMA token holders and cannot be reversed, which produced the disputed Ukraine-minerals, Zelensky-suit and Strategy-Bitcoin resolutions; Trustpilot shows 1.4/5 from 619 reviews."
+    },
+    {
+      "q": "Is Polymarket US the same as Polymarket?",
+      "a": "No. Polymarket's own site says it 'operates globally through separate legal entities': Polymarket US is QCX LLC, a CFTC-regulated exchange launched to the public on May 12, 2026, using bank deposits, segregated customer accounts, KYC and an in-house outcome-review process; the international polymarket.com platform is run by Adventure One QSS Inc., uses on-chain USDC/pUSD, UMA oracle resolution, and is geoblocked for the United States."
+    }
+  ]
+}
