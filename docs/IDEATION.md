@@ -169,6 +169,16 @@ generation, pages, calculators, the disclosure language — is build work.
 |---|---|---|---|---|---|
 | 2026-09-07 | last 7 days (site live since 09-04) | 176 | 1 | 7.9 | 3 days of data; 68 URLs discovered 09-04. Pace ≈ 1,700 impressions / 30 days against the 2,000 pass line. |
 
+Top queries, 2026-09-07 (impressions): kalshi us house 2026 (4), polymarket
+senate control 2026 (4), polymarket house control 2026 (3), kalshi democrats win
+senate (2), polymarket house 2026 (2), kalshi senate control 2026 (1), september
+2026 fomc meeting date (1), do i have to pay taxes on kalshi (1), kalshi tax (1),
+december rate cut polymarket (1). Reading: the per-pair pages are what Google
+shows first, led by the 2026 House/Senate control pairs — which today are
+Kalshi vs Polymarket *global* pages, because politics is outside the radar's
+Polymarket US scope (normalizer defect, frozen during the study). The taxes
+page is reaching its query.
+
 Pass at 2026-10-16 needs ≥ 2,000 impressions in the trailing 30 days AND a
 top-20 page for a cluster term, AND one affiliate approval (see the test above).
 
