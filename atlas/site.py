@@ -36,7 +36,10 @@ from pathlib import Path
 from atlas.gap_radar import kalshi_taker_fee_per_contract
 from atlas.intel import _BLOCKER_PROSE
 
-SITE_VERSION = "0.2"
+SITE_VERSION = "0.3"
+# A pair not quoted in this many days is shown as closed rather than dropped:
+# deleting its page would 404 a URL Google may already have indexed.
+STALE_AFTER_DAYS = 3
 SITE_NAME = "Same bet or not?"
 TRUSTED_STATUSES = {"APPROVED_EQUIVALENT", "APPROVED_INVERSE"}
 REPO_URL = "https://github.com/omac049/atlas"
@@ -189,6 +192,8 @@ class PairPage:
     def tradeable(self) -> bool:
         return bool(self.observation.get("tradeable_venue_pair"))
 
+    stale: bool = False
+
     @property
     def polymarket_venue(self) -> str:
         return str(self.observation.get("polymarket_venue") or "polymarket_global")
@@ -255,6 +260,12 @@ class Site:
     # docs/site/kalshi-vs-polymarket.json: the head-term page's rows and FAQ,
     # every row sourced; None renders the short version that links the pillars.
     comparison: dict | None = None
+    # docs/site/legit.json: sourced facts behind the "is X legit" pages; None
+    # means those pages are not generated at all (never an empty page).
+    legit: dict | None = None
+    # Owner's referral codes by venue key, when they exist. Absent = the
+    # referral-code pages explain the program and say we publish no code.
+    referral_codes: dict[str, str] = field(default_factory=dict)
 
     @property
     def stamp(self) -> str:
@@ -475,9 +486,18 @@ def render_pair(site: Site, page: PairPage) -> str:
         else "<p class=\"muted\">The Polymarket leg here is the global venue, which US accounts "
         "cannot trade; it is shown for the rules comparison only.</p>"
     )
+    stale_html = (
+        "<div class=\"summary\"><strong>No longer quoted.</strong> This pair stopped being "
+        "observed on the last check, which usually means the event has settled or the contracts "
+        "closed. The rules comparison below is kept as a record; the prices are historical.</div>"
+        if page.stale
+        else ""
+    )
     body = (
         f"<p class=\"muted\">{_esc(page.family)}</p>"
         f"<h1>{_esc(page.title)}</h1>"
+        + stale_html
+        +
         f"<p class=\"muted\">Last checked {_esc(str(obs.get('observed_at', ''))[:16].replace('T', ' '))} UTC. "
         "Prices move constantly; the rules comparison is the durable part.</p>"
         + verdict
@@ -522,9 +542,11 @@ def _pair_row(p: PairPage) -> str:
 
 
 def render_index(site: Site) -> str:
-    same = [p for p in site.pairs if p.same_bet]
+    open_pairs = [p for p in site.pairs if not p.stale]
+    closed = [p for p in site.pairs if p.stale]
+    same = [p for p in open_pairs if p.same_bet]
     families: dict[str, list[PairPage]] = {}
-    for p in sorted(site.pairs, key=lambda p: (p.family, not p.tradeable, p.headline)):
+    for p in sorted(open_pairs, key=lambda p: (p.family, not p.tradeable, p.headline)):
         families.setdefault(p.family, []).append(p)
     sections = ""
     if same:
@@ -539,6 +561,13 @@ def render_index(site: Site) -> str:
             "<table><thead><tr><th>Pair</th><th>Verdict</th><th>Tradeable</th></tr></thead>"
             f"<tbody>{''.join(_pair_row(p) for p in pairs)}</tbody></table>"
         )
+    if closed:
+        sections += (
+            "<h2>Recently closed</h2><p class=\"muted\">No longer quoted; kept as a record of "
+            "the rules comparison.</p>"
+            "<table><thead><tr><th>Pair</th><th>Verdict</th><th>Tradeable</th></tr></thead>"
+            f"<tbody>{''.join(_pair_row(p) for p in sorted(closed, key=lambda p: p.headline))}</tbody></table>"
+        )
     body = (
         "<h1>Is it the same bet on Kalshi and Polymarket?</h1>"
         "<p class=\"lede\">The same event is often listed on both venues. Whether it is the "
@@ -546,7 +575,7 @@ def render_index(site: Site) -> str:
         "the data is late, how the number is rounded. Every page here compares the two venues' "
         "own published terms for one matched pair, using a deterministic rule check, and shows "
         "the live price and fee on each side.</p>"
-        f"<p>Tracking <strong>{len(site.pairs)} pairs</strong> right now; <strong>{len(same)}</strong> "
+        f"<p>Tracking <strong>{len(open_pairs)} pairs</strong> right now; <strong>{len(same)}</strong> "
         "verify as the same bet. No picks, no predictions — just what each venue says it will do.</p>"
         "<div class=\"cards\">"
         "<div class=\"card\"><a href=\"kalshi-vs-polymarket\">Kalshi vs Polymarket, side by side</a>"
@@ -560,6 +589,7 @@ def render_index(site: Site) -> str:
         "<div class=\"card\"><a href=\"taxes\">Taxes</a><p>What forms each venue sends, and "
         "what practitioners say about reporting.</p></div>"
         "</div>"
+        + _guides_html(site)
         + sections
     )
     return _page(site, title="Kalshi vs Polymarket — same bet or not, contract by contract",
@@ -953,6 +983,210 @@ def render_comparison(site: Site) -> str:
                  "funding, exact fees, settlement and disputes, taxes, referrals. Every row sourced.")
 
 
+def _guides_html(site: Site) -> str:
+    items = [
+        ("kalshi-vs-polymarket", "Kalshi vs Polymarket, side by side"),
+        ("arbitrage", "Kalshi vs Polymarket arbitrage: we measured it"),
+        ("kalshi-referral-code", "Kalshi referral code: how the program works"),
+        ("polymarket-referral-code", "Polymarket referral code: what it pays"),
+    ]
+    if site.legit:
+        items += [
+            ("is-kalshi-legit", "Is Kalshi legit? The documented record"),
+            ("is-polymarket-legit", "Is Polymarket legit? The documented record"),
+        ]
+    return "<h2>Guides</h2><ul>" + "".join(
+        f"<li><a href=\"{href}\">{_esc(label)}</a></li>" for href, label in items
+    ) + "</ul>"
+
+
+def _comparison_row(site: Site, prefix: str) -> dict | None:
+    for row in (site.comparison or {}).get("rows", []):
+        if str(row.get("topic", "")).lower().startswith(prefix):
+            return row
+    return None
+
+
+def render_referral_code(site: Site, venue: str) -> str:
+    row = _comparison_row(site, "referral") or {}
+    label = VENUE_LABELS[venue]
+    code = site.referral_codes.get(venue)
+    if venue == "kalshi":
+        title = "Kalshi referral code (2026): what it actually gives you"
+        path = "kalshi-referral-code.html"
+        what = (
+            "Kalshi's refer-a-friend program pays <strong>trading credits, not cash</strong>. "
+            "The referred person signs up with a link or code, passes identity verification, "
+            "and meets a trading requirement shown in the app; then both sides receive credits. "
+            "Credits must be used within 7 days unless stated otherwise, only profits made with "
+            "them become withdrawable, amounts and lifetime caps are set per account and shown "
+            "in-app, and the program is US-only."
+        )
+        venue_text = row.get("kalshi") or ""
+        other = (
+            "<p>Also searching \"Kalshi promo code\"? Kalshi publishes no separate promo-code "
+            "system; the referral program is the published incentive. Any site advertising an "
+            "\"exclusive\" Kalshi bonus beyond the in-app terms is describing something Kalshi "
+            "does not publish.</p>"
+        )
+    else:
+        title = "Polymarket referral code (2026): $25 credits, and what they are not"
+        path = "polymarket-referral-code.html"
+        what = (
+            "Polymarket US's refer-a-friend program pays <strong>bonus credits, not cash</strong>: "
+            "$25 to the referrer and $25 to the new user after the new user signs up with the "
+            "code and deposits at least $10. Each account can earn up to 14 referral bonuses. "
+            "Credits can only be used to trade; the resulting balance becomes withdrawable when "
+            "the position settles or is closed."
+        )
+        venue_text = row.get("polymarket_us") or ""
+        other = (
+            "<p><strong>Polymarket (global) is a different program on a venue US accounts cannot "
+            "use.</strong> There, referrers with $10,000+ lifetime volume earn 10% of direct "
+            "referrals' net trading fees (5% indirect) for 30 days, paid daily in pUSD. Pages "
+            "offering a \"Polymarket referral code\" to US readers with those terms are describing "
+            "the offshore venue.</p>"
+        )
+    code_html = (
+        f"<div class=\"summary\"><strong>Code:</strong> <code>{_esc(code)}</code> — entered at sign-up. "
+        "Every valid code gives the same published terms; there is no better code.</div>"
+        if code
+        else "<div class=\"summary\">We do not publish a code on this page yet. Every valid code "
+        "gives the same published terms above, so no code is \"better\" than another; the "
+        "terms are what matter, and they are quoted here from the venue's own help pages.</div>"
+    )
+    srcs = [(u, u) for u in row.get("sources", [])]
+    body = (
+        f"<h1>{_esc(title)}</h1>"
+        f"<p class=\"lede\">{what}</p>"
+        + code_html
+        + f"<h2>The terms in the venue's own words</h2><blockquote>{_esc(venue_text)}</blockquote>"
+        + other
+        + "<h2>How this compares</h2><p>Kalshi and Polymarket US both pay in credits that can only "
+        "be traded; neither pays cash for a referral. The full three-venue comparison, including "
+        "the affiliate programs, is on the <a href=\"referrals\">referral programs page</a>; "
+        "fees at any price are on the <a href=\"fees\">calculator</a>.</p>"
+        + (_sources(srcs) if srcs else "")
+    )
+    return _page(site, title=title, path=path, body=body,
+                 description=f"{label} referral program terms as published: credits not cash, "
+                 "requirements, caps, and what a code does and does not change.")
+
+
+def render_arbitrage(site: Site) -> str:
+    live = [
+        p for p in site.pairs
+        if p.tradeable and not p.stale and _dec(p.observation.get("best_gap")) is not None
+    ]
+    live.sort(key=lambda p: _dec(p.observation.get("best_gap")) or Decimal(0), reverse=True)
+    rows = "".join(
+        f"<tr><td><a href=\"compare/{p.slug}\">{_esc(p.headline)}</a></td>"
+        f"<td>{_cents(p.observation.get('best_gap'))}</td>"
+        f"<td>{_esc(_dec(p.observation.get('best_basket_size')) or '—')}</td>"
+        f"<td>{'Same bet ✓' if p.same_bet else 'Not verified'}</td></tr>"
+        for p in live[:10]
+    )
+    positive = sum(1 for p in live if (_dec(p.observation.get("best_gap")) or 0) > 0)
+    body = (
+        "<h1>Kalshi vs Polymarket arbitrage: we measured it, and here is what is left</h1>"
+        "<p class=\"lede\">The idea sounds free: the same event priced differently on two venues, "
+        "buy both sides, lock the difference. We built a system that watched both venues around "
+        "the clock for weeks, matched contracts by their published rules, priced both order books, "
+        "and applied each venue's published fee. This page is what it found, updated nightly.</p>"
+        "<h2>What the measurement found</h2>"
+        "<ul><li>Against the venue a US account can actually trade (Polymarket US), <strong>27 "
+        "matched pairs produced zero executable gaps</strong>. The two US venues are linked by "
+        "the same fast traders and agree on price.</li>"
+        "<li>Every gap the system ever recorded was against Polymarket's offshore venue, which US "
+        "accounts cannot use.</li>"
+        "<li>The best case, taking the numbers at face value: about <strong>3.4% annualized</strong> "
+        "on capital locked for five to eight months, on order books holding tens of dollars.</li>"
+        "<li>Fees are a curve that peaks at 50¢ on both venues (see the <a href=\"fees\">calculator</a>). "
+        "Most \"gaps\" people screenshot are smaller than the two fees combined.</li>"
+        "<li>And the contracts are usually not the same bet: settlement sources, delayed-data "
+        "rules, and rounding differ, so a \"locked\" position can settle two ways "
+        "(<a href=\"same-bet\">real cases</a>).</li></ul>"
+        "<h2>Today, across the pairs we track</h2>"
+        f"<p>{len(live)} US-tradeable pairs measured at the last rebuild; <strong>{positive}</strong> "
+        "show a positive gap after both venues' fees. A negative number means buying both sides "
+        "costs more than the $1 you get back.</p>"
+        "<table><thead><tr><th>Pair</th><th>Gap after fees</th><th>Contracts available</th>"
+        f"<th>Rules</th></tr></thead><tbody>{rows}</tbody></table>"
+        "<p class=\"muted\">Gap = $1 minus the cost of buying YES on one venue and NO on the other "
+        "at the best available prices, minus both venues' taker fees, per contract. \"Contracts "
+        "available\" is the thinner side's depth at that price.</p>"
+        "<h2>Where the numbers come from</h2>"
+        "<p>The instrument is a paper-only research system with a public record: four ideas for "
+        "making money in prediction markets, each tested against thresholds fixed before the data, "
+        f"each returning a negative. The write-ups are at <a href=\"{REPO_URL}\" rel=\"noopener\">"
+        f"{_esc(REPO_URL)}</a>. Nothing here is a strategy or a recommendation; it is a measurement.</p>"
+    )
+    return _page(site, title="Kalshi vs Polymarket arbitrage: measured, with today's gaps after fees",
+                 path="arbitrage.html", body=body,
+                 description="We measured cross-venue arbitrage between Kalshi and Polymarket for "
+                 "weeks: zero executable gaps on US venues. Today's gaps after fees, updated nightly.")
+
+
+def _legit_table(rows: list[dict]) -> str:
+    out = ""
+    for row in rows:
+        srcs = " ".join(
+            f"<a href=\"{_esc(u)}\" rel=\"nofollow noopener\">[{j + 1}]</a>"
+            for j, u in enumerate(row.get("sources") or [])
+        )
+        note = f"<div class=\"muted\">Note: {_esc(row['note'])}</div>" if row.get("note") else ""
+        out += (
+            f"<tr><th scope=\"row\">{_esc(row.get('topic'))}</th>"
+            f"<td>{_esc(row.get('fact') or 'Not found')}{note}"
+            f"<div class=\"muted\">{srcs}</div></td></tr>"
+        )
+    return f"<table><tbody>{out}</tbody></table>"
+
+
+def render_legit(site: Site, venue_key: str) -> str:
+    data = site.legit or {}
+    as_of = str(data.get("as_of") or "September 2026")
+    venues = data.get("venues") or {}
+    if venue_key == "kalshi":
+        title = "Is Kalshi legit? The documented record, not a verdict"
+        path = "is-kalshi-legit.html"
+        blocks = [("Kalshi", venues.get("kalshi", {}).get("rows", []))]
+        lede = (
+            "\"Is Kalshi legit\" is the most-searched question about the venue. This page does not "
+            "answer with a word; it lays out what is documented — who regulates it, where the money "
+            "sits, what it has paid, where it has been sued, how disputes went — with a source on "
+            "every line, so you can judge."
+        )
+    else:
+        title = "Is Polymarket legit? The documented record for both Polymarket venues"
+        path = "is-polymarket-legit.html"
+        blocks = [
+            ("Polymarket US", venues.get("polymarket_us", {}).get("rows", [])),
+            ("Polymarket (global)", venues.get("polymarket_global", {}).get("rows", [])),
+        ]
+        lede = (
+            "There are two Polymarkets: a US-regulated venue and the original global platform, "
+            "which US accounts cannot use. Much of what is written about \"Polymarket\" mixes them "
+            "up. This page keeps them apart and documents each — regulation, custody, disputes, "
+            "enforcement — with a source on every line, so you can judge."
+        )
+    faq = [f for f in data.get("faq", []) if venue_key in str(f.get("q", "")).lower()]
+    body = (
+        f"<h1>{_esc(title)}</h1><p class=\"lede\">{lede}</p>"
+        f"<p class=\"muted\">As of {_esc(as_of)}. Bracketed numbers link the source for each line.</p>"
+        + "".join(f"<h2>{_esc(name)}</h2>" + _legit_table(rows) for name, rows in blocks if rows)
+        + "<h2>Related</h2><ul><li><a href=\"legal\">Legal status by state</a></li>"
+        "<li><a href=\"kalshi-vs-polymarket\">Kalshi vs Polymarket, side by side</a></li>"
+        "<li><a href=\"same-bet\">Disputes where the same event paid differently</a></li></ul>"
+        + ("<h2>Questions people ask</h2>" + "".join(
+            f"<h3>{_esc(f.get('q'))}</h3><p>{_esc(f.get('a'))}</p>" for f in faq
+        ) + _faq_jsonld(faq) if faq else "")
+    )
+    return _page(site, title=title, path=path, body=body,
+                 description=f"What is documented about {'Kalshi' if venue_key == 'kalshi' else 'Polymarket'}: "
+                 "regulator, custody of funds, payouts, disputes, lawsuits, scale. Sourced, no verdict.")
+
+
 def render_about(site: Site) -> str:
     body = (
         "<h1>About</h1>"
@@ -994,7 +1228,13 @@ def render_all(site: Site) -> dict[str, str]:
         "methodology.html": render_methodology(site),
         "about.html": render_about(site),
         "kalshi-vs-polymarket.html": render_comparison(site),
+        "arbitrage.html": render_arbitrage(site),
+        "kalshi-referral-code.html": render_referral_code(site, "kalshi"),
+        "polymarket-referral-code.html": render_referral_code(site, "polymarket_us"),
     }
+    if site.legit:
+        pages["is-kalshi-legit.html"] = render_legit(site, "kalshi")
+        pages["is-polymarket-legit.html"] = render_legit(site, "polymarket")
     for page in site.pairs:
         pages[f"compare/{page.slug}.html"] = render_pair(site, page)
     base = site.base_url.rstrip("/")
@@ -1073,6 +1313,19 @@ def verify_comparison(data: dict | None) -> list[str]:
     ]
 
 
+def verify_legit(data: dict | None) -> list[str]:
+    """A 'legit' row asserting a fact without a loaded source is not publishable."""
+    if not data:
+        return []
+    problems = []
+    for venue, block in (data.get("venues") or {}).items():
+        for row in block.get("rows", []):
+            fact = str(row.get("fact") or "")
+            if fact and not fact.startswith(("Not published", "Not found")) and not row.get("sources"):
+                problems.append(f"legit: {venue} row '{row.get('topic')}' has no source")
+    return problems
+
+
 def build_site(
     observations: list[dict],
     *,
@@ -1082,6 +1335,8 @@ def build_site(
     quotes: dict[str, dict] | None = None,
     legal_states: dict | None = None,
     comparison: dict | None = None,
+    legit: dict | None = None,
+    referral_codes: dict[str, str] | None = None,
     generated_at: datetime | None = None,
     analytics_id: str | None = None,
 ) -> tuple[Site, dict[str, str]]:
@@ -1104,15 +1359,28 @@ def build_site(
         )
         for obs in latest.values()
     ]
+    now = generated_at or datetime.now(UTC)
+    for page in pairs:
+        try:
+            observed = datetime.fromisoformat(str(page.observation.get("observed_at")))
+        except (TypeError, ValueError):
+            continue
+        if observed.tzinfo is None:
+            observed = observed.replace(tzinfo=UTC)
+        page.stale = (now - observed).days >= STALE_AFTER_DAYS
     site = Site(
         base_url=base_url,
-        generated_at=generated_at or datetime.now(UTC),
+        generated_at=now,
         pairs=pairs,
         analytics_id=analytics_id,
         legal_states=legal_states,
         comparison=comparison,
+        legit=legit,
+        referral_codes=dict(referral_codes or {}),
     )
-    problems = verify_legal_states(legal_states) + verify_comparison(comparison)
+    problems = (
+        verify_legal_states(legal_states) + verify_comparison(comparison) + verify_legit(legit)
+    )
     if problems:
         raise ValueError("site guardrails failed: " + "; ".join(problems))
     pages = render_all(site)

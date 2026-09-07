@@ -2,6 +2,7 @@ import argparse
 import asyncio
 import functools
 import json
+import os
 import re
 import sqlite3
 from datetime import UTC, datetime, timedelta
@@ -1652,10 +1653,11 @@ async def clarity_scan(live: bool, max_markets: int = CLARITY_MAX_MARKETS_DEFAUL
     print(f"clarity_scan_written={target}")
 
 
-SITE_MAX_AGE_DAYS = 3
+SITE_MAX_AGE_DAYS = 21  # older pairs drop; within this, stale ones show as closed
 SITE_MAX_LIVE_FETCHES = 200
 SITE_LEGAL_STATES_PATH = Path("docs/site/legal-states.json")
 SITE_COMPARISON_PATH = Path("docs/site/kalshi-vs-polymarket.json")
+SITE_LEGIT_PATH = Path("docs/site/legit.json")
 GAMMA_MARKETS_URL = "https://gamma-api.polymarket.com/markets"
 
 
@@ -1802,6 +1804,18 @@ async def site_build(
     comparison = None
     if SITE_COMPARISON_PATH.exists():
         comparison = json.loads(SITE_COMPARISON_PATH.read_text())
+    legit = None
+    if SITE_LEGIT_PATH.exists():
+        legit = json.loads(SITE_LEGIT_PATH.read_text())
+    # ATLAS_SITE_REFERRAL_CODES="kalshi=ABC,polymarket_us=XYZ" — the owner's own
+    # codes, set in the plist once accounts exist; never read from any file.
+    referral_codes = {
+        k.strip(): v.strip()
+        for k, _, v in (
+            item.partition("=") for item in os.environ.get("ATLAS_SITE_REFERRAL_CODES", "").split(",")
+        )
+        if k.strip() and v.strip()
+    }
     site, pages = build_site(
         observations,
         base_url=base_url,
@@ -1810,6 +1824,8 @@ async def site_build(
         quotes=quotes,
         legal_states=legal_states,
         comparison=comparison,
+        legit=legit,
+        referral_codes=referral_codes,
         analytics_id=analytics_id,
     )
     written = write_site(pages, Path(out))

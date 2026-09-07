@@ -273,3 +273,64 @@ def test_jsonld_cannot_break_out_of_its_script_tag():
 
     out = _faq_jsonld([{"q": "x</script><script>alert(1)</script>", "a": "y"}])
     assert out.count("</script>") == 1
+
+
+def test_referral_code_pages_publish_terms_and_only_show_a_code_when_the_owner_has_one():
+    comparison = {"as_of": "2026-09-04", "rows": [
+        {"topic": "Referral / promotions", "kalshi": "Referral credits aren't cash.",
+         "polymarket_us": "$25 bonus credit for each qualifying referral",
+         "polymarket_global": "10% of net trading fees", "sources": ["https://example.test/ref"]}],
+        "faq": []}
+    pages = _pages(comparison=comparison)
+    k = pages["kalshi-referral-code.html"]
+    assert "Referral credits aren&#x27;t cash." in k and "We do not publish a code" in k
+    assert 'href="https://example.test/ref"' in k
+    with_code = _pages(comparison=comparison, referral_codes={"kalshi": "OMAR123"})
+    assert "<code>OMAR123</code>" in with_code["kalshi-referral-code.html"]
+    assert "We do not publish a code" in with_code["polymarket-referral-code.html"]
+    assert "<script>" not in _pages(referral_codes={"kalshi": "<script>"})["kalshi-referral-code.html"].split("<body>")[1].split("</main>")[0].replace("<script>window.dataLayer", "")
+
+
+def test_arbitrage_page_lists_only_tradeable_pairs_sorted_by_gap_after_fees():
+    a = _obs(kid="kalshi:A"); a["best_gap"] = "-0.0167"; a["best_basket_size"] = "1"
+    b = _obs(kid="kalshi:B"); b["best_gap"] = "0.004"; b["best_basket_size"] = "62"
+    b["kalshi_title"] = "TOP GAP PAIR"
+    g = _obs(kid="kalshi:G", venue="polymarket_global", pid="polymarket_global:1"); g["best_gap"] = "0.30"
+    _, pages = build_site([a, b, g], base_url="https://example.test", generated_at=AT)
+    page = pages["arbitrage.html"]
+    assert "TOP GAP PAIR" in page and "polymarket_global:1" not in page
+    assert page.index("TOP GAP PAIR") < page.index("kalshi:A".replace("kalshi:", "")) or "0.4¢" in page
+    assert "<strong>1</strong> show a positive gap" in page
+    assert "27 matched pairs produced zero executable gaps" in page
+
+
+def test_legit_pages_exist_only_with_data_and_require_sources():
+    assert "is-kalshi-legit.html" not in _pages()
+    data = {"as_of": "2026-09-07", "venues": {
+        "kalshi": {"rows": [{"topic": "Regulator", "fact": "CFTC-designated DCM since 2020.",
+                             "sources": ["https://example.test/cftc"]}]},
+        "polymarket_us": {"rows": [{"topic": "Regulator", "fact": "Not found", "sources": []}]},
+        "polymarket_global": {"rows": []}},
+        "faq": [{"q": "Is Kalshi legit?", "a": "Kalshi is a CFTC-designated exchange."},
+                {"q": "Is Polymarket safe?", "a": "Two venues; see the table."}]}
+    pages = _pages(legit=data)
+    k = pages["is-kalshi-legit.html"]
+    assert "CFTC-designated DCM since 2020." in k and 'href="https://example.test/cftc"' in k
+    assert "Is Kalshi legit?" in k and "Is Polymarket safe?" not in k
+    assert "Is Polymarket safe?" in pages["is-polymarket-legit.html"]
+    assert 'href="is-kalshi-legit"' in pages["index.html"]
+    bad = {"as_of": "x", "venues": {"kalshi": {"rows": [{"topic": "Custody", "fact": "FDIC insured.", "sources": []}]}}}
+    with pytest.raises(ValueError, match="Custody"):
+        _pages(legit=bad)
+
+
+def test_a_pair_not_quoted_for_three_days_is_shown_closed_not_deleted():
+    """Deleting a settled pair's page would 404 an indexed URL."""
+    fresh = _obs(kid="kalshi:FRESH", at="2026-09-04T10:00:00+00:00")
+    old = _obs(kid="kalshi:OLD", at="2026-08-30T10:00:00+00:00")
+    old["kalshi_title"] = "OLD SETTLED PAIR"; old["best_gap"] = "0.5"
+    _, pages = build_site([fresh, old], base_url="https://example.test", generated_at=AT)
+    old_page = next(h for p, h in pages.items() if "old" in p and p.startswith("compare/"))
+    assert "No longer quoted" in old_page
+    assert "Recently closed" in pages["index.html"] and "Tracking <strong>1 pairs" in pages["index.html"]
+    assert "OLD SETTLED PAIR" not in pages["arbitrage.html"]
