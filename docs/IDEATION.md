@@ -163,6 +163,15 @@ generation, pages, calculators, the disclosure language — is build work.
   event family, About page, 51-jurisdiction sourced legal table
   (`docs/site/legal-states.json`), visual identity.
 
+## Scoreboard (Search Console, owner's personal account; logged Mondays)
+
+| Logged | Window | Impressions | Clicks | Avg position | Notes |
+|---|---|---|---|---|---|
+| 2026-09-07 | last 7 days (site live since 09-04) | 176 | 1 | 7.9 | 3 days of data; 68 URLs discovered 09-04. Pace ≈ 1,700 impressions / 30 days against the 2,000 pass line. |
+
+Pass at 2026-10-16 needs ≥ 2,000 impressions in the trailing 30 days AND a
+top-20 page for a cluster term, AND one affiliate approval (see the test above).
+
 ## Deprioritized, not forgotten
 
 B (validation as a service) is the highest-probability *income* line if the
