@@ -1092,3 +1092,4 @@ evidence. The point of the 90 days is to let this accumulate.
   families are already on `main` with tests; the branches are dead duplicates.
 - [x] Demand-test site generator (`atlas site build`, `docs/SITE.md`) — owner: domain, hosting, Search Console, affiliate applications
 - [ ] Fifth charter (market making, paper-only replay): owner signs by merging `docs/decisions/2026-09-08-market-making-charter.md`; then build `atlas/making.py`, freeze, run Arm B, run Arm A on 2026-09-17, write results
+- [ ] Fee Verified build (charter merged 2026-09-08): schedules for 17 platforms with quotes + examples; engine per platform; owner: domain, hosting, Search Console, affiliate applications (`docs/FEES.md`)

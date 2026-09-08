@@ -1,0 +1,263 @@
+{
+  "platform": "shopify",
+  "name": "Shopify",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://www.shopify.com/pricing",
+      "title": "Shopify Pricing \u2014 You've got plans. Us too. (USA | English)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "Footnote only: Balance earnings rate 'accurate as of September 4, 2026' (fee schedule itself is undated)"
+    },
+    {
+      "url": "https://help.shopify.com/en/manual/payments/shopify-payments/onboarding/cost-of-shopify-payments",
+      "title": "Shopify Help Center \u2014 Shopify Payments fees",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/credit-card-rates",
+      "title": "Shopify Help Center \u2014 Shopify Payments rates in the United States by card type",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.shopify.com/en/manual/your-account/manage-billing/billing-charges/types-of-charges/third-party-charges/third-party-transaction-fees",
+      "title": "Shopify Help Center \u2014 Third-party transaction fees on your Shopify bills",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.shopify.com/en/manual/intro-to-shopify/pricing-plans/pricing-overview",
+      "title": "Shopify Help Center \u2014 Pricing plans and billing overview",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.shopify.com/en/manual/payments/shopify-payments/payouts/pay-periods-and-fees",
+      "title": "Shopify Help Center \u2014 Viewing your Shopify Payments payout fees",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/domestic-international-eu-credit-cards",
+      "title": "Shopify Help Center \u2014 Understanding domestic, international, and EEA credit cards",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.shopify.com/en/manual/international/pricing/fees",
+      "title": "Shopify Help Center \u2014 Fees and costs (selling in local currencies)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "Shopify Payments card rates and third-party transaction fees for US stores by plan. Subscriptions are shown as context, not per-sale; POS Pro, Plus custom rates and Shop Pay Installments are out of scope.",
+  "structure": "Two separate fees. (1) Shopify Payments card processing: fee = rate x amount + fixed cents, charged when you capture payment; the rate depends on plan (Basic / Grow / Advanced / Plus) and channel \u2014 online standard cards 2.9% / 2.7% / 2.5% (+ 30\u00a2), online premium cards (commercial/corporate/business cards and all domestic Amex) 3.5% / 3.3% / 3.1% (+ 30\u00a2), in-person cards 2.6% / 2.5% / 2.4% (+ 10\u00a2), in-person manual entry 3.5% + 10\u00a2 on every plan; cards issued outside the US add 1% ('cross-border fee'); paying in a non-payout currency adds a 1.5% currency conversion fee (US). The loaded pages do not itemize the base for card fees beyond 'the payment for an order' (i.e. the captured order amount). (2) Third-party transaction fee, charged by Shopify only when a third-party payment provider processes the payment (or on the store-credit/gift-card portion for stores created on or after May 12, 2025): 2% / 1% / 0.6% / 0.2% of [(cost of products - discounts) + tax + shipping charges]; waived entirely when Shopify Payments is the sole provider; if Shopify Payments runs alongside a third-party provider, Shopify Payments transactions also carry a 1.25% premium. Neither card fees nor third-party fees are returned on refunds. No rounding rule is published.",
+  "quotes": [
+    "Try 3 days free, then $1/month for 3 months.",
+    "| Pay monthly | $39 USD/mo | $105 USD/mo | $399 USD/mo | Starts at $2,300 USD/mo |",
+    "| Pay yearly | $29 USD/mo | $79 USD/mo | $299 USD/mo | Not included |",
+    "Basic\n$29/mo\nFor solo entrepreneurs",
+    "Grow\n$79/mo\nFor small teams",
+    "Advanced\n$299/mo\nFor global reach",
+    "Plus\nfrom $2,300/mo\nFor complex businesses\nTry for $399",
+    "Card rates from 2.9% + 30\u00a2 USD",
+    "Card rates from 2.7% + 30\u00a2 USD",
+    "Card rates from 2.5% + 30\u00a2 USD",
+    "Card rates from 2.25% + 30\u00a2 USD",
+    "| Online standard card rates | 2.9% + 30\u00a2 | 2.7% + 30\u00a2 | 2.5% + 30\u00a2 | Most competitive rates |",
+    "| Online premium card rates | 3.5% + 30\u00a2 | 3.3% + 30\u00a2 | 3.1% + 30\u00a2 | Most competitive rates |",
+    "| Online international rates | + 1% | + 1% | + 1% | Most competitive rates |",
+    "| PayPal Wallet rates | Starting at 3.49% + 49\u00a2 | Starting at 3.49% + 49\u00a2 | Starting at 3.49% + 49\u00a2 | Most competitive rates |",
+    "| In-person card rates | 2.6% + 10\u00a2 | 2.5% + 10\u00a2 | 2.4% + 10\u00a2 | Most competitive rates |",
+    "| USDC rates | 2.9% + 30\u00a2 | 2.7% + 30\u00a2 | 2.5% + 30\u00a2 | Most competitive rates |",
+    "| In-person manual rates | 3.5% + 10\u00a2 | 3.5% + 10\u00a2 | 3.5% + 10\u00a2 | Most competitive rates |",
+    "| Third-party transaction fees | 2% | 1% | 0.6% | 0.2% |",
+    "| POS Pro: Advanced tools for brick\u2011and\u2011mortar retailers | $89/mo per location | $89/mo per location | $89/mo per location | Includes 20 locations. Up to 200 with Shopify Payments. |",
+    "| Over 50 synced marketplace orders | 1% up to $99/mo | 1% up to $99/mo | 1% up to $99/mo | 1% up to $99/mo |",
+    "There are no setup fees on any of our plans.\nThird-party transaction fees may apply when you use a third-party payment provider (instead of Shopify Payments). The rate depends on your plan.\nShopify charges a small fee to allow you to accept major credit cards, such as Visa and Mastercard, as payment in your store. These fees vary depending on the plan that you choose.",
+    "Aside from the credit card rate and the subscription fees for your store's Shopify subscription plan, there are no monthly fees, no hidden fees, and no setup fees for Shopify Payments. When you use Shopify Payments as your sole payment provider, there are no third-party transaction fees for orders.",
+    "Transactions processed by your third-party provider, such as credit and debit card payments, are subject to third-party transaction fees based on your Shopify plan.\nTransactions processed by Shopify Payments, such as Shop Pay and local payment methods, are charged at standard Shopify Payments rates plus a 1.25% premium. Shopify Payments rates vary by plan type and market.",
+    "Standard: Includes domestic consumer cards issued by Visa, Mastercard, Discover, and Diners Club.\nPremium: Includes domestic commercial, corporate, or business-tier cards, such as Visa Business, and all domestic American Express cards.",
+    "If you process international cards and payment methods, then an additional charge applies above the base rate.",
+    "If your online store is based in the United States and you process payments by using Shopify Payments, then you're charged a 1% cross-border fee on all sales made with a credit card issued in another country.",
+    "Manually entered payments are subject to higher fees because card details are often collected over the phone or through other unencrypted methods, increasing the risk of fraud.",
+    "Shopify uses this formula to calculate third-party transaction fees for a 30-day period:\n[(cost of products - discounts) + tax + shipping charges] x rate\nThe rate for third-party transaction charges varies depending on your pricing plan.",
+    "Transaction fees don't apply for POS orders or for manual payment methods, which include cash on delivery (COD), bank deposits, checks, test orders, and draft orders marked as paid or pending. Third-party transaction fees aren't returned to you when you issue an order refund.",
+    "Transaction fees are in addition to processing fees charged by your third-party payment provider.",
+    "Stores on the Shopify Plus plan that use Shopify Payments as their sole payment provider have their third-party transaction fees waived, including fees on store credit and gift cards. If you use Shopify Payments alongside a third-party payment provider, then transaction fees apply.",
+    "Credit card transaction fees aren't returned to you when you issue a refund.",
+    "If you switch to an annual billing cycle, then you can receive a discount on your subscription charge. Annual billing charges the full year upfront and presents a lower effective monthly rate.",
+    "When you use Shopify Payments, you pay the credit card rate, but you don't pay a transaction fee. Stores that use a third-party payment provider instead of Shopify Payments pay both a transaction fee from Shopify, and credit card fees charged by their third-party payment provider.",
+    "When you capture the payment for an order, you're charged a Shopify Payments fee (in your payout currency) which covers the cost of processing the payment. The fee amount depends on the type of credit card that is used and the location where the credit card is registered.",
+    "| Currency conversion fee | 1.5% | 2% | 2% |",
+    "Currency conversion fee - The fee that Shopify charges (in your payout currency) to convert currencies when you capture a payment. Currency conversion fees and credit card fees are not returned to you when you issue a refund, but you're not charged additional conversion fees when you issue a refund or when you receive a chargeback."
+  ],
+  "excluded": [
+    "Chargeback fee (not captured on loaded pages)",
+    "POS hardware, POS Pro subscription ($89/mo per location)",
+    "Shopify Plus negotiated card rates ('Most competitive rates'), Plus 1- or 3-year term pricing",
+    "MB WAY / Bizum rates (non-US methods), PayPal Wallet detail beyond the 'starting at' rate",
+    "Marketplace synced-order fee (1% up to $99/mo over 50 orders), pay-per-send SMS, app charges, domain purchases",
+    "Shopify Balance, Capital, Credit card cashback, Bill Pay, Shopify Tax add-ons",
+    "Shipping label costs / discounts"
+  ],
+  "notes": [
+    "The pricing page defaults to the 'Pay yearly' toggle, so the headline prices ($29 / $79 / $299) are the annual-billing effective monthly rates; monthly billing is $39 / $105 / $399. Plus is 'Starts at $2,300 USD/mo' with 'Not included' under Pay yearly and a 'Try for $399' offer.",
+    "Plus card rate conflict: the plan card says 'Card rates from 2.25% + 30\u00a2 USD' while every Plus row of the comparison table says 'Most competitive rates' (no number).",
+    "The base for Shopify Payments card fees is not itemized on the loaded pages (fees are charged 'when you capture the payment for an order'); the third-party transaction fee formula explicitly includes tax and shipping. Calculator author must decide whether to apply card rates to the order total including shipping and tax (consistent with fees on the captured amount).",
+    "'Online international rates + 1%' on the pricing page corresponds to the help center's '1% cross-border fee on all sales made with a credit card issued in another country' for US stores; the pricing page lists it only under online rates, so treatment of international cards in person is unspecified.",
+    "Online 'premium' card rates apply to domestic commercial/corporate/business cards and all domestic American Express cards \u2014 a calculator needs the card type as an input.",
+    "Third-party transaction fees also apply to the store-credit/gift-card portion of orders for stores created on or after May 12, 2025, even when Shopify Payments is used (waived on Plus with Shopify Payments as sole provider).",
+    "If Shopify Payments is used alongside a third-party provider, Shopify Payments transactions are charged standard rates plus a 1.25% premium.",
+    "Currency conversion fee is 1.5% for US stores (2% France/other; 3% for PayPal Wallet) and is charged in the payout currency; it is not refunded on refunds.",
+    "No rounding rule is published on the loaded pages.",
+    "help.shopify.com returns an empty shell over plain HTTP; the pages were captured with a JavaScript-rendering fetch.",
+    "Rates shown are for the USA | English locale; the page says pricing and payment options differ by country."
+  ],
+  "rates": {
+    "online_standard": {
+      "basic": [
+        0.029,
+        0.3
+      ],
+      "grow": [
+        0.027,
+        0.3
+      ],
+      "advanced": [
+        0.025,
+        0.3
+      ]
+    },
+    "online_premium": {
+      "basic": [
+        0.035,
+        0.3
+      ],
+      "grow": [
+        0.033,
+        0.3
+      ],
+      "advanced": [
+        0.031,
+        0.3
+      ]
+    },
+    "in_person": {
+      "basic": [
+        0.026,
+        0.1
+      ],
+      "grow": [
+        0.025,
+        0.1
+      ],
+      "advanced": [
+        0.024,
+        0.1
+      ]
+    },
+    "manual": [
+      0.035,
+      0.1
+    ],
+    "international_surcharge": 0.01,
+    "third_party_fee": {
+      "basic": 0.02,
+      "grow": 0.01,
+      "advanced": 0.006
+    },
+    "plan_monthly": {
+      "basic": 39,
+      "grow": 105,
+      "advanced": 399
+    },
+    "plan_yearly_billed": {
+      "basic": 29,
+      "grow": 79,
+      "advanced": 299
+    }
+  },
+  "summary": "With Shopify Payments, online card payments cost 2.9% + 30\u00a2 on Basic, 2.7% on Grow and 2.5% on Advanced (premium cards 3.5%/3.3%/3.1%), in person 2.6%/2.5%/2.4% + 10\u00a2, plus 1% for cards issued outside the US. Using another payment provider adds Shopify's 2%/1%/0.6% transaction fee on top of that provider's charges. Plans are $39/$105/$399 a month.",
+  "inputs": [
+    {
+      "id": "amount",
+      "label": "Order total charged",
+      "type": "money",
+      "default": 100
+    },
+    {
+      "id": "plan",
+      "label": "Plan",
+      "type": "select",
+      "default": "basic",
+      "options": [
+        [
+          "basic",
+          "Basic ($39/mo)"
+        ],
+        [
+          "grow",
+          "Grow ($105/mo)"
+        ],
+        [
+          "advanced",
+          "Advanced ($399/mo)"
+        ]
+      ]
+    },
+    {
+      "id": "channel",
+      "label": "Payment",
+      "type": "select",
+      "default": "online_standard",
+      "options": [
+        [
+          "online_standard",
+          "Online, standard card"
+        ],
+        [
+          "online_premium",
+          "Online, premium/commercial card or Amex"
+        ],
+        [
+          "in_person",
+          "In person"
+        ],
+        [
+          "manual",
+          "Manually entered"
+        ],
+        [
+          "third_party",
+          "Another payment provider (Shopify's transaction fee only)"
+        ]
+      ]
+    },
+    {
+      "id": "international",
+      "label": "Card issued outside the US (+1%)",
+      "type": "bool",
+      "default": false
+    }
+  ],
+  "examples": [
+    {
+      "description": "Arithmetic check derived from the published rates: $100 online standard card on Basic.",
+      "inputs": {
+        "amount": 100,
+        "plan": "basic",
+        "channel": "online_standard"
+      },
+      "expected": {
+        "total_fees": 3.2,
+        "net": 96.8
+      },
+      "quote": "2.9% + 30\u00a2 USD online",
+      "source_url": "https://www.shopify.com/pricing",
+      "derived": true
+    }
+  ]
+}

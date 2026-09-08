@@ -1,0 +1,842 @@
+[
+  {
+    "platform": "square",
+    "name": "Square",
+    "as_of": "2026-09-08",
+    "sources": [
+      {
+        "url": "https://squareup.com/us/en/pricing",
+        "title": "Pricing — Your complete business toolkit, starting at $0 (Square, US)",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://squareup.com/help/us/en/article/5068-what-are-square-s-fees",
+        "title": "Learn about Square fees (Square Support Center, US)",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://squareup.com/us/en/payments/our-fees",
+        "title": "Square Payments — Know what processing fees you’ll pay",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://squareup.com/us/en/payments/fee-calculator",
+        "title": "Square Payments — Calculate your Square processing fees",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://squareup.com/help/us/en/article/5092-rounding",
+        "title": "(redirects to article 5068 'Learn about Square fees'; no separate rounding article exists)",
+        "loaded": true,
+        "last_updated_on_page": null
+      }
+    ],
+    "rates": {
+      "plan_free_monthly_usd_per_location": 0,
+      "plan_plus_monthly_usd_per_location": 49,
+      "plan_premium_monthly_usd_per_location": 149,
+      "plan_pro_custom_pricing_threshold_annual_sales_usd": 250000,
+      "in_person_card_free_pct": 0.026,
+      "in_person_card_free_fixed_usd": 0.15,
+      "in_person_card_plus_pct": 0.025,
+      "in_person_card_plus_fixed_usd": 0.15,
+      "in_person_card_premium_pct": 0.024,
+      "in_person_card_premium_fixed_usd": 0.15,
+      "online_card_free_pct": 0.033,
+      "online_card_free_fixed_usd": 0.3,
+      "online_card_plus_pct": 0.029,
+      "online_card_plus_fixed_usd": 0.3,
+      "online_card_premium_pct": 0.029,
+      "online_card_premium_fixed_usd": 0.3,
+      "online_api_card_all_plans_pct": 0.029,
+      "online_api_card_all_plans_fixed_usd": 0.3,
+      "manual_entry_or_card_on_file_all_plans_pct": 0.035,
+      "manual_entry_or_card_on_file_all_plans_fixed_usd": 0.15,
+      "ach_via_invoice_pct": 0.01,
+      "ach_via_invoice_min_fee_usd": 1.0,
+      "ach_via_invoice_fee_cap_usd_free": null,
+      "ach_via_invoice_fee_cap_usd_plus": 10.0,
+      "ach_via_invoice_fee_cap_usd_premium": 10.0,
+      "ach_via_api_pct": 0.01,
+      "ach_via_api_min_fee_usd": 1.0,
+      "ach_via_api_fee_cap_usd": 5.0,
+      "afterpay_all_plans_pct": 0.06,
+      "afterpay_all_plans_fixed_usd": 0.3,
+      "international_card_surcharge_pct": 0.015,
+      "ebt_pct": 0.018,
+      "ebt_fixed_usd": 0.05,
+      "ebt_waived_through": "fall 2026 (beta)",
+      "bitcoin_payment_pct_until_2026_12_31": 0.0,
+      "bitcoin_payment_pct_after": 0.01,
+      "gift_card_load_fee_pct_free_and_plus": 0.025,
+      "gift_card_load_fee_pct_premium": 0.0,
+      "cash_or_check_fee": 0,
+      "legacy_plan_in_person_pct": 0.026,
+      "legacy_plan_in_person_fixed_usd": 0.15,
+      "legacy_plan_online_invoice_payment_links_pct": 0.033,
+      "legacy_plan_online_invoice_payment_links_fixed_usd": 0.3,
+      "legacy_plan_ecommerce_api_pct": 0.029,
+      "legacy_plan_ecommerce_api_fixed_usd": 0.3,
+      "legacy_plan_manual_or_card_on_file_pct": 0.035,
+      "legacy_plan_manual_or_card_on_file_fixed_usd": 0.15,
+      "legacy_plan_ach_pct": 0.01,
+      "legacy_plan_ach_min_fee_usd": 1.0,
+      "legacy_plan_ach_fee_cap_usd": 10.0,
+      "legacy_plan_cash_app_pay_card_present_pct": 0.026,
+      "legacy_plan_cash_app_pay_card_present_fixed_usd": 0.15,
+      "legacy_plan_cash_app_pay_card_not_present_pct": 0.033,
+      "legacy_plan_cash_app_pay_card_not_present_fixed_usd": 0.3
+    },
+    "structure": "Fee per card payment = (percentage rate x transaction total) + fixed cents, where the rate depends on plan (Square Free / Square Plus / Square Premium; monthly plan fee is $0 / $49 / $149 per location) and on how the card was taken (in person tap/dip/swipe; online or invoice; online via Square payments APIs; manually entered or card on file). The base is the whole transaction: 'Payment processing fees are taken out of the total amount of each transaction, including tax and tip', and the same rate applies to every card brand. Cards issued outside the US add a 1.5% international surcharge on top of the base rate (not applied to Afterpay, ACH, Cash App Pay, Bitcoin or EBT). ACH bank transfers cost 1% with a $1 minimum, capped at $10 per payment on invoices (Plus/Premium; the Free column shows no cap) and $5 per payment via the API. Fees are deducted before funds are transferred to the seller's bank; no rounding rule is published; chargebacks/dispute management carry no fee.",
+    "examples": [],
+    "quotes": [
+      "Payment processing fees are taken out of the total amount of each transaction, including tax and tip. This fee covers all credit card fees and applies to every card brand at the same rate. The fee is deducted from the total transaction amount and applies to all businesses, including non-profit organizations.",
+      "Square’s processing fees are deducted before funds are transferred to your linked bank account.",
+      "Tap, dip, or swipe\nApplies to in-person payments when a card is present.\n2.6% + 15¢\n2.5% + 15¢\n2.4% + 15¢",
+      "Online\nApplies to card payments made online or through an invoice.\n3.3% + 30¢\n2.9% + 30¢\n2.9% + 30¢",
+      "Online API\nApplies to card payments made within your web or mobile application's workflow using our payments APIs.\n2.9% + 30¢\n2.9% + 30¢\n2.9% + 30¢",
+      "ACH bank transfer (via invoice)\nApplies to payments made on invoices with an ACH bank transfer.\n1%, $1 min\n1%, $1 min,\n$10 fee cap\n1%, $1 min,\n$10 fee cap",
+      "ACH bank transfer (via API)\nApplies to ACH transfers through the Web Payments SDK and Payments API.\n1%, $1 min, $5 fee cap\n1%, $1 min, $5 fee cap\n1%, $1 min, $5 fee cap",
+      "Manual entry or card on file\nApplies to payments when a card number is manually entered or when a saved card on file is used.\n3.5% + 15¢\n3.5% + 15¢\n3.5% + 15¢",
+      "Afterpay\nYou get paid immediately, but customers pay over time in four installments.\n6% + 30¢\n6% + 30¢\n6% + 30¢",
+      "Cash or check\nApplies to any payment made via cash or check.\nFree\nFree\nFree",
+      "Bitcoin payments\nApplies to in-person payments where buyer scans a QR code to pay in bitcoin.\n0% until 2027\n0% until 2027\n0% until 2027",
+      "EBT\nApplies to in-person payments made with an EBT card for SNAP-eligible items. Processing fees are waived for EBT payments while the feature is in beta, through fall 2026.\n1.8% + 5¢\n1.8% + 5¢\n1.8% + 5¢",
+      "Locations\nWith Square Plus and Square Premium, the monthly fee applies to each location you run.\n$0/mo. per location\n$49/mo. per location\n$149/mo. per location",
+      "International card transaction fee\nAn additional fee applies to payments made on credit or debit cards issued outside of the United States.\n1.5%\n1.5%\n1.5%",
+      "Gift card load\nWith Square Free and Square Plus, you pay a 2.5% load fee. There are no additional fees when a gift card is redeemed.\n2.5% load fee\n2.5% load fee\n0% load fee",
+      "Processing fees vary based on the Square plan you choose. Square Premium offers the lowest processing fees. If you process over $250,000 per year, you can talk to our team about custom pricing and processing fees.",
+      "Square Plus and Square Premium each offer a free 30-day trial, and you can cancel or switch plans anytime. With Square Free, there are no monthly subscription costs — you only pay processing fees when you take a payment.",
+      "Payments made with credit or debit cards issued in a different country than the location of your Square account incur a 1.5% international transaction fee, in addition to Square’s base processing fees. International transaction fees apply to in-person, online, card-not-present (CNP), and Square API transactions, as well as all Square pricing tiers.",
+      "International transaction fees don’t apply to alternative payment methods such as Afterpay, ACH, Cash App Pay, Bitcoin, or EBT payments.",
+      "Here are the processing fees for legacy plan subscribers:\nSwiped Magstripe Cards: 2.6% + 15¢ **\nSwiped or Inserted Chip Cards: 2.6% + 15¢ **\nContactless (NFC) Payments: 2.6% + 15¢ **\nTap to Pay on iPhone: 2.6% + 15¢ **\nTap to Pay on Android: 2.6% + 15¢ **\nPoint-of-Sale API Swiped or Inserted Payments: 2.6% + 15¢ **\nSwiped Virtual Terminal Payments: 2.6% + 15¢ **\nPayment Links Through Text in Virtual Terminal: 3.3% + 30¢ **\nCard on File Transactions: 3.5% + 15¢*\nManually Entered Card Payments: 3.5% + 15¢*\nPoint-of-Sale API Keyed-In Payments: 3.5% + 15¢*\nManually Entered Virtual Terminal Payments: 3.5% + 15¢*\nSquare eCommerce API: 2.9% + 30¢\nOnline payments: 3.3% + 30¢ **\nSquare Invoices: 3.3% + 30¢ **\nSquare Payment Links: 3.3% + 30¢ **\nSubscription Payments: 3.3% + 30¢ **\nCash App Pay (Card-Present Transactions): 2.6% + 15¢ **\nCash App Pay (Card-Non-Present Transactions): 3.3% + 30¢ **\nNeighborhoods on Cash App: 1% for participating Neighborhoods sellers on orders through Cash App.\nACH Transactions: 1%, minimum $1 **\n$0 fees for ACH transactions deposited into Square Checking\n$10 fee cap on all ACH bank transfer payments.\nInternational cards: 1.5% international transaction fee\nEBT processing fee: 1.8% + 5¢ (waived during open beta)",
+      "**Payment processing rates may vary based on plan type. Check your Pricing & subscriptions page in Square Dashboard for rates applicable to your plan.",
+      "Bitcoin payments: 0% processing fees until December 31, 2026, after which it will be 1%.",
+      "Square sellers using Afterpay get paid the full amount at the time of purchase, minus a processing fee on the total order. Enabling Afterpay with Square is free — there are no monthly fees or startup costs. You only pay when you make a sale. There are no processing fees charged on the remaining installments or if your customer makes a late payment.",
+      "Afterpay rates are fixed and do not vary by subscription type, hardware or custom pricing.",
+      "There are no fees for:\nActivation\nDownloading the Square Point of Sale app\nChargebacks and Dispute management\nSquare Support\nAdvanced reporting tools\nAccount inactivity\nPCI compliance support\nAccount takeover protection\nEnd-to-end encrypted payments\nActive fraud prevention\nAs soon as next-business-day transfers\nFree Square Reader for magstripe\nEarly termination",
+      "You won’t pay any fees for Cash, Check, and Other Tender payment types."
+    ],
+    "excluded": [
+      "Chargeback / dispute fees (Square states there are none)",
+      "Hardware prices (readers 'starting at $59')",
+      "Square KDS app ($30/$20 per device per month) and Square Kiosk app ($50/$30 per device per month)",
+      "Text message marketing overage (3¢ / 1.5¢ per text)",
+      "Square Payroll ($35/month + $6 per person paid)",
+      "Bitcoin buy/sell (1% plus spread), bitcoin conversions (1.0%/1.0%/0.5%), bitcoin withdrawal network fees ($2 rush / $3 priority)",
+      "Square Gift Card eGift order-site processing (3.3% + 30¢ card-not-present)",
+      "Neighborhoods on Cash App 1% seller fee",
+      "Custom ('Square Pro') negotiated pricing for sellers over $250,000/year",
+      "Square Checking / Savings / Loans"
+    ],
+    "notes": [
+      "The three-column fee table on squareup.com/us/en/pricing, /payments/our-fees and /payments/fee-calculator lost its column headers in text extraction; the Free / Plus / Premium order was inferred from the plan-card order on the page and from the page text ('Lower processing fees' for Plus, 'Lowest processing fees' for Premium, and the FAQ 'Square Premium offers the lowest processing fees'), so the third column (2.4% + 15¢ in person; $149/mo) = Premium, second (2.5% + 15¢; $49/mo) = Plus, first (2.6% + 15¢; $0/mo) = Free. Verify visually before publishing.",
+      "The help article's per-plan dropdowns ('Square Free', 'Square Plus', 'Square Premium') load only on click and could not be captured; the article's explicit rate list is for legacy plans, which match the Free column (2.6% + 15¢ in person, 3.3% + 30¢ online, 2.9% + 30¢ eCommerce API, 3.5% + 15¢ keyed/card on file).",
+      "ACH via invoice: the Free column reads '1%, $1 min' with no cap, while Plus/Premium read '1%, $1 min, $10 fee cap'; the legacy-plan help text says '$10 fee cap on all ACH bank transfer payments' and '$0 fees for ACH transactions deposited into Square Checking'. Calculator author must decide whether Free-plan ACH invoice payments are capped.",
+      "No rounding rule is published anywhere on the loaded pages; the /help/us/en/article/5092-rounding URL redirects to the general fees article.",
+      "The 'Online' rate on the new plans covers 'card payments made online or through an invoice' (3.3% + 30¢ on Free, 2.9% + 30¢ on Plus/Premium), while 'Online API' payments are 2.9% + 30¢ on every plan — so on Square Free an invoice costs more than an API payment.",
+      "Square plans are monthly per location with no annual-billing price on the page; the free-trial length renders as an unfilled template placeholder ('{{sub2_api.num_free_trial_days}}') in the page text, while the FAQ states a 30-day trial.",
+      "The pricing page's only 'as of' dates are for savings APY (Jan 23, 2026) and do not date the fee schedule.",
+      "The in-person and online rates are the same for every card brand ('You can accept every major card — Visa, Mastercard, American Express, and Discover — all for the same processing fees').",
+      "Cash App Pay accepted through Square is priced on Square's legacy list at 2.6% + 15¢ (card-present) / 3.3% + 30¢ (card-not-present); the new-plan table does not list Cash App Pay separately."
+    ]
+  },
+  {
+    "platform": "stripe",
+    "name": "Stripe",
+    "as_of": "2026-09-08",
+    "sources": [
+      {
+        "url": "https://stripe.com/pricing",
+        "title": "Pricing & Fees | Stripe (United States, English)",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://stripe.com/pricing/local-payment-methods",
+        "title": "Accept popular payment methods with a single integration — payment method pricing (US)",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://support.stripe.com/questions/manually-entered-card-payments",
+        "title": "Manually entered card payments — Stripe Support",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://docs.stripe.com/payouts/instant-payouts",
+        "title": "Instant Payouts for Stripe Dashboard users — Stripe Docs",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://stripe.com/legal/pricing-policy",
+        "title": "Stripe Pricing Policy",
+        "loaded": true,
+        "last_updated_on_page": "Last modified: July 20, 2026"
+      },
+      {
+        "url": "https://support.stripe.com/questions/rounding-rules-for-stripe-fees",
+        "title": "Rounding rules for Stripe fees — Stripe Support",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://docs.stripe.com/payments/ach-direct-debit",
+        "title": "ACH Direct Debit payments — Stripe Docs (no fee amounts on page)",
+        "loaded": true,
+        "last_updated_on_page": null
+      }
+    ],
+    "rates": {
+      "card_domestic_online_pct": 0.029,
+      "card_domestic_online_fixed_usd": 0.3,
+      "manually_entered_card_surcharge_pct": 0.005,
+      "manually_entered_card_total_pct": 0.034,
+      "manually_entered_card_total_fixed_usd": 0.3,
+      "international_card_surcharge_pct": 0.015,
+      "currency_conversion_surcharge_pct": 0.01,
+      "ach_direct_debit_pct": 0.008,
+      "ach_direct_debit_fee_cap_usd": 5.0,
+      "ach_direct_debit_fixed_usd": 0,
+      "instant_payout_us_pct": 0.015,
+      "instant_payout_us_min_amount_usd": 0.5,
+      "instant_payout_us_max_amount_usd": 9999,
+      "instant_payout_max_per_day": 10,
+      "dispute_received_fee_usd": 15.0,
+      "dispute_countered_fee_usd": 15.0,
+      "dispute_countered_fee_refunded_if_won": true,
+      "smart_disputes_fee_pct_of_disputed_amount_if_won": 0.3,
+      "terminal_in_person_domestic_pct": 0.027,
+      "terminal_in_person_domestic_fixed_usd": 0.05,
+      "terminal_tap_to_pay_per_authorization_usd": 0.1,
+      "terminal_p2pe_optional_per_authorization_usd": 0.05,
+      "link_card_pct": 0.029,
+      "link_card_fixed_usd": 0.3,
+      "wallets_apple_google_cash_app_pay_pct": 0.029,
+      "wallets_apple_google_cash_app_pay_fixed_usd": 0.3,
+      "klarna_pct": 0.0599,
+      "klarna_fixed_usd": 0.3,
+      "affirm_pct": 0.06,
+      "affirm_fixed_usd": 0.3,
+      "stablecoin_pct": 0.015,
+      "invoicing_starter_pct_per_paid_invoice": 0.004,
+      "post_payment_invoice_pct": 0.004,
+      "post_payment_invoice_cap_usd": 2.0,
+      "managed_payments_merchant_of_record_pct": 0.035,
+      "refund_charge": "fixed fee applicable to the refunded transaction is charged per successful refund (Pricing Policy 1.4)",
+      "setup_or_monthly_fee_usd": 0,
+      "rounding": "each Stripe fee rounded to nearest cent; 0.025 -> 0.03, 0.024 -> 0.02"
+    },
+    "structure": "Standard US pricing: 2.9% of the transaction amount plus $0.30 per successful domestic card transaction (online cards and wallets; same rate for Link, Apple Pay, Google Pay, Cash App Pay). Surcharges add percentage points on the same base: +0.5% for manually entered (Dashboard/MOTO) cards, giving 3.4% + $0.30; +1.5% for cards issued outside the US; +1% if currency conversion is required (surcharges can stack). Stripe does not itemize tax or shipping — the fee applies to the full amount charged. Each Stripe fee is rounded to the nearest cent (0.025 rounds up to 0.03, 0.024 rounds down to 0.02). ACH Direct Debit is 0.8% capped at $5.00 per transaction. Instant Payouts for US accounts cost 1.5% of the payout amount, with each payout between $0.50 and $9,999 and at most 10 per day. Disputes: $15.00 when received plus $15.00 when countered manually (the countered fee is returned if you win). Per the Pricing Policy, each successful refund is charged the fixed fee applicable to the refunded transaction.",
+    "examples": [
+      {
+        "description": "Rounding example from the Stripe Pricing Policy / support article (a computed fee of $0.025 becomes $0.03; $0.024 becomes $0.02).",
+        "inputs": {
+          "computed_fee_usd_before_rounding": [
+            0.025,
+            0.024
+          ]
+        },
+        "expected": {
+          "fee": [
+            0.03,
+            0.02
+          ],
+          "net": null
+        },
+        "quote": "Stripe rounds each Stripe fee to the nearest unit (e.g., cents). For example, if the fee is 0.025, Stripe will round up to 0.03. If the fee is 0.024, Stripe will round down to 0.02.",
+        "source_url": "https://stripe.com/legal/pricing-policy"
+      }
+    ],
+    "quotes": [
+      "Access a complete payments platform with simple, pay-as-you-go pricing. No setup fees, monthly fees, or hidden fees.",
+      "2.9% + 30¢\nper successful transaction for domestic cards",
+      "+\n0.5%\nfor manually entered cards",
+      "+\n1.5%\nfor international cards",
+      "+\n1%\nif currency conversion is required",
+      "0.8%\nACH Direct Debit\n$5.00 cap",
+      "ACH Direct Debit 0.8% per transaction for standard settlement timing",
+      "Dispute received fee\n$15.00\nfor each dispute you receive.\nIn rare cases, network fees also apply.",
+      "Dispute countered fee\n$15.00\nfor each dispute you respond to manually.\nYou get this fee back for won disputes. You don't get this fee back for lost disputes.",
+      "Smart Disputes fee\n30%\nof the disputed amount for each dispute you win.\nThere's no Smart Dispute fee for lost disputes. The dispute received fee still applies.",
+      "Cards and wallets\nAccept widely used credit cards, debit cards, and digital wallets for in-person payments.\n2.7% + 5¢\nper successful transaction for domestic cards\n+\n1.5%\nfor international cards\n+\n$0.10\nper authorization for Tap to Pay",
+      "Cash App Pay 2.9% + 30¢ per successful charge",
+      "Apple Pay 2.9% + 30¢ per successful charge",
+      "Link Cards 2.9% + 30¢ per successful transaction",
+      "5.99% + 30¢\nper successful transaction for Klarna",
+      "Affirm Standard 6% + 30¢ per successful charge",
+      "Stablecoins\nEnable customers globally to pay with stablecoins.\n1.5%\nof the transaction amount in USD",
+      "Post-payment invoices\nAutomatically generate an invoice after a one-time purchase.\n0.4%\non transaction total\n$2.00\ncap per invoice",
+      "Transaction fees on cards entered manually in the Dashboard or with Terminal MOTO are 3.4% + 0.30 USD for businesses on standard pricing based in the US, and 3.4% + 0.30 CAD for businesses based in Canada, Standard card payments are 2.9% + 0.30 USD in the US, and 2.9% + 0.30 CAD in Canada.",
+      "The first subscription payment using a card whose details have been typed into the Dashboard. All subsequent subscription payments using that card will be charged the standard 2.9% + 0.30 USD card processing fee.",
+      "Stripe charges Dashboard users a 1% fee for all Instant Payouts for CA, EU, UK, SG, NO, HK and MY, and a 1.5% fee for US, AU, NZ, and AE. Each Instant Payout transaction has a minimum and maximum amount dependent on the currency.",
+      "| United States | 0.50 USD | 9,999 USD |",
+      "You’re limited to a maximum of 10 Instant Payouts per day.",
+      "Fees: The Instant Payout fee is pre-deducted so the balance shown reflects what you’d actually receive.",
+      "Funds acquired from card payments are available for Instant Payouts as soon as the charge is complete. ACH or bank debits are only available for Instant Payouts after the payment has settled.",
+      "1.3 Stripe rounds each Stripe fee to the nearest unit (e.g., cents). For example, if the fee is 0.025, Stripe will round up to 0.03. If the fee is 0.024, Stripe will round down to 0.02.",
+      "1.4 Stripe may offer you the ability to refund a successful payment to your Customer, either in full or in part. Card Transaction refunds constitute a Charge Event (as defined in your Pricing Agreement), and for each successful refund, Stripe will charge you the fixed fee in your Pricing Agreement applicable to the Transaction that is being refunded.",
+      "Stripe rounds the Stripe fee to the nearest unit (e.g., cents). For example, if the fee is 0.025, Stripe will round up to 0.03. If the fee is 0.024, Stripe will round down to 0.02."
+    ],
+    "excluded": [
+      "Dispute/chargeback fees ($15 received, $15 countered, Smart Disputes 30%, Visa/Mastercard dispute-prevention $15/$29) — captured for reference, out of calculator scope",
+      "Card reader hardware ($59 M2, $299 S710/S700, $329 T600) and $10/reader/month cellular",
+      "Subscription products: Billing ($620/mo or 0.7%), Tax ($90/mo, 0.5% or $0.50), Sigma, Data Pipeline, Revenue Recognition, Radar, Identity, Atlas, Climate, Workflows",
+      "Connect platform fees (0.25% starting), Treasury, Issuing ($0.10 virtual / $3.50 physical card; 1% + 30¢ cross-border), Global Payouts ($1.50 per payout)",
+      "Managed Payments merchant-of-record 3.5%",
+      "Financial Connections ($1.50 instant verification, etc.)",
+      "Custom / IC+ negotiated pricing",
+      "ACH failed-payment and ACH dispute fees (amounts not captured; see notes)"
+    ],
+    "notes": [
+      "The FAQ answers on stripe.com/pricing ('How are payment fees calculated?', 'Are there additional fees for refunds?', 'Do you have setup fees or monthly fees?') are rendered only on click; they were not present in either the server HTML or the JS-rendered DOM, so their text could not be captured. The Pricing Policy (1.3 rounding, 1.4 refund fixed fee) was used instead.",
+      "On stripe.com/pricing/local-payment-methods every 'Show additional fees' panel (e.g. ACH Direct Debit failure and dispute fees, international/currency-conversion surcharges per method) is click-rendered and was not captured; the ACH $5.00 cap comes from the main pricing page. The ACH docs page confirms a failure fee and a non-refundable dispute fee exist but does not state amounts.",
+      "Manual-entry pricing is stated two ways that agree: '+0.5% for manually entered cards' on the pricing page and '3.4% + 0.30 USD' on the support article (2.9% + 0.5% = 3.4%). The support article also says only the first subscription payment on a Dashboard-keyed card gets the higher rate.",
+      "International (+1.5%) and currency-conversion (+1%) surcharges are listed separately and can both apply to one payment; the pages do not state whether surcharges are rounded separately or after summing — Pricing Policy 1.3 says 'each Stripe fee' is rounded.",
+      "Refunds: Pricing Policy 1.4 says each successful refund is charged the fixed fee applicable to the refunded transaction (i.e. the $0.30). The pricing-page FAQ on refunds could not be read to confirm whether the percentage portion is also retained; calculator author must decide how to model refunds.",
+      "Instant Payouts: the 1.5% US fee is stated in docs (not on the pricing page); limits are $0.50 minimum and $9,999 maximum per payout, max 10 per day, US daily limit resets at midnight US Central Time; new accounts are not immediately eligible.",
+      "The hero shows '2.9% + $0.30' and the table shows '2.9% + 30¢' — same rate. The page footer reads 'United States (English)', so these are US rates.",
+      "Terminal (in-person) domestic cards are 2.7% + 5¢, plus $0.10 per authorization for Tap to Pay and an optional $0.05 P2PE fee; international cards add 1.5% in person as well."
+    ]
+  },
+  {
+    "platform": "shopify",
+    "name": "Shopify",
+    "as_of": "2026-09-08",
+    "sources": [
+      {
+        "url": "https://www.shopify.com/pricing",
+        "title": "Shopify Pricing — You've got plans. Us too. (USA | English)",
+        "loaded": true,
+        "last_updated_on_page": "Footnote only: Balance earnings rate 'accurate as of September 4, 2026' (fee schedule itself is undated)"
+      },
+      {
+        "url": "https://help.shopify.com/en/manual/payments/shopify-payments/onboarding/cost-of-shopify-payments",
+        "title": "Shopify Help Center — Shopify Payments fees",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/credit-card-rates",
+        "title": "Shopify Help Center — Shopify Payments rates in the United States by card type",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.shopify.com/en/manual/your-account/manage-billing/billing-charges/types-of-charges/third-party-charges/third-party-transaction-fees",
+        "title": "Shopify Help Center — Third-party transaction fees on your Shopify bills",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.shopify.com/en/manual/intro-to-shopify/pricing-plans/pricing-overview",
+        "title": "Shopify Help Center — Pricing plans and billing overview",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.shopify.com/en/manual/payments/shopify-payments/payouts/pay-periods-and-fees",
+        "title": "Shopify Help Center — Viewing your Shopify Payments payout fees",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/domestic-international-eu-credit-cards",
+        "title": "Shopify Help Center — Understanding domestic, international, and EEA credit cards",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.shopify.com/en/manual/international/pricing/fees",
+        "title": "Shopify Help Center — Fees and costs (selling in local currencies)",
+        "loaded": true,
+        "last_updated_on_page": null
+      }
+    ],
+    "rates": {
+      "plan_basic_monthly_usd": 39,
+      "plan_basic_yearly_billed_per_month_usd": 29,
+      "plan_grow_monthly_usd": 105,
+      "plan_grow_yearly_billed_per_month_usd": 79,
+      "plan_advanced_monthly_usd": 399,
+      "plan_advanced_yearly_billed_per_month_usd": 299,
+      "plan_plus_monthly_from_usd": 2300,
+      "plan_plus_yearly": "Not included",
+      "plan_plus_trial_usd": 399,
+      "plan_agentic_monthly_usd": 0,
+      "trial": "3 days free, then $1/month for 3 months",
+      "pos_pro_addon_monthly_usd_per_location": 89,
+      "online_standard_card_basic_pct": 0.029,
+      "online_standard_card_basic_fixed_usd": 0.3,
+      "online_standard_card_grow_pct": 0.027,
+      "online_standard_card_grow_fixed_usd": 0.3,
+      "online_standard_card_advanced_pct": 0.025,
+      "online_standard_card_advanced_fixed_usd": 0.3,
+      "online_standard_card_plus_from_pct": 0.0225,
+      "online_standard_card_plus_fixed_usd": 0.3,
+      "online_premium_card_basic_pct": 0.035,
+      "online_premium_card_basic_fixed_usd": 0.3,
+      "online_premium_card_grow_pct": 0.033,
+      "online_premium_card_grow_fixed_usd": 0.3,
+      "online_premium_card_advanced_pct": 0.031,
+      "online_premium_card_advanced_fixed_usd": 0.3,
+      "online_international_card_surcharge_pct": 0.01,
+      "in_person_card_basic_pct": 0.026,
+      "in_person_card_basic_fixed_usd": 0.1,
+      "in_person_card_grow_pct": 0.025,
+      "in_person_card_grow_fixed_usd": 0.1,
+      "in_person_card_advanced_pct": 0.024,
+      "in_person_card_advanced_fixed_usd": 0.1,
+      "in_person_manual_all_plans_pct": 0.035,
+      "in_person_manual_all_plans_fixed_usd": 0.1,
+      "third_party_transaction_fee_basic_pct": 0.02,
+      "third_party_transaction_fee_grow_pct": 0.01,
+      "third_party_transaction_fee_advanced_pct": 0.006,
+      "third_party_transaction_fee_plus_pct": 0.002,
+      "shopify_payments_alongside_third_party_provider_premium_pct": 0.0125,
+      "paypal_wallet_from_pct": 0.0349,
+      "paypal_wallet_from_fixed_usd": 0.49,
+      "usdc_basic_pct": 0.029,
+      "usdc_grow_pct": 0.027,
+      "usdc_advanced_pct": 0.025,
+      "usdc_fixed_usd": 0.3,
+      "currency_conversion_fee_us_pct": 0.015,
+      "currency_conversion_fee_paypal_wallet_us_pct": 0.03,
+      "marketplace_synced_orders_over_50_pct": 0.01,
+      "marketplace_synced_orders_cap_monthly_usd": 99
+    },
+    "structure": "Two separate fees. (1) Shopify Payments card processing: fee = rate x amount + fixed cents, charged when you capture payment; the rate depends on plan (Basic / Grow / Advanced / Plus) and channel — online standard cards 2.9% / 2.7% / 2.5% (+ 30¢), online premium cards (commercial/corporate/business cards and all domestic Amex) 3.5% / 3.3% / 3.1% (+ 30¢), in-person cards 2.6% / 2.5% / 2.4% (+ 10¢), in-person manual entry 3.5% + 10¢ on every plan; cards issued outside the US add 1% ('cross-border fee'); paying in a non-payout currency adds a 1.5% currency conversion fee (US). The loaded pages do not itemize the base for card fees beyond 'the payment for an order' (i.e. the captured order amount). (2) Third-party transaction fee, charged by Shopify only when a third-party payment provider processes the payment (or on the store-credit/gift-card portion for stores created on or after May 12, 2025): 2% / 1% / 0.6% / 0.2% of [(cost of products - discounts) + tax + shipping charges]; waived entirely when Shopify Payments is the sole provider; if Shopify Payments runs alongside a third-party provider, Shopify Payments transactions also carry a 1.25% premium. Neither card fees nor third-party fees are returned on refunds. No rounding rule is published.",
+    "examples": [
+      {
+        "description": "Store-credit example (help center): only the $10 CAD paid with store credit attracts the third-party transaction fee; the page does not state the resulting dollar fee (it depends on plan rate).",
+        "inputs": {
+          "order_paid_by_credit_card_via_shopify_payments": "remainder",
+          "store_credit_portion_cad": 10.0,
+          "plan": "not stated"
+        },
+        "expected": {
+          "fee": null,
+          "net": null,
+          "fee_base_cad": 10.0
+        },
+        "quote": "For example, if your store uses Shopify Payments and a customer pays for an order using both a credit card and $10 CAD of store credit, then you're charged third-party transaction fees only on the $10 CAD of store credit.",
+        "source_url": "https://help.shopify.com/en/manual/your-account/manage-billing/billing-charges/types-of-charges/third-party-charges/third-party-transaction-fees"
+      },
+      {
+        "description": "Currency-conversion example (help center): a $10.00 USD product converted to EUR with the 1.5% conversion fee built into the displayed price.",
+        "inputs": {
+          "product_price_usd": 10.0,
+          "currency_conversion_rate_usd_to_eur": 0.867519,
+          "currency_conversion_fee_pct": 0.015
+        },
+        "expected": {
+          "fee": null,
+          "net": null,
+          "converted_price_eur": 8.81
+        },
+        "quote": "(Product price x currency conversion rate) x (1 + currency conversion fee)\n($10.00 USD x 0.867519) x (1 + .015) = €8.81",
+        "source_url": "https://help.shopify.com/en/manual/international/pricing/exchange-rates"
+      }
+    ],
+    "quotes": [
+      "Try 3 days free, then $1/month for 3 months.",
+      "| Pay monthly | $39 USD/mo | $105 USD/mo | $399 USD/mo | Starts at $2,300 USD/mo |",
+      "| Pay yearly | $29 USD/mo | $79 USD/mo | $299 USD/mo | Not included |",
+      "Basic\n$29/mo\nFor solo entrepreneurs",
+      "Grow\n$79/mo\nFor small teams",
+      "Advanced\n$299/mo\nFor global reach",
+      "Plus\nfrom $2,300/mo\nFor complex businesses\nTry for $399",
+      "Card rates from 2.9% + 30¢ USD",
+      "Card rates from 2.7% + 30¢ USD",
+      "Card rates from 2.5% + 30¢ USD",
+      "Card rates from 2.25% + 30¢ USD",
+      "| Online standard card rates | 2.9% + 30¢ | 2.7% + 30¢ | 2.5% + 30¢ | Most competitive rates |",
+      "| Online premium card rates | 3.5% + 30¢ | 3.3% + 30¢ | 3.1% + 30¢ | Most competitive rates |",
+      "| Online international rates | + 1% | + 1% | + 1% | Most competitive rates |",
+      "| PayPal Wallet rates | Starting at 3.49% + 49¢ | Starting at 3.49% + 49¢ | Starting at 3.49% + 49¢ | Most competitive rates |",
+      "| In-person card rates | 2.6% + 10¢ | 2.5% + 10¢ | 2.4% + 10¢ | Most competitive rates |",
+      "| USDC rates | 2.9% + 30¢ | 2.7% + 30¢ | 2.5% + 30¢ | Most competitive rates |",
+      "| In-person manual rates | 3.5% + 10¢ | 3.5% + 10¢ | 3.5% + 10¢ | Most competitive rates |",
+      "| Third-party transaction fees | 2% | 1% | 0.6% | 0.2% |",
+      "| POS Pro: Advanced tools for brick‑and‑mortar retailers | $89/mo per location | $89/mo per location | $89/mo per location | Includes 20 locations. Up to 200 with Shopify Payments. |",
+      "| Over 50 synced marketplace orders | 1% up to $99/mo | 1% up to $99/mo | 1% up to $99/mo | 1% up to $99/mo |",
+      "There are no setup fees on any of our plans.\nThird-party transaction fees may apply when you use a third-party payment provider (instead of Shopify Payments). The rate depends on your plan.\nShopify charges a small fee to allow you to accept major credit cards, such as Visa and Mastercard, as payment in your store. These fees vary depending on the plan that you choose.",
+      "Aside from the credit card rate and the subscription fees for your store's Shopify subscription plan, there are no monthly fees, no hidden fees, and no setup fees for Shopify Payments. When you use Shopify Payments as your sole payment provider, there are no third-party transaction fees for orders.",
+      "Transactions processed by your third-party provider, such as credit and debit card payments, are subject to third-party transaction fees based on your Shopify plan.\nTransactions processed by Shopify Payments, such as Shop Pay and local payment methods, are charged at standard Shopify Payments rates plus a 1.25% premium. Shopify Payments rates vary by plan type and market.",
+      "Standard: Includes domestic consumer cards issued by Visa, Mastercard, Discover, and Diners Club.\nPremium: Includes domestic commercial, corporate, or business-tier cards, such as Visa Business, and all domestic American Express cards.",
+      "If you process international cards and payment methods, then an additional charge applies above the base rate.",
+      "If your online store is based in the United States and you process payments by using Shopify Payments, then you're charged a 1% cross-border fee on all sales made with a credit card issued in another country.",
+      "Manually entered payments are subject to higher fees because card details are often collected over the phone or through other unencrypted methods, increasing the risk of fraud.",
+      "Shopify uses this formula to calculate third-party transaction fees for a 30-day period:\n[(cost of products - discounts) + tax + shipping charges] x rate\nThe rate for third-party transaction charges varies depending on your pricing plan.",
+      "Transaction fees don't apply for POS orders or for manual payment methods, which include cash on delivery (COD), bank deposits, checks, test orders, and draft orders marked as paid or pending. Third-party transaction fees aren't returned to you when you issue an order refund.",
+      "Transaction fees are in addition to processing fees charged by your third-party payment provider.",
+      "Stores on the Shopify Plus plan that use Shopify Payments as their sole payment provider have their third-party transaction fees waived, including fees on store credit and gift cards. If you use Shopify Payments alongside a third-party payment provider, then transaction fees apply.",
+      "Credit card transaction fees aren't returned to you when you issue a refund.",
+      "If you switch to an annual billing cycle, then you can receive a discount on your subscription charge. Annual billing charges the full year upfront and presents a lower effective monthly rate.",
+      "When you use Shopify Payments, you pay the credit card rate, but you don't pay a transaction fee. Stores that use a third-party payment provider instead of Shopify Payments pay both a transaction fee from Shopify, and credit card fees charged by their third-party payment provider.",
+      "When you capture the payment for an order, you're charged a Shopify Payments fee (in your payout currency) which covers the cost of processing the payment. The fee amount depends on the type of credit card that is used and the location where the credit card is registered.",
+      "| Currency conversion fee | 1.5% | 2% | 2% |",
+      "Currency conversion fee - The fee that Shopify charges (in your payout currency) to convert currencies when you capture a payment. Currency conversion fees and credit card fees are not returned to you when you issue a refund, but you're not charged additional conversion fees when you issue a refund or when you receive a chargeback."
+    ],
+    "excluded": [
+      "Chargeback fee (not captured on loaded pages)",
+      "POS hardware, POS Pro subscription ($89/mo per location)",
+      "Shopify Plus negotiated card rates ('Most competitive rates'), Plus 1- or 3-year term pricing",
+      "MB WAY / Bizum rates (non-US methods), PayPal Wallet detail beyond the 'starting at' rate",
+      "Marketplace synced-order fee (1% up to $99/mo over 50 orders), pay-per-send SMS, app charges, domain purchases",
+      "Shopify Balance, Capital, Credit card cashback, Bill Pay, Shopify Tax add-ons",
+      "Shipping label costs / discounts"
+    ],
+    "notes": [
+      "The pricing page defaults to the 'Pay yearly' toggle, so the headline prices ($29 / $79 / $299) are the annual-billing effective monthly rates; monthly billing is $39 / $105 / $399. Plus is 'Starts at $2,300 USD/mo' with 'Not included' under Pay yearly and a 'Try for $399' offer.",
+      "Plus card rate conflict: the plan card says 'Card rates from 2.25% + 30¢ USD' while every Plus row of the comparison table says 'Most competitive rates' (no number).",
+      "The base for Shopify Payments card fees is not itemized on the loaded pages (fees are charged 'when you capture the payment for an order'); the third-party transaction fee formula explicitly includes tax and shipping. Calculator author must decide whether to apply card rates to the order total including shipping and tax (consistent with fees on the captured amount).",
+      "'Online international rates + 1%' on the pricing page corresponds to the help center's '1% cross-border fee on all sales made with a credit card issued in another country' for US stores; the pricing page lists it only under online rates, so treatment of international cards in person is unspecified.",
+      "Online 'premium' card rates apply to domestic commercial/corporate/business cards and all domestic American Express cards — a calculator needs the card type as an input.",
+      "Third-party transaction fees also apply to the store-credit/gift-card portion of orders for stores created on or after May 12, 2025, even when Shopify Payments is used (waived on Plus with Shopify Payments as sole provider).",
+      "If Shopify Payments is used alongside a third-party provider, Shopify Payments transactions are charged standard rates plus a 1.25% premium.",
+      "Currency conversion fee is 1.5% for US stores (2% France/other; 3% for PayPal Wallet) and is charged in the payout currency; it is not refunded on refunds.",
+      "No rounding rule is published on the loaded pages.",
+      "help.shopify.com returns an empty shell over plain HTTP; the pages were captured with a JavaScript-rendering fetch.",
+      "Rates shown are for the USA | English locale; the page says pricing and payment options differ by country."
+    ]
+  },
+  {
+    "platform": "venmo",
+    "name": "Venmo",
+    "as_of": "2026-09-08",
+    "sources": [
+      {
+        "url": "https://venmo.com/resources/our-fees/",
+        "title": "About Venmo Fees | Venmo (also linked from venmo.com/legal as 'Venmo Long Form Disclosure')",
+        "loaded": true,
+        "last_updated_on_page": "No date for the fee tables; only the Venmo Visa Credit Card rates table says 'accurate as of June 27, 2024'"
+      },
+      {
+        "url": "https://help.venmo.com/cs/articles/instant-bank-transfer-faq-vhel302",
+        "title": "Instant Bank Transfer FAQ | Venmo",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.venmo.com/cs/articles/business-profile-transaction-fees-vhel221",
+        "title": "Business Profile Transaction Fees | Venmo",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.venmo.com/cs/articles/tap-to-pay-on-iphone-faq-vhel116",
+        "title": "Tap to Pay on iPhone FAQ | Venmo",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.venmo.com/cs/articles/tap-to-pay-on-android-faq-vhel198",
+        "title": "Tap to Pay on Android FAQ | Venmo",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.venmo.com/cs/articles/buying-and-selling-on-venmo-faq-vhel138",
+        "title": "Buying and Selling on Venmo FAQ | Venmo",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.venmo.com/cs/articles/selling-with-personal-profiles-vhel183",
+        "title": "Selling with Personal Profiles | Venmo",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.venmo.com/cs/articles/charity-profile-donation-fees-vhel159",
+        "title": "Charity Profile Donation Fees | Venmo",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.venmo.com/cs/articles/credit-card-fees-on-venmo-payments-vhel257",
+        "title": "Credit Card Fees on Venmo Payments | Venmo",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.venmo.com/cs/articles/cryptocurrency-faq-vhel141",
+        "title": "Cryptocurrency FAQ | Venmo",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.venmo.com/cs/articles/buying-cryptocurrency-on-venmo-vhel164",
+        "title": "Buying Cryptocurrency on Venmo | Venmo",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.venmo.com/cs/articles/selling-cryptocurrency-on-venmo-vhel204",
+        "title": "Selling Cryptocurrency on Venmo | Venmo",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://venmo.com/legal/us-user-agreement/",
+        "title": "Venmo User Agreement (only the header rendered; body is JS-loaded)",
+        "loaded": false,
+        "last_updated_on_page": "This user agreement is effective as of August 24, 2026."
+      },
+      {
+        "url": "https://venmo.com/legal/crypto-terms/",
+        "title": "Cryptocurrency Terms and Conditions (redirects to paypal.com/us/legalhub/paypal/cryptocurrencies-tnc; fee section defers to fee pages)",
+        "loaded": true,
+        "last_updated_on_page": "Last updated on May 19, 2026"
+      }
+    ],
+    "rates": {
+      "send_with_balance_debit_or_bank_pct": 0.0,
+      "send_with_credit_card_pct": 0.03,
+      "standard_transfer_fee": 0.0,
+      "instant_transfer_pct": 0.0175,
+      "instant_transfer_min_fee_usd": 0.25,
+      "instant_transfer_max_fee_usd": 25.0,
+      "goods_and_services_personal_profile_seller_fee_pct": 0.0299,
+      "goods_and_services_personal_profile_seller_fee_fixed_usd": 0.0,
+      "business_profile_seller_fee_pct": 0.019,
+      "business_profile_seller_fee_fixed_usd": 0.1,
+      "business_profile_fee_minimum_payment_usd": 1.0,
+      "business_profile_tap_to_pay_pct": 0.0229,
+      "business_profile_tap_to_pay_fixed_usd": 0.09,
+      "business_profile_tap_to_pay_fixed_usd_per_help_article_vhel221": 0.1,
+      "charity_profile_fee_pct": 0.019,
+      "charity_profile_fee_fixed_usd": 0.1,
+      "credit_card_fee_exempt_when_paying_business_or_charity_profile": true,
+      "crypto_buy_sell_fee_pct_1_00_to_74_99": 0.022,
+      "crypto_buy_sell_fee_pct_75_00_to_200_00": 0.02,
+      "crypto_buy_sell_fee_pct_200_01_to_1000_00": 0.018,
+      "crypto_buy_sell_fee_pct_over_1000": 0.015,
+      "crypto_pyusd_buy_sell_fee_pct": 0.0,
+      "crypto_transfer_to_venmo_or_paypal_fee": 0.0,
+      "crypto_transfer_external_fee": "network fee, varies, paid in cryptocurrency",
+      "send_to_non_us_paypal_pct": 0.05,
+      "send_to_non_us_paypal_min_fee_usd": 0.99,
+      "send_to_non_us_paypal_max_fee_usd": 4.99,
+      "currency_conversion_spread_pct": 0.04,
+      "account_setup_fee": 0.0,
+      "monthly_fee": 0.0
+    },
+    "structure": "All Venmo fees are a percentage of the payment or transfer amount (some with a fixed cents add-on), deducted from the amount the recipient receives except the credit-card fee, which the sender pays. Sending money funded by a credit card costs the sender 3.00% (waived when paying a business or charity profile); sends funded by balance, debit card or bank are free. Instant Transfer to an eligible debit card or bank costs 1.75% of the transfer amount, minimum $0.25 and maximum $25, deducted from the transfer; standard transfers are free. Receiving a payment the sender tagged as for goods and services on a personal profile costs the seller 2.99% (no fixed part). Business profiles pay 1.9% + $0.10 of the payment total on every payment of $1.00 or more, or 2.29% + $0.09 for Tap to Pay contactless payments; charity profiles pay 1.9% + $0.10. Crypto buys/sells carry a tiered fee by amount (2.20% / 2.00% / 1.80% / 1.50%) plus a spread built into the exchange rate; PYUSD is fee-free. No rounding rule is published.",
+    "examples": [
+      {
+        "description": "Charity profile donation: $100.00 donation, 1.9% + $0.10 fee.",
+        "inputs": {
+          "amount_usd": 100.0,
+          "profile": "charity"
+        },
+        "expected": {
+          "fee": 2.0,
+          "net": 98.0
+        },
+        "quote": "For example, if a donor sends $100.00 to a charity profile, $2.00 of that payment would be charged as a donation fee and the charity profile would receive $98.00.",
+        "source_url": "https://help.venmo.com/cs/articles/charity-profile-donation-fees-vhel159"
+      },
+      {
+        "description": "Personal profile payment tagged as a purchase (goods and services): $100 payment. NOTE: this published example implies a $2.00 fee, which does not match the 2.99% seller fee on the fee schedule (2.99% would be a $2.99 fee and $97.01 net); it appears to reflect the older 1.9% + $0.10 rate.",
+        "inputs": {
+          "amount_usd": 100.0,
+          "profile": "personal",
+          "tagged_as_purchase": true
+        },
+        "expected": {
+          "fee": 2.0,
+          "net": 98.0
+        },
+        "quote": "Selling: Users who receive payments tagged as purchases will incur a fee. This fee amount is automatically removed from the total amount received. For example, if a $100 payment is tagged as a purchase by the sender, the recipient would get $98.",
+        "source_url": "https://help.venmo.com/cs/articles/buying-and-selling-on-venmo-faq-vhel138"
+      }
+    ],
+    "quotes": [
+      "Sending money to a Venmo account or U.S. PayPal account using your balance, debit card or bank account\n$0.00\nNo fee to send money to a Venmo account or U.S. PayPal account using your Venmo balance, debit card or bank account.",
+      "Sending money to a Venmo account or U.S. PayPal account using your credit card\n3.00%\nThere’s a 3.00% fee for sending money to a Venmo account or U.S. PayPal account using your credit card.",
+      "Receive personal payments in your Venmo account from Venmo users.\n$0.00\nNo fee for you when Venmo users send you personal payments with Venmo. You will be assessed a fee if the sender identifies the transaction as for goods and services.",
+      "Receive payments in your personal Venmo account that are identified by the sender as for goods and services\n2.99%\nThere's a seller transaction fee when you receive a payment that is identified by the sender as for goods and services.",
+      "Receive payments in your charity profile\n1.9% + $0.10\nThere's a charity transaction fee when you receive a payment sent to your charity profile.",
+      "Receive payments in your business profile\n1.9% + $0.10 or 2.29% + $0.09\nThere's a 1.9% + $0.10 transaction fee when you receive a payment sent to your business profile (except for Tap to Pay payments). We assess a 2.29% + $0.09 fee when you receive a payment sent to your business profile through Tap to Pay.",
+      "Electronic withdrawal (standard or Instant Transfer)\n$0.00 or 1.75% (minimum $0.25 fee, maximum $25 fee)\nNo fee to transfer money from your Venmo account with the standard option. Money transferred with the standard option is typically available in 1-3 business days when sent to a linked bank account and in approximately 48 hours when sent to an eligible linked debit card.\nThere’s a fee to transfer money from your Venmo account to your eligible linked debit card or bank account with the Instant Transfer option. The money is typically available in minutes.",
+      "Buying, selling, or transferring cryptocurrencies\nCrypto services provided by PayPal Digital, Inc (doing business as Venmo Digital)\nCryptocurrency purchase or sale amount:\nThere's a fee for buying or selling cryptocurrencies. Fee will vary based on purchase or sale amount. These fees do not apply to buying and selling PYUSD.\n$1.00 - $74.99\n2.20%\n$75.00 - $200.00\n2.00%\n$200.01 - $1000.00\n1.80%\n>$1000\n1.50%",
+      "Receiving a cryptocurrency transfer\n$0\nNo fee\nTransferring cryptocurrency to another Venmo or PayPal account\n$0\nNo fee\nTransferring cryptocurrency to an address outside of Venmo or PayPal\nAmount varies (paid in cryptocurrency)\nYou will be charged a cryptocurrency network fee, payable in the cryptocurrency you transfer, which varies.",
+      "Sending money to a non-U.S. PayPal account using your credit card\n5.00% (min. $0.99 fee/max. $4.99 fee) + 3.00%\nThere’s a 5.00% fee (with a minimum of $0.99 and maximum of $4.99) to send money to an eligible non-U.S. PayPal account and an additional 3.00% fee for sending money using your credit card.",
+      "A 1.75% fee (with a minimum fee of $0.25 and a maximum fee of $25) is deducted from the transfer amount for each transfer.",
+      "Business profile owners are charged a low fee for every payment they receive of $1.00 or more. These fees are automatically deducted from the total payment amount sent by your customer.",
+      "The seller transaction fee is a standard rate of 1.9% + $0.10 of the payment total",
+      "Contactless payments accepted with Tap to Pay on iPhone or Tap to Pay on Android have a slightly higher transaction fee rate of 2.29% + $0.10 of the payment total",
+      "Yes. Venmo charges business profile owners a fee of 2.29% + $0.09 of the payment total for each payment accepted with Tap to Pay.",
+      "Payments sent to your business profile from another Venmo account (not using Tap to Pay) will still incur the standard fee rate of 1.9%+$0.10 for each payment of $1.00 or more",
+      "It’s worth noting that Venmo users who make a payment to a business profile using a credit card will be exempt from the standard 3% Venmo fee on payments funded by credit cards.",
+      "Please note, Venmo is not able to refund seller fees for payments sent to your business profile from another Venmo account.",
+      "For payments intentionally tagged as purchases by the sender, Venmo will not return the fee amount if you need to issue a refund. This means that you (as the seller) will need to cover the fee amount when refunding your buyer to ensure that they receive the full amount of their payment back.",
+      "This fee is a standard rate of 1.9% + $0.10 for each donation.",
+      "You will incur a fee when you buy or sell most cryptocurrencies on Venmo. The fee will vary based on the purchase or sale amount. Venmo displays that amount when you are making a transaction.",
+      "There are no fees to buy or sell PYUSD on Venmo.",
+      "Some credit card providers charge cash advance fees (possibly including an additional dollar amount or percent rate, in addition to other possible cash advance service fees, including a higher APR) if you use your credit card to make payments to friends on Venmo."
+    ],
+    "excluded": [
+      "Venmo Debit Card (Mastercard) fees: out-of-network ATM $2.50, international ATM $2.50, over-the-counter withdrawal $3.00",
+      "Venmo Visa Credit Card APRs and penalty fees (cash advance $10 or 5%, late/returned payment up to $41, paper statement $1.99)",
+      "Cash a check (2.00% / 5.00%, minimum $6) and add cash at stores ($3.74)",
+      "Sending to non-US PayPal accounts (5.00%, min $0.99 / max $4.99) and the 4.00% currency conversion spread",
+      "Card-issuer cash-advance fees on credit-card-funded payments (charged by the issuer, not Venmo)",
+      "Crypto network fees for external transfers and the exchange-rate spread"
+    ],
+    "notes": [
+      "The fee tables on venmo.com/resources/our-fees are present in the server HTML but hidden inside collapsed accordions; both plain-HTTP and browser-rendered markdown extractions returned only the section headings, so the values were extracted from the raw HTML.",
+      "Tap to Pay fixed component conflict: the fee schedule page and both Tap to Pay FAQs say 2.29% + $0.09, while the 'Business Profile Transaction Fees' help article says 2.29% + $0.10. Two of three sources (including the legal fee disclosure) say $0.09.",
+      "Goods-and-services conflict: the fee schedule says 2.99% for payments to a personal profile tagged as a purchase, but the Buying and Selling FAQ example ('$100 ... the recipient would get $98') implies 2% and looks stale (matches the older 1.9% + $0.10 rate).",
+      "The $1.00 minimum payment for business/charity profile fees appears only in help articles, not on the fee schedule page; whether payments under $1.00 to a business profile carry any fee is unspecified.",
+      "Instant Transfer: the 1.75% fee is deducted from the transfer amount (user receives amount minus fee); minimum $0.25 and maximum $25 apply per transfer.",
+      "Credit-card-funded payments to business and charity profiles are exempt from the 3% sender fee (help articles); the fee schedule row states the 3.00% fee without listing that exemption.",
+      "Business-profile and purchase-tagged seller fees are not refunded when the seller refunds the buyer.",
+      "Crypto: the tiered percentages come from the fee schedule page; help articles only say the fee 'will vary based on the purchase or sale amount', and the PayPal Digital crypto terms say the exchange rate includes a spread and point to fee pages for amounts.",
+      "The User Agreement body (which contains the same fee table) did not render (JS-loaded); only its effective date (August 24, 2026) was captured.",
+      "No rounding rule is published on any loaded Venmo page."
+    ]
+  },
+  {
+    "platform": "cash_app",
+    "name": "Cash App",
+    "as_of": "2026-09-08",
+    "sources": [
+      {
+        "url": "https://cash.app/legal/us/en-us/tos",
+        "title": "US | Terms of Service | Cash App (Section I 'Account Opening Disclosures and Fees'; VII.9 'Peer-to-Peer Service Fees'; XI.4 'Our Fees for Transaction Processing')",
+        "loaded": true,
+        "last_updated_on_page": "Last Updated: August 26, 2026"
+      },
+      {
+        "url": "https://cash.app/help/us/en-us/3073-cash-out-speed-options",
+        "title": "Withdrawal Transfer Speed Options — Cash App Support",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://cash.app/help/us/en-US/6521-cash-app-business-fees",
+        "title": "Cash App Business Fees — Cash App Support",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://cash.app/legal/us/en-us/cash-payment-terms",
+        "title": "Cash App Business Terms (Section 6 'Our Fees')",
+        "loaded": true,
+        "last_updated_on_page": "Last Updated: August 25, 2025"
+      },
+      {
+        "url": "https://cash.app/help/us/en-us/6567-problems-linking-a-credit-card",
+        "title": "Problems Linking a Credit Card — Cash App Support (no fee amounts)",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://cash.app/bank/no-fees",
+        "title": "Bank without all the fees | Cash App (FAQ answers collapsed; no numbers captured)",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://cash.app/cardfees",
+        "title": "Stored Balance Long Form Disclosure — Cash App",
+        "loaded": false,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://cash.app/send",
+        "title": "Send Money Instantly with Cash App (only the cookie banner rendered)",
+        "loaded": false,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://developers.cash.app/cash-app-pay-partner-api/api-reference/network-api/merchant-fee-plans",
+        "title": "MerchantFeePlans — Cash App Pay Partner API (API schema only; no fee amounts)",
+        "loaded": true,
+        "last_updated_on_page": null
+      }
+    ],
+    "rates": {
+      "send_with_balance_or_debit_card_pct": 0.0,
+      "send_from_credit_card_pct": 0.03,
+      "add_money_from_credit_card_pct": 0.03,
+      "receive_money_fee": 0.0,
+      "standard_transfer_fee": 0.0,
+      "instant_transfer_pct_min": 0.005,
+      "instant_transfer_pct_max": 0.025,
+      "instant_transfer_min_fee_usd_low": 0.25,
+      "instant_transfer_min_fee_usd_high": 1.0,
+      "instant_transfer_max_fee_usd": 75.0,
+      "business_processing_pct": 0.026,
+      "business_processing_fixed_usd": 0.15,
+      "business_tap_to_pay_pct": 0.03,
+      "business_tap_to_pay_fixed_usd": null,
+      "business_account_monthly_fee": 0.0,
+      "monthly_fee": 0.0,
+      "account_setup_fee": 0.0,
+      "rounding": "banker's rounding to the penny (numbers ending in 5 round to the nearest even)"
+    },
+    "structure": "Personal accounts: sending from the Cash App balance or a debit card is free; sending money funded by a linked credit card costs the sender 3% of the amount (the ToS lists this both as 'Send from credit card 3%' and 'Add money from Credit Card: 3%'); receiving money is free. Standard transfers out to a linked bank/card are free (1–3 business days); Instant Transfer costs 0.5%–2.5% of the amount with a minimum fee of $0.25–$1 and a maximum of $75, with the exact rate only disclosed in-app before confirming. Business accounts: Cash App deducts 2.6% + $0.15 from each payment received from a customer's Cash App account and 3% from each Tap to Pay payment, so the balance credited already nets out the fee. For percentage fees Cash App uses banker's rounding to the penny (numbers ending in 5 round to the nearest even), and fees are deducted first from the collected funds; on a refund Cash App also refunds its fee so the customer gets the full amount back.",
+    "examples": [
+      {
+        "description": "Paper Money Deposit example from the ToS (the only worked example on the loaded pages; this fee type is out of scope but shows fees are deducted from the transaction amount).",
+        "inputs": {
+          "deposit_usd": 10.0,
+          "paper_money_deposit_fee_usd": 1.0
+        },
+        "expected": {
+          "fee": 1.0,
+          "net": 9.0
+        },
+        "quote": "The fee for Paper Money Deposit is $1 per transaction. Any fee will be deducted from the transaction amount. For example, if you deposit $10 using Paper Money Deposit and are assessed the $1 fee, your Cash App Balance will be credited $9 once the transaction is completed.",
+        "source_url": "https://cash.app/legal/us/en-us/tos"
+      }
+    ],
+    "quotes": [
+      "| Sending money using your Cash App Balance or debit card in the U.S. | $0 |",
+      "| Receive money | $0 |",
+      "| Send from credit card | 3%** |",
+      "Add money from Credit Card: 3%**",
+      "Instant Transfer: 0.5%-2.5% ($0.25-$1 min)** (the maximum fee shall not exceed $75)**",
+      "| Transfer to Linked Account (standard transfer) No fee to transfer money from your Cash App Balance to a Linked Account with the standard option. The money is typically available in 1-3 Business Days. | $0 |",
+      "| Transfer to a Linked Account (Instant Transfer) Fee for expedited transfer from your Cash App Balance to a Linked Account. Funds are typically available within minutes. The specific fee amount is disclosed at the time of the transaction. | 0.5%-2.5% ($0.25-$1 min)** (the maximum fee shall not exceed $75)** |",
+      "**For these fees, Cash App uses banker’s rounding to round up or down to the penny, as applicable. Banker’s rounding rounds numbers ending in 5 to the nearest even integer.",
+      "Send from Credit Card: 3.00%**\nInstant Transfer Withdrawals: 0.5%-2.5% ($0.25-$1 min)** (the maximum fee shall not exceed $75)**",
+      "There are currently no fees for sending funds using the Peer-to-Peer Service unless you are sending funds using a credit card. The fee for sending funds using a credit card for the Peer-to-Peer Service will be displayed at the time of the transaction.",
+      "Once you have a Cash App Business Account you will be able to accept payments from Cash App customers for the sale of goods and services, and we may charge you a transaction processing fee for doing so. This fee will be disclosed to you when you open, use, or switch to a Cash App Business Account. Payments you receive, less the applicable fee, will be deposited to your Cash App Balance.",
+      "Standard transfers are free and usually arrive within 1–3 business days",
+      "Instant transfers typically arrive immediately to your linked debit card and are subject to a 0.5%–2.5% fee (minimum $0.25–$1, maximum $75). This fee will be displayed before you complete the transaction",
+      "Cash App Business accounts are free to create and require no additional hardware to process business payments.",
+      "A 2.6% + $0.15 processing fee on each payment you receive from your customer’s Cash App account to your Cash App Business account",
+      "A 3% processing fee for each payment accepted via Tap to Pay",
+      "When you receive a payment from a customer on your Cash App Business account, the amount you receive in your balance will already have these fees deducted.",
+      "All Fees are charged at the time we process a transaction and are deducted first from the transferred or collected funds, unless otherwise disclosed. To the extent that the Fees are calculated as a percentage of the transaction amount, then we will use banker’s rounding to round up or down to the penny, as applicable. Banker’s rounding rounds numbers ending in 5 to the nearest even integer.",
+      "The fees are also refunded by the Company, so the full purchase amount is always returned to your customer."
+    ],
+    "excluded": [
+      "ATM withdrawal fee ($2.50, waivable), foreign transaction fee (3%), paper money deposit ($1)",
+      "Cash App Card / Debit Flex Card fees (expedited shipping $15, replacement $5 / $50) and Cash App Tag fees (up to $250; $15 expedited shipping)",
+      "Remittance Service fees ($1.99 / $3.98 tiers)",
+      "Bitcoin and stock investing fees, Afterpay, Cash App Lending, overdraft",
+      "Chargebacks (Business Terms reserve the right to charge a mediation fee; no amount stated)"
+    ],
+    "notes": [
+      "Instant Transfer is a published RANGE (0.5%–2.5%, minimum $0.25–$1, maximum $75); the exact percentage is only shown in-app before confirming, so a calculator can only bound the fee (e.g. show the 0.5% and 2.5% cases) or take the rate as an input.",
+      "The ToS lists the credit-card charge twice with different labels — 'Send from credit card 3%' (Prepaid Account fee table and P2P section) and 'Add money from Credit Card: 3%' (Details About Your Cash App Balance) — both 3% and both subject to banker's rounding.",
+      "Cash App Business 'Tap to Pay' is stated as a flat 3% with no fixed component, versus 2.6% + $0.15 for payments from a customer's Cash App account; no base definition beyond 'each payment you receive' is given (tips/tax not addressed).",
+      "Cash App Pay acceptance by merchants is priced by the merchant's processor, not by Cash App: Square's legacy list shows Cash App Pay at 2.6% + 15¢ (card-present) / 3.3% + 30¢ (card-not-present) and Stripe lists Cash App Pay at 2.9% + 30¢ — those are Square/Stripe pages, not cash.app pages.",
+      "cash.app help pages are JavaScript-rendered (plain HTTP returns an empty body); cash.app/cardfees returned HTTP 405 in both plain and browser fetches; cash.app/send rendered only a cookie banner. The ToS contains the same fee disclosures, so nothing is missing.",
+      "Cash App Business Terms specify fees are deducted first from collected funds and that Cash App refunds its fee when the business refunds a customer.",
+      "Search-engine snippets returned an older '0.5%–1.75%' instant-transfer range; the loaded pages say 0.5%–2.5%, and only the loaded pages were used."
+    ]
+  }
+]

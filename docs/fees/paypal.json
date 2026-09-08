@@ -1,0 +1,182 @@
+{
+  "platform": "paypal",
+  "name": "PayPal (US merchant)",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://www.paypal.com/us/business/paypal-business-fees",
+      "title": "PayPal Merchant Fees (United States)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "September 1, 2026"
+    }
+  ],
+  "scope": "Fees for receiving payments on a US PayPal account. Sending money to friends and family, crypto, Payouts, Hyperwallet, Payflow, and PayPal Point of Sale hardware are out of scope.",
+  "rates": {
+    "fixed_fee_usd": 0.49,
+    "qr_fixed_fee_usd": 0.09,
+    "micropayment_fixed_fee_usd": 0.09,
+    "paypal_checkout": 0.0349,
+    "guest_checkout": 0.0349,
+    "pay_with_venmo": 0.0349,
+    "qr_code": 0.0229,
+    "goods_and_services_p2p": 0.0299,
+    "standard_cards": 0.0299,
+    "pay_later": 0.0499,
+    "all_other_commercial": 0.0349,
+    "international_surcharge": 0.015,
+    "invoicing_checkout": 0.0349,
+    "invoicing_cards": 0.0299,
+    "invoicing_pay_later": 0.0499,
+    "invoicing_ach": 0.01,
+    "invoicing_ach_cap": 10.0,
+    "micropayments": 0.0499,
+    "donations": 0.0289,
+    "charity_approved": 0.0199,
+    "instant_withdrawal": 0.015,
+    "instant_withdrawal_min": 0.5,
+    "currency_conversion_spread": 0.03,
+    "currency_conversion_spread_goods": 0.04
+  },
+  "structure": "Receiving a domestic commercial payment costs a percentage of the amount plus a fixed fee that depends on the currency received ($0.49 for USD; $0.09 for QR-code and micropayment transactions). The percentage depends on how the buyer paid: 3.49% for PayPal Checkout, guest checkout, Pay with Venmo and all other commercial transactions; 2.99% for standard credit and debit card payments; 2.29% for QR code transactions; 2.99% with no fixed fee for money received for goods and services person-to-person; 4.99% for PayPal Pay Later. International transactions add 1.50%. Invoices follow the same percentages, with Pay by Bank (ACH) at 1% capped at $10. Micropayments pricing (by application) is 4.99% + $0.09. Donations are 2.89% + fixed; approved charities 1.99% + fixed. Refunding a payment does not return the fees originally paid. Instant withdrawal to a bank or card costs 1.50% (minimum $0.50).",
+  "examples": [
+    {
+      "description": "Arithmetic check derived from the published rates (PayPal publishes no worked example on this page): $100.00 received through PayPal Checkout from a US buyer.",
+      "inputs": {
+        "amount": 100,
+        "payment_type": "paypal_checkout",
+        "international": false
+      },
+      "expected": {
+        "total_fees": 3.98,
+        "net": 96.02
+      },
+      "quote": "PayPal Checkout 3.49% + fixed fee \u2026 US dollar 0.49 USD",
+      "source_url": "https://www.paypal.com/us/business/paypal-business-fees",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: $50.00 received as a standard card payment from an international buyer.",
+      "inputs": {
+        "amount": 50,
+        "payment_type": "standard_cards",
+        "international": true
+      },
+      "expected": {
+        "total_fees": 2.74,
+        "net": 47.26
+      },
+      "quote": "Standard Credit and Debit Card Payments 2.99% + fixed fee \u2026 Additional percentage-based fee for international commercial transactions \u2026 1.50%",
+      "source_url": "https://www.paypal.com/us/business/paypal-business-fees",
+      "derived": true
+    }
+  ],
+  "quotes": [
+    "PayPal Checkout 3.49% + fixed fee",
+    "QR code Transactions 2.29% + fixed fee",
+    "Send/Receive Money for Goods and Services 2.99%",
+    "Standard Credit and Debit Card Payments 2.99% + fixed fee",
+    "PayPal Pay Later options 4.99% + fixed fee",
+    "All Other Commercial Transactions 3.49% + fixed fee",
+    "Additional percentage-based fee for international commercial transactions \u2026 All Commercial Transactions 1.50%",
+    "Fixed fee for commercial transactions (based on currency received) \u2026 US dollar 0.49 USD",
+    "Pay by Bank (ACH) 1% (capped at $10.00 per transaction)",
+    "Receiving domestic micropayments \u2026 US 4.99% + fixed fee \u2026 Micropayments fixed fee \u2026 US dollar 0.09 USD",
+    "Instant \u2026 1.50% of amount transferred \u2026 Minimum fee \u2013 Instant Transfer \u2026 US dollar 0.50 USD",
+    "If you refund a Commercial Transaction or an Invoicing Transaction payment, there are no fees to make the refund, but the fees you originally paid to receive the payment are not returned to you."
+  ],
+  "excluded": [
+    "Chargeback fee ($20)",
+    "Dispute fees ($15 standard / $30 high volume)",
+    "Currency conversion spread (3%\u20134%)",
+    "Crypto",
+    "PayPal Payouts / Hyperwallet",
+    "Payflow gateway",
+    "Point of Sale card-present rates",
+    "Sending money to friends and family"
+  ],
+  "notes": [
+    "Fixed fee is per transaction in the currency received; this calculator covers USD only.",
+    "PayPal rounds fees at the transaction level; this calculator rounds the computed fee to the cent (half up)."
+  ],
+  "inputs": [
+    {
+      "id": "amount",
+      "label": "Amount received",
+      "type": "money",
+      "default": 100
+    },
+    {
+      "id": "payment_type",
+      "label": "How the buyer paid",
+      "type": "select",
+      "default": "paypal_checkout",
+      "options": [
+        [
+          "paypal_checkout",
+          "PayPal Checkout (3.49% + $0.49)"
+        ],
+        [
+          "guest_checkout",
+          "Guest checkout (3.49% + $0.49)"
+        ],
+        [
+          "pay_with_venmo",
+          "Pay with Venmo (3.49% + $0.49)"
+        ],
+        [
+          "standard_cards",
+          "Card via PayPal card fields (2.99% + $0.49)"
+        ],
+        [
+          "qr_code",
+          "QR code (2.29% + $0.09)"
+        ],
+        [
+          "goods_and_services_p2p",
+          "Sent to you for goods & services (2.99%)"
+        ],
+        [
+          "pay_later",
+          "PayPal Pay Later (4.99% + $0.49)"
+        ],
+        [
+          "invoicing_checkout",
+          "Invoice paid with PayPal/Venmo (3.49% + $0.49)"
+        ],
+        [
+          "invoicing_cards",
+          "Invoice paid by card/Apple Pay (2.99% + $0.49)"
+        ],
+        [
+          "invoicing_ach",
+          "Invoice paid by bank / ACH (1%, max $10)"
+        ],
+        [
+          "micropayments",
+          "Micropayments pricing (4.99% + $0.09)"
+        ],
+        [
+          "donations",
+          "Donation (2.89% + $0.49)"
+        ],
+        [
+          "charity_approved",
+          "Approved charity (1.99% + $0.49)"
+        ]
+      ]
+    },
+    {
+      "id": "international",
+      "label": "Buyer is outside the US (+1.50%)",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "instant_withdrawal",
+      "label": "Instant transfer to bank or card (1.50%, min $0.50)",
+      "type": "bool",
+      "default": false
+    }
+  ],
+  "summary": "PayPal takes a percentage of each payment you receive plus a fixed $0.49 (or $0.09 for QR and micropayments): 3.49% for PayPal Checkout and most other payments, 2.99% for card payments, 2.29% for QR codes, 4.99% for Pay Later, plus 1.50% when the buyer is outside the US. Refunds don't return the fee."
+}

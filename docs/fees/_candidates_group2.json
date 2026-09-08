@@ -1,0 +1,678 @@
+[
+  {
+    "platform": "gofundme",
+    "name": "GoFundMe",
+    "as_of": "2026-09-08",
+    "sources": [
+      {
+        "url": "https://www.gofundme.com/c/pricing",
+        "title": "Pricing and Fees (Simple pricing, powerful fundraising)",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://support.gofundme.com/hc/en-us/articles/203604424-Learn-about-GoFundMe-fees",
+        "title": "Learn about GoFundMe fees – Help Center",
+        "loaded": true,
+        "last_updated_on_page": "June 29, 2026 14:23 Updated"
+      },
+      {
+        "url": "https://support.gofundme.com/hc/en-us/articles/360051144952-Choosing-a-tip-amount",
+        "title": "Choosing a tip amount – Help Center",
+        "loaded": true,
+        "last_updated_on_page": "June 17, 2026 17:32 Updated"
+      },
+      {
+        "url": "https://support.gofundme.com/hc/en-us/articles/115015446027-Extra-Charge-on-Statement",
+        "title": "Extra or larger than expected charge on statement – Help Center",
+        "loaded": true,
+        "last_updated_on_page": "April 07, 2026 17:56 Updated"
+      },
+      {
+        "url": "https://transparency.gofundme.com/hc/en-us/articles/25144121631643-Pricing-and-Fees",
+        "title": "Pricing and Fees – Transparency Center",
+        "loaded": true,
+        "last_updated_on_page": "January 21, 2026 14:07 Updated"
+      },
+      {
+        "url": "https://www.gofundme.com/c/blog/gofundme-fees",
+        "title": "GoFundMe Fees: Answers to Your Top Questions (blog)",
+        "loaded": true,
+        "last_updated_on_page": "April 20, 2026"
+      },
+      {
+        "url": "https://charitysupport.gofundme.com/hc/en-us/articles/360035220752-Pricing-fees-",
+        "title": "Pricing & fees – GoFundMe Charity (legacy help center)",
+        "loaded": false,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://charity.gofundme.com/c/charity-pricing",
+        "title": "GoFundMe charity pricing (old URL)",
+        "loaded": false,
+        "last_updated_on_page": null
+      }
+    ],
+    "rates": {
+      "platform_fee": 0,
+      "fee_to_create_fundraiser": 0,
+      "transaction_fee_pct_us_individual_or_business": 0.029,
+      "transaction_fee_fixed_us_individual_or_business": 0.3,
+      "transaction_fee_pct_us_certified_nonprofit": 0.022,
+      "transaction_fee_fixed_us_certified_nonprofit": 0.3,
+      "recurring_donation_fee_pct_paid_by_donor": 0.05,
+      "tip_default": "not published on official pages; tip is optional, donor-adjustable via slider or custom amount, can be 0",
+      "gofundme_pro_processing_pct_range": "0.022-0.025 (custom pricing; 'typically')",
+      "gofundme_pro_processing_fixed": 0.3,
+      "gofundme_pro_amex_surcharge_pct": 0.01,
+      "giving_fund_card_processing_pct_after_first_contribution": 0.022,
+      "giving_fund_ach_fee": 0
+    },
+    "structure": "US personal (individual or business) fundraisers pay one transaction fee per donation of 2.9% + $0.30, deducted automatically from each donation before transfer; the recipient receives the donation minus that fee and there is no fee to create or manage a fundraiser (0% platform fee). US certified-nonprofit fundraisers are charged 2.2% + $0.30 per donation. Donor tips to GoFundMe are optional, charged to the donor on top of the donation (never deducted from the fundraiser), adjustable to any amount including 0, and the organizer cannot see them. If a donor chooses a recurring (monthly) donation, the donor pays an additional 5% fee per recurring donation (not applicable to GoFundMe Pro). International transaction and currency-conversion fees may apply depending on the donor's payment method. Rounding is not stated; the platform's own example resolves to exact cents ($50 -> $48.25).",
+    "examples": [
+      {
+        "description": "US personal fundraiser, single $50 donation",
+        "inputs": {
+          "donation": 50,
+          "country": "US",
+          "fundraiser_type": "individual"
+        },
+        "expected": {
+          "fee": 1.75,
+          "net": 48.25
+        },
+        "quote": "If a donor makes a $50 donation to a US fundraiser, the individual receiving funds will receive $48.25 once transaction fees (2.9% + $0.30) are deducted.",
+        "source_url": "https://support.gofundme.com/hc/en-us/articles/203604424-Learn-about-GoFundMe-fees"
+      }
+    ],
+    "quotes": [
+      "One transaction fee 2.9% + $0.30 Automatically deducted from each donation, so you never have to worry about paying a bill. International transaction and conversion fees may apply based on your payment method. (pricing page, United States, 'Individual or business' tab)",
+      "One transaction fee—that’s it* 2.2% + $0.30 Automatically deducted from each donation, so you never have to worry about paying a bill. (pricing page, United States, 'Certified nonprofit' tab)",
+      "No fee to create a fundraiser $0.00 There’s no fee to start or manage your fundraiser.",
+      "Donor contributions to GoFundMe are optional $0.00 Donors can help power GoFundMe with an optional contribution, but it’s never required.",
+      "It’s always free to start and manage a fundraiser on GoFundMe. To help us cover payment processing, there’s a transaction fee per donation.",
+      "If donors choose recurring donations, they pay a fee of 5% per donation to help make this feature possible for our community.",
+      "Supporters who choose to make a recurring donation to an individual or charity on GoFundMe pay a 5% fee per donation to help support this feature. This fee does not apply to recurring donations made through GoFundMe Pro.",
+      "Tipping is optional, and the tip amount can be changed to 0. The GoFundMe organizer will not see whether or not their donors leave a tip to GoFundMe.",
+      "Leaving a tip is not mandatory, and it can be changed to any amount, including 0.",
+      "Your total due today will be the donation plus the amount you choose to tip.",
+      "No platform fees: Starting and managing a fundraiser is always free on GoFundMe.",
+      "GoFundMe Pro offers custom pricing based on your organization’s unique needs. Standard processing fees apply—typically 2.2%–2.5% + $0.30 per transaction, with a 1% additional fee for American Express.",
+      "If you contribute using a credit or debit card, standard processing fees may apply after your first contribution— 2.2% per transaction. There are no fees for ACH contributions. (GoFundMe Giving Fund)"
+    ],
+    "excluded": [
+      "Non-US country rates (e.g., Australia 2.2% + $0.30 individual / 1.9% + $0.30 nonprofit; UK/Ireland 2.9% + £0.25; EU 2.9% + €0.25; Mexico 2.9% + MXN 5; Switzerland 2.9% + CHF 0.30; Nordics 2.9% + 3 kr.)",
+      "GoFundMe Pro custom platform pricing",
+      "GoFundMe Giving Fund (donor-advised fund) fees",
+      "Donor-side international transaction / currency conversion fees (vary by payment method)",
+      "Donor tips (paid by donor on top of donation; not a deduction from funds raised)"
+    ],
+    "notes": [
+      "Tip default: no official page states a default tip percentage. The help center refers to 'the suggested tip amount' that donors adjust with a slider or custom entry and may set to 0; the organizer never sees it. Any specific default percentage found on third-party sites is unverified.",
+      "Country mapping on the pricing page comes from its country selector as rendered: United States -> Individual or business 2.9% + $0.30; Certified nonprofit 2.2% + $0.30. Do not confuse with Australia, whose individual rate is also 2.2% + $0.30 (GST included).",
+      "Charity rate: the current US pricing page shows 'Certified nonprofit' at 2.2% + $0.30; nonprofit tooling is otherwise sold as GoFundMe Pro (custom pricing, 'typically 2.2%–2.5% + $0.30', +1% Amex). The legacy GoFundMe Charity help page (charitysupport.gofundme.com) failed to load on three fetchers (TLS handshake failure); the 'Free tier 0% platform + 1.9% + $0.30 / Flex tier 3% platform + 2.2% + $0.30' figures visible only in search-engine snippets are UNVERIFIED and likely obsolete.",
+      "Recurring-donation 5% fee is charged to the donor (it appears under 'Extra or larger than expected charge on statement'), so the fundraiser's net per recurring donation is still donation minus 2.9% + $0.30 unless GoFundMe states otherwise; a calculator author must decide whether to display it as a donor-side cost.",
+      "The blog post dated April 20, 2026 still contains the stale phrase 'GoFundMe’s fees for 2022' but states the same 2.9% + $0.30 and 5% recurring figures.",
+      "Payment methods covered by the single transaction fee per the help article: credit, debit, ACH, PayPal, Venmo, Apple Pay, Google Pay (for most fundraisers)."
+    ]
+  },
+  {
+    "platform": "depop",
+    "name": "Depop",
+    "as_of": "2026-09-08",
+    "sources": [
+      {
+        "url": "https://depophelp.zendesk.com/hc/en-gb/articles/360001791127-Seller-fees-and-charges",
+        "title": "Seller fees and charges – Depop Help Centre",
+        "loaded": true,
+        "last_updated_on_page": "no date shown; footnote '^new listings from 23 March 2026'"
+      },
+      {
+        "url": "https://depophelp.zendesk.com/hc/en-gb/articles/10110299060753-Boosted-Listings",
+        "title": "Boosted Listings – Depop Help Centre",
+        "loaded": true,
+        "last_updated_on_page": "no date shown; text says fees 'are effective from 23 March'"
+      },
+      {
+        "url": "https://depophelp.zendesk.com/hc/en-gb/articles/21752555753361-What-is-the-Marketplace-fee",
+        "title": "What is the Marketplace fee? – Depop Help Centre",
+        "loaded": true,
+        "last_updated_on_page": "effective from 15 April 2024 in the UK, and 18 July 2024 in the US"
+      },
+      {
+        "url": "https://www.depop.com/sell/",
+        "title": "Sell Clothes Online for Free - 0% Selling Fees | Depop",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://news.depop.com/company-news/depop-removes-selling-fees-in-the-united-states-evolves-fee-structure/",
+        "title": "Depop removes selling fees in the United States, evolves fee structure | Depop newsroom",
+        "loaded": true,
+        "last_updated_on_page": "15 Jul 2024"
+      },
+      {
+        "url": "https://depophelp.zendesk.com/hc/en-gb/articles/360001791287-How-do-I-change-the-currency-of-my-items",
+        "title": "How do I change the currency of my items? – Depop Help Centre",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://partnerapi.depop.com/api-docs/concepts/fees/",
+        "title": "Fees - Selling API (Depop partner API docs)",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://depophelp.zendesk.com/hc/en-us/articles/360001791127-Seller-fees-and-charges",
+        "title": "Seller fees and charges (en-us locale)",
+        "loaded": false,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://blog.depop.com/articles/us-depop-fee-change",
+        "title": "The Depop Circular: US fee change (blog)",
+        "loaded": false,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://depophelp.zendesk.com/hc/en-gb/articles/10782996439313-Depop-Payments-fee-change-US-",
+        "title": "Depop Payments fee change (US) – Depop Help Centre",
+        "loaded": false,
+        "last_updated_on_page": null
+      }
+    ],
+    "rates": {
+      "selling_fee_pct_us": 0,
+      "payment_processing_pct_us": 0.033,
+      "payment_processing_fixed_us": 0.45,
+      "boosting_fee_pct_us": 0.12,
+      "boosting_fee_effective": "new listings from 23 March 2026",
+      "boosting_attribution_window_days": 28,
+      "selling_fee_pct_outside_uk_us_aus": 0.1,
+      "boosting_fee_pct_outside_uk_us": 0.08,
+      "payment_processing_uk": "0.029 + £0.30",
+      "payment_processing_aus": "0.026 + A$0.30",
+      "marketplace_fee_buyer_pct_max_us": 0.05,
+      "marketplace_fee_buyer_fixed_max_us": 1.0
+    },
+    "structure": "US-based sellers selling in USD pay no Depop selling fee. When paid through Depop Payments (Stripe), a payment-processing fee of 3.3% + $0.45 is charged on the item sale price plus shipping costs plus any applicable taxes (i.e., the buyer's full payment), once per transaction (a bundle counts as one transaction), and is deducted before the proceeds reach the seller's bank account. If a listing (or the whole shop via Boost Shop) is boosted, a 12% boosting fee applies on the item sale price excluding taxes, plus the shipping cost if the seller arranged their own shipping rather than using a Depop Shipping label; it is charged only when a buyer interacted with the boosted listing and bought within 28 days, and it applies to new listings from 23 March 2026. All fees are reversed if the sale is refunded. Buyers separately pay a Marketplace fee (up to 5% of item price + up to $1, excluding taxes and shipping) that is not deducted from the seller.",
+    "examples": [],
+    "quotes": [
+      "No Depop Selling fees will be charged to sellers based in the UK, US, or AUS.",
+      "US payment processing fee (Depop Payments) 3.3% + $0.45 The payment processing fee for Depop Payments (via Stripe) is charged on the item sale price plus shipping costs and any applicable taxes.",
+      "Sellers in the United Kingdom (UK) and United States (US)^: Boosting fee (for Boosted Listings) 12% The boosting fee is charged on the item sale price (excluding taxes) and, if you haven’t used a Depop Shipping label, the shipping cost. ... ^new listings from 23 March 2026",
+      "Sellers outside of the UK and US: Boosting fee (for Boosted Listings) 8%",
+      "Depop Selling fees 10% on all sales The selling fee is charged on the item sale price (excluding taxes) and, if you haven’t used a Depop Shipping label, the shipping cost. The selling fee applies to sellers outside of the UK, US, or AUS and selling in a currency other than GBP, USD, or AUD.",
+      "If you are selling using Depop Payments (via Stripe), all fees are deducted before your sale proceeds are paid to your bank account.",
+      "If your sale is refunded, all fees (the selling fee, payments processing fees and boosting fees) will be reversed too.",
+      "The payment processing fees will apply once per bundle transaction.",
+      "You’ll only pay a boosting fee if a buyer interacts with your boosted listing (views, clicks, or likes it) and then purchases the item within 28 days. Charges differ depending on where you live.",
+      "In the UK or US: if you boost an individual listing, a 12% boosting fee on the item sale price (excluding taxes) and any shipping costs, if you arrange your own",
+      "These fees are in addition to selling fees (payable outside of the United Kingdom and United States) and payment processing fees. They are effective from 23 March and form part of our Terms of Service.",
+      "Unlike other resale platforms, we have zero selling fees. On anything. *Payment processing fees and boosting fees still apply.",
+      "Zero selling fees are available to sellers located in the U.S. and to USD sales only, and the usual payment processing fee will still apply.",
+      "The Marketplace fee will be applied to each purchase made on Depop in the UK and the US in either GBP (£) or USD ($). It will be charged at: up to 5% of the item purchase price, plus a fixed amount of up to £/$1, excluding taxes and shipping costs."
+    ],
+    "excluded": [
+      "Buyer-paid Marketplace fee (up to 5% + up to $1)",
+      "10% selling fee for sellers outside UK/US/AUS and PayPal processing fees for those sellers",
+      "UK and Australian payment-processing rates",
+      "Customs duties/taxes on cross-border orders; US state sales tax collected from buyers",
+      "Depop Shipping label prices (prepaid by buyer)"
+    ],
+    "notes": [
+      "Depop's Help Centre has a single English locale (hc/en-gb); the en-us URL returns 404. The en-gb 'Seller fees and charges' page states the US rates explicitly.",
+      "Boost fee: the 12% UK/US rate is footnoted '^new listings from 23 March 2026' and the Boosted Listings article says the fees are 'effective from 23 March'. The rate for listings created before that date is not stated on the loaded pages (the 8% figure on the fee page applies to sellers outside the UK/US).",
+      "Currency/international terms: zero selling fees are tied to sellers located in the US selling in USD (newsroom, 15 Jul 2024); the fee page phrases the 10% fee as applying to sellers outside UK/US/AUS selling in a currency other than GBP/USD/AUD. Listing currency defaults to phone settings and can be changed in Payment Settings for new items only; relocating sellers must contact support. No Depop-side currency-conversion fee for US sellers was found on the loaded pages.",
+      "Calculator ambiguity: the processing-fee base includes 'any applicable taxes' (buyer's sales tax) and shipping, so an exact fee requires the buyer's tax amount; the Marketplace fee is not listed as part of the base. The boosting-fee base excludes taxes and includes shipping only when the seller does not use a Depop Shipping label.",
+      "Newsroom (15 Jul 2024) announced the Marketplace fee 'from July 18th 2024' at up to 5% + up to $1; the Marketplace fee article gives the same figures and dates.",
+      "Failed pages: blog.depop.com/articles/us-depop-fee-change now redirects to the blog index (article removed); the 'Depop Payments fee change (US)' help article redirects to a login page (restricted). The partner API 'Fees' doc contains no numbers and points to the help article."
+    ]
+  },
+  {
+    "platform": "poshmark",
+    "name": "Poshmark",
+    "as_of": "2026-09-08",
+    "sources": [
+      {
+        "url": "https://poshmark.com/fee_policy",
+        "title": "Fee Policy – Poshmark Legal Center (client-side tab; also reachable as https://poshmark.com/terms#fee-policy)",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://support.poshmark.com/s/article/297755057?language=en_US",
+        "title": "What are the fees for selling on Poshmark?",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://support.poshmark.com/s/article/975218789?language=en_US",
+        "title": "What are the shipping rates on Poshmark?",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://support.poshmark.com/s/article/Texas-Seller-Fee-Tax?language=en_US",
+        "title": "What is Texas Seller Fee Tax?",
+        "loaded": true,
+        "last_updated_on_page": "As of October 1, 2025"
+      },
+      {
+        "url": "https://blog.poshmark.com/2026/02/13/shipping-heavier-items-on-poshmark-is-now-simpler-and-cheaper/",
+        "title": "Shipping Heavier Items on Poshmark is Now Simpler and Cheaper – Poshmark Blog",
+        "loaded": true,
+        "last_updated_on_page": "February 13, 2026"
+      }
+    ],
+    "rates": {
+      "listing_fee": 0,
+      "flat_commission_under_15": 2.95,
+      "commission_pct_15_and_above": 0.2,
+      "commission_threshold_usd": 15,
+      "shipping_label_flat_paid_by_buyer": 6.49,
+      "shipping_label_weight_limit_lb": 5,
+      "heavier_label_upgrade_5_1_to_10_lb": 5.0,
+      "heavier_label_upgrade_10_1_to_15_lb": 10.0,
+      "texas_seller_fee_tax_base_share_of_fee": 0.8,
+      "texas_seller_fee_tax_state_rate": 0.0625,
+      "texas_seller_fee_tax_combined_rate_example": 0.0825
+    },
+    "structure": "Listing is free. After a sale, Poshmark deducts its fee from the 'final order price' (the order/item price after seller discounts; buyer-paid shipping and sales tax are outside this base): a flat $2.95 when the sale is under $15, or 20% (seller keeps 80%) when the sale is $15 or above. The buyer pays a flat $6.49 shipping fee for a USPS Ground Advantage label covering the order (or a bundle from one closet) up to 5 lb; above 5 lb the seller pays, buying a heavier-weight label upgrade at $5.00 (5.1–10 lb) or $10.00 (10.1–15 lb), paying only the difference from the original label. Since October 1, 2025, sellers with a Texas return address also have a Texas Seller Fee Tax deducted: Texas state (6.25%) plus local sales tax applied to 80% of Poshmark's fee. Rounding rules are not published.",
+    "examples": [
+      {
+        "description": "Texas seller, $100 sale: 20% fee plus Texas Seller Fee Tax at an assumed 8.25% combined rate on 80% of the fee (net of $78.68 is derived, not stated by Poshmark)",
+        "inputs": {
+          "sale_price": 100,
+          "seller_state": "TX",
+          "assumed_local_rate": 0.02
+        },
+        "expected": {
+          "fee": 20.0,
+          "texas_seller_fee_tax": 1.32,
+          "net": null
+        },
+        "quote": "A buyer purchases an item for $100. Poshmark’s seller fee is $20 (20% of the sale). Texas applies a 8.25% tax on 80% of the seller fee ($20 × 80% = $16). The commission tax is $1.320 ($16 × 8.25%).",
+        "source_url": "https://support.poshmark.com/s/article/Texas-Seller-Fee-Tax?language=en_US"
+      }
+    ],
+    "quotes": [
+      "It’s always free to list an item for sale on Poshmark.",
+      "For Sellers, after your item sells, we deduct a small fee from the final order price. For sales under $15, the fee is a flat rate of $2.95. For sales $15 and above, the fee is 20% and you keep 80%.",
+      "Please note, estimated earnings are displayed during listing creation and actual earnings will vary based on the final order price, seller discounts, fees paid, and any other applicable taxes and discounts.",
+      "For sales under $15, Poshmark takes a flat commission of $2.95—you keep the rest.",
+      "For sales of $15 or more, you keep 80% of the sale, and Poshmark takes a 20% commission.",
+      "As of October 1st, 2025, sellers located in Texas will see an additional Texas Seller Fee Tax deducted from their earnings.",
+      "Poshmark provides a flat-rate shipping fee of $6.49, paid by the buyer, for all orders.",
+      "Orders are shipped via USPS Ground Advantage (2-5 business days).",
+      "If you’re purchasing multiple listings from the same closet, you can add them to a Bundle and pay a single $6.49 shipping fee, provided the total package weight does not exceed 5 lbs.",
+      "If the total weight exceeds 5 lbs, any overweight shipping costs are the responsibility of the seller.",
+      "5.1-10 lbs: Now a single, low $5.00 tier.",
+      "10.1-15 lbs: A brand-new tier for only $10.00.",
+      "Sellers, you only pay the difference between your original label and the upgraded label, and your entire order still ships together in one package.",
+      "Poshmark is required to apply this additional tax to 80% of the seller fee on sales made by sellers with a return address in Texas.",
+      "The tax rate imposed includes the 6.25% Texas state sales tax plus applicable local sales taxes (city, county, etc.) where the seller is located. Assuming the local sales tax rate is 2%, this results in a combined rate of 8.25%. This will be deducted from the seller’s earnings at the time of sale."
+    ],
+    "excluded": [
+      "Canada, Australia and India fee schedules",
+      "Sales tax collected from buyers (Posh Remit)",
+      "Seller-funded shipping discounts / Closet Clear Out offers (amounts governed by the Shipping Policy, not loaded)",
+      "Promoted Closet advertising fees",
+      "Posh Shows / live-show fees (none stated on the loaded pages)",
+      "Carrier overweight/oversize postage charges"
+    ],
+    "notes": [
+      "Threshold boundary: 'under $15' -> $2.95 flat; '$15 and above' / '$15 or more' -> 20%. A sale of exactly $15.00 is charged 20% ($3.00).",
+      "The fee base is the 'final order price' after seller discounts. Whether a seller-offered shipping discount is additionally deducted from earnings is governed by the Shipping Policy (not loaded) — a calculator author must decide how to model seller-paid shipping discounts (UNVERIFIED here).",
+      "The Legal Center page at /fee_policy renders the Terms of Service first; the Fee Policy text appears only after switching to the 'Fee Policy' tab (URL becomes /terms#fee-policy). The Fee Policy tab shows no version/effective date; the Terms tab shows 'Version 4.6 (Current) Effective June 3rd 2025'.",
+      "Shipping: only $6.49 is on current official pages. A '$7.97' figure that surfaced in a search-engine snippet was not found on any loaded Poshmark page (it does appear in Mercari's carrier table) — treat as unverified/outdated.",
+      "Third-party reports (e.g., Modern Retail) say a late-2024 announced 5.99% seller fee / $5.99 buyer fee structure was rolled back after seller backlash — UNVERIFIED; the current official pages show only the $2.95 / 20% structure and the Texas Seller Fee Tax (Oct 1, 2025) as a new deduction.",
+      "Texas Seller Fee Tax: Poshmark's example shows '$1.320', so rounding of this deduction to cents is not specified; the local component varies by the seller's locality."
+    ]
+  },
+  {
+    "platform": "mercari",
+    "name": "Mercari",
+    "as_of": "2026-09-08",
+    "sources": [
+      {
+        "url": "https://www.mercari.com/us/help_center/article/169/",
+        "title": "Fees on Mercari | Mercari Help",
+        "loaded": true,
+        "last_updated_on_page": "Updated 05/07/2026"
+      },
+      {
+        "url": "https://www.mercari.com/us/help_center/article/2517/",
+        "title": "Changes to our fee structure | Mercari Help",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://www.mercari.com/us/help_center/article/2518/",
+        "title": "FAQs about our new fee structure | Mercari Help",
+        "loaded": true,
+        "last_updated_on_page": "Last updated: 12/9/2024; 12/18/2024; 1/6/2025"
+      },
+      {
+        "url": "https://www.mercari.com/us/help_center/article/93/",
+        "title": "How to request a direct deposit or Instant Pay | Mercari Help",
+        "loaded": false,
+        "last_updated_on_page": null
+      }
+    ],
+    "rates": {
+      "listing_fee": 0,
+      "selling_fee_pct": 0.1,
+      "selling_fee_base": "item price + buyer-paid shipping (listings created or updated on/after 2025-01-06)",
+      "payment_processing_pct": 0,
+      "payment_processing_fixed": 0,
+      "legacy_payment_processing_pct_buyer_paid": 0.029,
+      "legacy_payment_processing_fixed_buyer_paid": 0.5,
+      "buyer_protection_fee_pct_buyer_paid": 0.036,
+      "legacy_buyer_service_fee_pct_buyer_paid": 0.1,
+      "instant_pay_fee_per_cashout": 3.0,
+      "instant_pay_monthly_limit": 600,
+      "direct_deposit_fee": 0,
+      "failed_direct_deposit_fee": 2.0,
+      "cancellation_fee_pct_frequent_cancellers": 0.05,
+      "cancellation_fee_max": 25.0
+    },
+    "structure": "For listings created or updated on or after January 6, 2025, the seller pays a flat 10% selling fee on the combined item price plus buyer-paid shipping; no separate payment-processing fee is charged to either side. The buyer pays a 3.6% Buyer Protection fee on the same base (item price + buyer-paid shipping), shown in the checkout total and not deducted from the seller. Legacy listings created before January 6, 2025 and never updated carry the old structure instead: no seller fee, but the buyer pays a 10% service fee and a payment-processing fee of $0.50 + 2.9% of the transaction price (item + shipping + service fee + sales tax). Payouts: ACH direct deposit is free (once per day; $2 for each failed request); Instant Pay costs a flat $3 per cash-out (once per day, up to $600/month). Rounding is not published.",
+    "examples": [],
+    "quotes": [
+      "Listing an item is always free on Mercari. Fees are charged when an item sells or when a service is used.",
+      "Effective January 6, 2025, a 10% selling fee will apply to item price and buyer-paid shipping for new and updated listings.",
+      "A 10% selling fee of the combined amount of item price and buyer-paid shipping will be charged to the seller.",
+      "Existing listings created before January 6, 2025 A selling fee will not be applied until the listing is updated.",
+      "Effective January 6, 2025, Mercari will no longer charge buyers a payment processing fee at the time of purchase on new or updated listings.",
+      "Until the listing is updated, a Payment Processing Fee of $0.50 plus 2.9% of the transaction price (includes the item price, shipping, service fee and sales tax) will be charged to the buyer.",
+      "Starting January 6, 2025, a Buyer Protection fee of 3.6% will apply to the item price and buyer-paid shipping for new and updated listings.",
+      "A 10% buyer fee will apply to the buyer until the listing is updated.",
+      "Effective January 6, 2025 at 2:00 PM PT, there is no longer a $2 non-refundable fee per cash-out.",
+      "There is $2 non-refundable fee for each failed direct deposit request.",
+      "You can use Instant Pay for up to $600 per month, once per day on eligible debit cards. There is a $3 flat fee per cash-out.",
+      "$3 fee For each completed Instant Pay transfer.",
+      "If a seller has frequent cancelations, Mercari may charge a cancelation fee of 5% of the item price (maximum of $25) to cover the cost of any transaction fees, operational and/or shipping label costs we incur.",
+      "Sellers will pay a flat 10% selling fee on the completed item price and buyer-paid shipping",
+      "No additional payment processing fee for either buyers or sellers",
+      "Payment processing fees (2.9% + $0.50) apply to items sold with the old fee structure.",
+      "We’re removing the ACH direct deposit fee for successful withdrawal transactions. Limit to one ACH direct deposit per day."
+    ],
+    "excluded": [
+      "Buyer Protection fee (buyer-paid)",
+      "Mercari Authenticate listing fee ($5) and Certificate of Authenticity ($10)",
+      "Prepaid shipping label rates (USPS/UPS/FedEx tables; USPS rates updated May 7, 2026) and underpaid-label / wrong-packaging surcharges",
+      "Legal document processing fee ($25/hour, paid by agencies)",
+      "Third-party warranties (buyer-paid)",
+      "Sales tax"
+    ],
+    "notes": [
+      "Timeline (official): March 2024 — seller fees removed and a buyer service fee introduced ('When we initially introduced our current fee structure in March ... sellers got to keep 100% of their sales proceeds'); January 6, 2025 — 10% selling fee reinstated, 3.6% Buyer Protection fee introduced, payment-processing fee dropped for new/updated listings, $2 ACH cash-out fee removed at 2:00 PM PT; January 6–12, 2025 — transition week with no 10% fee on old-structure listings; May 7, 2026 — prepaid USPS label rates changed for the fuel surcharge (fee page 'Updated 05/07/2026'). No 2026 change to the 10% / 3.6% structure appears on official pages.",
+      "Conflict: several third-party pages date the reinstated 10% fee to 'January 6, 2026' — UNVERIFIED and contradicted by Mercari's own pages, which say January 6, 2025.",
+      "Calculator ambiguity: the fee base is 'item price + buyer-paid shipping'. When the seller offers free shipping there is no buyer-paid shipping in the base, and the label cost comes out of the seller's proceeds (label prices from the rate table); when the buyer pays shipping via a Mercari label, the fee is 10% of item + shipping even though the shipping money passes through to the carrier.",
+      "Legacy structure applies only to listings created before Jan 6, 2025 that were never updated; Mercari said existing listings would be 'updated automatically within a week', so it should be rare in 2026.",
+      "Instant Pay details ($3 flat, $600/month, once per day, up to 30 minutes) come from the fee page; the dedicated Instant Pay how-to article (article 93) is JavaScript-rendered and returned an empty body to HTTP fetchers."
+    ]
+  },
+  {
+    "platform": "whatnot",
+    "name": "Whatnot",
+    "as_of": "2026-09-08",
+    "sources": [
+      {
+        "url": "https://help.whatnot.com/hc/en-us/articles/4847069165965-Whatnot-seller-fees",
+        "title": "Whatnot seller fees – Whatnot Help Center",
+        "loaded": true,
+        "last_updated_on_page": "August 11, 2026 15:54"
+      },
+      {
+        "url": "https://help.whatnot.com/hc/en-us/articles/14477076380941-Reduced-commission-on-Coins-Money",
+        "title": "Reduced commission on Coins & Money – Whatnot Help Center",
+        "loaded": true,
+        "last_updated_on_page": "July 31, 2026 16:12"
+      },
+      {
+        "url": "https://help.whatnot.com/hc/en-us/articles/27912945518733-Reduced-Commission-on-High-Value-Orders",
+        "title": "Reduced Commission on High-Value Orders – Whatnot Help Center",
+        "loaded": true,
+        "last_updated_on_page": "July 31, 2026 16:24"
+      },
+      {
+        "url": "https://help.whatnot.com/hc/en-us/articles/46618300974477-Sell-More-Earn-More",
+        "title": "Sell More, Earn More – Whatnot Help Center",
+        "loaded": true,
+        "last_updated_on_page": "July 16, 2026 15:05 (terms 'Last Updated: July 9, 2026')"
+      },
+      {
+        "url": "https://help.whatnot.com/hc/en-us/articles/32083195713421-Taxes-on-Whatnot-commissions-and-fees",
+        "title": "Taxes on Whatnot commissions and fees – Whatnot Help Center",
+        "loaded": true,
+        "last_updated_on_page": "July 17, 2026 23:40"
+      },
+      {
+        "url": "https://help.whatnot.com/hc/en-us/sections/44398189207565-Fees-commissions",
+        "title": "Fees & commissions – Whatnot Help Center (section index)",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://help.whatnot.com/hc/en-us/articles/25550923919757-Reduced-Commission-on-Electronics",
+        "title": "Reduced Commission on Electronics – Whatnot Help Center",
+        "loaded": false,
+        "last_updated_on_page": null
+      }
+    ],
+    "rates": {
+      "listing_fee": 0,
+      "commission_pct_standard_us": 0.08,
+      "payment_processing_pct_us": 0.029,
+      "payment_processing_fixed_us": 0.3,
+      "commission_pct_coins_and_money": 0.04,
+      "commission_pct_pallets_wholesale_limited_time": 0.04,
+      "high_value_threshold_usd": 1500,
+      "commission_pct_on_portion_above_threshold_select_categories": 0,
+      "high_value_promo_start": "2026-01-14",
+      "trading_cards_commission_pct": 0.08,
+      "giveaway_seller_fees": 0,
+      "sell_more_earn_more_us_test_tiers": "US Fashion / Toys & Hobbies / Food & Drink only, by trailing 4-week total sales: $0 Standard 8.00%; $20,000 Tier 1 7.00%; $35,000 Tier 2 6.00%; $50,000 Tier 3 5.00%; $100,000 Tier 4 4.00%; $250,000 Tier 5 3.75%; $500,000 Tier 6 3.50%; $1,000,000 Tier 7 3.25%; $1,500,000 Tier 8 3.00%; Coins & Money 4% at all tiers; all other categories 8% at all tiers; runs through at least 2026-11-01",
+      "premier_shop_discount_share_of_commission": 0.1
+    },
+    "structure": "Two fees are deducted per checkout transaction. Commission is a percentage of the item's final sale price (accepted offer/auction price after seller-generated coupons), excluding shipping and taxes: 8% in most US categories, 4% for Coins & Money (Coins & Bullion, Paper Money & Currency) and for the Pallets wholesale category (limited time). Payment processing is 2.9% of the total order value paid by the buyer at checkout (item + buyer-paid shipping + buyer-paid sales tax) plus a fixed $0.30 per transaction; it therefore varies with shipping and tax even for identical item prices. Since January 14, 2026, in select categories (Comics & Anime, Toys & Hobbies, Coins & Money, Trading Card Games, Entertainment Cards, Sports Singles subcategories, and from June 4, 2026 Bags & Accessories and Jewelry & Watches) the commission is 0% on the portion of an individual order's price above $1,500 while processing still applies to the full amount; sports breaks and surprise products are excluded. Net earnings = final sale price − commission − payment processing − any state tax on fees − any seller-covered shipping. Whatnot-issued coupons do not reduce the seller's price; giveaways carry no seller fees. The same schedule applies to live shows and marketplace (non-live) listings; for live sales the rate follows the show's category, for marketplace sales the product's category.",
+    "examples": [
+      {
+        "description": "US/Canada/Australia standard example: $50 item, 8% commission, $58.70 total order value",
+        "inputs": {
+          "final_sale_price": 50,
+          "total_order_value": 58.7,
+          "commission_pct": 0.08
+        },
+        "expected": {
+          "fee": 6.0,
+          "net": 44.0
+        },
+        "quote": "Final sale price: $50 Commission (8%): $4 Total order value (including shipping and taxes): $58.70 Payment processing fee (2.9% of $58.70 + $0.30): $2.00 Your net earnings: $50 − $4 − $2 = $44.00",
+        "source_url": "https://help.whatnot.com/hc/en-us/articles/4847069165965-Whatnot-seller-fees"
+      },
+      {
+        "description": "High-value order in a qualifying category: $2,000 item; commission only (processing on full transaction value not computed in the example)",
+        "inputs": {
+          "final_sale_price": 2000,
+          "category": "qualifying (e.g., Trading Card Games)",
+          "commission_pct": 0.08,
+          "threshold": 1500
+        },
+        "expected": {
+          "fee": 120.0,
+          "net": null
+        },
+        "quote": "You are US-based seller who sells an item in a qualifying category for $2,000 You will be charged standard commission (for the US, 8%) on the first $1,500. Your total commission fee will be $120. You will be charged 0% commission on the remaining $500 Payment processing fees on the full transaction value still apply. In the US, this number is 2.9% + $0.30",
+        "source_url": "https://help.whatnot.com/hc/en-us/articles/27912945518733-Reduced-Commission-on-High-Value-Orders"
+      },
+      {
+        "description": "Texas seller: sales tax on the payment-processing fee (Houston 8.25% reduced by 20% = 6.6%) on $100 of buyer payments",
+        "inputs": {
+          "total_order_value": 100,
+          "seller_location": "Houston, TX",
+          "local_sales_tax_rate": 0.0825
+        },
+        "expected": {
+          "fee": 3.2,
+          "tax_on_processing_fee": 0.21,
+          "net": null
+        },
+        "quote": "Order total (subtotal + shipping + buyer tax) $100.00 Total Payment Processing fee (2.9% + .30c) $3.20 Houston sales tax rate (8.25%) reduced by 20% 6.6% Total sales tax on payment processing fee $0.21",
+        "source_url": "https://help.whatnot.com/hc/en-us/articles/32083195713421-Taxes-on-Whatnot-commissions-and-fees"
+      }
+    ],
+    "quotes": [
+      "Comics, TCG, Sports Singles, Toys & Hobbies (see other restrictions) 8% on final sale price up to $1,500; 0% on portion above $1,500 (limited time; learn more). 2.9% on total order value + $0.30 transaction fee",
+      "Coins & Money 4% on final sale price up to $1,500; 0% on portion above $1,500 (limited time)** 2.9% on total order value + $0.30 transaction fee",
+      "Pallets (Wholesale category) 4% on final sale price (limited time) 2.9% on total order value + $0.30 transaction fee",
+      "All other categories (some restrictions apply) 8% on final sale price 2.9% on total order value + $0.30 transaction fee",
+      "*Plus applicable taxes on fees.",
+      "The commission fee is Whatnot’s share of the sale. It’s calculated as a percentage of your item’s final sale price, excluding shipping and taxes.",
+      "It’s calculated as a percentage of the total order value (the amount paid by the buyer at checkout), plus a fixed transaction fee.",
+      "Fees are automatically applied each time a buyer checks out. Even if purchases are later bundled into one order or shipment, fees are calculated separately per transaction.",
+      "Whatnot doesn’t charge fees to create, store, or manage listings.",
+      "Net earnings = Item's final sale price – commission fee – payment processing fee",
+      "Products properly listed under the following categories qualify for a 4% commission fee: Coins & Bullion Paper Money & Currency",
+      "Starting January 14, 2026, Whatnot began charging a 0% commission on the portion of the sale price over 1,500 (USD/AUD/EUR/GBP 1,500 or JPY 225,000) on individual orders in select categories plus standard payment processing.",
+      "Starting at 12:00am EST on June 4th, 2026, Whatnot extended this promotion to include individual orders in Bags & Accessories and Jewelry & Watches.",
+      "Rate only applies to the Singles subcategories in Sports Cards. Sports breaks and Surprise Products are excluded from the promotion.",
+      "For live sales: the rate is based on the category of the show. For marketplace (non-live) sales: the rate is based on the category of the product.",
+      "No. You aren't charged seller fees for Giveaways because the buyer doesn’t pay anything. You only pay for shipping.",
+      "Seller-generated coupons: Reduce the final sale price, so fees apply to the discounted amount.",
+      "If you cover part or all of the shipping cost, that amount is deducted from your earnings, along with applicable commission and payment processing fees.",
+      "State laws require Whatnot to collect sales tax on Whatnot Commissions and Fees in the following states: Commission: District of Columbia, Hawaii, New Mexico, West Virginia Payment Processing Fee: Connecticut (special 1% rate), Hawaii, New Mexico, Ohio, South Dakota, Texas (standard rate reduced by 20%), West Virginia Show Promotion and Boost: Hawaii, New Mexico, South Dakota",
+      "This program is currently available in US Fashion, Toys & Hobbies, and Food & Drink and will run through at least November 1, 2026.",
+      "So if you qualify for a 5% rate, you’ll be charged 4.5% (5% plus the 10% Premier Shop discount)."
+    ],
+    "excluded": [
+      "EU/UK (6.67% + VAT; 2.42% + €/£0.25 + VAT), Japan (8% + JCT; 2.9% + ¥50 + JCT), Australia/Canada-specific promotions and taxes",
+      "Regional limited-time promotions (FR/BE fashion 0%, AU coins/TCG/fashion 0% weeks, DE/AT 0% week, UK lower-cost-order fee reduction, '0% Commission for 24 Hours | August 7th')",
+      "Show Promotion and Boost fees (amounts not on the loaded pages)",
+      "Shipping label costs and Early Payout terms",
+      "Buyer-side fees and buyer sales tax"
+    ],
+    "notes": [
+      "Live vs marketplace: the fee schedule does not differentiate live-show sales from marketplace (Buy It Now/offer) sales; the only stated difference is which category sets the rate (show category for live, product category for marketplace).",
+      "Trading cards: Trading Card Games, Entertainment Cards and Sports Singles have the standard 8% commission but qualify for the 0%-above-$1,500 promotion; sports breaks and Surprise Products do not. Coins & Money is the only permanently reduced category (4%); Pallets (wholesale) is 4% 'limited time'.",
+      "Electronics: the 'Reduced Commission on Electronics' article now returns 404 and Electronics is not a reduced row in the fee table; search-engine snippets citing a 5% electronics commission are stale/unverified. The snippet 'Seller fees are ≤8% (varies by category/country)' also comes from an older revision of the fee page.",
+      "The high-value 0% promotion has no stated end date ('limited time'; Whatnot may end it at any time). Sell More, Earn More is a US-only test for a subset of sellers through at least November 1, 2026; a calculator should treat tiered rates as optional/conditional.",
+      "Payment processing uses the buyer's total including sales tax, so an exact fee needs shipping and buyer tax as inputs; in Whatnot's own example 2.9% × $58.70 + $0.30 = $2.0023 is shown as $2.00 (rounded to cents).",
+      "Taxes on fees: sellers in DC, HI, NM, WV pay state sales tax on the commission; sellers in CT (special 1% rate), HI, NM, OH, SD, TX (rate reduced by 20%), WV pay it on the payment-processing fee; these are deducted from earnings.",
+      "Premier Shop discount (10% off the commission) is mentioned only in the Sell More, Earn More FAQ; eligibility terms were not on the loaded pages."
+    ]
+  },
+  {
+    "platform": "vinted",
+    "name": "Vinted",
+    "as_of": "2026-09-08",
+    "sources": [
+      {
+        "url": "https://www.vinted.com/pricelist",
+        "title": "Price List | Vinted (US, USD)",
+        "loaded": true,
+        "last_updated_on_page": "Last updated: 1 July 2024"
+      },
+      {
+        "url": "https://www.vinted.com/help/342-buyer-protection-fee-on-vinted",
+        "title": "Buyer Protection fee on Vinted | Vinted",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://www.vinted.com/help/373-is-selling-on-vinted-free",
+        "title": "Is selling on Vinted free? | Vinted",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://www.vinted.com/help/68-how-to-withdraw-earnings",
+        "title": "How to withdraw earnings | Vinted",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://www.vinted.com/help/437-vinted-wallet-how-it-works",
+        "title": "Vinted Wallet: how it works | Vinted",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://www.vinted.com/help/1555-us-uk-international-sales",
+        "title": "US / UK international sales | Vinted",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://www.vinted.com/help/1147-item-verification-for-designer-items",
+        "title": "Item Verification for designer items | Vinted",
+        "loaded": true,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://www.vinted.com/help/432-withdrawals",
+        "title": "Withdrawals | Vinted",
+        "loaded": false,
+        "last_updated_on_page": null
+      },
+      {
+        "url": "https://www.vinted.com/help/4/1577-payments-withdrawals",
+        "title": "Payments & withdrawals | Vinted (topic index)",
+        "loaded": false,
+        "last_updated_on_page": null
+      }
+    ],
+    "rates": {
+      "listing_fee": 0,
+      "selling_fee_pct": 0,
+      "buyer_protection_fee_pct_of_item_price_buyer_paid": 0.05,
+      "buyer_protection_fee_fixed_buyer_paid": 0.7,
+      "withdrawal_fee": 0,
+      "withdrawal_minimum": 0.1,
+      "withdrawal_time_business_days_max": 5,
+      "instant_payout_fee": "no instant-withdrawal option or fee is published on US help pages",
+      "item_verification_fee_us": "service not available in the US (buyer-paid where offered)",
+      "currency_conversion_fee_us_uk_buyer_side": 0.012,
+      "bump_fee": "variable; displayed before purchase (no fixed amount published)"
+    },
+    "structure": "Sellers pay nothing to list or sell: after an order completes, the full agreed item price is credited to the seller's Vinted Wallet, and withdrawals to a US bank account (USD only) are free, take up to 5 business days, and require a minimum of $0.10. The buyer pays, on top of the item price, shipping and any sales tax, a mandatory Buyer Protection fee of $0.70 plus 5% of the item price (for a bundle, 5% of the combined bundle price, with the fixed part once per order); the help center says the fee is 'usually 5% + $0.70' and can vary by item characteristics, order value and order type. Shipping costs are borne by the buyer; taxes on integrated labels are paid by the buyer, while for custom shipping the applicable taxes are borne by the seller. Optional seller-paid item bumps are priced at checkout (3 or 7 calendar days) and are not refundable. For US–UK cross-border orders the buyer pays the same Buyer Protection fee and a 1.2% currency conversion built into the checkout exchange rate; the seller is paid in USD.",
+    "examples": [],
+    "quotes": [
+      "There are no fees for uploading your items or selling them on Vinted. This means once your sale is successfully closed, you'll receive the full selling price straight to your Vinted Wallet.",
+      "The Buyer will be automatically charged a Buyer Protection Fee for these Buyer Protection Services, which will always be shown at checkout before completion of the order.",
+      "The Buyer Protection Fee is calculated as follows: A fixed amount of $0.70; plus 5% of the item price agreed to between the Buyer and the Seller, not including the shipping costs, any additional costs and applicable taxes.",
+      "This fee is mandatory for every order made through Vinted and is added automatically at checkout.",
+      "The Buyer Protection fee typically includes a percentage of the item's or bundle's price, as well as a fixed fee — usually 5% + $0.70.",
+      "The calculation of this fee varies based on several factors, such as: item characteristics, order value, order type (a single item versus a bundle)",
+      "These shipping costs are borne by the Buyer, and they are displayed when the Seller provides that option to Buyers.",
+      "Taxes on Integrated shipping labels are paid by the Buyer, and for custom shipping, the applicable taxes are borne by the Seller.",
+      "The Fee for Bumping Listed Items is displayed before completion of the Bump order. Any applicable sales tax may also be added at checkout.",
+      "They can take up to 5 business days to arrive in your bank account (Monday–Friday, not including weekends and holidays).",
+      "You can withdraw earnings in dollars (USD) to supported accounts in banks or other financial institutions using account and routing numbers.",
+      "The minimum amount you can withdraw is $0.10. Withdrawals below this amount will fail.",
+      "When making international purchases on Vinted, the same Buyer Protection fee applies as for domestic transactions.",
+      "Our payment provider applies a 1.2% currency conversion fee to USD↔GBP transactions, which is included in the conversion rate provided at the checkout.",
+      "Item Verification is currently available in France, Italy, Belgium, Germany, Spain, The Netherlands, the United Kingdom, Poland, Portugal, Romania, Denmark, Sweden, Lithuania and Finland.",
+      "The service fee is paid for by buyers and is visible on the item page and the checkout."
+    ],
+    "excluded": [
+      "Buyer Protection fee (buyer-paid; listed for reference only)",
+      "Shipping label prices and sales tax (buyer-paid)",
+      "Item bump / promotion fees (optional, variable, shown at purchase)",
+      "Item Verification / Electronics Verification fees (buyer-paid; not offered in the US)",
+      "Vinted Pro / business-seller terms",
+      "Non-US Buyer Protection fee formulas"
+    ],
+    "notes": [
+      "Conflict to resolve: the Price List (last updated 1 July 2024) states an exact formula ($0.70 + 5% of item price), whereas help article 342 says 'usually 5% + $0.70' and that the calculation 'varies based on ... item characteristics, order value, order type'. Use $0.70 + 5% as the default and flag that the checkout amount can differ.",
+      "Seller-side charges: none found on US pages beyond optional bumps and taxes on custom shipping. No instant-withdrawal option or fee is documented for the US (the Wallet page says funds become available 2 days after order completion; bank withdrawal takes up to 5 business days).",
+      "'Offline verification': Vinted's Item Verification for designer items is buyer-paid and, per the loaded page, not available in the US. 'Electronics Verification' appears only in search-engine snippets — UNVERIFIED.",
+      "The Price List and help pages were served for the US locale (English, US; USD amounts); the same URL serves other countries' formulas under other locales.",
+      "Failed pages: /help/432 (Withdrawals) redirected to the Help Centre home; the /help/4/1577 'Payments & withdrawals' topic index did not render server-side.",
+      "Vinted is not a fee-on-seller marketplace, so a seller-fee calculator should return fee = 0 and net = item price; the Buyer Protection fee is relevant only for showing the buyer's total (item + $0.70 + 5% + shipping + tax)."
+    ]
+  }
+]

@@ -1,0 +1,165 @@
+{
+  "platform": "depop",
+  "name": "Depop (US sellers)",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://depophelp.zendesk.com/hc/en-gb/articles/360001791127-Seller-fees-and-charges",
+      "title": "Seller fees and charges \u2013 Depop Help Centre",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "no date shown; footnote '^new listings from 23 March 2026'"
+    },
+    {
+      "url": "https://depophelp.zendesk.com/hc/en-gb/articles/10110299060753-Boosted-Listings",
+      "title": "Boosted Listings \u2013 Depop Help Centre",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "no date shown; text says fees 'are effective from 23 March'"
+    },
+    {
+      "url": "https://depophelp.zendesk.com/hc/en-gb/articles/21752555753361-What-is-the-Marketplace-fee",
+      "title": "What is the Marketplace fee? \u2013 Depop Help Centre",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "effective from 15 April 2024 in the UK, and 18 July 2024 in the US"
+    },
+    {
+      "url": "https://www.depop.com/sell/",
+      "title": "Sell Clothes Online for Free - 0% Selling Fees | Depop",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://news.depop.com/company-news/depop-removes-selling-fees-in-the-united-states-evolves-fee-structure/",
+      "title": "Depop removes selling fees in the United States, evolves fee structure | Depop newsroom",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "15 Jul 2024"
+    },
+    {
+      "url": "https://depophelp.zendesk.com/hc/en-gb/articles/360001791287-How-do-I-change-the-currency-of-my-items",
+      "title": "How do I change the currency of my items? \u2013 Depop Help Centre",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://partnerapi.depop.com/api-docs/concepts/fees/",
+      "title": "Fees - Selling API (Depop partner API docs)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://depophelp.zendesk.com/hc/en-us/articles/360001791127-Seller-fees-and-charges",
+      "title": "Seller fees and charges (en-us locale)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null,
+      "verify": false,
+      "note": "Read by a person in a browser on the loaded date; this page blocks automated checks, so it is not part of the nightly verification."
+    },
+    {
+      "url": "https://blog.depop.com/articles/us-depop-fee-change",
+      "title": "The Depop Circular: US fee change (blog)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://depophelp.zendesk.com/hc/en-gb/articles/10782996439313-Depop-Payments-fee-change-US-",
+      "title": "Depop Payments fee change (US) \u2013 Depop Help Centre",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "US sellers selling in USD through Depop Payments. Buyer-paid Marketplace fee, non-US selling fees and PayPal checkout are out of scope.",
+  "structure": "US-based sellers selling in USD pay no Depop selling fee. When paid through Depop Payments (Stripe), a payment-processing fee of 3.3% + $0.45 is charged on the item sale price plus shipping costs plus any applicable taxes (i.e., the buyer's full payment), once per transaction (a bundle counts as one transaction), and is deducted before the proceeds reach the seller's bank account. If a listing (or the whole shop via Boost Shop) is boosted, a 12% boosting fee applies on the item sale price excluding taxes, plus the shipping cost if the seller arranged their own shipping rather than using a Depop Shipping label; it is charged only when a buyer interacted with the boosted listing and bought within 28 days, and it applies to new listings from 23 March 2026. All fees are reversed if the sale is refunded. Buyers separately pay a Marketplace fee (up to 5% of item price + up to $1, excluding taxes and shipping) that is not deducted from the seller.",
+  "quotes": [
+    "No Depop Selling fees will be charged to sellers based in the UK, US, or AUS.",
+    "US payment processing fee (Depop Payments) 3.3% + $0.45 The payment processing fee for Depop Payments (via Stripe) is charged on the item sale price plus shipping costs and any applicable taxes.",
+    "Sellers in the United Kingdom (UK) and United States (US)^: Boosting fee (for Boosted Listings) 12% The boosting fee is charged on the item sale price (excluding taxes) and, if you haven\u2019t used a Depop Shipping label, the shipping cost. ... ^new listings from 23 March 2026",
+    "Sellers outside of the UK and US: Boosting fee (for Boosted Listings) 8%",
+    "Depop Selling fees 10% on all sales The selling fee is charged on the item sale price (excluding taxes) and, if you haven\u2019t used a Depop Shipping label, the shipping cost. The selling fee applies to sellers outside of the UK, US, or AUS and selling in a currency other than GBP, USD, or AUD.",
+    "If you are selling using Depop Payments (via Stripe), all fees are deducted before your sale proceeds are paid to your bank account.",
+    "If your sale is refunded, all fees (the selling fee, payments processing fees and boosting fees) will be reversed too.",
+    "The payment processing fees will apply once per bundle transaction.",
+    "You\u2019ll only pay a boosting fee if a buyer interacts with your boosted listing (views, clicks, or likes it) and then purchases the item within 28 days. Charges differ depending on where you live.",
+    "In the UK or US: if you boost an individual listing, a 12% boosting fee on the item sale price (excluding taxes) and any shipping costs, if you arrange your own",
+    "These fees are in addition to selling fees (payable outside of the United Kingdom and United States) and payment processing fees. They are effective from 23 March and form part of our Terms of Service.",
+    "Unlike other resale platforms, we have zero selling fees. On anything. *Payment processing fees and boosting fees still apply.",
+    "Zero selling fees are available to sellers located in the U.S. and to USD sales only, and the usual payment processing fee will still apply.",
+    "The Marketplace fee will be applied to each purchase made on Depop in the UK and the US in either GBP (\u00a3) or USD ($). It will be charged at: up to 5% of the item purchase price, plus a fixed amount of up to \u00a3/$1, excluding taxes and shipping costs."
+  ],
+  "excluded": [
+    "Buyer-paid Marketplace fee (up to 5% + up to $1)",
+    "10% selling fee for sellers outside UK/US/AUS and PayPal processing fees for those sellers",
+    "UK and Australian payment-processing rates",
+    "Customs duties/taxes on cross-border orders; US state sales tax collected from buyers",
+    "Depop Shipping label prices (prepaid by buyer)"
+  ],
+  "notes": [
+    "Depop's Help Centre has a single English locale (hc/en-gb); the en-us URL returns 404. The en-gb 'Seller fees and charges' page states the US rates explicitly.",
+    "Boost fee: the 12% UK/US rate is footnoted '^new listings from 23 March 2026' and the Boosted Listings article says the fees are 'effective from 23 March'. The rate for listings created before that date is not stated on the loaded pages (the 8% figure on the fee page applies to sellers outside the UK/US).",
+    "Currency/international terms: zero selling fees are tied to sellers located in the US selling in USD (newsroom, 15 Jul 2024); the fee page phrases the 10% fee as applying to sellers outside UK/US/AUS selling in a currency other than GBP/USD/AUD. Listing currency defaults to phone settings and can be changed in Payment Settings for new items only; relocating sellers must contact support. No Depop-side currency-conversion fee for US sellers was found on the loaded pages.",
+    "Calculator ambiguity: the processing-fee base includes 'any applicable taxes' (buyer's sales tax) and shipping, so an exact fee requires the buyer's tax amount; the Marketplace fee is not listed as part of the base. The boosting-fee base excludes taxes and includes shipping only when the seller does not use a Depop Shipping label.",
+    "Newsroom (15 Jul 2024) announced the Marketplace fee 'from July 18th 2024' at up to 5% + up to $1; the Marketplace fee article gives the same figures and dates.",
+    "Failed pages: blog.depop.com/articles/us-depop-fee-change now redirects to the blog index (article removed); the 'Depop Payments fee change (US)' help article redirects to a login page (restricted). The partner API 'Fees' doc contains no numbers and points to the help article."
+  ],
+  "rates": {
+    "selling_fee": 0.0,
+    "processing": [
+      0.033,
+      0.45
+    ],
+    "boost": 0.12,
+    "boost_attribution_days": 28,
+    "marketplace_fee_buyer": [
+      0.05,
+      1.0
+    ]
+  },
+  "summary": "Depop charges US sellers no selling fee. Depop Payments takes 3.3% + 45\u00a2 of the buyer's full payment (item, shipping and tax), once per order or bundle. A boosted listing that sells within 28 days of a click pays 12% of the item price on top.",
+  "inputs": [
+    {
+      "id": "price",
+      "label": "Item price",
+      "type": "money",
+      "default": 50
+    },
+    {
+      "id": "shipping",
+      "label": "Shipping paid by buyer",
+      "type": "money",
+      "default": 0
+    },
+    {
+      "id": "sales_tax_rate",
+      "label": "Buyer's sales tax rate",
+      "type": "percent",
+      "default": 0,
+      "help": "Raises the processing fee base."
+    },
+    {
+      "id": "boosted",
+      "label": "Sale came from a boosted listing (12%)",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "own_shipping",
+      "label": "I arranged my own shipping (boost fee also applies to shipping)",
+      "type": "bool",
+      "default": false
+    }
+  ],
+  "examples": [
+    {
+      "description": "Arithmetic check derived from the published rates: $50 item with $5 buyer-paid shipping, no tax, not boosted.",
+      "inputs": {
+        "price": 50,
+        "shipping": 5
+      },
+      "expected": {
+        "total_fees": 2.27,
+        "net": 52.73
+      },
+      "quote": "3.3% + $0.45",
+      "source_url": "https://depophelp.zendesk.com/hc/en-gb/articles/360001791127-Seller-fees-and-charges",
+      "derived": true
+    }
+  ]
+}

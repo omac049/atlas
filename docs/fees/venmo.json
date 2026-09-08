@@ -1,0 +1,217 @@
+{
+  "platform": "venmo",
+  "name": "Venmo",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://venmo.com/resources/our-fees/",
+      "title": "About Venmo Fees | Venmo (also linked from venmo.com/legal as 'Venmo Long Form Disclosure')",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "No date for the fee tables; only the Venmo Visa Credit Card rates table says 'accurate as of June 27, 2024'"
+    },
+    {
+      "url": "https://help.venmo.com/cs/articles/instant-bank-transfer-faq-vhel302",
+      "title": "Instant Bank Transfer FAQ | Venmo",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.venmo.com/cs/articles/business-profile-transaction-fees-vhel221",
+      "title": "Business Profile Transaction Fees | Venmo",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.venmo.com/cs/articles/tap-to-pay-on-iphone-faq-vhel116",
+      "title": "Tap to Pay on iPhone FAQ | Venmo",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.venmo.com/cs/articles/tap-to-pay-on-android-faq-vhel198",
+      "title": "Tap to Pay on Android FAQ | Venmo",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.venmo.com/cs/articles/buying-and-selling-on-venmo-faq-vhel138",
+      "title": "Buying and Selling on Venmo FAQ | Venmo",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.venmo.com/cs/articles/selling-with-personal-profiles-vhel183",
+      "title": "Selling with Personal Profiles | Venmo",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.venmo.com/cs/articles/charity-profile-donation-fees-vhel159",
+      "title": "Charity Profile Donation Fees | Venmo",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.venmo.com/cs/articles/credit-card-fees-on-venmo-payments-vhel257",
+      "title": "Credit Card Fees on Venmo Payments | Venmo",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.venmo.com/cs/articles/cryptocurrency-faq-vhel141",
+      "title": "Cryptocurrency FAQ | Venmo",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.venmo.com/cs/articles/buying-cryptocurrency-on-venmo-vhel164",
+      "title": "Buying Cryptocurrency on Venmo | Venmo",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.venmo.com/cs/articles/selling-cryptocurrency-on-venmo-vhel204",
+      "title": "Selling Cryptocurrency on Venmo | Venmo",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://venmo.com/legal/us-user-agreement/",
+      "title": "Venmo User Agreement (only the header rendered; body is JS-loaded)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "This user agreement is effective as of August 24, 2026."
+    },
+    {
+      "url": "https://venmo.com/legal/crypto-terms/",
+      "title": "Cryptocurrency Terms and Conditions (redirects to paypal.com/us/legalhub/paypal/cryptocurrencies-tnc; fee section defers to fee pages)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "Last updated on May 19, 2026"
+    }
+  ],
+  "scope": "Fees charged to the person receiving money for goods and services and to business profiles, plus instant transfer. Sending to friends, crypto and the credit card are out of scope.",
+  "structure": "All Venmo fees are a percentage of the payment or transfer amount (some with a fixed cents add-on), deducted from the amount the recipient receives except the credit-card fee, which the sender pays. Sending money funded by a credit card costs the sender 3.00% (waived when paying a business or charity profile); sends funded by balance, debit card or bank are free. Instant Transfer to an eligible debit card or bank costs 1.75% of the transfer amount, minimum $0.25 and maximum $25, deducted from the transfer; standard transfers are free. Receiving a payment the sender tagged as for goods and services on a personal profile costs the seller 2.99% (no fixed part). Business profiles pay 1.9% + $0.10 of the payment total on every payment of $1.00 or more, or 2.29% + $0.09 for Tap to Pay contactless payments; charity profiles pay 1.9% + $0.10. Crypto buys/sells carry a tiered fee by amount (2.20% / 2.00% / 1.80% / 1.50%) plus a spread built into the exchange rate; PYUSD is fee-free. No rounding rule is published.",
+  "quotes": [
+    "Sending money to a Venmo account or U.S. PayPal account using your balance, debit card or bank account\n$0.00\nNo fee to send money to a Venmo account or U.S. PayPal account using your Venmo balance, debit card or bank account.",
+    "Sending money to a Venmo account or U.S. PayPal account using your credit card\n3.00%\nThere\u2019s a 3.00% fee for sending money to a Venmo account or U.S. PayPal account using your credit card.",
+    "Receive personal payments in your Venmo account from Venmo users.\n$0.00\nNo fee for you when Venmo users send you personal payments with Venmo. You will be assessed a fee if the sender identifies the transaction as for goods and services.",
+    "Receive payments in your personal Venmo account that are identified by the sender as for goods and services\n2.99%\nThere's a seller transaction fee when you receive a payment that is identified by the sender as for goods and services.",
+    "Receive payments in your charity profile\n1.9% + $0.10\nThere's a charity transaction fee when you receive a payment sent to your charity profile.",
+    "Receive payments in your business profile\n1.9% + $0.10 or 2.29% + $0.09\nThere's a 1.9% + $0.10 transaction fee when you receive a payment sent to your business profile (except for Tap to Pay payments). We assess a 2.29% + $0.09 fee when you receive a payment sent to your business profile through Tap to Pay.",
+    "Electronic withdrawal (standard or Instant Transfer)\n$0.00 or 1.75% (minimum $0.25 fee, maximum $25 fee)\nNo fee to transfer money from your Venmo account with the standard option. Money transferred with the standard option is typically available in 1-3 business days when sent to a linked bank account and in approximately 48 hours when sent to an eligible linked debit card.\nThere\u2019s a fee to transfer money from your Venmo account to your eligible linked debit card or bank account with the Instant Transfer option. The money is typically available in minutes.",
+    "Buying, selling, or transferring cryptocurrencies\nCrypto services provided by PayPal Digital, Inc (doing business as Venmo Digital)\nCryptocurrency purchase or sale amount:\nThere's a fee for buying or selling cryptocurrencies. Fee will vary based on purchase or sale amount. These fees do not apply to buying and selling PYUSD.\n$1.00 - $74.99\n2.20%\n$75.00 - $200.00\n2.00%\n$200.01 - $1000.00\n1.80%\n>$1000\n1.50%",
+    "Receiving a cryptocurrency transfer\n$0\nNo fee\nTransferring cryptocurrency to another Venmo or PayPal account\n$0\nNo fee\nTransferring cryptocurrency to an address outside of Venmo or PayPal\nAmount varies (paid in cryptocurrency)\nYou will be charged a cryptocurrency network fee, payable in the cryptocurrency you transfer, which varies.",
+    "Sending money to a non-U.S. PayPal account using your credit card\n5.00% (min. $0.99 fee/max. $4.99 fee) + 3.00%\nThere\u2019s a 5.00% fee (with a minimum of $0.99 and maximum of $4.99) to send money to an eligible non-U.S. PayPal account and an additional 3.00% fee for sending money using your credit card.",
+    "A 1.75% fee (with a minimum fee of $0.25 and a maximum fee of $25) is deducted from the transfer amount for each transfer.",
+    "Business profile owners are charged a low fee for every payment they receive of $1.00 or more. These fees are automatically deducted from the total payment amount sent by your customer.",
+    "The seller transaction fee is a standard rate of 1.9% + $0.10 of the payment total",
+    "Contactless payments accepted with Tap to Pay on iPhone or Tap to Pay on Android have a slightly higher transaction fee rate of 2.29% + $0.10 of the payment total",
+    "Yes. Venmo charges business profile owners a fee of 2.29% + $0.09 of the payment total for each payment accepted with Tap to Pay.",
+    "Payments sent to your business profile from another Venmo account (not using Tap to Pay) will still incur the standard fee rate of 1.9%+$0.10 for each payment of $1.00 or more",
+    "It\u2019s worth noting that Venmo users who make a payment to a business profile using a credit card will be exempt from the standard 3% Venmo fee on payments funded by credit cards.",
+    "Please note, Venmo is not able to refund seller fees for payments sent to your business profile from another Venmo account.",
+    "For payments intentionally tagged as purchases by the sender, Venmo will not return the fee amount if you need to issue a refund. This means that you (as the seller) will need to cover the fee amount when refunding your buyer to ensure that they receive the full amount of their payment back.",
+    "This fee is a standard rate of 1.9% + $0.10 for each donation.",
+    "You will incur a fee when you buy or sell most cryptocurrencies on Venmo. The fee will vary based on the purchase or sale amount. Venmo displays that amount when you are making a transaction.",
+    "There are no fees to buy or sell PYUSD on Venmo.",
+    "Some credit card providers charge cash advance fees (possibly including an additional dollar amount or percent rate, in addition to other possible cash advance service fees, including a higher APR) if you use your credit card to make payments to friends on Venmo."
+  ],
+  "excluded": [
+    "Venmo Debit Card (Mastercard) fees: out-of-network ATM $2.50, international ATM $2.50, over-the-counter withdrawal $3.00",
+    "Venmo Visa Credit Card APRs and penalty fees (cash advance $10 or 5%, late/returned payment up to $41, paper statement $1.99)",
+    "Cash a check (2.00% / 5.00%, minimum $6) and add cash at stores ($3.74)",
+    "Sending to non-US PayPal accounts (5.00%, min $0.99 / max $4.99) and the 4.00% currency conversion spread",
+    "Card-issuer cash-advance fees on credit-card-funded payments (charged by the issuer, not Venmo)",
+    "Crypto network fees for external transfers and the exchange-rate spread"
+  ],
+  "notes": [
+    "The fee tables on venmo.com/resources/our-fees are present in the server HTML but hidden inside collapsed accordions; both plain-HTTP and browser-rendered markdown extractions returned only the section headings, so the values were extracted from the raw HTML.",
+    "Tap to Pay fixed component conflict: the fee schedule page and both Tap to Pay FAQs say 2.29% + $0.09, while the 'Business Profile Transaction Fees' help article says 2.29% + $0.10. Two of three sources (including the legal fee disclosure) say $0.09.",
+    "Goods-and-services conflict: the fee schedule says 2.99% for payments to a personal profile tagged as a purchase, but the Buying and Selling FAQ example ('$100 ... the recipient would get $98') implies 2% and looks stale (matches the older 1.9% + $0.10 rate).",
+    "The $1.00 minimum payment for business/charity profile fees appears only in help articles, not on the fee schedule page; whether payments under $1.00 to a business profile carry any fee is unspecified.",
+    "Instant Transfer: the 1.75% fee is deducted from the transfer amount (user receives amount minus fee); minimum $0.25 and maximum $25 apply per transfer.",
+    "Credit-card-funded payments to business and charity profiles are exempt from the 3% sender fee (help articles); the fee schedule row states the 3.00% fee without listing that exemption.",
+    "Business-profile and purchase-tagged seller fees are not refunded when the seller refunds the buyer.",
+    "Crypto: the tiered percentages come from the fee schedule page; help articles only say the fee 'will vary based on the purchase or sale amount', and the PayPal Digital crypto terms say the exchange rate includes a spread and point to fee pages for amounts.",
+    "The User Agreement body (which contains the same fee table) did not render (JS-loaded); only its effective date (August 24, 2026) was captured.",
+    "No rounding rule is published on any loaded Venmo page.",
+    "Venmo's help FAQ shows a personal-profile purchase example of $100 \u2192 $98 that contradicts the fee schedule's 2.99% ($97.01); the schedule is used and the FAQ example is not pinned."
+  ],
+  "rates": {
+    "personal_goods_services": [
+      0.0299,
+      0.0
+    ],
+    "business": [
+      0.019,
+      0.1
+    ],
+    "tap_to_pay": [
+      0.0229,
+      0.09
+    ],
+    "charity": [
+      0.019,
+      0.1
+    ],
+    "instant_transfer": {
+      "rate": 0.0175,
+      "min": 0.25,
+      "max": 25.0
+    },
+    "credit_card_send": 0.03
+  },
+  "summary": "Venmo deducts 2.99% from a payment tagged as a purchase on a personal profile, 1.9% + 10\u00a2 on a business profile (2.29% + 9\u00a2 for Tap to Pay), and 1.75% (25\u00a2 to $25) to move money out instantly. Sending funded by a credit card costs the sender 3%.",
+  "inputs": [
+    {
+      "id": "amount",
+      "label": "Payment received",
+      "type": "money",
+      "default": 100
+    },
+    {
+      "id": "profile",
+      "label": "Received as",
+      "type": "select",
+      "default": "business",
+      "options": [
+        [
+          "business",
+          "Business profile (1.9% + 10\u00a2)"
+        ],
+        [
+          "tap_to_pay",
+          "Business profile Tap to Pay (2.29% + 9\u00a2)"
+        ],
+        [
+          "personal_goods_services",
+          "Personal profile, tagged as a purchase (2.99%)"
+        ],
+        [
+          "charity",
+          "Charity profile (1.9% + 10\u00a2)"
+        ]
+      ]
+    },
+    {
+      "id": "instant_transfer",
+      "label": "Instant transfer to bank or card (1.75%, min 25\u00a2, max $25)",
+      "type": "bool",
+      "default": false
+    }
+  ],
+  "examples": [
+    {
+      "description": "Venmo's own charity example: a $100 donation on a charity profile costs 1.9% + $0.10.",
+      "inputs": {
+        "amount": 100,
+        "profile": "charity"
+      },
+      "expected": {
+        "total_fees": 2.0,
+        "net": 98.0
+      },
+      "quote": "For example, if a donor sends $100.00 to a charity profile, $2.00 of that payment would be charged as a donation fee and the charity profile would receive $98.00.",
+      "source_url": "https://help.venmo.com/cs/articles/charity-profile-donation-fees-vhel159"
+    }
+  ]
+}
