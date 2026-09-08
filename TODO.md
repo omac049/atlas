@@ -1093,6 +1093,7 @@ evidence. The point of the 90 days is to let this accumulate.
 - [x] Demand-test site generator (`atlas site build`, `docs/SITE.md`) — owner: domain, hosting, Search Console, affiliate applications
 - [ ] Fifth charter (market making, paper-only replay): owner signs by merging `docs/decisions/2026-09-08-market-making-charter.md`; then build `atlas/making.py`, freeze, run Arm B, run Arm A on 2026-09-17, write results
 - [x] Fee Verified build (charter merged 2026-09-08): 17 platform schedules with quotes + published examples; shared JS engine; nightly verification; live on Cloudflare Pages 2026-09-08 (`docs/FEES.md`)
-- [ ] Fee Verified go-live: `verifiedfees.com` live 2026-09-08 (apex); owner: attach `www`, confirm the sitemap in Search Console → log the clock start in `docs/decisions/2026-09-08-fee-calculator-demand-test.md`; affiliate applications
+- [x] Fee Verified go-live: `verifiedfees.com` live 2026-09-08; sitemap submitted 2026-09-08 → **clock started, verdict 2026-10-20** (`docs/decisions/2026-09-08-fee-calculator-demand-test.md`); nightly proven end to end
+- [ ] Fee Verified, owner: attach `www.verifiedfees.com`; Search Console → Security issues result; affiliate applications (Shopify/Impact, QuickBooks/CJ, Wise/Partnerize, Printful, Printify, Square/Impact, Vendoo/Awin)
 - [ ] Fee Verified weekly scoreboard (Mondays, alongside samebetornot.com) in the charter; verdict at week six
 - [ ] Fee Verified Safe Browsing false positive (2026-09-08): owner checks Search Console → Security issues + files the false-positive report; re-check Chrome on the domain after 2–3 days and log the outcome in the charter

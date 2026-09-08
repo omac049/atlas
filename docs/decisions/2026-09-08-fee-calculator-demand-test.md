@@ -148,9 +148,13 @@ before it ships.
   Console → Security issues, request a review if anything is listed, and file
   a false-positive report. Recorded as a risk to the test: a warning suppresses
   clicks and can delay indexing, and the pass line does not move for it.
-- Pending, owner: attach `www.verifiedfees.com`; confirm the sitemap is
-  submitted in Search Console. **The clock has not started** until the sitemap
-  is accepted; the week-six verdict date is that day plus 42.
+- **2026-09-08: the clock started.** The owner submitted the sitemap in the
+  personal Search Console property (verification TXT confirmed in DNS) and
+  filed the Safe Browsing false-positive report the same day. **Week-six
+  verdict date: 2026-10-20.** The nightly agent completed its first full
+  unattended cycle at 20:57 UTC: 17/17 sources verified, built, published,
+  IndexNow accepted. Still open, owner: attach `www.verifiedfees.com`; report
+  what Search Console → Security issues shows.
 
 ## 9. Scoreboard
 
@@ -160,4 +164,4 @@ clock start.
 
 | Week | Date | Impressions | Clicks | Avg. position | Best fee-term page (position) | Notes |
 |---|---|---|---|---|---|---|
-| 0 | 2026-09-08 | — | — | — | — | live on verifiedfees.com; Search Console verified; sitemap acceptance pending |
+| 0 | 2026-09-08 | — | — | — | — | clock started; live on verifiedfees.com; Chrome Safe Browsing warning reported as a false positive |
