@@ -1,0 +1,18 @@
+{
+  "as_of": "2026-09-08",
+  "note": "Events that Polymarket US lists for a pair whose verified comparison is Kalshi vs Polymarket global. These are NOT verified as the same contract by Atlas's rule check (politics is outside the radar's Polymarket US scope during the study); the site shows them as 'also listed', never with a verdict. Each entry was loaded from the Polymarket US events list on as_of; the nightly build drops an entry whose event is no longer open.",
+  "events": {
+    "us_house_control|2026": {
+      "venue": "polymarket_us",
+      "event_slug": "usho-midterms-2026-11-03",
+      "title": "U.S House Midterm Winner",
+      "markets": {"Democratic Party": "paccc-usho-midterms-2026-11-03-dem", "Republican Party": "paccc-usho-midterms-2026-11-03-rep"}
+    },
+    "us_senate_control|2026": {
+      "venue": "polymarket_us",
+      "event_slug": "usse-midterms-2026-11-03",
+      "title": "U.S Senate Midterm Winner",
+      "markets": {"Democratic Party": "paccc-usse-midterms-2026-11-03-dem", "Republican Party": "paccc-usse-midterms-2026-11-03-rep"}
+    }
+  }
+}

@@ -266,6 +266,10 @@ class Site:
     # Owner's referral codes by venue key, when they exist. Absent = the
     # referral-code pages explain the program and say we publish no code.
     referral_codes: dict[str, str] = field(default_factory=dict)
+    # docs/site/also-on.json: event_subject -> a Polymarket US event that lists
+    # the same event, shown as "also listed" on Kalshi-vs-global pages. Never a
+    # verdict; the verifier has not compared these contracts.
+    also_on: dict[str, dict] = field(default_factory=dict)
 
     @property
     def stamp(self) -> str:
@@ -480,11 +484,22 @@ def render_pair(site: Site, page: PairPage) -> str:
         rules += (
             f"<h2>What Polymarket publishes</h2><blockquote>{_esc(page.polymarket_rules[:1500])}</blockquote>"
         )
+    also = site.also_on.get(str(obs.get("event_subject") or "")) if not page.tradeable else None
+    also_html = ""
+    if also and also.get("event_slug") and also.get("title"):
+        also_html = (
+            "<div class=\"summary\"><strong>Also listed on Polymarket US:</strong> "
+            f"<a class=\"ext\" href=\"https://polymarket.us/event/{_esc(also['event_slug'])}\" "
+            f"rel=\"noopener\" target=\"_blank\">{_esc(also['title'])}</a>. US accounts can trade "
+            "that one. Our rule check has <em>not</em> compared it with the Kalshi contract, so "
+            "no verdict is given for that pairing; the verified comparison on this page is "
+            "against the global venue's contract.</div>"
+        )
     tradeable_note = (
         ""
         if page.tradeable
         else "<p class=\"muted\">The Polymarket leg here is the global venue, which US accounts "
-        "cannot trade; it is shown for the rules comparison only.</p>"
+        "cannot trade; it is shown for the rules comparison only.</p>" + also_html
     )
     stale_html = (
         "<div class=\"summary\"><strong>No longer quoted.</strong> This pair stopped being "
@@ -1337,6 +1352,7 @@ def build_site(
     comparison: dict | None = None,
     legit: dict | None = None,
     referral_codes: dict[str, str] | None = None,
+    also_on: dict[str, dict] | None = None,
     generated_at: datetime | None = None,
     analytics_id: str | None = None,
 ) -> tuple[Site, dict[str, str]]:
@@ -1377,6 +1393,7 @@ def build_site(
         comparison=comparison,
         legit=legit,
         referral_codes=dict(referral_codes or {}),
+        also_on=dict(also_on or {}),
     )
     problems = (
         verify_legal_states(legal_states) + verify_comparison(comparison) + verify_legit(legit)

@@ -1658,6 +1658,7 @@ SITE_MAX_LIVE_FETCHES = 200
 SITE_LEGAL_STATES_PATH = Path("docs/site/legal-states.json")
 SITE_COMPARISON_PATH = Path("docs/site/kalshi-vs-polymarket.json")
 SITE_LEGIT_PATH = Path("docs/site/legit.json")
+SITE_ALSO_ON_PATH = Path("docs/site/also-on.json")
 GAMMA_MARKETS_URL = "https://gamma-api.polymarket.com/markets"
 
 
@@ -1672,8 +1673,10 @@ def _kalshi_market_url(series_ticker: str, series_title: str, event_ticker: str)
     )
 
 
-async def _polymarket_us_event_slugs(venue: PolymarketUSVenue) -> dict[str, str]:
-    """market slug -> event slug for the radar's PM-US scope. The gateway's
+async def _polymarket_us_event_slugs(
+    venue: PolymarketUSVenue, categories: tuple[str, ...] = GAP_RADAR_PMUS_CATEGORIES
+) -> dict[str, str]:
+    """market slug -> event slug for the given PM-US categories. The gateway's
     market object carries no event reference; the events list does."""
     found: dict[str, str] = {}
     limit, offset = 100, 0
@@ -1685,7 +1688,7 @@ async def _polymarket_us_event_slugs(venue: PolymarketUSVenue) -> dict[str, str]
             ("limit", str(limit)),
             ("offset", str(offset)),
         ]
-        params.extend(("categories", c) for c in GAP_RADAR_PMUS_CATEGORIES)
+        params.extend(("categories", c) for c in categories)
         payload = await venue._get("/v1/events", params=params)
         events = payload.get("events", []) if isinstance(payload, dict) else []
         if not events:
@@ -1807,6 +1810,19 @@ async def site_build(
     legit = None
     if SITE_LEGIT_PATH.exists():
         legit = json.loads(SITE_LEGIT_PATH.read_text())
+    also_on: dict[str, dict] = {}
+    if SITE_ALSO_ON_PATH.exists():
+        also_on = dict(json.loads(SITE_ALSO_ON_PATH.read_text()).get("events") or {})
+        if live and also_on:
+            # Drop entries whose event is no longer open, so the note never links
+            # to a closed page. Failure to check keeps nothing rather than guessing.
+            try:
+                open_events = set(
+                    (await _polymarket_us_event_slugs(pm_us, ("politics",))).values()
+                )
+                also_on = {k: v for k, v in also_on.items() if v.get("event_slug") in open_events}
+            except (httpx.HTTPError, ValueError):
+                also_on = {}
     # ATLAS_SITE_REFERRAL_CODES="kalshi=ABC,polymarket_us=XYZ" — the owner's own
     # codes, set in the plist once accounts exist; never read from any file.
     referral_codes = {
@@ -1826,6 +1842,7 @@ async def site_build(
         comparison=comparison,
         legit=legit,
         referral_codes=referral_codes,
+        also_on=also_on,
         analytics_id=analytics_id,
     )
     written = write_site(pages, Path(out))
@@ -1836,7 +1853,7 @@ async def site_build(
         f"rules_excerpts={sum(1 for p in site.pairs if p.kalshi_rules and p.polymarket_rules)} "
         f"grades={len(grades)} quotes={len(quotes)} links={linked} "
         f"legal_states={len((legal_states or {}).get('states', []))} "
-        f"comparison_rows={len((comparison or {}).get('rows', []))} "
+        f"comparison_rows={len((comparison or {}).get('rows', []))} also_on={len(also_on)} "
         f"live_fetches={fetches} live_failures={failures} out={out}"
     )
 
