@@ -1,0 +1,582 @@
+{
+  "platform": "amazon",
+  "name": "Amazon (US marketplace, referral fees)",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://sell.amazon.com/pricing",
+      "title": "How much does it cost to sell on Amazon? | Sell on Amazon (Standard selling fees)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://sellercentral.amazon.com/help/hub/reference/external/G200336920",
+      "title": "Selling on Amazon fee schedule (Seller Central help, public; 'This article applies to selling in: United States')",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://sellercentral.amazon.com/help/hub/reference/external/GTG4BAWSY39Z98Z3",
+      "title": "Referral fees (Seller Central help, public)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://sellercentral.amazon.com/help/hub/reference/external/GKD9U5REK5DKB38Y",
+      "title": "Closing fees (Seller Central help, public)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://sellercentral.amazon.com/help/hub/reference/external/GX7NRP7C7LKZLQV6",
+      "title": "Seller Central help page GX7NRP7C7LKZLQV6 (FAILED: JS app shell only, body text 'You need to enable JavaScript to run this app.'; also tried https://sellercentral.amazon.com/gp/help/external/GX7NRP7C7LKZLQV6 with same result)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "Referral fees and selling-plan fees for the US marketplace. FBA fulfillment, storage, advertising, and refund administration fees are out of scope.",
+  "quotes": [
+    "Individual $0.99 / item sold",
+    "Professional $39.99 / month",
+    "Professional Selling Plan: USD $39.99 per month* when you have active listings",
+    "Individual Selling Plan: No subscription fee",
+    "Professional sellers: No per-item fee",
+    "Individual sellers: $0.99 fee for each item sold",
+    "Referral fees vary by product category. For every item sold, you\u2019ll pay a percentage of the total price or a minimum amount, whichever is greater.\u00b9",
+    "For all products, Amazon deducts the applicable referral fee percentage calculated on the total sales price, excluding any taxes calculated through Amazon tax calculation services. The total sales price is the total amount paid by the buyer, including the item price and any delivery or gift wrapping charges.",
+    "Items in some categories have a per-item minimum referral fee as listed below (for example, sellers pay the greater of the referral fee or the per-item minimum referral fee).",
+    "Referral fee = [(Item price + delivery charges + giftwrap charges) multiplied by the category referral fee rate] OR [applicable minimum referral fee], whichever is greater.",
+    "Time of charge | When the buyer's order is shipped",
+    "Amazon Device Accessories | 45% | $0.30",
+    "Automotive and Powersports | 12% | $0.30",
+    "Baby Products | * 8% for products with a total sales price of $10.00 or less, and * 15% for products with a total sales price greater than $10.00 | $0.30",
+    "Backpacks, Handbags, and Luggage | 15% | $0.30",
+    "Base Equipment Power Tools | 12% | $0.30",
+    "Beauty, Health and Personal Care | * 8% for products with a total sales price of $10.00 or less, and * 15% for items with a total sales price greater than $10.00 | $0.30",
+    "Business, Industrial, and Scientific Supplies | 12% | $0.30",
+    "Clothing and Accessories | * 5% for products with a total sales price of $15.00 or less * 10% for products with a total sales price greater than $15.00 and less than or equal to $20.00 * 17% for products with a total sales price greater than $20.00 | $0.30",
+    "Compact Appliances | * 15% for the portion of the total sales price up to $300.00, and * 8% for any portion of the total sales price greater than $300.00 | $0.30",
+    "Computers | 8% | $0.30",
+    "Consumer Electronics1 | 8% | $0.30",
+    "Electronics Accessories | * 15% for the portion of the total sales price up to $100.00, and * 8% for any portion of the total sales price greater than $100.00 | $0.30",
+    "Everything Else2 | 15% | $0.30",
+    "Eyewear | 15% | $0.30",
+    "Fine Art | * 20% for the portion of the total sales price up to $100.00, * 15% for the portion of the total sales price greater than $100.00 up to $1,000.00, * 10% for the portion of the total sales price greater than $1,000.00 up to $5,000.00, and * 5% for the portion of the total sales price greater than $5,000.00 | --",
+    "Footwear | 15% | $0.30",
+    "Full-Size Appliances | 8% | $0.30",
+    "Furniture | * 15% for the portion of the total sales price up to $200.00, and * 10% for any portion of the total sales price greater than $200.00 | $0.30",
+    "Gift Cards | 20% | --",
+    "Grocery and Gourmet | * 8% for products with a total sales price of $15.00 or less, and * 15% for products with a total sales price greater than $15.00 | --",
+    "Home and Kitchen | 15% | $0.30",
+    "Jewelry | * 20% for the portion of the total sales price up to $250.00, and * 5% for any portion of the total sales price greater than $250.00 | $0.30",
+    "Lawn and Garden | 15% | $0.30",
+    "Lawn Mowers and Snow Throwers | * 15% for products with a total sales price of up to $500.00 * 8% for products with a total sales price greater than $500.00 | $0.30",
+    "Mattresses | 15% | $0.30",
+    "Media - Books, DVD, Music, Software, Video | 15% | --",
+    "Merchant Fulfilled Services3 | 20% | $0.30",
+    "Musical Instruments and AV Production | 15% | $0.30",
+    "Office Products | 15% | $0.30",
+    "Pet Products | 15%, except 22% for veterinary diets | $0.30",
+    "Sports and Outdoors | 15% | $0.30",
+    "Tires | 10% | $0.30",
+    "Tools and Home Improvement | 15% | $0.30",
+    "Toys and Games | 15% | $0.30",
+    "Video Game Consoles | 8% | --",
+    "Video Games and Gaming Accessories | 15% | --",
+    "Watches | * 16% for the portion of the total sales price up to $1,500.00, and * 3% for any portion of the total sales price greater than $1,500.00 | $0.30",
+    "Sellers also pay a closing fee of $1.80 per item that is sold in the categories of Books, DVD, Music, Software & Computer/Video Games, Video Game Consoles, and Video Game Accessories.",
+    "The closing fee is $1.80 per unit sold for products in the Books, DVD, Music, Software & Computer/Video Games, Video Game Consoles, and Video Game Accessories categories.",
+    "4 In addition to the referral fee, media items incur a closing fee $1.80 per item.",
+    "If you refund a buyer for an order for which you have already received payment, we refund you the amount of the referral fee you paid for the item minus the applicable refund administration fee, which is the lesser of $5.00 or 20% of the applicable referral fee.",
+    "The rental book service fee is $5.00 per book rented to a customer.",
+    "We charge a monthly high-volume listing fee of $0.001 per eligible SKU to cover our system costs associated with cataloging and maintaining large numbers of SKUs on Amazon.com.",
+    "Amazon collects the lower of the applicable fees stated below and any fees communicated to you by Amazon (such as promotional fees that Amazon may provide from time to time).",
+    "1 An item\u2019s total price includes its list price, as well as shipping costs and any gift-wrapping charges."
+  ],
+  "excluded": [
+    "FBA fulfillment fees (out of scope per task)",
+    "FBA monthly inventory storage fees, aged inventory surcharge, inbound placement, removal/disposal order fees, returns processing fees",
+    "Advertising (Amazon Ads / Sponsored Products)",
+    "Amazon Business (B2B) referral fee schedule (separate page G201762480, not loaded)",
+    "Special handling fee, lithium batteries fee, digital services fee (listed as related fee pages; amounts not loaded)",
+    "Shipping credits / BMVD shipping rates for Individual sellers",
+    "Sales tax collected via Amazon tax calculation services (excluded from referral fee base)"
+  ],
+  "notes": [
+    "FAILED PAGE: https://sellercentral.amazon.com/help/hub/reference/external/GX7NRP7C7LKZLQV6 rendered only the JS app shell ('You need to enable JavaScript to run this app.') under both crawl4ai and a Playwright fetch with network-idle wait; the legacy /gp/help/external/ form of the same ID also returned the shell. Used instead: sell.amazon.com/pricing plus the public Seller Central pages 'Selling on Amazon fee schedule' (G200336920), 'Referral fees' (GTG4BAWSY39Z98Z3) and 'Closing fees' (GKD9U5REK5DKB38Y), which rendered fully.",
+    "No 'last updated' date is displayed on any of the four loaded Amazon pages; only a '\u00a9 2026 Amazon.com Services LLC.' footer.",
+    "Category names differ slightly between sell.amazon.com/pricing and Seller Central: 'Pet Supplies' vs 'Pet Products'; 'Appliances - Compact' vs 'Compact Appliances'; 'Appliances - Full-size' vs 'Full-Size Appliances'; 'Media - Books, DVD, Music, Software, Video' identical. Seller Central names used as keys.",
+    "CONFLICT (Fine Art): sell.amazon.com/pricing reads '20% for the portion of Sales Proceeds up to $100 (with a minimum Referral Fee of $1.00)' with the minimum column showing '--'; Seller Central reads '20% for the portion of the total sales price up to $100.00' and minimum '--' with no $1.00 mention. Treated minimum as unstated/None; flag for review.",
+    "Two different tier semantics exist in the same table: 'for the portion of the total sales price' = marginal bands; 'for products with a total sales price of ... or less / greater than' = the whole price gets one rate. Encoded as tier_basis 'portion' vs 'whole_price'.",
+    "Closing fee scope: Seller Central lists Books, DVD, Music, Software & Computer/Video Games, Video Game Consoles, and Video Game Accessories; sell.amazon.com's footnote 4 says only 'media items'. Seller Central list used.",
+    "Referral fee base excludes taxes only when calculated through Amazon tax calculation services; the fee is charged when the order ships, not at sale.",
+    "The Professional subscription is charged only 'when you have active listings'; merged multi-country accounts may see a different fee (page footnote).",
+    "Rounding of fee amounts is not specified on any loaded page.",
+    "sell.amazon.com/pricing links 'Learn more about selling fees' to Seller Central G6F7CN3EQS7MEGCN ('Selling on Amazon fees guide'); not loaded, not needed for numbers."
+  ],
+  "categories": {
+    "amazon_device_accessories": {
+      "label": "Amazon Device Accessories",
+      "minimum": 0.3,
+      "rate": 0.45
+    },
+    "automotive_and_powersports": {
+      "label": "Automotive and Powersports",
+      "minimum": 0.3,
+      "rate": 0.12
+    },
+    "baby_products": {
+      "label": "Baby Products",
+      "minimum": 0.3,
+      "tier_basis": "whole_price",
+      "tiers": [
+        {
+          "rate": 0.08,
+          "from": 0,
+          "to": 10.0
+        },
+        {
+          "rate": 0.15,
+          "from": 10.0,
+          "to": null
+        }
+      ]
+    },
+    "backpacks_handbags_and_luggage": {
+      "label": "Backpacks, Handbags, and Luggage",
+      "minimum": 0.3,
+      "rate": 0.15
+    },
+    "base_equipment_power_tools": {
+      "label": "Base Equipment Power Tools",
+      "minimum": 0.3,
+      "rate": 0.12
+    },
+    "beauty_health_and_personal_care": {
+      "label": "Beauty, Health and Personal Care",
+      "minimum": 0.3,
+      "tier_basis": "whole_price",
+      "tiers": [
+        {
+          "rate": 0.08,
+          "from": 0,
+          "to": 10.0
+        },
+        {
+          "rate": 0.15,
+          "from": 10.0,
+          "to": null
+        }
+      ]
+    },
+    "business_industrial_and_scientific_supplies": {
+      "label": "Business, Industrial, and Scientific Supplies",
+      "minimum": 0.3,
+      "rate": 0.12
+    },
+    "clothing_and_accessories": {
+      "label": "Clothing and Accessories",
+      "minimum": 0.3,
+      "tier_basis": "whole_price",
+      "tiers": [
+        {
+          "rate": 0.05,
+          "from": 0,
+          "to": 15.0
+        },
+        {
+          "rate": 0.1,
+          "from": 15.0,
+          "to": 20.0
+        },
+        {
+          "rate": 0.17,
+          "from": 20.0,
+          "to": null
+        }
+      ]
+    },
+    "compact_appliances": {
+      "label": "Compact Appliances",
+      "minimum": 0.3,
+      "tier_basis": "portion",
+      "tiers": [
+        {
+          "rate": 0.15,
+          "from": 0,
+          "to": 300.0
+        },
+        {
+          "rate": 0.08,
+          "from": 300.0,
+          "to": null
+        }
+      ]
+    },
+    "computers": {
+      "label": "Computers",
+      "minimum": 0.3,
+      "rate": 0.08
+    },
+    "consumer_electronics": {
+      "label": "Consumer Electronics",
+      "minimum": 0.3,
+      "rate": 0.08
+    },
+    "electronics_accessories": {
+      "label": "Electronics Accessories",
+      "minimum": 0.3,
+      "tier_basis": "portion",
+      "tiers": [
+        {
+          "rate": 0.15,
+          "from": 0,
+          "to": 100.0
+        },
+        {
+          "rate": 0.08,
+          "from": 100.0,
+          "to": null
+        }
+      ]
+    },
+    "everything_else": {
+      "label": "Everything Else",
+      "minimum": 0.3,
+      "rate": 0.15
+    },
+    "eyewear": {
+      "label": "Eyewear",
+      "minimum": 0.3,
+      "rate": 0.15
+    },
+    "fine_art": {
+      "label": "Fine Art",
+      "minimum": null,
+      "tier_basis": "portion",
+      "tiers": [
+        {
+          "rate": 0.2,
+          "from": 0,
+          "to": 100.0
+        },
+        {
+          "rate": 0.15,
+          "from": 100.0,
+          "to": 1000.0
+        },
+        {
+          "rate": 0.1,
+          "from": 1000.0,
+          "to": 5000.0
+        },
+        {
+          "rate": 0.05,
+          "from": 5000.0,
+          "to": null
+        }
+      ]
+    },
+    "footwear": {
+      "label": "Footwear",
+      "minimum": 0.3,
+      "rate": 0.15
+    },
+    "full_size_appliances": {
+      "label": "Full-Size Appliances",
+      "minimum": 0.3,
+      "rate": 0.08
+    },
+    "furniture": {
+      "label": "Furniture",
+      "minimum": 0.3,
+      "tier_basis": "portion",
+      "tiers": [
+        {
+          "rate": 0.15,
+          "from": 0,
+          "to": 200.0
+        },
+        {
+          "rate": 0.1,
+          "from": 200.0,
+          "to": null
+        }
+      ]
+    },
+    "gift_cards": {
+      "label": "Gift Cards",
+      "minimum": null,
+      "rate": 0.2
+    },
+    "grocery_and_gourmet": {
+      "label": "Grocery and Gourmet",
+      "minimum": null,
+      "tier_basis": "whole_price",
+      "tiers": [
+        {
+          "rate": 0.08,
+          "from": 0,
+          "to": 15.0
+        },
+        {
+          "rate": 0.15,
+          "from": 15.0,
+          "to": null
+        }
+      ]
+    },
+    "home_and_kitchen": {
+      "label": "Home and Kitchen",
+      "minimum": 0.3,
+      "rate": 0.15
+    },
+    "jewelry": {
+      "label": "Jewelry",
+      "minimum": 0.3,
+      "tier_basis": "portion",
+      "tiers": [
+        {
+          "rate": 0.2,
+          "from": 0,
+          "to": 250.0
+        },
+        {
+          "rate": 0.05,
+          "from": 250.0,
+          "to": null
+        }
+      ]
+    },
+    "lawn_and_garden": {
+      "label": "Lawn and Garden",
+      "minimum": 0.3,
+      "rate": 0.15
+    },
+    "lawn_mowers_and_snow_throwers": {
+      "label": "Lawn Mowers and Snow Throwers",
+      "minimum": 0.3,
+      "tier_basis": "whole_price",
+      "tiers": [
+        {
+          "rate": 0.15,
+          "from": 0,
+          "to": 500.0
+        },
+        {
+          "rate": 0.08,
+          "from": 500.0,
+          "to": null
+        }
+      ]
+    },
+    "mattresses": {
+      "label": "Mattresses",
+      "minimum": 0.3,
+      "rate": 0.15
+    },
+    "media__books_dvd_music_software_video": {
+      "label": "Media - Books, DVD, Music, Software, Video",
+      "minimum": null,
+      "rate": 0.15
+    },
+    "merchant_fulfilled_services": {
+      "label": "Merchant Fulfilled Services",
+      "minimum": 0.3,
+      "rate": 0.2
+    },
+    "musical_instruments_and_av_production": {
+      "label": "Musical Instruments and AV Production",
+      "minimum": 0.3,
+      "rate": 0.15
+    },
+    "office_products": {
+      "label": "Office Products",
+      "minimum": 0.3,
+      "rate": 0.15
+    },
+    "pet_products": {
+      "label": "Pet Products",
+      "minimum": 0.3,
+      "rate": 0.15
+    },
+    "sports_and_outdoors": {
+      "label": "Sports and Outdoors",
+      "minimum": 0.3,
+      "rate": 0.15
+    },
+    "tires": {
+      "label": "Tires",
+      "minimum": 0.3,
+      "rate": 0.1
+    },
+    "tools_and_home_improvement": {
+      "label": "Tools and Home Improvement",
+      "minimum": 0.3,
+      "rate": 0.15
+    },
+    "toys_and_games": {
+      "label": "Toys and Games",
+      "minimum": 0.3,
+      "rate": 0.15
+    },
+    "video_game_consoles": {
+      "label": "Video Game Consoles",
+      "minimum": null,
+      "rate": 0.08
+    },
+    "video_games_and_gaming_accessories": {
+      "label": "Video Games and Gaming Accessories",
+      "minimum": null,
+      "rate": 0.15
+    },
+    "watches": {
+      "label": "Watches",
+      "minimum": 0.3,
+      "tier_basis": "portion",
+      "tiers": [
+        {
+          "rate": 0.16,
+          "from": 0,
+          "to": 1500.0
+        },
+        {
+          "rate": 0.03,
+          "from": 1500.0,
+          "to": null
+        }
+      ]
+    }
+  },
+  "rates": {
+    "individual_per_item": 0.99,
+    "professional_monthly": 39.99,
+    "minimum_referral_default": 0.3,
+    "media_closing_fee": 1.8,
+    "media_categories": [
+      "media__books_dvd_music_software_video"
+    ]
+  },
+  "structure": "Two layers. (1) Selling plan: Individual = $0.99 per item sold, no subscription; Professional = $39.99 per month 'when you have active listings', no per-item fee. (2) Referral fee per unit sold, charged 'When the buyer's order is shipped': Referral fee = max( (item price + delivery charges + gift-wrap charges) x category rate , per-item minimum referral fee ). Base = 'total sales price' = total amount paid by the buyer including item price and any delivery or gift wrapping charges, 'excluding any taxes calculated through Amazon tax calculation services'. Minimum is $0.30 per unit for most categories; categories shown as '--' have no minimum (Fine Art, Gift Cards, Grocery and Gourmet, Media, Video Game Consoles, Video Games and Gaming Accessories). Tiered categories come in two kinds: 'portion' (marginal) tiers where each rate applies only to the slice of the total sales price inside the band (Compact Appliances, Electronics Accessories, Fine Art, Furniture, Jewelry, Watches), and 'whole_price' tiers where the rate is picked by the total sales price bucket and applied to the entire price (Baby Products; Beauty, Health and Personal Care; Clothing and Accessories; Grocery and Gourmet; Lawn Mowers and Snow Throwers). (3) Closing fee: flat $1.80 per unit sold in Books, DVD, Music, Software & Computer/Video Games, Video Game Consoles, and Video Game Accessories, in addition to the referral fee. Seller pays all of the above (deducted from the buyer's payment before deposit). Amazon 'collects the lower of the applicable fees stated below and any fees communicated to you by Amazon (such as promotional fees)'. Refunds: Amazon returns the referral fee minus a refund administration fee (lesser of $5.00 or 20% of the referral fee). Rounding rules are not stated on any loaded page.",
+  "summary": "Amazon takes a referral fee \u2014 a category percentage (8% to 45%, most at 15%) of the item price plus shipping and gift wrap, with a $0.30 minimum in most categories \u2014 plus $0.99 per item on the Individual plan or $39.99 a month on Professional, and a $1.80 closing fee on media. FBA fulfillment fees are separate.",
+  "inputs": [
+    {
+      "id": "item_price",
+      "label": "Item price",
+      "type": "money",
+      "default": 25
+    },
+    {
+      "id": "delivery_charges",
+      "label": "Shipping charged to buyer",
+      "type": "money",
+      "default": 0
+    },
+    {
+      "id": "gift_wrap_charges",
+      "label": "Gift wrap charged",
+      "type": "money",
+      "default": 0
+    },
+    {
+      "id": "category",
+      "label": "Category",
+      "type": "select",
+      "default": "toys_and_games",
+      "options_from": "categories"
+    },
+    {
+      "id": "plan",
+      "label": "Selling plan",
+      "type": "select",
+      "default": "individual",
+      "options": [
+        [
+          "individual",
+          "Individual ($0.99 per item sold)"
+        ],
+        [
+          "professional",
+          "Professional ($39.99/month, no per-item fee)"
+        ]
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "description": "Referral fee for a toy product (15% category, $0.30 minimum) with delivery and gift-wrap charges",
+      "inputs": {
+        "category": "toys_and_games",
+        "item_price": 25.0,
+        "delivery_charges": 4.5,
+        "gift_wrap_charges": 3.5,
+        "plan": "professional"
+      },
+      "expected": {
+        "referral_fee": 4.95
+      },
+      "quote": "Item price = $25.00 Delivery charges = $4.50 Gift-wrap charges = $3.50 Total sales price = Item price + delivery charges + giftwrap charges = $33.00 Referral fee = Higher of (15% multiplied by $33.00) or $0.30 = $4.95",
+      "source_url": "https://sellercentral.amazon.com/help/hub/reference/external/GTG4BAWSY39Z98Z3"
+    },
+    {
+      "description": "Watches, $8.00 watch (16% on portion up to $1,500)",
+      "inputs": {
+        "category": "watches",
+        "item_price": 8.0,
+        "delivery_charges": 0,
+        "gift_wrap_charges": 0,
+        "plan": "professional"
+      },
+      "expected": {
+        "referral_fee": 1.28
+      },
+      "quote": "Example 1: Referral fee for an $8.00 watch | For the portion of the total sales price up to $1,500.00 | $1.28 | For any portion of the total sales price from $1,500.01 and above | $0.00 | Referral fee | $1.28",
+      "source_url": "https://sellercentral.amazon.com/help/hub/reference/external/GTG4BAWSY39Z98Z3"
+    },
+    {
+      "description": "Watches, $1,500.00 watch",
+      "inputs": {
+        "category": "watches",
+        "item_price": 1500.0,
+        "delivery_charges": 0,
+        "gift_wrap_charges": 0,
+        "plan": "professional"
+      },
+      "expected": {
+        "referral_fee": 240.0
+      },
+      "quote": "Example 2: Referral fee for a $1,500.00 watch | For the portion of the total sales price up to $1,500.00 | $240.00 | For any portion of the total sales price from $1,500.01 and above | $0.00 | Referral fee | $240.00",
+      "source_url": "https://sellercentral.amazon.com/help/hub/reference/external/GTG4BAWSY39Z98Z3"
+    },
+    {
+      "description": "Watches, $7,000.00 watch (16% on first $1,500 = $240 plus 3% on remaining $5,500 = $165)",
+      "inputs": {
+        "category": "watches",
+        "item_price": 7000.0,
+        "delivery_charges": 0,
+        "gift_wrap_charges": 0,
+        "plan": "professional"
+      },
+      "expected": {
+        "referral_fee": 405.0
+      },
+      "quote": "Example 3: Referral fee for a $7,000.00 watch | For the portion of the total sales price up to $1,500.00 | $240.00 | For any portion of the total sales price from $1,500.01 and above | $165.00 | Referral fee | $405.00",
+      "source_url": "https://sellercentral.amazon.com/help/hub/reference/external/GTG4BAWSY39Z98Z3"
+    },
+    {
+      "description": "Closing fee on a book sale (flat, in addition to referral fee)",
+      "inputs": {
+        "category": "media__books_dvd_music_software_video",
+        "item_price": 10,
+        "delivery_charges": 0,
+        "gift_wrap_charges": 0,
+        "plan": "professional"
+      },
+      "expected": {
+        "closing_fee": 1.8
+      },
+      "quote": "When a book is sold in the Amazon store, the seller is charged a $1.80 closing fee in addition to any other applicable fees.",
+      "source_url": "https://sellercentral.amazon.com/help/hub/reference/external/GKD9U5REK5DKB38Y"
+    }
+  ]
+}

@@ -137,6 +137,7 @@ def _page(site: dict, *, title: str, path: str, body: str, description: str, hea
         f"<title>{_esc(title)}</title><meta name=\"description\" content=\"{_esc(description)}\">"
         f"<link rel=\"canonical\" href=\"{_esc(canonical)}\">"
         f"<meta property=\"og:title\" content=\"{_esc(title)}\"><meta property=\"og:description\" content=\"{_esc(description)}\">"
+        "<link rel=\"icon\" href=\"data:,\">"
         f"<style>{_CSS}</style>{head_extra}</head><body>"
         f"<header><div class=\"top\"><a class=\"brand\" href=\"{root or './'}\">Fee <span>Verified</span></a><nav>{nav}</nav></div></header>"
         f"<main>{body}</main>"
@@ -147,6 +148,8 @@ def _page(site: dict, *, title: str, path: str, body: str, description: str, hea
 
 
 def render_platform(site: dict, schedule: dict, verification: dict, engine_js: str, ui_js: str) -> str:
+    if schedule.get("no_calculator"):
+        return render_fact_page(site, schedule, verification)
     _status, kind, text = status_for(schedule, verification)
     name = schedule["name"]
     short = name.split(" (")[0]
@@ -227,13 +230,16 @@ def render_methodology(site: dict) -> str:
         "<p>Each platform has a schedule file: the fee components, the exact sentences on the "
         "platform's page that state them, the page's URL, and the date the numbers were read. "
         "The calculator on the page computes from that file and nothing else.</p>"
-        "<h2>The nightly check</h2><p>Every night the platform's fee page is fetched and reduced to "
-        "its visible text, and that text is hashed. If the hash matches the one recorded when a "
-        "human last reviewed the numbers, the page shows <span class=\"badge verified\">verified</span> "
-        "with both dates. If it differs, the page shows <span class=\"badge review\">under review</span> "
-        "until a person re-reads the schedule and updates the file — the calculator stays usable "
-        "but is honest about its state. If the page could not be fetched, the page says so and "
-        "keeps the last verified date. Numbers are never changed by software.</p>"
+        "<h2>The nightly check</h2><p>Every night each platform's fee page is fetched and the exact "
+        "sentences this site relies on — the ones quoted on each calculator page — are looked for in "
+        "the page's text. If every sentence is still there, the page shows "
+        "<span class=\"badge verified\">verified</span> with the date the numbers were last reviewed and "
+        "the date the page was last checked. If a sentence has disappeared or been reworded, the page "
+        "shows <span class=\"badge review\">under review</span> until a person re-reads the schedule and "
+        "updates the file — the calculator stays usable but is honest about its state. If the page "
+        "could not be fetched, the page says so and keeps the last verified date. A fingerprint of "
+        "all fee-bearing sentences is recorded as supporting evidence. Numbers are never changed by "
+        "software.</p>"
         "<h2>Pinned to the platforms' own arithmetic</h2><p>Where a platform publishes a worked "
         "example (eBay publishes two on its fees page), the calculator must reproduce it to the "
         "cent in an automated test, or the site does not build. Where a platform publishes only "
@@ -263,6 +269,28 @@ def render_about(site: dict) -> str:
         "citing the platform's page.</p>"
     )
     return _page(site, title="About Fee Verified", path="about.html", body=body, description="Who makes Fee Verified and how to send a correction.")
+
+
+def render_fact_page(site: dict, schedule: dict, verification: dict) -> str:
+    """A platform that publishes no computable schedule gets a page that says
+    exactly that, with the sentences that say it — not a made-up calculator."""
+    _status, kind, text = status_for(schedule, verification)
+    short = schedule["name"].split(" (")[0]
+    quotes = "".join(f"<li>{_esc(q)}</li>" for q in schedule.get("quotes", [])[:10])
+    sources = "".join(f"<li><a href=\"{_esc(s['url'])}\" rel=\"noopener\">{_esc(s['title'])}</a></li>" for s in schedule["sources"])
+    notes = "".join(f"<li>{_esc(x)}</li>" for x in schedule.get("notes", []))
+    body = (
+        f"<h1>{_esc(short)} seller fees</h1><p class=\"lede\">{_esc(schedule.get('summary', ''))}</p>"
+        f"<div class=\"status {kind}\">{_esc(text)}</div>"
+        f"<h2>What {_esc(short)} publishes</h2><p>{_esc(schedule.get('structure', ''))}</p>"
+        f"<h2>In {_esc(short)}'s own words</h2><ul>{quotes}</ul>"
+        f"<h2>Sources</h2><ul>{sources}</ul>"
+        + (f"<h2>Notes</h2><ul>{notes}</ul>" if notes else "")
+        + "<p class=\"muted\">No calculator is offered because the platform publishes no rate to compute from. Third-party sites quoting a percentage are quoting something the platform itself does not state.</p>"
+    )
+    return _page(site, title=f"{short} seller fees ({site['year']}): what the platform publishes, and what it doesn't",
+                 path=f"{schedule['platform']}.html", body=body,
+                 description=f"{short} seller fees as published by the platform, with the exact sentences quoted.")
 
 
 def render_take(site: dict, schedule: dict, verification: dict) -> str:
@@ -365,10 +393,11 @@ def build(base_url: str, generated_at: datetime | None = None) -> dict[str, str]
     by_slug = {s["platform"]: s for s in schedules}
     for s in schedules:
         pages[f"{s['platform']}.html"] = render_platform(site, s, verification, engine_js, ui_js)
-        pages[f"how-much-does-{s['platform']}-take.html"] = render_take(site, s, verification)
+        if not s.get("no_calculator"):
+            pages[f"how-much-does-{s['platform']}-take.html"] = render_take(site, s, verification)
     available = []
     for slug, title, members in COMPARISONS:
-        present = [by_slug[m] for m in members if m in by_slug]
+        present = [by_slug[m] for m in members if m in by_slug and not by_slug[m].get("no_calculator")]
         if len(present) >= 2:
             pages[f"compare/{slug}.html"] = render_comparison(site, slug, title, present, verification)
             available.append((slug, title))

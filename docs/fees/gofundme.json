@@ -1,0 +1,147 @@
+{
+  "platform": "gofundme",
+  "name": "GoFundMe",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://www.gofundme.com/c/pricing",
+      "title": "Pricing and Fees (Simple pricing, powerful fundraising)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://support.gofundme.com/hc/en-us/articles/203604424-Learn-about-GoFundMe-fees",
+      "title": "Learn about GoFundMe fees \u2013 Help Center",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "June 29, 2026 14:23 Updated"
+    },
+    {
+      "url": "https://support.gofundme.com/hc/en-us/articles/360051144952-Choosing-a-tip-amount",
+      "title": "Choosing a tip amount \u2013 Help Center",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "June 17, 2026 17:32 Updated"
+    },
+    {
+      "url": "https://support.gofundme.com/hc/en-us/articles/115015446027-Extra-Charge-on-Statement",
+      "title": "Extra or larger than expected charge on statement \u2013 Help Center",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "April 07, 2026 17:56 Updated"
+    },
+    {
+      "url": "https://transparency.gofundme.com/hc/en-us/articles/25144121631643-Pricing-and-Fees",
+      "title": "Pricing and Fees \u2013 Transparency Center",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "January 21, 2026 14:07 Updated"
+    },
+    {
+      "url": "https://www.gofundme.com/c/blog/gofundme-fees",
+      "title": "GoFundMe Fees: Answers to Your Top Questions (blog)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "April 20, 2026"
+    },
+    {
+      "url": "https://charitysupport.gofundme.com/hc/en-us/articles/360035220752-Pricing-fees-",
+      "title": "Pricing & fees \u2013 GoFundMe Charity (legacy help center)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null,
+      "verify": false,
+      "note": "Read by a person in a browser on the loaded date; this page blocks automated checks, so it is not part of the nightly verification."
+    },
+    {
+      "url": "https://charity.gofundme.com/c/charity-pricing",
+      "title": "GoFundMe charity pricing (old URL)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "Transaction fees deducted from donations to US fundraisers. GoFundMe Pro custom pricing and donor tips (paid by the donor, never deducted) are out of scope.",
+  "structure": "US personal (individual or business) fundraisers pay one transaction fee per donation of 2.9% + $0.30, deducted automatically from each donation before transfer; the recipient receives the donation minus that fee and there is no fee to create or manage a fundraiser (0% platform fee). US certified-nonprofit fundraisers are charged 2.2% + $0.30 per donation. Donor tips to GoFundMe are optional, charged to the donor on top of the donation (never deducted from the fundraiser), adjustable to any amount including 0, and the organizer cannot see them. If a donor chooses a recurring (monthly) donation, the donor pays an additional 5% fee per recurring donation (not applicable to GoFundMe Pro). International transaction and currency-conversion fees may apply depending on the donor's payment method. Rounding is not stated; the platform's own example resolves to exact cents ($50 -> $48.25).",
+  "quotes": [
+    "One transaction fee 2.9% + $0.30 Automatically deducted from each donation, so you never have to worry about paying a bill. International transaction and conversion fees may apply based on your payment method. (pricing page, United States, 'Individual or business' tab)",
+    "One transaction fee\u2014that\u2019s it* 2.2% + $0.30 Automatically deducted from each donation, so you never have to worry about paying a bill. (pricing page, United States, 'Certified nonprofit' tab)",
+    "No fee to create a fundraiser $0.00 There\u2019s no fee to start or manage your fundraiser.",
+    "Donor contributions to GoFundMe are optional $0.00 Donors can help power GoFundMe with an optional contribution, but it\u2019s never required.",
+    "It\u2019s always free to start and manage a fundraiser on GoFundMe. To help us cover payment processing, there\u2019s a transaction fee per donation.",
+    "If donors choose recurring donations, they pay a fee of 5% per donation to help make this feature possible for our community.",
+    "Supporters who choose to make a recurring donation to an individual or charity on GoFundMe pay a 5% fee per donation to help support this feature. This fee does not apply to recurring donations made through GoFundMe Pro.",
+    "Tipping is optional, and the tip amount can be changed to 0. The GoFundMe organizer will not see whether or not their donors leave a tip to GoFundMe.",
+    "Leaving a tip is not mandatory, and it can be changed to any amount, including 0.",
+    "Your total due today will be the donation plus the amount you choose to tip.",
+    "No platform fees: Starting and managing a fundraiser is always free on GoFundMe.",
+    "GoFundMe Pro offers custom pricing based on your organization\u2019s unique needs. Standard processing fees apply\u2014typically 2.2%\u20132.5% + $0.30 per transaction, with a 1% additional fee for American Express.",
+    "If you contribute using a credit or debit card, standard processing fees may apply after your first contribution\u2014 2.2% per transaction. There are no fees for ACH contributions. (GoFundMe Giving Fund)"
+  ],
+  "excluded": [
+    "Non-US country rates (e.g., Australia 2.2% + $0.30 individual / 1.9% + $0.30 nonprofit; UK/Ireland 2.9% + \u00a30.25; EU 2.9% + \u20ac0.25; Mexico 2.9% + MXN 5; Switzerland 2.9% + CHF 0.30; Nordics 2.9% + 3 kr.)",
+    "GoFundMe Pro custom platform pricing",
+    "GoFundMe Giving Fund (donor-advised fund) fees",
+    "Donor-side international transaction / currency conversion fees (vary by payment method)",
+    "Donor tips (paid by donor on top of donation; not a deduction from funds raised)"
+  ],
+  "notes": [
+    "Tip default: no official page states a default tip percentage. The help center refers to 'the suggested tip amount' that donors adjust with a slider or custom entry and may set to 0; the organizer never sees it. Any specific default percentage found on third-party sites is unverified.",
+    "Country mapping on the pricing page comes from its country selector as rendered: United States -> Individual or business 2.9% + $0.30; Certified nonprofit 2.2% + $0.30. Do not confuse with Australia, whose individual rate is also 2.2% + $0.30 (GST included).",
+    "Charity rate: the current US pricing page shows 'Certified nonprofit' at 2.2% + $0.30; nonprofit tooling is otherwise sold as GoFundMe Pro (custom pricing, 'typically 2.2%\u20132.5% + $0.30', +1% Amex). The legacy GoFundMe Charity help page (charitysupport.gofundme.com) failed to load on three fetchers (TLS handshake failure); the 'Free tier 0% platform + 1.9% + $0.30 / Flex tier 3% platform + 2.2% + $0.30' figures visible only in search-engine snippets are UNVERIFIED and likely obsolete.",
+    "Recurring-donation 5% fee is charged to the donor (it appears under 'Extra or larger than expected charge on statement'), so the fundraiser's net per recurring donation is still donation minus 2.9% + $0.30 unless GoFundMe states otherwise; a calculator author must decide whether to display it as a donor-side cost.",
+    "The blog post dated April 20, 2026 still contains the stale phrase 'GoFundMe\u2019s fees for 2022' but states the same 2.9% + $0.30 and 5% recurring figures.",
+    "Payment methods covered by the single transaction fee per the help article: credit, debit, ACH, PayPal, Venmo, Apple Pay, Google Pay (for most fundraisers)."
+  ],
+  "rates": {
+    "individual": [
+      0.029,
+      0.3
+    ],
+    "certified_nonprofit": [
+      0.022,
+      0.3
+    ],
+    "recurring_donor_fee": 0.05,
+    "platform_fee": 0.0
+  },
+  "summary": "GoFundMe deducts 2.9% + 30\u00a2 from each donation to a US personal or business fundraiser (2.2% + 30\u00a2 for certified nonprofits) and nothing else \u2014 there is no platform fee and no fee to start. Donor tips are optional and paid on top by the donor.",
+  "inputs": [
+    {
+      "id": "amount",
+      "label": "Donation",
+      "type": "money",
+      "default": 50
+    },
+    {
+      "id": "fundraiser_type",
+      "label": "Fundraiser type",
+      "type": "select",
+      "default": "individual",
+      "options": [
+        [
+          "individual",
+          "Individual or business (2.9% + 30\u00a2)"
+        ],
+        [
+          "certified_nonprofit",
+          "Certified nonprofit (2.2% + 30\u00a2)"
+        ]
+      ]
+    },
+    {
+      "id": "recurring",
+      "label": "Recurring monthly donation (donor pays an extra 5%)",
+      "type": "bool",
+      "default": false
+    }
+  ],
+  "examples": [
+    {
+      "description": "GoFundMe's own example: a $50 donation to a US fundraiser nets $48.25 after the 2.9% + $0.30 fee.",
+      "inputs": {
+        "amount": 50,
+        "fundraiser_type": "individual"
+      },
+      "expected": {
+        "total_fees": 1.75,
+        "net": 48.25
+      },
+      "quote": "If a donor makes a $50 donation to a US fundraiser, the individual receiving funds will receive $48.25 once transaction fees (2.9% + $0.30) are deducted.",
+      "source_url": "https://support.gofundme.com/hc/en-us/articles/203604424-Learn-about-GoFundMe-fees"
+    }
+  ]
+}

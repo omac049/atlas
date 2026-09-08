@@ -61,10 +61,13 @@ def test_every_schedule_cites_a_loaded_source_and_quotes_its_numbers(path):
             assert "derived" in example["description"].lower() or "arithmetic" in example["description"].lower()
 
 
-def test_engine_covers_every_schedule_file():
+def test_engine_covers_every_calculator_schedule():
     engine = (ROOT / "feeverified" / "static" / "fees.js").read_text()
     for path in SCHEDULES:
-        assert f"{path.stem}(" in engine or f"{path.stem}:" in engine or f"{path.stem} " in engine or path.stem in engine, path.stem
+        data = json.loads(path.read_text())
+        if data.get("no_calculator"):
+            continue
+        assert f"function {path.stem}(" in engine, path.stem
 
 
 def test_rounding_is_half_up_to_the_cent():
@@ -107,3 +110,16 @@ def test_build_guardrails_every_page_carries_disclosure_and_status():
     assert 'class="status ' in pages["ebay.html"]
     assert "https://www.ebay.com/help/selling/fees-credits-invoices/selling-fees" in pages["ebay.html"]
     assert "<loc>https://example.test/ebay</loc>" in pages["sitemap.xml"]
+
+
+def test_quote_check_ignores_typography_but_catches_a_reworded_fee():
+    from feeverified.verify import missing_quotes
+
+    page = "We charge 13.6% on the total amount of the sale up to $7,500.  For orders $10.00 or less the per order fee is $0.30."
+    assert missing_quotes(page, ["We charge 13.6% on the total amount of the sale up to $7,500."]) == []
+    assert missing_quotes(page.replace("$0.30", "$0.35"), ["For orders $10.00 or less the per order fee is $0.30."]) == [
+        "For orders $10.00 or less the per order fee is $0.30."
+    ]
+    # Curly quotes, dashes and spacing are not changes; '...' splits a quote into fragments.
+    assert missing_quotes("It\u2019s 13.6% \u2013 up to $7,500", ["It's 13.6% - up to $7,500"]) == []
+    assert missing_quotes(page, ["13.6% on the total amount … per order fee is $0.30."]) == []

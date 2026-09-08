@@ -1,5 +1,368 @@
 {
  "platforms": {
+  "amazon": {
+   "history": [
+    {
+     "at": "2026-09-08T17:51:38+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:04+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [
+    "Individual $0.99 / item sold",
+    "Professional Selling Plan: USD $39.99 per month* when you have active listings",
+    "Individual Selling Plan: No subscription fee",
+    "Professional sellers: No per-item fee",
+    "Individual sellers: $0.99 fee for each item sold",
+    "Referral fees vary by product category. For every item sold, you\u2019ll pay a percentage of the total price or a minimum amount, whichever is greater.\u00b9",
+    "For all products, Amazon deducts the applicable referral fee percentage calculated on the total sales price, excluding any taxes calculated through Amazon tax calculation services. The total sales price is the total amount paid by the buyer, including the item price and any delivery or gift wrapping charges.",
+    "Items in some categories have a per-item minimum referral fee as listed below (for example, sellers pay the greater of the referral fee or the per-item minimum referral fee).",
+    "Referral fee = [(Item price + delivery charges + giftwrap charges) multiplied by the category referral fee rate] OR [applicable minimum referral fee], whichever is greater.",
+    "Time of charge | When the buyer's order is shipped",
+    "Amazon Device Accessories | 45% | $0.30",
+    "Automotive and Powersports | 12% | $0.30",
+    "Baby Products | * 8% for products with a total sales price of $10.00 or less, and * 15% for products with a total sales price greater than $10.00 | $0.30",
+    "Backpacks, Handbags, and Luggage | 15% | $0.30",
+    "Base Equipment Power Tools | 12% | $0.30",
+    "Beauty, Health and Personal Care | * 8% for products with a total sales price of $10.00 or less, and * 15% for items with a total sales price greater than $10.00 | $0.30",
+    "Business, Industrial, and Scientific Supplies | 12% | $0.30",
+    "Clothing and Accessories | * 5% for products with a total sales price of $15.00 or less * 10% for products with a total sales price greater than $15.00 and less than or equal to $20.00 * 17% for products with a total sales price greater than $20.00 | $0.30",
+    "Compact Appliances | * 15% for the portion of the total sales price up to $300.00, and * 8% for any portion of the total sales price greater than $300.00 | $0.30",
+    "Computers | 8% | $0.30",
+    "Consumer Electronics1 | 8% | $0.30",
+    "Electronics Accessories | * 15% for the portion of the total sales price up to $100.00, and * 8% for any portion of the total sales price greater than $100.00 | $0.30",
+    "Everything Else2 | 15% | $0.30",
+    "Eyewear | 15% | $0.30",
+    "Fine Art | * 20% for the portion of the total sales price up to $100.00, * 15% for the portion of the total sales price greater than $100.00 up to $1,000.00, * 10% for the portion of the total sales price greater than $1,000.00 up to $5,000.00, and * 5% for the portion of the total sales price greater than $5,000.00 | --",
+    "Footwear | 15% | $0.30",
+    "Full-Size Appliances | 8% | $0.30",
+    "Furniture | * 15% for the portion of the total sales price up to $200.00, and * 10% for any portion of the total sales price greater than $200.00 | $0.30",
+    "Gift Cards | 20% | --",
+    "Grocery and Gourmet | * 8% for products with a total sales price of $15.00 or less, and * 15% for products with a total sales price greater than $15.00 | --",
+    "Home and Kitchen | 15% | $0.30",
+    "Jewelry | * 20% for the portion of the total sales price up to $250.00, and * 5% for any portion of the total sales price greater than $250.00 | $0.30",
+    "Lawn and Garden | 15% | $0.30",
+    "Lawn Mowers and Snow Throwers | * 15% for products with a total sales price of up to $500.00 * 8% for products with a total sales price greater than $500.00 | $0.30",
+    "Mattresses | 15% | $0.30",
+    "Media - Books, DVD, Music, Software, Video | 15% | --",
+    "Merchant Fulfilled Services3 | 20% | $0.30",
+    "Musical Instruments and AV Production | 15% | $0.30",
+    "Office Products | 15% | $0.30",
+    "Pet Products | 15%, except 22% for veterinary diets | $0.30",
+    "Sports and Outdoors | 15% | $0.30",
+    "Tires | 10% | $0.30",
+    "Tools and Home Improvement | 15% | $0.30",
+    "Toys and Games | 15% | $0.30",
+    "Video Game Consoles | 8% | --",
+    "Video Games and Gaming Accessories | 15% | --",
+    "Watches | * 16% for the portion of the total sales price up to $1,500.00, and * 3% for any portion of the total sales price greater than $1,500.00 | $0.30",
+    "Sellers also pay a closing fee of $1.80 per item that is sold in the categories of Books, DVD, Music, Software & Computer/Video Games, Video Game Consoles, and Video Game Accessories.",
+    "The closing fee is $1.80 per unit sold for products in the Books, DVD, Music, Software & Computer/Video Games, Video Game Consoles, and Video Game Accessories categories.",
+    "If you refund a buyer for an order for which you have already received payment, we refund you the amount of the referral fee you paid for the item minus the applicable refund administration fee, which is the lesser of $5.00 or 20% of the applicable referral fee.",
+    "The rental book service fee is $5.00 per book rented to a customer.",
+    "We charge a monthly high-volume listing fee of $0.001 per eligible SKU to cover our system costs associated with cataloging and maintaining large numbers of SKUs on Amazon.com.",
+    "Amazon collects the lower of the applicable fees stated below and any fees communicated to you by Amazon (such as promotional fees that Amazon may provide from time to time)."
+   ],
+   "quotes_missing_at_review": [
+    "Individual $0.99 / item sold",
+    "Professional Selling Plan: USD $39.99 per month* when you have active listings",
+    "Individual Selling Plan: No subscription fee",
+    "Professional sellers: No per-item fee",
+    "Individual sellers: $0.99 fee for each item sold",
+    "Referral fees vary by product category. For every item sold, you\u2019ll pay a percentage of the total price or a minimum amount, whichever is greater.\u00b9",
+    "For all products, Amazon deducts the applicable referral fee percentage calculated on the total sales price, excluding any taxes calculated through Amazon tax calculation services. The total sales price is the total amount paid by the buyer, including the item price and any delivery or gift wrapping charges.",
+    "Items in some categories have a per-item minimum referral fee as listed below (for example, sellers pay the greater of the referral fee or the per-item minimum referral fee).",
+    "Referral fee = [(Item price + delivery charges + giftwrap charges) multiplied by the category referral fee rate] OR [applicable minimum referral fee], whichever is greater.",
+    "Time of charge | When the buyer's order is shipped",
+    "Amazon Device Accessories | 45% | $0.30",
+    "Automotive and Powersports | 12% | $0.30",
+    "Baby Products | * 8% for products with a total sales price of $10.00 or less, and * 15% for products with a total sales price greater than $10.00 | $0.30",
+    "Backpacks, Handbags, and Luggage | 15% | $0.30",
+    "Base Equipment Power Tools | 12% | $0.30",
+    "Beauty, Health and Personal Care | * 8% for products with a total sales price of $10.00 or less, and * 15% for items with a total sales price greater than $10.00 | $0.30",
+    "Business, Industrial, and Scientific Supplies | 12% | $0.30",
+    "Clothing and Accessories | * 5% for products with a total sales price of $15.00 or less * 10% for products with a total sales price greater than $15.00 and less than or equal to $20.00 * 17% for products with a total sales price greater than $20.00 | $0.30",
+    "Compact Appliances | * 15% for the portion of the total sales price up to $300.00, and * 8% for any portion of the total sales price greater than $300.00 | $0.30",
+    "Computers | 8% | $0.30",
+    "Consumer Electronics1 | 8% | $0.30",
+    "Electronics Accessories | * 15% for the portion of the total sales price up to $100.00, and * 8% for any portion of the total sales price greater than $100.00 | $0.30",
+    "Everything Else2 | 15% | $0.30",
+    "Eyewear | 15% | $0.30",
+    "Fine Art | * 20% for the portion of the total sales price up to $100.00, * 15% for the portion of the total sales price greater than $100.00 up to $1,000.00, * 10% for the portion of the total sales price greater than $1,000.00 up to $5,000.00, and * 5% for the portion of the total sales price greater than $5,000.00 | --",
+    "Footwear | 15% | $0.30",
+    "Full-Size Appliances | 8% | $0.30",
+    "Furniture | * 15% for the portion of the total sales price up to $200.00, and * 10% for any portion of the total sales price greater than $200.00 | $0.30",
+    "Gift Cards | 20% | --",
+    "Grocery and Gourmet | * 8% for products with a total sales price of $15.00 or less, and * 15% for products with a total sales price greater than $15.00 | --",
+    "Home and Kitchen | 15% | $0.30",
+    "Jewelry | * 20% for the portion of the total sales price up to $250.00, and * 5% for any portion of the total sales price greater than $250.00 | $0.30",
+    "Lawn and Garden | 15% | $0.30",
+    "Lawn Mowers and Snow Throwers | * 15% for products with a total sales price of up to $500.00 * 8% for products with a total sales price greater than $500.00 | $0.30",
+    "Mattresses | 15% | $0.30",
+    "Media - Books, DVD, Music, Software, Video | 15% | --",
+    "Merchant Fulfilled Services3 | 20% | $0.30",
+    "Musical Instruments and AV Production | 15% | $0.30",
+    "Office Products | 15% | $0.30",
+    "Pet Products | 15%, except 22% for veterinary diets | $0.30",
+    "Sports and Outdoors | 15% | $0.30",
+    "Tires | 10% | $0.30",
+    "Tools and Home Improvement | 15% | $0.30",
+    "Toys and Games | 15% | $0.30",
+    "Video Game Consoles | 8% | --",
+    "Video Games and Gaming Accessories | 15% | --",
+    "Watches | * 16% for the portion of the total sales price up to $1,500.00, and * 3% for any portion of the total sales price greater than $1,500.00 | $0.30",
+    "Sellers also pay a closing fee of $1.80 per item that is sold in the categories of Books, DVD, Music, Software & Computer/Video Games, Video Game Consoles, and Video Game Accessories.",
+    "The closing fee is $1.80 per unit sold for products in the Books, DVD, Music, Software & Computer/Video Games, Video Game Consoles, and Video Game Accessories categories.",
+    "If you refund a buyer for an order for which you have already received payment, we refund you the amount of the referral fee you paid for the item minus the applicable refund administration fee, which is the lesser of $5.00 or 20% of the applicable referral fee.",
+    "The rental book service fee is $5.00 per book rented to a customer.",
+    "We charge a monthly high-volume listing fee of $0.001 per eligible SKU to cover our system costs associated with cataloging and maintaining large numbers of SKUs on Amazon.com.",
+    "Amazon collects the lower of the applicable fees stated below and any fees communicated to you by Amazon (such as promotional fees that Amazon may provide from time to time)."
+   ],
+   "reviewed_at": "2026-09-08T17:56:04+00:00",
+   "sources": {
+    "https://sell.amazon.com/pricing": {
+     "fingerprint_drift": false,
+     "hash": "6e1fb02338b48a3d2b9e82ccfa16dc828a166ed632d48c1361426ddfeb6a7d68",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:04+00:00",
+     "status": "verified"
+    },
+    "https://sellercentral.amazon.com/help/hub/reference/external/G200336920": {
+     "fingerprint_drift": false,
+     "hash": "72efc80f02dd4547c9699ec1e2dad0cf06b77f11bc577a8e2c3ced1fc3e8fa8b",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:04+00:00",
+     "status": "verified"
+    },
+    "https://sellercentral.amazon.com/help/hub/reference/external/GKD9U5REK5DKB38Y": {
+     "fingerprint_drift": false,
+     "hash": "72efc80f02dd4547c9699ec1e2dad0cf06b77f11bc577a8e2c3ced1fc3e8fa8b",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:04+00:00",
+     "status": "verified"
+    },
+    "https://sellercentral.amazon.com/help/hub/reference/external/GTG4BAWSY39Z98Z3": {
+     "fingerprint_drift": false,
+     "hash": "72efc80f02dd4547c9699ec1e2dad0cf06b77f11bc577a8e2c3ced1fc3e8fa8b",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:04+00:00",
+     "status": "verified"
+    },
+    "https://sellercentral.amazon.com/help/hub/reference/external/GX7NRP7C7LKZLQV6": {
+     "fingerprint_drift": false,
+     "hash": "72efc80f02dd4547c9699ec1e2dad0cf06b77f11bc577a8e2c3ced1fc3e8fa8b",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:04+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "cashapp": {
+   "history": [
+    {
+     "at": "2026-09-08T17:51:40+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:53:51+00:00",
+     "event": "reviewed",
+     "note": "re-baseline after excluding pages that block automated checks, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:06+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [
+    "| Sending money using your Cash App Balance or debit card in the U.S. | $0 |",
+    "| Receive money | $0 |",
+    "| Send from credit card | 3%** |",
+    "| Transfer to Linked Account (standard transfer) No fee to transfer money from your Cash App Balance to a Linked Account with the standard option. The money is typically available in 1-3 Business Days. | $0 |",
+    "| Transfer to a Linked Account (Instant Transfer) Fee for expedited transfer from your Cash App Balance to a Linked Account. Funds are typically available within minutes. The specific fee amount is disclosed at the time of the transaction. | 0.5%-2.5% ($0.25-$1 min)** (the maximum fee shall not exceed $75)** |",
+    "Standard transfers are free and usually arrive within 1\u20133 business days",
+    "Instant transfers typically arrive immediately to your linked debit card and are subject to a 0.5%\u20132.5% fee (minimum $0.25\u2013$1, maximum $75). This fee will be displayed before you complete the transaction",
+    "Cash App Business accounts are free to create and require no additional hardware to process business payments.",
+    "A 2.6% + $0.15 processing fee on each payment you receive from your customer\u2019s Cash App account to your Cash App Business account",
+    "A 3% processing fee for each payment accepted via Tap to Pay",
+    "When you receive a payment from a customer on your Cash App Business account, the amount you receive in your balance will already have these fees deducted."
+   ],
+   "quotes_missing_at_review": [
+    "| Sending money using your Cash App Balance or debit card in the U.S. | $0 |",
+    "| Receive money | $0 |",
+    "| Send from credit card | 3%** |",
+    "| Transfer to Linked Account (standard transfer) No fee to transfer money from your Cash App Balance to a Linked Account with the standard option. The money is typically available in 1-3 Business Days. | $0 |",
+    "| Transfer to a Linked Account (Instant Transfer) Fee for expedited transfer from your Cash App Balance to a Linked Account. Funds are typically available within minutes. The specific fee amount is disclosed at the time of the transaction. | 0.5%-2.5% ($0.25-$1 min)** (the maximum fee shall not exceed $75)** |",
+    "Standard transfers are free and usually arrive within 1\u20133 business days",
+    "Instant transfers typically arrive immediately to your linked debit card and are subject to a 0.5%\u20132.5% fee (minimum $0.25\u2013$1, maximum $75). This fee will be displayed before you complete the transaction",
+    "Cash App Business accounts are free to create and require no additional hardware to process business payments.",
+    "A 2.6% + $0.15 processing fee on each payment you receive from your customer\u2019s Cash App account to your Cash App Business account",
+    "A 3% processing fee for each payment accepted via Tap to Pay",
+    "When you receive a payment from a customer on your Cash App Business account, the amount you receive in your balance will already have these fees deducted."
+   ],
+   "reviewed_at": "2026-09-08T17:56:06+00:00",
+   "sources": {
+    "https://cash.app/bank/no-fees": {
+     "fingerprint_drift": false,
+     "hash": "af2162b7f8707c9cdf55b0384a34f0907ba40c8482ecdc261429c0c17f5b6e16",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:06+00:00",
+     "status": "verified"
+    },
+    "https://cash.app/help/us/en-US/6521-cash-app-business-fees": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:06+00:00",
+     "status": "verified"
+    },
+    "https://cash.app/help/us/en-us/3073-cash-out-speed-options": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:06+00:00",
+     "status": "verified"
+    },
+    "https://cash.app/help/us/en-us/6567-problems-linking-a-credit-card": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:06+00:00",
+     "status": "verified"
+    },
+    "https://cash.app/legal/us/en-us/cash-payment-terms": {
+     "fingerprint_drift": false,
+     "hash": "44d11b71f612a342e82e608e31fe7e674c413d81609ed660eea017be7d6c2afa",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:06+00:00",
+     "status": "verified"
+    },
+    "https://cash.app/legal/us/en-us/tos": {
+     "fingerprint_drift": false,
+     "hash": "9588ba4c65d9d5024ee73ea6767c07c998ea532119e51c1124d74e539779f2e1",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:06+00:00",
+     "status": "verified"
+    },
+    "https://cash.app/send": {
+     "fingerprint_drift": false,
+     "hash": "1750ccfca7930af9bba71c8fcfb315fefc1fc99df41fbba2e63021ade55d178b",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:06+00:00",
+     "status": "verified"
+    },
+    "https://developers.cash.app/cash-app-pay-partner-api/api-reference/network-api/merchant-fee-plans": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:06+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "depop": {
+   "history": [
+    {
+     "at": "2026-09-08T17:51:42+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:53:53+00:00",
+     "event": "reviewed",
+     "note": "re-baseline after excluding pages that block automated checks, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:08+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [
+    "These fees are in addition to selling fees (payable outside of the United Kingdom and United States) and payment processing fees. They are effective from 23 March and form part of our Terms of Service."
+   ],
+   "quotes_missing_at_review": [
+    "These fees are in addition to selling fees (payable outside of the United Kingdom and United States) and payment processing fees. They are effective from 23 March and form part of our Terms of Service."
+   ],
+   "reviewed_at": "2026-09-08T17:56:08+00:00",
+   "sources": {
+    "https://blog.depop.com/articles/us-depop-fee-change": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:08+00:00",
+     "status": "verified"
+    },
+    "https://depophelp.zendesk.com/hc/en-gb/articles/10110299060753-Boosted-Listings": {
+     "fingerprint_drift": false,
+     "hash": "07385cf624554443095a74e33d2349fd86a0d7c656c42b7e21e4d33372ee78ec",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:08+00:00",
+     "status": "verified"
+    },
+    "https://depophelp.zendesk.com/hc/en-gb/articles/10782996439313-Depop-Payments-fee-change-US-": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:08+00:00",
+     "status": "verified"
+    },
+    "https://depophelp.zendesk.com/hc/en-gb/articles/21752555753361-What-is-the-Marketplace-fee": {
+     "fingerprint_drift": false,
+     "hash": "d9209544185cbf1e14f6dbe86942b1f7e19636c1e347522b7f4e9056f5f3de67",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:08+00:00",
+     "status": "verified"
+    },
+    "https://depophelp.zendesk.com/hc/en-gb/articles/360001791127-Seller-fees-and-charges": {
+     "fingerprint_drift": false,
+     "hash": "a554dab21c8fcdf9198251943f93b07f48c4d5edd476ceeb8fecb7d2c81eaddc",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:08+00:00",
+     "status": "verified"
+    },
+    "https://depophelp.zendesk.com/hc/en-gb/articles/360001791287-How-do-I-change-the-currency-of-my-items": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:08+00:00",
+     "status": "verified"
+    },
+    "https://news.depop.com/company-news/depop-removes-selling-fees-in-the-united-states-evolves-fee-structure/": {
+     "fingerprint_drift": false,
+     "hash": "7090344ec642861b00145232c5574641abbb4521952d7eef0f8e06f1837eb886",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:08+00:00",
+     "status": "verified"
+    },
+    "https://partnerapi.depop.com/api-docs/concepts/fees/": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:08+00:00",
+     "status": "verified"
+    },
+    "https://www.depop.com/sell/": {
+     "fingerprint_drift": false,
+     "hash": "4a65d4ec6368304b85604e351f9af7f29756396f59adcc8cf099d5ba5b237187",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:08+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
   "ebay": {
    "history": [
     {
@@ -21,15 +384,234 @@
      "at": "2026-09-08T17:39:23+00:00",
      "event": "reviewed",
      "note": "baseline on block-aware fee-sentence fingerprint, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:51:48+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:12+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T17:39:28+00:00",
-   "reviewed_at": "2026-09-08T17:39:23+00:00",
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [
+    "The total amount of the sale includes the item price, any handling charges, any shipping costs collected from the buyer (some exceptions apply), sales tax, and any other applicable fees."
+   ],
+   "quotes_missing_at_review": [
+    "The total amount of the sale includes the item price, any handling charges, any shipping costs collected from the buyer (some exceptions apply), sales tax, and any other applicable fees."
+   ],
+   "reviewed_at": "2026-09-08T17:56:12+00:00",
    "sources": {
     "https://www.ebay.com/help/selling/fees-credits-invoices/selling-fees?id=4822": {
+     "fingerprint_drift": false,
      "hash": "dd04c11f51b81ab70c274af7e933ea6424a5b3862bd809ae00190ea5f5b712e7",
-     "last_checked_at": "2026-09-08T17:39:28+00:00",
-     "reviewed_at": "2026-09-08T17:39:23+00:00",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:12+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "etsy": {
+   "history": [
+    {
+     "at": "2026-09-08T17:51:50+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:15+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [
+    "United States | 3% + 0.25 USD",
+    "Location of Bank Account | Etsy Payments Fees (% of total sale price + flat fee per order) exclusive of VAT, where applicable | Deposit fee where applicable (exclusive of VAT, where applicable)",
+    "Location of Bank Account | Fees for Etsy Payments(% of total sale price + flat fee per order)",
+    "You will be charged a listing fee whether or not the listed item sells, unless you create a private listing, in which case you will only be charged the listing fee when the private listing is sold. Etsy.com listings expire after four months.",
+    "E. Instant Transfer (US seller only). Eligible U.S sellers may use instant transfer to make transfers from their Etsy Payment account directly to their bank account, subject to a fee. Please note that if applicable, an instant transfer fee will be charged and displayed as part of the transfer process."
+   ],
+   "quotes_missing_at_review": [
+    "United States | 3% + 0.25 USD",
+    "Location of Bank Account | Etsy Payments Fees (% of total sale price + flat fee per order) exclusive of VAT, where applicable | Deposit fee where applicable (exclusive of VAT, where applicable)",
+    "Location of Bank Account | Fees for Etsy Payments(% of total sale price + flat fee per order)",
+    "You will be charged a listing fee whether or not the listed item sells, unless you create a private listing, in which case you will only be charged the listing fee when the private listing is sold. Etsy.com listings expire after four months.",
+    "E. Instant Transfer (US seller only). Eligible U.S sellers may use instant transfer to make transfers from their Etsy Payment account directly to their bank account, subject to a fee. Please note that if applicable, an instant transfer fee will be charged and displayed as part of the transfer process."
+   ],
+   "reviewed_at": "2026-09-08T17:56:15+00:00",
+   "sources": {
+    "https://help.etsy.com/hc/en-us/articles/115014483627-What-are-the-Fees-and-Taxes-for-Selling-on-Etsy": {
+     "fingerprint_drift": false,
+     "hash": "15bf764573d0c35fee2e5feeda67b8a955bfac6f5f87fb9261489e9eb3d1854c",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:15+00:00",
+     "status": "verified"
+    },
+    "https://help.etsy.com/hc/en-us/articles/115015628847-What-are-Payment-Processing-Fees-for-Selling-on-Etsy": {
+     "fingerprint_drift": false,
+     "hash": "748cf7adc4e76fcb681412d84887311799838a3fcd0b69c9bd340c3630ddf105",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:15+00:00",
+     "status": "verified"
+    },
+    "https://help.etsy.com/hc/en-us/articles/360035902374-Etsy-Fee-Basics": {
+     "fingerprint_drift": false,
+     "hash": "f2814d2aea82452096372708eb25e0f7dc66cd595ceab419a08a1cdb95c37b1c",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:15+00:00",
+     "status": "verified"
+    },
+    "https://www.etsy.com/legal/etsy-payments/": {
+     "fingerprint_drift": false,
+     "hash": "2ba4f0766d801c01fe33806c5e873620ae4f859978eef054fa4d30d39ca73924",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:15+00:00",
+     "status": "verified"
+    },
+    "https://www.etsy.com/legal/fees/": {
+     "fingerprint_drift": false,
+     "hash": "9276efd98058db95b04ce6903f6d55ac4701b3ef62d1b3f299346009a190125e",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:15+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "gofundme": {
+   "history": [
+    {
+     "at": "2026-09-08T17:51:52+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:53:57+00:00",
+     "event": "reviewed",
+     "note": "re-baseline after excluding pages that block automated checks, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:17+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [
+    "One transaction fee 2.9% + $0.30 Automatically deducted from each donation, so you never have to worry about paying a bill. International transaction and conversion fees may apply based on your payment method. (pricing page, United States, 'Individual or business' tab)",
+    "One transaction fee\u2014that\u2019s it* 2.2% + $0.30 Automatically deducted from each donation, so you never have to worry about paying a bill. (pricing page, United States, 'Certified nonprofit' tab)",
+    "Supporters who choose to make a recurring donation to an individual or charity on GoFundMe pay a 5% fee per donation to help support this feature. This fee does not apply to recurring donations made through GoFundMe Pro.",
+    "If you contribute using a credit or debit card, standard processing fees may apply after your first contribution\u2014 2.2% per transaction. There are no fees for ACH contributions. (GoFundMe Giving Fund)"
+   ],
+   "quotes_missing_at_review": [
+    "One transaction fee 2.9% + $0.30 Automatically deducted from each donation, so you never have to worry about paying a bill. International transaction and conversion fees may apply based on your payment method. (pricing page, United States, 'Individual or business' tab)",
+    "One transaction fee\u2014that\u2019s it* 2.2% + $0.30 Automatically deducted from each donation, so you never have to worry about paying a bill. (pricing page, United States, 'Certified nonprofit' tab)",
+    "Supporters who choose to make a recurring donation to an individual or charity on GoFundMe pay a 5% fee per donation to help support this feature. This fee does not apply to recurring donations made through GoFundMe Pro.",
+    "If you contribute using a credit or debit card, standard processing fees may apply after your first contribution\u2014 2.2% per transaction. There are no fees for ACH contributions. (GoFundMe Giving Fund)"
+   ],
+   "reviewed_at": "2026-09-08T17:56:17+00:00",
+   "sources": {
+    "https://charity.gofundme.com/c/charity-pricing": {
+     "fingerprint_drift": false,
+     "hash": "d6d491315b2828c18b6c23d1c5d41b3114ab314581df1d82a49740dc6390895b",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:17+00:00",
+     "status": "verified"
+    },
+    "https://support.gofundme.com/hc/en-us/articles/115015446027-Extra-Charge-on-Statement": {
+     "fingerprint_drift": false,
+     "hash": "3477df9d11c83c7d347380fa7a939c14dd5c7ecc1825b235e864a6778a02a25a",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:17+00:00",
+     "status": "verified"
+    },
+    "https://support.gofundme.com/hc/en-us/articles/203604424-Learn-about-GoFundMe-fees": {
+     "fingerprint_drift": false,
+     "hash": "543edd20dd0ff9c17f93a9a6ea1e3c951e98978c3134cfc215b4dd7eab51447a",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:17+00:00",
+     "status": "verified"
+    },
+    "https://support.gofundme.com/hc/en-us/articles/360051144952-Choosing-a-tip-amount": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:17+00:00",
+     "status": "verified"
+    },
+    "https://transparency.gofundme.com/hc/en-us/articles/25144121631643-Pricing-and-Fees": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:17+00:00",
+     "status": "verified"
+    },
+    "https://www.gofundme.com/c/blog/gofundme-fees": {
+     "fingerprint_drift": false,
+     "hash": "fed683190df691a9fa9ad4a8f8e1ccd2dfe5715454c0dded05419908d77c499b",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:17+00:00",
+     "status": "verified"
+    },
+    "https://www.gofundme.com/c/pricing": {
+     "fingerprint_drift": false,
+     "hash": "3280ae0a85909c1e9ca700ea4900b55fbc9c864c5558b3f22886cf672c491181",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:17+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "mercari": {
+   "history": [
+    {
+     "at": "2026-09-08T17:51:54+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:19+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [],
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-09-08T17:56:19+00:00",
+   "sources": {
+    "https://www.mercari.com/us/help_center/article/169/": {
+     "fingerprint_drift": false,
+     "hash": "87f3fc9bbbdc18dc005e475d50ef0d153ea780272b6c6d129291cb1fa86e283e",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:19+00:00",
+     "status": "verified"
+    },
+    "https://www.mercari.com/us/help_center/article/2517/": {
+     "fingerprint_drift": false,
+     "hash": "2fd81f4583cb4bd89003e67cfb7d58879d54cb8ed8d7a02f923db560626abc69",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:19+00:00",
+     "status": "verified"
+    },
+    "https://www.mercari.com/us/help_center/article/2518/": {
+     "fingerprint_drift": false,
+     "hash": "05b6ca548b3bb66815047d4c8efb15e88c480776357e461c7e26b19e092e6eaa",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:19+00:00",
+     "status": "verified"
+    },
+    "https://www.mercari.com/us/help_center/article/93/": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:19+00:00",
      "status": "verified"
     }
    },
@@ -56,15 +638,905 @@
      "at": "2026-09-08T17:39:27+00:00",
      "event": "reviewed",
      "note": "baseline on block-aware fee-sentence fingerprint, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:51:56+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:21+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T17:39:28+00:00",
-   "reviewed_at": "2026-09-08T17:39:27+00:00",
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [],
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-09-08T17:56:21+00:00",
    "sources": {
     "https://www.paypal.com/us/business/paypal-business-fees": {
+     "fingerprint_drift": false,
      "hash": "5723eca6ec8e3594860139fe5b1ee8c6c2c4ad6150e4458f766137976fddb1f4",
-     "last_checked_at": "2026-09-08T17:39:28+00:00",
-     "reviewed_at": "2026-09-08T17:39:27+00:00",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:21+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "poshmark": {
+   "history": [
+    {
+     "at": "2026-09-08T17:51:57+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:53:59+00:00",
+     "event": "reviewed",
+     "note": "re-baseline after excluding pages that block automated checks, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:23+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [
+    "For sales under $15, Poshmark takes a flat commission of $2.95\u2014you keep the rest.",
+    "For sales of $15 or more, you keep 80% of the sale, and Poshmark takes a 20% commission.",
+    "As of October 1st, 2025, sellers located in Texas will see an additional Texas Seller Fee Tax deducted from their earnings.",
+    "Poshmark provides a flat-rate shipping fee of $6.49, paid by the buyer, for all orders.",
+    "Orders are shipped via USPS Ground Advantage (2-5 business days).",
+    "If you\u2019re purchasing multiple listings from the same closet, you can add them to a Bundle and pay a single $6.49 shipping fee, provided the total package weight does not exceed 5 lbs.",
+    "If the total weight exceeds 5 lbs, any overweight shipping costs are the responsibility of the seller.",
+    "10.1-15 lbs: A brand-new tier for only $10.00.",
+    "Sellers, you only pay the difference between your original label and the upgraded label, and your entire order still ships together in one package.",
+    "Poshmark is required to apply this additional tax to 80% of the seller fee on sales made by sellers with a return address in Texas.",
+    "The tax rate imposed includes the 6.25% Texas state sales tax plus applicable local sales taxes (city, county, etc.) where the seller is located. Assuming the local sales tax rate is 2%, this results in a combined rate of 8.25%. This will be deducted from the seller\u2019s earnings at the time of sale."
+   ],
+   "quotes_missing_at_review": [
+    "For sales under $15, Poshmark takes a flat commission of $2.95\u2014you keep the rest.",
+    "For sales of $15 or more, you keep 80% of the sale, and Poshmark takes a 20% commission.",
+    "As of October 1st, 2025, sellers located in Texas will see an additional Texas Seller Fee Tax deducted from their earnings.",
+    "Poshmark provides a flat-rate shipping fee of $6.49, paid by the buyer, for all orders.",
+    "Orders are shipped via USPS Ground Advantage (2-5 business days).",
+    "If you\u2019re purchasing multiple listings from the same closet, you can add them to a Bundle and pay a single $6.49 shipping fee, provided the total package weight does not exceed 5 lbs.",
+    "If the total weight exceeds 5 lbs, any overweight shipping costs are the responsibility of the seller.",
+    "10.1-15 lbs: A brand-new tier for only $10.00.",
+    "Sellers, you only pay the difference between your original label and the upgraded label, and your entire order still ships together in one package.",
+    "Poshmark is required to apply this additional tax to 80% of the seller fee on sales made by sellers with a return address in Texas.",
+    "The tax rate imposed includes the 6.25% Texas state sales tax plus applicable local sales taxes (city, county, etc.) where the seller is located. Assuming the local sales tax rate is 2%, this results in a combined rate of 8.25%. This will be deducted from the seller\u2019s earnings at the time of sale."
+   ],
+   "reviewed_at": "2026-09-08T17:56:23+00:00",
+   "sources": {
+    "https://blog.poshmark.com/2026/02/13/shipping-heavier-items-on-poshmark-is-now-simpler-and-cheaper/": {
+     "fingerprint_drift": false,
+     "hash": "a68b8329697351482258abe260ac4ae9a42c0646f3a442e8ff9f8e49717314a7",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:23+00:00",
+     "status": "verified"
+    },
+    "https://poshmark.com/fee_policy": {
+     "fingerprint_drift": false,
+     "hash": "9ca759ab9d3cfaeacf5f54907533f5fe3cfaa1d26ed30568d3de657eb203132e",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:23+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "reverb": {
+   "history": [
+    {
+     "at": "2026-09-08T17:51:59+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:54:00+00:00",
+     "event": "reviewed",
+     "note": "re-baseline after excluding pages that block automated checks, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:24+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [
+    "USD | $10,000 | $500 | $0.50",
+    "For sellers using Reverb Payments, the payment processing fee is 3.19% of the transaction amount +$0.49 per transaction.",
+    "USA | 3.19% + $0.49 USD per transaction",
+    "USA | USD | 3.19% + $0.49 USD | 2.99% + $0.49 USD",
+    "The first time you make a sale, Reverb initiates your payout once we get confirmation that the item has been delivered. For every sale after that, Reverb initiates your payout as soon as a valid tracking number shows that the gear is in transit.",
+    "For your first sale, funds will be available for deposit 1 - 2 business days after the item is delivered, according to the tracking information on your order. After your first sale, funds will be available for deposit 1 business day after you provide a valid tracking number showing package movement. Payment notifications will be sent via email. From there, it may take 1 - 4 business days for payment to appear in your bank account.",
+    "If you\u2019ve sold previously, you\u2019ll get paid within 2 - 5 business days of the carrier confirming that the item is in transit. If it\u2019s your first sale or you sold with local pickup, you\u2019ll be paid within 2 - 5 business days of the item being delivered"
+   ],
+   "quotes_missing_at_review": [
+    "USD | $10,000 | $500 | $0.50",
+    "For sellers using Reverb Payments, the payment processing fee is 3.19% of the transaction amount +$0.49 per transaction.",
+    "USA | 3.19% + $0.49 USD per transaction",
+    "USA | USD | 3.19% + $0.49 USD | 2.99% + $0.49 USD",
+    "The first time you make a sale, Reverb initiates your payout once we get confirmation that the item has been delivered. For every sale after that, Reverb initiates your payout as soon as a valid tracking number shows that the gear is in transit.",
+    "For your first sale, funds will be available for deposit 1 - 2 business days after the item is delivered, according to the tracking information on your order. After your first sale, funds will be available for deposit 1 business day after you provide a valid tracking number showing package movement. Payment notifications will be sent via email. From there, it may take 1 - 4 business days for payment to appear in your bank account.",
+    "If you\u2019ve sold previously, you\u2019ll get paid within 2 - 5 business days of the carrier confirming that the item is in transit. If it\u2019s your first sale or you sold with local pickup, you\u2019ll be paid within 2 - 5 business days of the item being delivered"
+   ],
+   "reviewed_at": "2026-09-08T17:56:24+00:00",
+   "sources": {
+    "https://help.reverb.com/hc/en-us/articles/40917616326171-How-long-does-it-take-to-get-paid": {
+     "fingerprint_drift": false,
+     "hash": "89f55565903bcabed9f7a46c47bd1ffc387277c4219349884794d50489d01668",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:24+00:00",
+     "status": "verified"
+    },
+    "https://help.reverb.com/hc/en-us/articles/40917652290843-What-fees-will-I-pay-for-selling-on-Reverb": {
+     "fingerprint_drift": false,
+     "hash": "3b2533d1bdbf572ca959927c49146fab53a8539570298ca7974b11a8f73afb1d",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:24+00:00",
+     "status": "verified"
+    },
+    "https://help.reverb.com/hc/en-us/articles/41988457586715-Why-was-I-charged-a-Bump-fee": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:24+00:00",
+     "status": "verified"
+    },
+    "https://help.reverb.com/hc/en-us/articles/41988469262107-What-are-my-fees-as-a-Reverb-Preferred-Seller": {
+     "fingerprint_drift": false,
+     "hash": "7a1a00b2896ce6033f85a34ce06f16c736a8fe5459c6100c7fa5406e0bb8dbf2",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:24+00:00",
+     "status": "verified"
+    },
+    "https://help.reverb.com/hc/en-us/articles/41988473838491-Availability-and-processing-fees-for-Reverb-Payments": {
+     "fingerprint_drift": false,
+     "hash": "ea3407603121d27f80e6871d4ee2eb36dafb9a02eaba1563579c813e79f0e58a",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:24+00:00",
+     "status": "verified"
+    },
+    "https://help.reverb.com/hc/en-us/articles/41988523307291-Why-are-my-total-earnings-lower-than-what-I-sold-my-gear-for": {
+     "fingerprint_drift": false,
+     "hash": "e202314b1963cb20639973b86bf08877fcab2e4d7df663ed260f27cd68295c15",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:24+00:00",
+     "status": "verified"
+    },
+    "https://help.reverb.com/hc/en-us/articles/41988532258587-What-is-Bump-and-how-does-it-work": {
+     "fingerprint_drift": false,
+     "hash": "347ad65b092b1d36f0367dc0bd6611d1a88aa7376e8fc04b343b25984afe94f9",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:24+00:00",
+     "status": "verified"
+    },
+    "https://help.reverb.com/hc/en-us/articles/41988540155931-What-is-a-payment-processing-fee": {
+     "fingerprint_drift": false,
+     "hash": "3d3eae58aa4252fd65ebd7377f24ec3d800bdfad5787a549e904a632334fcf4d",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:24+00:00",
+     "status": "verified"
+    },
+    "https://reverb.com/legal/reverbs-billing-policy": {
+     "fingerprint_drift": false,
+     "hash": "5c1bfd777043127ecefb9f78d22c9da94a7f8ca7c349c11fc98b50eb0883b113",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:24+00:00",
+     "status": "verified"
+    },
+    "https://reverb.com/selling/bump": {
+     "fingerprint_drift": false,
+     "hash": "7b6fbf838819330baccd2ac577c1c84bd42e542a94aa3a31c50916dc2d28fceb",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:24+00:00",
+     "status": "verified"
+    },
+    "https://reverb.com/selling/selling-fees": {
+     "fingerprint_drift": false,
+     "hash": "bcd4f2efba2603ae9579448671026888ccd760624657f168d8585280c32d54d6",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:24+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "shopify": {
+   "history": [
+    {
+     "at": "2026-09-08T17:52:03+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:27+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [
+    "| Pay monthly | $39 USD/mo | $105 USD/mo | $399 USD/mo | Starts at $2,300 USD/mo |",
+    "| Pay yearly | $29 USD/mo | $79 USD/mo | $299 USD/mo | Not included |",
+    "Basic\n$29/mo\nFor solo entrepreneurs",
+    "Grow\n$79/mo\nFor small teams",
+    "Advanced\n$299/mo\nFor global reach",
+    "Plus\nfrom $2,300/mo\nFor complex businesses\nTry for $399",
+    "| Online standard card rates | 2.9% + 30\u00a2 | 2.7% + 30\u00a2 | 2.5% + 30\u00a2 | Most competitive rates |",
+    "| Online premium card rates | 3.5% + 30\u00a2 | 3.3% + 30\u00a2 | 3.1% + 30\u00a2 | Most competitive rates |",
+    "| Online international rates | + 1% | + 1% | + 1% | Most competitive rates |",
+    "| PayPal Wallet rates | Starting at 3.49% + 49\u00a2 | Starting at 3.49% + 49\u00a2 | Starting at 3.49% + 49\u00a2 | Most competitive rates |",
+    "| In-person card rates | 2.6% + 10\u00a2 | 2.5% + 10\u00a2 | 2.4% + 10\u00a2 | Most competitive rates |",
+    "| USDC rates | 2.9% + 30\u00a2 | 2.7% + 30\u00a2 | 2.5% + 30\u00a2 | Most competitive rates |",
+    "| In-person manual rates | 3.5% + 10\u00a2 | 3.5% + 10\u00a2 | 3.5% + 10\u00a2 | Most competitive rates |",
+    "| Third-party transaction fees | 2% | 1% | 0.6% | 0.2% |",
+    "| POS Pro: Advanced tools for brick\u2011and\u2011mortar retailers | $89/mo per location | $89/mo per location | $89/mo per location | Includes 20 locations. Up to 200 with Shopify Payments. |",
+    "| Over 50 synced marketplace orders | 1% up to $99/mo | 1% up to $99/mo | 1% up to $99/mo | 1% up to $99/mo |",
+    "Transactions processed by your third-party provider, such as credit and debit card payments, are subject to third-party transaction fees based on your Shopify plan.\nTransactions processed by Shopify Payments, such as Shop Pay and local payment methods, are charged at standard Shopify Payments rates plus a 1.25% premium. Shopify Payments rates vary by plan type and market.",
+    "Standard: Includes domestic consumer cards issued by Visa, Mastercard, Discover, and Diners Club.\nPremium: Includes domestic commercial, corporate, or business-tier cards, such as Visa Business, and all domestic American Express cards.",
+    "Shopify uses this formula to calculate third-party transaction fees for a 30-day period:\n[(cost of products - discounts) + tax + shipping charges] x rate\nThe rate for third-party transaction charges varies depending on your pricing plan.",
+    "Transaction fees don't apply for POS orders or for manual payment methods, which include cash on delivery (COD), bank deposits, checks, test orders, and draft orders marked as paid or pending. Third-party transaction fees aren't returned to you when you issue an order refund.",
+    "If you switch to an annual billing cycle, then you can receive a discount on your subscription charge. Annual billing charges the full year upfront and presents a lower effective monthly rate.",
+    "| Currency conversion fee | 1.5% | 2% | 2% |"
+   ],
+   "quotes_missing_at_review": [
+    "| Pay monthly | $39 USD/mo | $105 USD/mo | $399 USD/mo | Starts at $2,300 USD/mo |",
+    "| Pay yearly | $29 USD/mo | $79 USD/mo | $299 USD/mo | Not included |",
+    "Basic\n$29/mo\nFor solo entrepreneurs",
+    "Grow\n$79/mo\nFor small teams",
+    "Advanced\n$299/mo\nFor global reach",
+    "Plus\nfrom $2,300/mo\nFor complex businesses\nTry for $399",
+    "| Online standard card rates | 2.9% + 30\u00a2 | 2.7% + 30\u00a2 | 2.5% + 30\u00a2 | Most competitive rates |",
+    "| Online premium card rates | 3.5% + 30\u00a2 | 3.3% + 30\u00a2 | 3.1% + 30\u00a2 | Most competitive rates |",
+    "| Online international rates | + 1% | + 1% | + 1% | Most competitive rates |",
+    "| PayPal Wallet rates | Starting at 3.49% + 49\u00a2 | Starting at 3.49% + 49\u00a2 | Starting at 3.49% + 49\u00a2 | Most competitive rates |",
+    "| In-person card rates | 2.6% + 10\u00a2 | 2.5% + 10\u00a2 | 2.4% + 10\u00a2 | Most competitive rates |",
+    "| USDC rates | 2.9% + 30\u00a2 | 2.7% + 30\u00a2 | 2.5% + 30\u00a2 | Most competitive rates |",
+    "| In-person manual rates | 3.5% + 10\u00a2 | 3.5% + 10\u00a2 | 3.5% + 10\u00a2 | Most competitive rates |",
+    "| Third-party transaction fees | 2% | 1% | 0.6% | 0.2% |",
+    "| POS Pro: Advanced tools for brick\u2011and\u2011mortar retailers | $89/mo per location | $89/mo per location | $89/mo per location | Includes 20 locations. Up to 200 with Shopify Payments. |",
+    "| Over 50 synced marketplace orders | 1% up to $99/mo | 1% up to $99/mo | 1% up to $99/mo | 1% up to $99/mo |",
+    "Transactions processed by your third-party provider, such as credit and debit card payments, are subject to third-party transaction fees based on your Shopify plan.\nTransactions processed by Shopify Payments, such as Shop Pay and local payment methods, are charged at standard Shopify Payments rates plus a 1.25% premium. Shopify Payments rates vary by plan type and market.",
+    "Standard: Includes domestic consumer cards issued by Visa, Mastercard, Discover, and Diners Club.\nPremium: Includes domestic commercial, corporate, or business-tier cards, such as Visa Business, and all domestic American Express cards.",
+    "Shopify uses this formula to calculate third-party transaction fees for a 30-day period:\n[(cost of products - discounts) + tax + shipping charges] x rate\nThe rate for third-party transaction charges varies depending on your pricing plan.",
+    "Transaction fees don't apply for POS orders or for manual payment methods, which include cash on delivery (COD), bank deposits, checks, test orders, and draft orders marked as paid or pending. Third-party transaction fees aren't returned to you when you issue an order refund.",
+    "If you switch to an annual billing cycle, then you can receive a discount on your subscription charge. Annual billing charges the full year upfront and presents a lower effective monthly rate.",
+    "| Currency conversion fee | 1.5% | 2% | 2% |"
+   ],
+   "reviewed_at": "2026-09-08T17:56:27+00:00",
+   "sources": {
+    "https://help.shopify.com/en/manual/international/pricing/fees": {
+     "fingerprint_drift": false,
+     "hash": "952649a5398bb42cbadb9894e71a63e631fb16b13e39ae49b3ae3e4404c8a240",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:27+00:00",
+     "status": "verified"
+    },
+    "https://help.shopify.com/en/manual/intro-to-shopify/pricing-plans/pricing-overview": {
+     "fingerprint_drift": false,
+     "hash": "6ec98ae4e141ce66800dbfedd602b3f85bcefc4888d82a86e694fa09440704d1",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:27+00:00",
+     "status": "verified"
+    },
+    "https://help.shopify.com/en/manual/payments/shopify-payments/onboarding/cost-of-shopify-payments": {
+     "fingerprint_drift": false,
+     "hash": "b773367e4028ccf79f4f65e64e5b8e48d6d585e795f8a872de4df06ae30ad4f1",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:27+00:00",
+     "status": "verified"
+    },
+    "https://help.shopify.com/en/manual/payments/shopify-payments/payouts/pay-periods-and-fees": {
+     "fingerprint_drift": false,
+     "hash": "d5499d4ec0d70e12558890b72d0196f3e453a7319ed360df0c02efa59ffc9616",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:27+00:00",
+     "status": "verified"
+    },
+    "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/credit-card-rates": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:27+00:00",
+     "status": "verified"
+    },
+    "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/domestic-international-eu-credit-cards": {
+     "fingerprint_drift": false,
+     "hash": "02167c04c6781e066fa4ad2c4d343cb6a29fc7d4eacab8dc567439d4bed9515a",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:27+00:00",
+     "status": "verified"
+    },
+    "https://help.shopify.com/en/manual/your-account/manage-billing/billing-charges/types-of-charges/third-party-charges/third-party-transaction-fees": {
+     "fingerprint_drift": false,
+     "hash": "6ec98ae4e141ce66800dbfedd602b3f85bcefc4888d82a86e694fa09440704d1",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:27+00:00",
+     "status": "verified"
+    },
+    "https://www.shopify.com/pricing": {
+     "fingerprint_drift": false,
+     "hash": "a8f97977514741b2f44e3be0dab46fbdddf9a6b200b6eb39ddfe932eb5f94ddf",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:27+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "square": {
+   "history": [
+    {
+     "at": "2026-09-08T17:52:09+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:32+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [
+    "Here are the processing fees for legacy plan subscribers:\nSwiped Magstripe Cards: 2.6% + 15\u00a2 **\nSwiped or Inserted Chip Cards: 2.6% + 15\u00a2 **\nContactless (NFC) Payments: 2.6% + 15\u00a2 **\nTap to Pay on iPhone: 2.6% + 15\u00a2 **\nTap to Pay on Android: 2.6% + 15\u00a2 **\nPoint-of-Sale API Swiped or Inserted Payments: 2.6% + 15\u00a2 **\nSwiped Virtual Terminal Payments: 2.6% + 15\u00a2 **\nPayment Links Through Text in Virtual Terminal: 3.3% + 30\u00a2 **\nCard on File Transactions: 3.5% + 15\u00a2*\nManually Entered Card Payments: 3.5% + 15\u00a2*\nPoint-of-Sale API Keyed-In Payments: 3.5% + 15\u00a2*\nManually Entered Virtual Terminal Payments: 3.5% + 15\u00a2*\nSquare eCommerce API: 2.9% + 30\u00a2\nOnline payments: 3.3% + 30\u00a2 **\nSquare Invoices: 3.3% + 30\u00a2 **\nSquare Payment Links: 3.3% + 30\u00a2 **\nSubscription Payments: 3.3% + 30\u00a2 **\nCash App Pay (Card-Present Transactions): 2.6% + 15\u00a2 **\nCash App Pay (Card-Non-Present Transactions): 3.3% + 30\u00a2 **\nNeighborhoods on Cash App: 1% for participating Neighborhoods sellers on orders through Cash App.\nACH Transactions: 1%, minimum $1 **\n$0 fees for ACH transactions deposited into Square Checking\n$10 fee cap on all ACH bank transfer payments.\nInternational cards: 1.5% international transaction fee\nEBT processing fee: 1.8% + 5\u00a2 (waived during open beta)",
+    "You won\u2019t pay any fees for Cash, Check, and Other Tender payment types."
+   ],
+   "quotes_missing_at_review": [
+    "Here are the processing fees for legacy plan subscribers:\nSwiped Magstripe Cards: 2.6% + 15\u00a2 **\nSwiped or Inserted Chip Cards: 2.6% + 15\u00a2 **\nContactless (NFC) Payments: 2.6% + 15\u00a2 **\nTap to Pay on iPhone: 2.6% + 15\u00a2 **\nTap to Pay on Android: 2.6% + 15\u00a2 **\nPoint-of-Sale API Swiped or Inserted Payments: 2.6% + 15\u00a2 **\nSwiped Virtual Terminal Payments: 2.6% + 15\u00a2 **\nPayment Links Through Text in Virtual Terminal: 3.3% + 30\u00a2 **\nCard on File Transactions: 3.5% + 15\u00a2*\nManually Entered Card Payments: 3.5% + 15\u00a2*\nPoint-of-Sale API Keyed-In Payments: 3.5% + 15\u00a2*\nManually Entered Virtual Terminal Payments: 3.5% + 15\u00a2*\nSquare eCommerce API: 2.9% + 30\u00a2\nOnline payments: 3.3% + 30\u00a2 **\nSquare Invoices: 3.3% + 30\u00a2 **\nSquare Payment Links: 3.3% + 30\u00a2 **\nSubscription Payments: 3.3% + 30\u00a2 **\nCash App Pay (Card-Present Transactions): 2.6% + 15\u00a2 **\nCash App Pay (Card-Non-Present Transactions): 3.3% + 30\u00a2 **\nNeighborhoods on Cash App: 1% for participating Neighborhoods sellers on orders through Cash App.\nACH Transactions: 1%, minimum $1 **\n$0 fees for ACH transactions deposited into Square Checking\n$10 fee cap on all ACH bank transfer payments.\nInternational cards: 1.5% international transaction fee\nEBT processing fee: 1.8% + 5\u00a2 (waived during open beta)",
+    "You won\u2019t pay any fees for Cash, Check, and Other Tender payment types."
+   ],
+   "reviewed_at": "2026-09-08T17:56:32+00:00",
+   "sources": {
+    "https://squareup.com/help/us/en/article/5068-what-are-square-s-fees": {
+     "fingerprint_drift": false,
+     "hash": "16e776527f6056ebadb6bcde230e5701d1a0f001b5099d86344c746c968cd29d",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:32+00:00",
+     "status": "verified"
+    },
+    "https://squareup.com/help/us/en/article/5092-rounding": {
+     "fingerprint_drift": false,
+     "hash": "16e776527f6056ebadb6bcde230e5701d1a0f001b5099d86344c746c968cd29d",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:32+00:00",
+     "status": "verified"
+    },
+    "https://squareup.com/us/en/payments/fee-calculator": {
+     "fingerprint_drift": false,
+     "hash": "b41e45d67df41c0bba528d414cf453c7bf559730fc822e524bb9248885c6e51b",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:32+00:00",
+     "status": "verified"
+    },
+    "https://squareup.com/us/en/payments/our-fees": {
+     "fingerprint_drift": false,
+     "hash": "78979fcc9dcb42d2f2c9001b6accf8b7fa87584a59cf5b2c4c8439acb7abb978",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:32+00:00",
+     "status": "verified"
+    },
+    "https://squareup.com/us/en/pricing": {
+     "fingerprint_drift": false,
+     "hash": "1d0a11b7d702b3e42f4d1788331bfb9d7814ef3349d8329c993ad0ec865b2ebf",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:32+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "stripe": {
+   "history": [
+    {
+     "at": "2026-09-08T17:52:12+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:52:32+00:00",
+     "event": "source_changed",
+     "url": "https://stripe.com/pricing"
+    },
+    {
+     "at": "2026-09-08T17:56:35+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [
+    "Transaction fees on cards entered manually in the Dashboard or with Terminal MOTO are 3.4% + 0.30 USD for businesses on standard pricing based in the US, and 3.4% + 0.30 CAD for businesses based in Canada, Standard card payments are 2.9% + 0.30 USD in the US, and 2.9% + 0.30 CAD in Canada.",
+    "The first subscription payment using a card whose details have been typed into the Dashboard. All subsequent subscription payments using that card will be charged the standard 2.9% + 0.30 USD card processing fee.",
+    "| United States | 0.50 USD | 9,999 USD |",
+    "Stripe rounds the Stripe fee to the nearest unit (e.g., cents). For example, if the fee is 0.025, Stripe will round up to 0.03. If the fee is 0.024, Stripe will round down to 0.02."
+   ],
+   "quotes_missing_at_review": [
+    "Transaction fees on cards entered manually in the Dashboard or with Terminal MOTO are 3.4% + 0.30 USD for businesses on standard pricing based in the US, and 3.4% + 0.30 CAD for businesses based in Canada, Standard card payments are 2.9% + 0.30 USD in the US, and 2.9% + 0.30 CAD in Canada.",
+    "The first subscription payment using a card whose details have been typed into the Dashboard. All subsequent subscription payments using that card will be charged the standard 2.9% + 0.30 USD card processing fee.",
+    "| United States | 0.50 USD | 9,999 USD |",
+    "Stripe rounds the Stripe fee to the nearest unit (e.g., cents). For example, if the fee is 0.025, Stripe will round up to 0.03. If the fee is 0.024, Stripe will round down to 0.02."
+   ],
+   "reviewed_at": "2026-09-08T17:56:35+00:00",
+   "sources": {
+    "https://docs.stripe.com/payments/ach-direct-debit": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:35+00:00",
+     "status": "verified"
+    },
+    "https://docs.stripe.com/payouts/instant-payouts": {
+     "fingerprint_drift": false,
+     "hash": "6fe07c7aba95518fb48029f087dbc8bf659e951c4c71f0c9c866f83399cad413",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:35+00:00",
+     "status": "verified"
+    },
+    "https://stripe.com/legal/pricing-policy": {
+     "fingerprint_drift": false,
+     "hash": "86350984efb01ae8ae8b2bd6a424ee8465b29d668a8b545f25e9d2ae9ce761f4",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:35+00:00",
+     "status": "verified"
+    },
+    "https://stripe.com/pricing": {
+     "fingerprint_drift": true,
+     "hash": "743dc98c88cfe723ffe55189663b2a7d2bced2de00593cee306a79d6356bae89",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:35+00:00",
+     "status": "verified"
+    },
+    "https://stripe.com/pricing/local-payment-methods": {
+     "fingerprint_drift": false,
+     "hash": "6c1752ada15e9e8840c8a21bb10afa6136726189cd843230609a566e85510db7",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:35+00:00",
+     "status": "verified"
+    },
+    "https://support.stripe.com/questions/manually-entered-card-payments": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:35+00:00",
+     "status": "verified"
+    },
+    "https://support.stripe.com/questions/rounding-rules-for-stripe-fees": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:35+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "stubhub": {
+   "history": [
+    {
+     "at": "2026-09-08T17:52:15+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:39+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [
+    "It's free to list tickets on StubHub! When they sell, we collect a sell fee. This may change over time depending on ticket supply and ticket marketing costs.",
+    "StubHub's fees help us create a safe, global ticket marketplace. As long as you deliver your tickets as promised and on time, this is the only StubHub fee you'll ever pay.",
+    "There\u2019s no set percentage for sell fees. Fees adjust based on ticket price, time to event, updated event information, and supply and demand.",
+    "It's free to list tickets on StubHub. If your tickets sell, we collect a sell fee.",
+    "When listing tickets: On the \u201cSet Your Price\u201d page, under \u201cEnter your price to continue\u201d see the payout you\u2019ll get if your tickets sell. Select the question mark under your payout to see a breakdown, including the sell fee.",
+    "After your tickets sell: In your sale details, see your total payout under \u201cPrice per ticket,\u201d with the sell fee subtracted.",
+    "If you deliver your tickets on time and as promised, the sell fee is the only fee you pay to sell tickets. If you don\u2019t fulfill your seller responsibilities per our Global User Agreement and our Seller Policies, you\u2019ll be charged whichever is greater: 100% of the price of the tickets sold. The full amount incurred by us to remedy the issue for the buyer.",
+    "There\u2019s no set percentage for buy fees. Fees adjust based on ticket price, time to event, updated event information, and supply and demand.",
+    "The only fees you pay are the service fee and fulfillment fee at checkout.",
+    "Typically, payouts from selling tickets are processed within 8 business days after the event. This timeline ensures there were no issues with your tickets and includes processing time but doesn\u2019t include local bank holidays.",
+    "Sellers will usually be sent payments within five (5) business days (sometimes longer) following the event. In some cases as determined in our sole discretion, sellers will be sent payment within five (5) business days (sometimes longer) of our confirmation of the buyer's receipt of tickets or related passes.",
+    "When you sell tickets on StubHub, we don't charge extra fees for being paid through PayPal.",
+    "If you ask PayPal to send you a check, there may be an extra service fee.",
+    "As of January 1, 2025, all U.S. sellers must provide a TIN to receive payment.",
+    "We may charge fees for selling and/or buying Tickets through our Site and/or otherwise using our Services, as well as delivery or fulfillment fees (collectively referred to as \u201cService Fees\u201d). Service Fees may vary depending on various factors, including event type, Ticket type, optional features selected by you (e.g., Sponsored Listings), and location.",
+    "Any applicable Service Fees including any taxes if applicable will be disclosed to you prior to listing or buying a Ticket.",
+    "If you dropped your sale, we will charge your payment method an amount equal to the greater of (i) 100% of the price of the ticket(s) sold or (ii) the full amount incurred by us to remedy the dropped sale",
+    "If you fail to respond to this email and or to take any other actions required by us to investigate the invalid ticket claim, you may be charged an amount equal to 20% of the cost of the original tickets, in addition to the Invalid Ticket Charge described in the paragraph above."
+   ],
+   "quotes_missing_at_review": [
+    "It's free to list tickets on StubHub! When they sell, we collect a sell fee. This may change over time depending on ticket supply and ticket marketing costs.",
+    "StubHub's fees help us create a safe, global ticket marketplace. As long as you deliver your tickets as promised and on time, this is the only StubHub fee you'll ever pay.",
+    "There\u2019s no set percentage for sell fees. Fees adjust based on ticket price, time to event, updated event information, and supply and demand.",
+    "It's free to list tickets on StubHub. If your tickets sell, we collect a sell fee.",
+    "When listing tickets: On the \u201cSet Your Price\u201d page, under \u201cEnter your price to continue\u201d see the payout you\u2019ll get if your tickets sell. Select the question mark under your payout to see a breakdown, including the sell fee.",
+    "After your tickets sell: In your sale details, see your total payout under \u201cPrice per ticket,\u201d with the sell fee subtracted.",
+    "If you deliver your tickets on time and as promised, the sell fee is the only fee you pay to sell tickets. If you don\u2019t fulfill your seller responsibilities per our Global User Agreement and our Seller Policies, you\u2019ll be charged whichever is greater: 100% of the price of the tickets sold. The full amount incurred by us to remedy the issue for the buyer.",
+    "There\u2019s no set percentage for buy fees. Fees adjust based on ticket price, time to event, updated event information, and supply and demand.",
+    "The only fees you pay are the service fee and fulfillment fee at checkout.",
+    "Typically, payouts from selling tickets are processed within 8 business days after the event. This timeline ensures there were no issues with your tickets and includes processing time but doesn\u2019t include local bank holidays.",
+    "Sellers will usually be sent payments within five (5) business days (sometimes longer) following the event. In some cases as determined in our sole discretion, sellers will be sent payment within five (5) business days (sometimes longer) of our confirmation of the buyer's receipt of tickets or related passes.",
+    "When you sell tickets on StubHub, we don't charge extra fees for being paid through PayPal.",
+    "If you ask PayPal to send you a check, there may be an extra service fee.",
+    "As of January 1, 2025, all U.S. sellers must provide a TIN to receive payment.",
+    "We may charge fees for selling and/or buying Tickets through our Site and/or otherwise using our Services, as well as delivery or fulfillment fees (collectively referred to as \u201cService Fees\u201d). Service Fees may vary depending on various factors, including event type, Ticket type, optional features selected by you (e.g., Sponsored Listings), and location.",
+    "Any applicable Service Fees including any taxes if applicable will be disclosed to you prior to listing or buying a Ticket.",
+    "If you dropped your sale, we will charge your payment method an amount equal to the greater of (i) 100% of the price of the ticket(s) sold or (ii) the full amount incurred by us to remedy the dropped sale",
+    "If you fail to respond to this email and or to take any other actions required by us to investigate the invalid ticket claim, you may be charged an amount equal to 20% of the cost of the original tickets, in addition to the Invalid Ticket Charge described in the paragraph above."
+   ],
+   "reviewed_at": "2026-09-08T17:56:39+00:00",
+   "sources": {
+    "https://newsroom.stubhub.com/2026/06/04/understanding-ticket-fees-why-they-exist-and-what-they-cover/": {
+     "fingerprint_drift": false,
+     "hash": "35231c380913f985921903385867d439cde89238f29d5619818c226416f0e9a6",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:39+00:00",
+     "status": "verified"
+    },
+    "https://support.stubhub.com/articles/61000276392-stubhubs-fees-to-buy-and-sell-tickets": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:39+00:00",
+     "status": "verified"
+    },
+    "https://support.stubhub.com/articles/61000276591-get-paid-for-sold-tickets": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:39+00:00",
+     "status": "verified"
+    },
+    "https://support.stubhub.com/articles/61000276682-cancelled-sale-charges": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:39+00:00",
+     "status": "verified"
+    },
+    "https://support.stubhub.com/articles/61000276706-expected-payout-from-sold-tickets": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:39+00:00",
+     "status": "verified"
+    },
+    "https://support.stubhub.com/articles/61000276710-paypal-fees-when-selling-tickets": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:39+00:00",
+     "status": "verified"
+    },
+    "https://support.stubhub.com/articles/61000276777-stubhubs-penalties-if-you-cant-deliver-tickets-you-sold": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:39+00:00",
+     "status": "verified"
+    },
+    "https://support.stubhub.com/articles/61000276841-stubhubs-fees-to-sell-tickets": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:39+00:00",
+     "status": "verified"
+    },
+    "https://www.stubhub.com/legal?section=sp": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:39+00:00",
+     "status": "verified"
+    },
+    "https://www.stubhub.com/legal?section=ua": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:39+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "venmo": {
+   "history": [
+    {
+     "at": "2026-09-08T17:52:18+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:41+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [],
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-09-08T17:56:41+00:00",
+   "sources": {
+    "https://help.venmo.com/cs/articles/business-profile-transaction-fees-vhel221": {
+     "fingerprint_drift": false,
+     "hash": "9486a453a65c38d51ac302cddc497f607abe25779c136ebf7137dd47b3f4020d",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:41+00:00",
+     "status": "verified"
+    },
+    "https://help.venmo.com/cs/articles/buying-and-selling-on-venmo-faq-vhel138": {
+     "fingerprint_drift": false,
+     "hash": "e6eddf389a2e784bcc826b0ef4d438bb8eee0761d6a3b2605944d3f4ce0214a1",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:41+00:00",
+     "status": "verified"
+    },
+    "https://help.venmo.com/cs/articles/buying-cryptocurrency-on-venmo-vhel164": {
+     "fingerprint_drift": false,
+     "hash": "93d7e21b3e04dffc2bb8d1081cf83e017b685ba85edfb7297ffb07894e1f6ded",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:41+00:00",
+     "status": "verified"
+    },
+    "https://help.venmo.com/cs/articles/charity-profile-donation-fees-vhel159": {
+     "fingerprint_drift": false,
+     "hash": "44d6f4e054d738a9cea2a3ee9799a7b575ddaac2f4847e4dce6d233747039bfb",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:41+00:00",
+     "status": "verified"
+    },
+    "https://help.venmo.com/cs/articles/credit-card-fees-on-venmo-payments-vhel257": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:41+00:00",
+     "status": "verified"
+    },
+    "https://help.venmo.com/cs/articles/cryptocurrency-faq-vhel141": {
+     "fingerprint_drift": false,
+     "hash": "730098283ce17ef2b536787ab2c6bdf52180aac1097b0f815252aff6067991a2",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:41+00:00",
+     "status": "verified"
+    },
+    "https://help.venmo.com/cs/articles/instant-bank-transfer-faq-vhel302": {
+     "fingerprint_drift": false,
+     "hash": "31276fa91f4c44b91340a480de2c0361cb6ca1d95ede916a7a5de9fce1748648",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:41+00:00",
+     "status": "verified"
+    },
+    "https://help.venmo.com/cs/articles/selling-cryptocurrency-on-venmo-vhel204": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:41+00:00",
+     "status": "verified"
+    },
+    "https://help.venmo.com/cs/articles/selling-with-personal-profiles-vhel183": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:41+00:00",
+     "status": "verified"
+    },
+    "https://help.venmo.com/cs/articles/tap-to-pay-on-android-faq-vhel198": {
+     "fingerprint_drift": false,
+     "hash": "36c48f261bfbf81fa636e8ed8aeaa55195b49a7e936c7c03599e5291f028c76d",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:41+00:00",
+     "status": "verified"
+    },
+    "https://help.venmo.com/cs/articles/tap-to-pay-on-iphone-faq-vhel116": {
+     "fingerprint_drift": false,
+     "hash": "24b1e79a44f52ea0d431b7451cd3fc92af26a47dd1555289e3a776e9a1ebae04",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:41+00:00",
+     "status": "verified"
+    },
+    "https://venmo.com/legal/crypto-terms/": {
+     "fingerprint_drift": false,
+     "hash": "f3d70eef11c9b721755f3b4592b08508d7c0188ca372faec5b9348b8a41564e5",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:41+00:00",
+     "status": "verified"
+    },
+    "https://venmo.com/legal/us-user-agreement/": {
+     "fingerprint_drift": false,
+     "hash": "2a44744dc283caad43392aaae3549292bd161e72063dbae686f03f4b580a4b11",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:41+00:00",
+     "status": "verified"
+    },
+    "https://venmo.com/resources/our-fees/": {
+     "fingerprint_drift": false,
+     "hash": "d1ff3fbc8b98eea7717b290b6648e3a3d6dd6fd2696f36af9e24cfc62663b2ca",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:41+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "vinted": {
+   "history": [
+    {
+     "at": "2026-09-08T17:52:22+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:46+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [
+    "There are no fees for uploading your items or selling them on Vinted. This means once your sale is successfully closed, you'll receive the full selling price straight to your Vinted Wallet.",
+    "The calculation of this fee varies based on several factors, such as: item characteristics, order value, order type (a single item versus a bundle)",
+    "You can withdraw earnings in dollars (USD) to supported accounts in banks or other financial institutions using account and routing numbers.",
+    "The minimum amount you can withdraw is $0.10. Withdrawals below this amount will fail.",
+    "Item Verification is currently available in France, Italy, Belgium, Germany, Spain, The Netherlands, the United Kingdom, Poland, Portugal, Romania, Denmark, Sweden, Lithuania and Finland."
+   ],
+   "quotes_missing_at_review": [
+    "There are no fees for uploading your items or selling them on Vinted. This means once your sale is successfully closed, you'll receive the full selling price straight to your Vinted Wallet.",
+    "The calculation of this fee varies based on several factors, such as: item characteristics, order value, order type (a single item versus a bundle)",
+    "You can withdraw earnings in dollars (USD) to supported accounts in banks or other financial institutions using account and routing numbers.",
+    "The minimum amount you can withdraw is $0.10. Withdrawals below this amount will fail.",
+    "Item Verification is currently available in France, Italy, Belgium, Germany, Spain, The Netherlands, the United Kingdom, Poland, Portugal, Romania, Denmark, Sweden, Lithuania and Finland."
+   ],
+   "reviewed_at": "2026-09-08T17:56:46+00:00",
+   "sources": {
+    "https://www.vinted.com/help/1147-item-verification-for-designer-items": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:46+00:00",
+     "status": "verified"
+    },
+    "https://www.vinted.com/help/1555-us-uk-international-sales": {
+     "fingerprint_drift": false,
+     "hash": "600569e29afee6811b45afd16e7f5ad2a046bfccf62b9ef77b88c1b75381c2f2",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:46+00:00",
+     "status": "verified"
+    },
+    "https://www.vinted.com/help/342-buyer-protection-fee-on-vinted": {
+     "fingerprint_drift": false,
+     "hash": "612accdd3714f4c89654e9917c12dd7f14d0043854990220f4ae7b37b2754228",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:46+00:00",
+     "status": "verified"
+    },
+    "https://www.vinted.com/help/373-is-selling-on-vinted-free": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:46+00:00",
+     "status": "verified"
+    },
+    "https://www.vinted.com/help/4/1577-payments-withdrawals": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:46+00:00",
+     "status": "verified"
+    },
+    "https://www.vinted.com/help/432-withdrawals": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:46+00:00",
+     "status": "verified"
+    },
+    "https://www.vinted.com/help/437-vinted-wallet-how-it-works": {
+     "fingerprint_drift": false,
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:46+00:00",
+     "status": "verified"
+    },
+    "https://www.vinted.com/help/68-how-to-withdraw-earnings": {
+     "fingerprint_drift": false,
+     "hash": "8308d8c01c3b0ff045ee7724576a7e4c76f1ff3611f9726791e3ad0cae9549de",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:46+00:00",
+     "status": "verified"
+    },
+    "https://www.vinted.com/pricelist": {
+     "fingerprint_drift": false,
+     "hash": "f173d5eab7ca2cacc82b3ca675d7494eed21dd5d4a17dbbe640304a00dad4db6",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:46+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "whatnot": {
+   "history": [
+    {
+     "at": "2026-09-08T17:52:30+00:00",
+     "event": "reviewed",
+     "note": "initial review against the source pages, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:54:02+00:00",
+     "event": "reviewed",
+     "note": "re-baseline after excluding pages that block automated checks, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:56:53+00:00",
+     "event": "reviewed",
+     "note": "baseline with quote verification, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:56:54+00:00",
+   "quotes_missing": [
+    "Comics, TCG, Sports Singles, Toys & Hobbies (see other restrictions) 8% on final sale price up to $1,500; 0% on portion above $1,500 (limited time; learn more). 2.9% on total order value + $0.30 transaction fee",
+    "*Plus applicable taxes on fees.",
+    "The commission fee is Whatnot\u2019s share of the sale. It\u2019s calculated as a percentage of your item\u2019s final sale price, excluding shipping and taxes.",
+    "For live sales: the rate is based on the category of the show. For marketplace (non-live) sales: the rate is based on the category of the product.",
+    "Seller-generated coupons: Reduce the final sale price, so fees apply to the discounted amount."
+   ],
+   "quotes_missing_at_review": [
+    "Comics, TCG, Sports Singles, Toys & Hobbies (see other restrictions) 8% on final sale price up to $1,500; 0% on portion above $1,500 (limited time; learn more). 2.9% on total order value + $0.30 transaction fee",
+    "*Plus applicable taxes on fees.",
+    "The commission fee is Whatnot\u2019s share of the sale. It\u2019s calculated as a percentage of your item\u2019s final sale price, excluding shipping and taxes.",
+    "For live sales: the rate is based on the category of the show. For marketplace (non-live) sales: the rate is based on the category of the product.",
+    "Seller-generated coupons: Reduce the final sale price, so fees apply to the discounted amount."
+   ],
+   "reviewed_at": "2026-09-08T17:56:53+00:00",
+   "sources": {
+    "https://help.whatnot.com/hc/en-us/articles/14477076380941-Reduced-commission-on-Coins-Money": {
+     "fingerprint_drift": false,
+     "hash": "690c9623e52df32a5867bacd37fb0de4db157b665e8de0910d73b884f9df3882",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:53+00:00",
+     "status": "verified"
+    },
+    "https://help.whatnot.com/hc/en-us/articles/27912945518733-Reduced-Commission-on-High-Value-Orders": {
+     "fingerprint_drift": false,
+     "hash": "50ceefde4c2b0b0ccf23d4730b8530f54268aeac5788b94bedb514c2ee3198d7",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:53+00:00",
+     "status": "verified"
+    },
+    "https://help.whatnot.com/hc/en-us/articles/32083195713421-Taxes-on-Whatnot-commissions-and-fees": {
+     "fingerprint_drift": false,
+     "hash": "c52dbf63445249d70cb99684eedb7883e654cd5942b17aaf4f4b3225bce057dd",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:53+00:00",
+     "status": "verified"
+    },
+    "https://help.whatnot.com/hc/en-us/articles/46618300974477-Sell-More-Earn-More": {
+     "fingerprint_drift": false,
+     "hash": "c3c853df013bec4c572849567152d23dcb27b10514596b59f112708705d7e778",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:53+00:00",
+     "status": "verified"
+    },
+    "https://help.whatnot.com/hc/en-us/articles/4847069165965-Whatnot-seller-fees": {
+     "fingerprint_drift": false,
+     "hash": "07294d1f7c68d97fec5a9d6ade71235ead595b1de016d07780599afb3db707c9",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:53+00:00",
+     "status": "verified"
+    },
+    "https://help.whatnot.com/hc/en-us/sections/44398189207565-Fees-commissions": {
+     "fingerprint_drift": false,
+     "hash": "62d4e6355bb6c5326c2749ccbbe0b940a093d7df77fecac220c5889593bb2744",
+     "last_checked_at": "2026-09-08T17:56:54+00:00",
+     "reviewed_at": "2026-09-08T17:56:53+00:00",
      "status": "verified"
     }
    },

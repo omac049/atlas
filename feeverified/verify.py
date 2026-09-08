@@ -65,6 +65,34 @@ def fee_lines(text: str) -> list[str]:
     return sorted({_WS.sub(" ", part).strip() for part in parts if _FEE_TOKEN.search(part)})
 
 
+_NORMALIZE = [
+    ("\u2019", "'"), ("\u2018", "'"), ("\u201c", '"'), ("\u201d", '"'), ("\u2013", "-"), ("\u2014", "-"),
+    ("\u00a0", " "), ("\u2026", "..."),
+]
+
+
+def normalize(text: str) -> str:
+    """Case, quote style, dashes and whitespace do not count as a fee change."""
+    out = text
+    for old, new in _NORMALIZE:
+        out = out.replace(old, new)
+    return re.sub(r"\s+", " ", out).strip().lower()
+
+
+def missing_quotes(page_text: str, quotes: list[str]) -> list[str]:
+    """The quoted sentences a schedule relies on that no longer appear in the
+    page text. A quote written with '...' is a list of fragments that must
+    each appear. This is the verification that decides 'changed': the fee
+    fingerprint is recorded alongside as supporting evidence only."""
+    haystack = normalize(page_text)
+    missing = []
+    for quote in quotes:
+        fragments = [f.strip() for f in normalize(quote).split("...") if f.strip()]
+        if any(fragment not in haystack for fragment in fragments):
+            missing.append(quote)
+    return missing
+
+
 def fee_fingerprint(html: str) -> str:
     lines = fee_lines(visible_text(html))
     return hashlib.sha256("\n".join(lines).encode("utf-8")).hexdigest()
@@ -117,10 +145,23 @@ def mark_reviewed(platform: str, note: str) -> dict:
     entry = state["platforms"].setdefault(platform, {"sources": {}, "history": []})
     schedule = json.loads((FEES_DIR / f"{platform}.json").read_text())
     now = datetime.now(UTC).isoformat(timespec="seconds")
+    statuses = []
+    texts = []
     for source in schedule["sources"]:
-        html = fetch(source["url"])
+        if source.get("verify") is False:
+            entry["sources"].pop(source["url"], None)
+            continue
+        try:
+            html = fetch(source["url"])
+        except Exception as exc:  # noqa: BLE001 - a page that will not load is recorded, not hidden
+            entry["sources"][source["url"]] = {"reviewed_at": now, "last_checked_at": now, "status": "unreachable", "error": str(exc)[:200]}
+            statuses.append("unreachable")
+            continue
         entry["sources"][source["url"]] = {"hash": text_hash(html), "reviewed_at": now, "last_checked_at": now, "status": "verified"}
-    entry["status"] = "verified"
+        texts.append(visible_text(html))
+        statuses.append("verified")
+    entry["quotes_missing_at_review"] = missing_quotes("\n".join(texts), schedule.get("quotes", []))
+    entry["status"] = "unreachable" if "unreachable" in statuses else "verified"
     entry["reviewed_at"] = now
     entry["history"].append({"at": now, "event": "reviewed", "note": note})
     save_state(state)
@@ -137,28 +178,39 @@ def check_all() -> dict:
         platform = schedule["platform"]
         entry = state["platforms"].setdefault(platform, {"sources": {}, "history": []})
         statuses = []
+        texts = []
         for source in schedule["sources"]:
+            if source.get("verify") is False:
+                continue
             url = source["url"]
             rec = entry["sources"].setdefault(url, {})
             try:
-                current = text_hash(fetch(url))
+                html = fetch(url)
             except Exception as exc:  # noqa: BLE001 - reported, never fatal
                 rec.update({"last_checked_at": now, "status": "unreachable", "error": str(exc)[:200]})
                 statuses.append("unreachable")
                 continue
+            texts.append(visible_text(html))
+            current = text_hash(html)
             rec["last_checked_at"] = now
             rec.pop("error", None)
             if not rec.get("hash"):
                 rec.update({"hash": current, "status": "unreviewed"})
                 statuses.append("unreviewed")
-            elif rec["hash"] == current:
+            else:
+                # Fingerprint drift is recorded as evidence; the decision is the quotes.
+                rec["fingerprint_drift"] = rec["hash"] != current
                 rec["status"] = "verified"
                 statuses.append("verified")
-            else:
-                if rec.get("status") != "changed":
-                    entry["history"].append({"at": now, "event": "source_changed", "url": url})
-                rec["status"] = "changed"
-                statuses.append("changed")
+        missing = missing_quotes("\n".join(texts), schedule.get("quotes", [])) if texts else []
+        # Quotes the reviewer already knew were absent do not count as a change.
+        known = set(entry.get("quotes_missing_at_review", []))
+        newly_missing = [q for q in missing if q not in known]
+        entry["quotes_missing"] = missing
+        if newly_missing and texts:
+            if entry.get("status") != "changed":
+                entry["history"].append({"at": now, "event": "quotes_missing", "quotes": newly_missing[:5]})
+            statuses.append("changed")
         # A platform is only as verified as its least-verified source.
         for level in ("changed", "unreviewed", "unreachable", "verified"):
             if level in statuses:

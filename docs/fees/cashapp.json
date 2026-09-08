@@ -1,0 +1,175 @@
+{
+  "platform": "cashapp",
+  "name": "Cash App",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://cash.app/legal/us/en-us/tos",
+      "title": "US | Terms of Service | Cash App (Section I 'Account Opening Disclosures and Fees'; VII.9 'Peer-to-Peer Service Fees'; XI.4 'Our Fees for Transaction Processing')",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "Last Updated: August 26, 2026"
+    },
+    {
+      "url": "https://cash.app/help/us/en-us/3073-cash-out-speed-options",
+      "title": "Withdrawal Transfer Speed Options \u2014 Cash App Support",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://cash.app/help/us/en-US/6521-cash-app-business-fees",
+      "title": "Cash App Business Fees \u2014 Cash App Support",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://cash.app/legal/us/en-us/cash-payment-terms",
+      "title": "Cash App Business Terms (Section 6 'Our Fees')",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "Last Updated: August 25, 2025"
+    },
+    {
+      "url": "https://cash.app/help/us/en-us/6567-problems-linking-a-credit-card",
+      "title": "Problems Linking a Credit Card \u2014 Cash App Support (no fee amounts)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://cash.app/bank/no-fees",
+      "title": "Bank without all the fees | Cash App (FAQ answers collapsed; no numbers captured)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://cash.app/cardfees",
+      "title": "Stored Balance Long Form Disclosure \u2014 Cash App",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null,
+      "verify": false,
+      "note": "Read by a person in a browser on the loaded date; this page blocks automated checks, so it is not part of the nightly verification."
+    },
+    {
+      "url": "https://cash.app/send",
+      "title": "Send Money Instantly with Cash App (only the cookie banner rendered)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://developers.cash.app/cash-app-pay-partner-api/api-reference/network-api/merchant-fee-plans",
+      "title": "MerchantFeePlans \u2014 Cash App Pay Partner API (API schema only; no fee amounts)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "Fees for Cash App for Business payments and for moving money out. Personal sending, Bitcoin, stocks and paper money deposits are out of scope.",
+  "structure": "Personal accounts: sending from the Cash App balance or a debit card is free; sending money funded by a linked credit card costs the sender 3% of the amount (the ToS lists this both as 'Send from credit card 3%' and 'Add money from Credit Card: 3%'); receiving money is free. Standard transfers out to a linked bank/card are free (1\u20133 business days); Instant Transfer costs 0.5%\u20132.5% of the amount with a minimum fee of $0.25\u2013$1 and a maximum of $75, with the exact rate only disclosed in-app before confirming. Business accounts: Cash App deducts 2.6% + $0.15 from each payment received from a customer's Cash App account and 3% from each Tap to Pay payment, so the balance credited already nets out the fee. For percentage fees Cash App uses banker's rounding to the penny (numbers ending in 5 round to the nearest even), and fees are deducted first from the collected funds; on a refund Cash App also refunds its fee so the customer gets the full amount back.",
+  "quotes": [
+    "| Sending money using your Cash App Balance or debit card in the U.S. | $0 |",
+    "| Receive money | $0 |",
+    "| Send from credit card | 3%** |",
+    "Add money from Credit Card: 3%**",
+    "Instant Transfer: 0.5%-2.5% ($0.25-$1 min)** (the maximum fee shall not exceed $75)**",
+    "| Transfer to Linked Account (standard transfer) No fee to transfer money from your Cash App Balance to a Linked Account with the standard option. The money is typically available in 1-3 Business Days. | $0 |",
+    "| Transfer to a Linked Account (Instant Transfer) Fee for expedited transfer from your Cash App Balance to a Linked Account. Funds are typically available within minutes. The specific fee amount is disclosed at the time of the transaction. | 0.5%-2.5% ($0.25-$1 min)** (the maximum fee shall not exceed $75)** |",
+    "**For these fees, Cash App uses banker\u2019s rounding to round up or down to the penny, as applicable. Banker\u2019s rounding rounds numbers ending in 5 to the nearest even integer.",
+    "Send from Credit Card: 3.00%**\nInstant Transfer Withdrawals: 0.5%-2.5% ($0.25-$1 min)** (the maximum fee shall not exceed $75)**",
+    "There are currently no fees for sending funds using the Peer-to-Peer Service unless you are sending funds using a credit card. The fee for sending funds using a credit card for the Peer-to-Peer Service will be displayed at the time of the transaction.",
+    "Once you have a Cash App Business Account you will be able to accept payments from Cash App customers for the sale of goods and services, and we may charge you a transaction processing fee for doing so. This fee will be disclosed to you when you open, use, or switch to a Cash App Business Account. Payments you receive, less the applicable fee, will be deposited to your Cash App Balance.",
+    "Standard transfers are free and usually arrive within 1\u20133 business days",
+    "Instant transfers typically arrive immediately to your linked debit card and are subject to a 0.5%\u20132.5% fee (minimum $0.25\u2013$1, maximum $75). This fee will be displayed before you complete the transaction",
+    "Cash App Business accounts are free to create and require no additional hardware to process business payments.",
+    "A 2.6% + $0.15 processing fee on each payment you receive from your customer\u2019s Cash App account to your Cash App Business account",
+    "A 3% processing fee for each payment accepted via Tap to Pay",
+    "When you receive a payment from a customer on your Cash App Business account, the amount you receive in your balance will already have these fees deducted.",
+    "All Fees are charged at the time we process a transaction and are deducted first from the transferred or collected funds, unless otherwise disclosed. To the extent that the Fees are calculated as a percentage of the transaction amount, then we will use banker\u2019s rounding to round up or down to the penny, as applicable. Banker\u2019s rounding rounds numbers ending in 5 to the nearest even integer.",
+    "The fees are also refunded by the Company, so the full purchase amount is always returned to your customer."
+  ],
+  "excluded": [
+    "ATM withdrawal fee ($2.50, waivable), foreign transaction fee (3%), paper money deposit ($1)",
+    "Cash App Card / Debit Flex Card fees (expedited shipping $15, replacement $5 / $50) and Cash App Tag fees (up to $250; $15 expedited shipping)",
+    "Remittance Service fees ($1.99 / $3.98 tiers)",
+    "Bitcoin and stock investing fees, Afterpay, Cash App Lending, overdraft",
+    "Chargebacks (Business Terms reserve the right to charge a mediation fee; no amount stated)"
+  ],
+  "notes": [
+    "Instant Transfer is a published RANGE (0.5%\u20132.5%, minimum $0.25\u2013$1, maximum $75); the exact percentage is only shown in-app before confirming, so a calculator can only bound the fee (e.g. show the 0.5% and 2.5% cases) or take the rate as an input.",
+    "The ToS lists the credit-card charge twice with different labels \u2014 'Send from credit card 3%' (Prepaid Account fee table and P2P section) and 'Add money from Credit Card: 3%' (Details About Your Cash App Balance) \u2014 both 3% and both subject to banker's rounding.",
+    "Cash App Business 'Tap to Pay' is stated as a flat 3% with no fixed component, versus 2.6% + $0.15 for payments from a customer's Cash App account; no base definition beyond 'each payment you receive' is given (tips/tax not addressed).",
+    "Cash App Pay acceptance by merchants is priced by the merchant's processor, not by Cash App: Square's legacy list shows Cash App Pay at 2.6% + 15\u00a2 (card-present) / 3.3% + 30\u00a2 (card-not-present) and Stripe lists Cash App Pay at 2.9% + 30\u00a2 \u2014 those are Square/Stripe pages, not cash.app pages.",
+    "cash.app help pages are JavaScript-rendered (plain HTTP returns an empty body); cash.app/cardfees returned HTTP 405 in both plain and browser fetches; cash.app/send rendered only a cookie banner. The ToS contains the same fee disclosures, so nothing is missing.",
+    "Cash App Business Terms specify fees are deducted first from collected funds and that Cash App refunds its fee when the business refunds a customer.",
+    "Search-engine snippets returned an older '0.5%\u20131.75%' instant-transfer range; the loaded pages say 0.5%\u20132.5%, and only the loaded pages were used.",
+    "Cash App states it uses banker's rounding to the penny; this calculator rounds half up, which can differ by one cent at exact half-cents."
+  ],
+  "rates": {
+    "business": [
+      0.026,
+      0.15
+    ],
+    "tap_to_pay": [
+      0.03,
+      0.0
+    ],
+    "instant_transfer": {
+      "rate_min": 0.005,
+      "rate_max": 0.025,
+      "min_fee_low": 0.25,
+      "min_fee_high": 1.0,
+      "max_fee": 75.0
+    },
+    "credit_card_send": 0.03
+  },
+  "summary": "Cash App for Business deducts 2.6% + 15\u00a2 from payments customers send you (3% for Tap to Pay). Instant transfers to a bank cost 0.5% to 2.5% with a 25\u00a2 to $1 minimum and $75 maximum \u2014 Cash App shows the exact rate before you confirm. Standard transfers are free.",
+  "inputs": [
+    {
+      "id": "amount",
+      "label": "Payment received",
+      "type": "money",
+      "default": 100
+    },
+    {
+      "id": "channel",
+      "label": "Received via",
+      "type": "select",
+      "default": "business",
+      "options": [
+        [
+          "business",
+          "Cash App for Business (2.6% + 15\u00a2)"
+        ],
+        [
+          "tap_to_pay",
+          "Tap to Pay (3%)"
+        ]
+      ]
+    },
+    {
+      "id": "instant_transfer",
+      "label": "Instant transfer out",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "instant_rate",
+      "label": "Instant transfer rate shown in-app",
+      "type": "percent",
+      "default": 0.0175,
+      "help": "Cash App publishes a range of 0.5%\u20132.5%; enter what the app shows you."
+    }
+  ],
+  "examples": [
+    {
+      "description": "Arithmetic check derived from the published rates: $100 received by a business account.",
+      "inputs": {
+        "amount": 100,
+        "channel": "business"
+      },
+      "expected": {
+        "total_fees": 2.75,
+        "net": 97.25
+      },
+      "quote": "2.6% + $0.15",
+      "source_url": "https://cash.app/legal/us/en-us/tos",
+      "derived": true
+    }
+  ]
+}

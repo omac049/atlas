@@ -118,7 +118,234 @@
     return { lines, total_fees: totalFees, net, effective_rate: amount > 0 ? cents(totalFees / amount * 100) : 0 };
   }
 
-  const engines = { ebay, paypal };
+  // ---------------------------------------------------------------- Etsy
+  function etsy(s, i) {
+    const r = s.rates;
+    const price = num(i.price), shipping = num(i.shipping), gift = num(i.gift_wrap);
+    const qty = Math.max(1, Math.round(num(i.quantity, 1)));
+    const tax = cents((price + shipping + gift) * num(i.sales_tax_rate));
+    const feeBase = price + shipping + gift;          // 6.5% and Offsite Ads base (US: no tax)
+    const processingBase = feeBase + tax;             // Etsy Payments base includes tax
+    const lines = [];
+    lines.push({ id: "listing_fee", label: "Listing fee ($0.20 per unit sold)", amount: cents(r.listing_fee * qty) });
+    lines.push({ id: "transaction_fee", label: "Transaction fee (6.5% of price + shipping + gift wrap)", amount: cents(feeBase * r.transaction_rate) });
+    lines.push({ id: "processing_fee", label: "Etsy Payments processing (3% + $0.25 on order incl. tax)", amount: cents(processingBase * r.processing_rate_us + r.processing_fixed_us) });
+    if (i.offsite_ad) {
+      const rate = num(i.offsite_rate, r.offsite_ads_standard);
+      lines.push({ id: "offsite_ads_fee", label: `Offsite Ads fee (${(rate * 100).toFixed(0)}%, capped at $100)`, amount: cents(Math.min(r.offsite_ads_cap, feeBase * rate)) });
+    }
+    const totalFees = cents(lines.reduce((a, l) => a + l.amount, 0));
+    return { total_sale: cents(processingBase), sales_tax: tax, lines, total_fees: totalFees, net: cents(feeBase - totalFees),
+      effective_rate: feeBase > 0 ? cents(totalFees / feeBase * 100) : 0 };
+  }
+
+  // -------------------------------------------------------------- Reverb
+  function reverb(s, i) {
+    const r = s.rates;
+    const price = num(i.price), shipping = num(i.shipping);
+    const tax = cents((price + shipping) * num(i.sales_tax_rate));
+    const sellingBase = price + shipping;             // "inclusive of all costs except sales tax"
+    const processingBase = sellingBase + tax;         // processing includes tax
+    const lines = [];
+    const selling = cents(Math.min(r.selling_max, Math.max(r.selling_min, sellingBase * r.selling_rate)));
+    lines.push({ id: "selling_fee", label: "Selling fee (5%, min $0.50, max $500)", amount: selling });
+    const pRate = i.preferred ? r.processing_rate_preferred : r.processing_rate;
+    lines.push({ id: "processing_fee", label: `Payment processing (${(pRate * 100).toFixed(2)}% + $0.49 on order incl. tax)`, amount: cents(processingBase * pRate + r.processing_fixed) });
+    if (i.international) lines.push({ id: "cross_border_fee", label: "Cross-border fee (1%)", amount: cents(sellingBase * r.cross_border_rate) });
+    const bump = num(i.bump_rate);
+    if (bump > 0) lines.push({ id: "bump_fee", label: `Bump (${(bump * 100).toFixed(1)}% of sale)`, amount: cents(sellingBase * Math.min(r.bump_max, Math.max(r.bump_min, bump))) });
+    const totalFees = cents(lines.reduce((a, l) => a + l.amount, 0));
+    return { total_sale: cents(processingBase), sales_tax: tax, lines, total_fees: totalFees, net: cents(sellingBase - totalFees),
+      effective_rate: sellingBase > 0 ? cents(totalFees / sellingBase * 100) : 0 };
+  }
+
+  // -------------------------------------------------------------- Amazon
+  function amazon(s, i) {
+    const r = s.rates;
+    const price = num(i.item_price), delivery = num(i.delivery_charges), gift = num(i.gift_wrap_charges);
+    const total = cents(price + delivery + gift);      // "total sales price", taxes excluded
+    const cat = s.categories[i.category] || s.categories[Object.keys(s.categories)[0]];
+    const lines = [];
+    let referral = 0;
+    if (cat.tiers) {
+      if (cat.tier_basis === "whole_price") {
+        const band = cat.tiers.find(t => total >= t.from && (t.to === null || t.to === undefined || total <= t.to)) || cat.tiers[cat.tiers.length - 1];
+        referral = total * band.rate;
+      } else {
+        referral = tieredFee(total, cat.tiers.map(t => (t.to === null || t.to === undefined) ? { above: t.from, rate: t.rate } : { upto: t.to, rate: t.rate }));
+      }
+    } else {
+      referral = total * num(cat.rate);
+    }
+    const minimum = cat.minimum === null || cat.minimum === undefined ? 0 : num(cat.minimum);
+    referral = cents(Math.max(referral, minimum));
+    lines.push({ id: "referral_fee", label: `Referral fee (${cat.label})`, amount: referral });
+    if (r.media_categories.indexOf(i.category) >= 0) lines.push({ id: "closing_fee", label: "Closing fee (media)", amount: r.media_closing_fee });
+    if (i.plan !== "professional") lines.push({ id: "plan_fee", label: "Individual plan ($0.99 per item sold)", amount: r.individual_per_item });
+    const totalFees = cents(lines.reduce((a, l) => a + l.amount, 0));
+    return { total_sale: total, lines, total_fees: totalFees, net: cents(total - totalFees),
+      effective_rate: total > 0 ? cents(totalFees / total * 100) : 0 };
+  }
+
+  function pctFixed(amount, pair, extraRate) {
+    const rate = (pair[0] || 0) + (extraRate || 0);
+    return { fee: cents(amount * rate + (pair[1] || 0)), rate, fixed: pair[1] || 0 };
+  }
+  function label(rate, fixed, extra) {
+    return `${(rate * 100).toFixed(2).replace(/\.?0+$/, "")}%${fixed ? " + $" + fixed.toFixed(2) : ""}${extra || ""}`;
+  }
+  function finish(amountBase, lines, extra) {
+    const totalFees = cents(lines.reduce((a, l) => a + l.amount, 0));
+    return Object.assign({ lines, total_fees: totalFees, net: cents(amountBase - totalFees),
+      effective_rate: amountBase > 0 ? cents(totalFees / amountBase * 100) : 0 }, extra || {});
+  }
+
+  // -------------------------------------------------------------- Square
+  function square(s, i) {
+    const r = s.rates, amount = num(i.amount), plan = i.plan || "free", ch = i.channel || "in_person";
+    const lines = [];
+    const intl = i.international ? r.international_surcharge : 0;
+    if (ch === "ach_invoice" || ch === "ach_api") {
+      const a = ch === "ach_invoice" ? r.ach_invoice : r.ach_api;
+      const cap = ch === "ach_invoice" ? a.cap[plan] : a.cap;
+      let fee = Math.max(a.min, amount * a.rate);
+      if (cap !== null && cap !== undefined) fee = Math.min(fee, cap);
+      lines.push({ id: "processing_fee", label: `ACH (1%, min $1${cap ? ", max $" + cap : ""})`, amount: cents(fee) });
+    } else {
+      const pair = ch === "in_person" ? r.in_person[plan] : ch === "online" ? r.online[plan] : ch === "api" ? r.api : ch === "keyed" ? r.keyed : r.afterpay;
+      const f = pctFixed(amount, pair, intl);
+      lines.push({ id: "processing_fee", label: `Processing (${label(f.rate, f.fixed, intl ? " incl. 1.5% international" : "")})`, amount: f.fee });
+    }
+    return finish(amount, lines);
+  }
+
+  // -------------------------------------------------------------- Stripe
+  function stripe(s, i) {
+    const r = s.rates, amount = num(i.amount), m = i.method || "card";
+    const lines = [];
+    if (m === "ach") {
+      lines.push({ id: "processing_fee", label: "ACH Direct Debit (0.8%, max $5)", amount: cents(Math.min(r.ach.cap, amount * r.ach.rate)) });
+    } else {
+      let pair = m === "terminal" ? r.terminal : m === "klarna" ? r.klarna : m === "affirm" ? r.affirm : r.card;
+      let extra = (m === "manual" ? r.manual_surcharge : 0) + (i.international && m !== "terminal" ? r.international_surcharge : 0) + (i.currency_conversion ? r.currency_conversion_surcharge : 0);
+      const f = pctFixed(amount, pair, extra);
+      lines.push({ id: "processing_fee", label: `Processing (${label(f.rate, f.fixed)})`, amount: f.fee });
+    }
+    let net = cents(amount - lines[0].amount);
+    if (i.instant_payout) { const ip = cents(net * r.instant_payout); lines.push({ id: "instant_payout", label: "Instant Payout (1.5%)", amount: ip }); }
+    return finish(amount, lines);
+  }
+
+  // ------------------------------------------------------------- Shopify
+  function shopify(s, i) {
+    const r = s.rates, amount = num(i.amount), plan = i.plan || "basic", ch = i.channel || "online_standard";
+    const lines = [];
+    if (ch === "third_party") {
+      lines.push({ id: "transaction_fee", label: `Shopify transaction fee for using another provider (${(r.third_party_fee[plan] * 100).toFixed(1)}%)`, amount: cents(amount * r.third_party_fee[plan]),
+        detail: "Your payment provider's own processing fee comes on top and is not shown here." });
+    } else {
+      const pair = ch === "manual" ? r.manual : r[ch][plan];
+      const intl = i.international && ch.startsWith("online") ? r.international_surcharge : 0;
+      const f = pctFixed(amount, pair, intl);
+      lines.push({ id: "processing_fee", label: `Shopify Payments (${label(f.rate, f.fixed, intl ? " incl. 1% international" : "")})`, amount: f.fee });
+    }
+    return finish(amount, lines, { note: `Plan subscription: $${r.plan_monthly[plan]}/month (or $${r.plan_yearly_billed[plan]}/month billed yearly), not per sale.` });
+  }
+
+  // --------------------------------------------------------------- Venmo
+  function venmo(s, i) {
+    const r = s.rates, amount = num(i.amount), pair = r[i.profile] || r.business;
+    const lines = [];
+    const f = pctFixed(amount, pair);
+    lines.push({ id: "seller_fee", label: `Venmo fee (${label(f.rate, f.fixed)})`, amount: f.fee });
+    if (i.instant_transfer) {
+      const net = amount - f.fee;
+      lines.push({ id: "instant_transfer", label: "Instant transfer (1.75%, min $0.25, max $25)", amount: cents(Math.min(r.instant_transfer.max, Math.max(r.instant_transfer.min, net * r.instant_transfer.rate))) });
+    }
+    return finish(amount, lines);
+  }
+
+  // ------------------------------------------------------------ Cash App
+  function cashapp(s, i) {
+    const r = s.rates, amount = num(i.amount), pair = r[i.channel] || r.business;
+    const lines = [];
+    const f = pctFixed(amount, pair);
+    lines.push({ id: "processing_fee", label: `Cash App for Business (${label(f.rate, f.fixed)})`, amount: f.fee });
+    if (i.instant_transfer) {
+      const it = r.instant_transfer;
+      const rate = Math.min(it.rate_max, Math.max(it.rate_min, num(i.instant_rate, 0.0175)));
+      const net = amount - f.fee;
+      lines.push({ id: "instant_transfer", label: `Instant transfer (${(rate * 100).toFixed(2)}%; Cash App publishes 0.5%–2.5%, min $0.25–$1, max $75)`,
+        amount: cents(Math.min(it.max_fee, Math.max(it.min_fee_low, net * rate))) });
+    }
+    return finish(amount, lines);
+  }
+
+  // ------------------------------------------------------------ GoFundMe
+  function gofundme(s, i) {
+    const r = s.rates, amount = num(i.amount), pair = r[i.fundraiser_type] || r.individual;
+    const lines = [];
+    const f = pctFixed(amount, pair);
+    lines.push({ id: "transaction_fee", label: `Transaction fee (${label(f.rate, f.fixed)})`, amount: f.fee });
+    const buyer = i.recurring ? [{ label: "Recurring-donation fee paid by the donor (5%)", amount: cents(amount * r.recurring_donor_fee) }] : [];
+    return finish(amount, lines, { buyer_fees: buyer });
+  }
+
+  // --------------------------------------------------------------- Depop
+  function depop(s, i) {
+    const r = s.rates, price = num(i.price), shipping = num(i.shipping);
+    const tax = cents((price + shipping) * num(i.sales_tax_rate));
+    const lines = [];
+    const f = pctFixed(price + shipping + tax, r.processing);
+    lines.push({ id: "processing_fee", label: "Depop Payments processing (3.3% + $0.45 on item + shipping + tax)", amount: f.fee });
+    if (i.boosted) lines.push({ id: "boost_fee", label: "Boosted listing fee (12%)", amount: cents((price + (i.own_shipping ? shipping : 0)) * r.boost) });
+    return finish(price + shipping, lines, { total_sale: cents(price + shipping + tax), sales_tax: tax });
+  }
+
+  // ------------------------------------------------------------ Poshmark
+  function poshmark(s, i) {
+    const r = s.rates, price = num(i.price);
+    const lines = [];
+    const fee = price < r.threshold ? r.flat_under_threshold : cents(price * r.rate_at_or_above);
+    lines.push({ id: "poshmark_fee", label: price < r.threshold ? "Poshmark fee (flat $2.95 under $15)" : "Poshmark fee (20% at $15 and above)", amount: fee });
+    const upgrade = num(i.label_upgrade);
+    if (upgrade > 0) lines.push({ id: "label_upgrade", label: `Heavier shipping label upgrade`, amount: upgrade });
+    if (i.texas) lines.push({ id: "texas_fee_tax", label: "Texas Seller Fee Tax (sales tax on 80% of the fee)", amount: cents(fee * r.texas_tax_base_share * num(i.texas_rate, r.texas_state_rate)) });
+    return finish(price, lines, { buyer_fees: [{ label: "Shipping label paid by the buyer", amount: r.buyer_shipping_label }] });
+  }
+
+  // ------------------------------------------------------------- Mercari
+  function mercari(s, i) {
+    const r = s.rates, price = num(i.price), shipping = num(i.shipping);
+    const base = price + shipping;
+    const lines = [{ id: "selling_fee", label: "Selling fee (10% of item + buyer-paid shipping)", amount: cents(base * r.selling_fee) }];
+    if (i.instant_pay) lines.push({ id: "instant_pay", label: "Instant Pay cash-out", amount: r.instant_pay_per_cashout });
+    return finish(base, lines, { buyer_fees: [{ label: "Buyer Protection fee paid by the buyer (3.6%)", amount: cents(base * r.buyer_protection_buyer_paid) }] });
+  }
+
+  // ------------------------------------------------------------- Whatnot
+  function whatnot(s, i) {
+    const r = s.rates, price = num(i.price), shipping = num(i.shipping), tax = num(i.sales_tax);
+    const cat = i.category || "standard";
+    let rate = r.tiers[i.tier || "standard"] || r.commission_standard;
+    if (cat === "coins") rate = r.commission_coins; else if (cat === "pallets") rate = r.commission_pallets;
+    let commission;
+    if (cat === "high_value") commission = Math.min(price, r.high_value_threshold) * rate + Math.max(0, price - r.high_value_threshold) * r.high_value_rate_above;
+    else commission = price * rate;
+    const total = cents(price + shipping + tax);
+    const lines = [{ id: "commission", label: `Commission (${(rate * 100).toFixed(2).replace(/\.?0+$/, "")}%${cat === "high_value" ? ", 0% above $1,500" : ""})`, amount: cents(commission) }];
+    const f = pctFixed(total, r.processing);
+    lines.push({ id: "processing_fee", label: "Payment processing (2.9% + $0.30 on checkout total)", amount: f.fee });
+    return finish(price, lines, { total_sale: total });
+  }
+
+  // -------------------------------------------------------------- Vinted
+  function vinted(s, i) {
+    const r = s.rates, price = num(i.price);
+    return finish(price, [], { buyer_fees: [{ label: "Buyer Protection fee paid by the buyer ($0.70 + 5%)", amount: cents(price * r.buyer_protection[0] + r.buyer_protection[1]) }] });
+  }
+
+  const engines = { ebay, paypal, etsy, reverb, amazon, square, stripe, shopify, venmo, cashapp, gofundme, depop, poshmark, mercari, whatnot, vinted };
 
   function computeFees(schedule, inputs) {
     const fn = engines[schedule.platform];

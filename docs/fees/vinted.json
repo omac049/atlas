@@ -1,0 +1,131 @@
+{
+  "platform": "vinted",
+  "name": "Vinted (US)",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://www.vinted.com/pricelist",
+      "title": "Price List | Vinted (US, USD)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "Last updated: 1 July 2024"
+    },
+    {
+      "url": "https://www.vinted.com/help/342-buyer-protection-fee-on-vinted",
+      "title": "Buyer Protection fee on Vinted | Vinted",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://www.vinted.com/help/373-is-selling-on-vinted-free",
+      "title": "Is selling on Vinted free? | Vinted",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://www.vinted.com/help/68-how-to-withdraw-earnings",
+      "title": "How to withdraw earnings | Vinted",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://www.vinted.com/help/437-vinted-wallet-how-it-works",
+      "title": "Vinted Wallet: how it works | Vinted",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://www.vinted.com/help/1555-us-uk-international-sales",
+      "title": "US / UK international sales | Vinted",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://www.vinted.com/help/1147-item-verification-for-designer-items",
+      "title": "Item Verification for designer items | Vinted",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://www.vinted.com/help/432-withdrawals",
+      "title": "Withdrawals | Vinted",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://www.vinted.com/help/4/1577-payments-withdrawals",
+      "title": "Payments & withdrawals | Vinted (topic index)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "What US Vinted sellers pay (nothing) and what buyers pay on top. Bumps, custom shipping and item verification are out of scope.",
+  "structure": "Sellers pay nothing to list or sell: after an order completes, the full agreed item price is credited to the seller's Vinted Wallet, and withdrawals to a US bank account (USD only) are free, take up to 5 business days, and require a minimum of $0.10. The buyer pays, on top of the item price, shipping and any sales tax, a mandatory Buyer Protection fee of $0.70 plus 5% of the item price (for a bundle, 5% of the combined bundle price, with the fixed part once per order); the help center says the fee is 'usually 5% + $0.70' and can vary by item characteristics, order value and order type. Shipping costs are borne by the buyer; taxes on integrated labels are paid by the buyer, while for custom shipping the applicable taxes are borne by the seller. Optional seller-paid item bumps are priced at checkout (3 or 7 calendar days) and are not refundable. For US\u2013UK cross-border orders the buyer pays the same Buyer Protection fee and a 1.2% currency conversion built into the checkout exchange rate; the seller is paid in USD.",
+  "quotes": [
+    "There are no fees for uploading your items or selling them on Vinted. This means once your sale is successfully closed, you'll receive the full selling price straight to your Vinted Wallet.",
+    "The Buyer will be automatically charged a Buyer Protection Fee for these Buyer Protection Services, which will always be shown at checkout before completion of the order.",
+    "The Buyer Protection Fee is calculated as follows: A fixed amount of $0.70; plus 5% of the item price agreed to between the Buyer and the Seller, not including the shipping costs, any additional costs and applicable taxes.",
+    "This fee is mandatory for every order made through Vinted and is added automatically at checkout.",
+    "The Buyer Protection fee typically includes a percentage of the item's or bundle's price, as well as a fixed fee \u2014 usually 5% + $0.70.",
+    "The calculation of this fee varies based on several factors, such as: item characteristics, order value, order type (a single item versus a bundle)",
+    "These shipping costs are borne by the Buyer, and they are displayed when the Seller provides that option to Buyers.",
+    "Taxes on Integrated shipping labels are paid by the Buyer, and for custom shipping, the applicable taxes are borne by the Seller.",
+    "The Fee for Bumping Listed Items is displayed before completion of the Bump order. Any applicable sales tax may also be added at checkout.",
+    "They can take up to 5 business days to arrive in your bank account (Monday\u2013Friday, not including weekends and holidays).",
+    "You can withdraw earnings in dollars (USD) to supported accounts in banks or other financial institutions using account and routing numbers.",
+    "The minimum amount you can withdraw is $0.10. Withdrawals below this amount will fail.",
+    "When making international purchases on Vinted, the same Buyer Protection fee applies as for domestic transactions.",
+    "Our payment provider applies a 1.2% currency conversion fee to USD\u2194GBP transactions, which is included in the conversion rate provided at the checkout.",
+    "Item Verification is currently available in France, Italy, Belgium, Germany, Spain, The Netherlands, the United Kingdom, Poland, Portugal, Romania, Denmark, Sweden, Lithuania and Finland.",
+    "The service fee is paid for by buyers and is visible on the item page and the checkout."
+  ],
+  "excluded": [
+    "Buyer Protection fee (buyer-paid; listed for reference only)",
+    "Shipping label prices and sales tax (buyer-paid)",
+    "Item bump / promotion fees (optional, variable, shown at purchase)",
+    "Item Verification / Electronics Verification fees (buyer-paid; not offered in the US)",
+    "Vinted Pro / business-seller terms",
+    "Non-US Buyer Protection fee formulas"
+  ],
+  "notes": [
+    "Conflict to resolve: the Price List (last updated 1 July 2024) states an exact formula ($0.70 + 5% of item price), whereas help article 342 says 'usually 5% + $0.70' and that the calculation 'varies based on ... item characteristics, order value, order type'. Use $0.70 + 5% as the default and flag that the checkout amount can differ.",
+    "Seller-side charges: none found on US pages beyond optional bumps and taxes on custom shipping. No instant-withdrawal option or fee is documented for the US (the Wallet page says funds become available 2 days after order completion; bank withdrawal takes up to 5 business days).",
+    "'Offline verification': Vinted's Item Verification for designer items is buyer-paid and, per the loaded page, not available in the US. 'Electronics Verification' appears only in search-engine snippets \u2014 UNVERIFIED.",
+    "The Price List and help pages were served for the US locale (English, US; USD amounts); the same URL serves other countries' formulas under other locales.",
+    "Failed pages: /help/432 (Withdrawals) redirected to the Help Centre home; the /help/4/1577 'Payments & withdrawals' topic index did not render server-side.",
+    "Vinted is not a fee-on-seller marketplace, so a seller-fee calculator should return fee = 0 and net = item price; the Buyer Protection fee is relevant only for showing the buyer's total (item + $0.70 + 5% + shipping + tax)."
+  ],
+  "rates": {
+    "selling_fee": 0.0,
+    "listing_fee": 0.0,
+    "withdrawal_fee": 0.0,
+    "buyer_protection": [
+      0.05,
+      0.7
+    ],
+    "currency_conversion_buyer_us_uk": 0.012
+  },
+  "summary": "Vinted charges US sellers nothing to list, sell or withdraw: you receive the full item price. The buyer pays a Buyer Protection fee of $0.70 plus 5% of the item price on top, which Vinted says is usually that formula but can vary.",
+  "inputs": [
+    {
+      "id": "price",
+      "label": "Item price",
+      "type": "money",
+      "default": 25
+    }
+  ],
+  "examples": [
+    {
+      "description": "Arithmetic check derived from the published Price List: a $25 item \u2014 the seller receives $25; the buyer pays $0.70 + 5% ($1.95) on top.",
+      "inputs": {
+        "price": 25
+      },
+      "expected": {
+        "total_fees": 0.0,
+        "net": 25.0
+      },
+      "quote": "$0.70 + 5% of the item price",
+      "source_url": "https://www.vinted.com/pricelist",
+      "derived": true
+    }
+  ]
+}

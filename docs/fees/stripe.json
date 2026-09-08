@@ -1,0 +1,215 @@
+{
+  "platform": "stripe",
+  "name": "Stripe",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://stripe.com/pricing",
+      "title": "Pricing & Fees | Stripe (United States, English)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://stripe.com/pricing/local-payment-methods",
+      "title": "Accept popular payment methods with a single integration \u2014 payment method pricing (US)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://support.stripe.com/questions/manually-entered-card-payments",
+      "title": "Manually entered card payments \u2014 Stripe Support",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://docs.stripe.com/payouts/instant-payouts",
+      "title": "Instant Payouts for Stripe Dashboard users \u2014 Stripe Docs",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://stripe.com/legal/pricing-policy",
+      "title": "Stripe Pricing Policy",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "Last modified: July 20, 2026"
+    },
+    {
+      "url": "https://support.stripe.com/questions/rounding-rules-for-stripe-fees",
+      "title": "Rounding rules for Stripe fees \u2014 Stripe Support",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://docs.stripe.com/payments/ach-direct-debit",
+      "title": "ACH Direct Debit payments \u2014 Stripe Docs (no fee amounts on page)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "Standard US pricing for card, wallet, ACH and Terminal payments. Disputes, Radar, Billing, Connect, Tax and custom pricing are out of scope.",
+  "structure": "Standard US pricing: 2.9% of the transaction amount plus $0.30 per successful domestic card transaction (online cards and wallets; same rate for Link, Apple Pay, Google Pay, Cash App Pay). Surcharges add percentage points on the same base: +0.5% for manually entered (Dashboard/MOTO) cards, giving 3.4% + $0.30; +1.5% for cards issued outside the US; +1% if currency conversion is required (surcharges can stack). Stripe does not itemize tax or shipping \u2014 the fee applies to the full amount charged. Each Stripe fee is rounded to the nearest cent (0.025 rounds up to 0.03, 0.024 rounds down to 0.02). ACH Direct Debit is 0.8% capped at $5.00 per transaction. Instant Payouts for US accounts cost 1.5% of the payout amount, with each payout between $0.50 and $9,999 and at most 10 per day. Disputes: $15.00 when received plus $15.00 when countered manually (the countered fee is returned if you win). Per the Pricing Policy, each successful refund is charged the fixed fee applicable to the refunded transaction.",
+  "quotes": [
+    "Access a complete payments platform with simple, pay-as-you-go pricing. No setup fees, monthly fees, or hidden fees.",
+    "2.9% + 30\u00a2\nper successful transaction for domestic cards",
+    "+\n0.5%\nfor manually entered cards",
+    "+\n1.5%\nfor international cards",
+    "+\n1%\nif currency conversion is required",
+    "0.8%\nACH Direct Debit\n$5.00 cap",
+    "ACH Direct Debit 0.8% per transaction for standard settlement timing",
+    "Dispute received fee\n$15.00\nfor each dispute you receive.\nIn rare cases, network fees also apply.",
+    "Dispute countered fee\n$15.00\nfor each dispute you respond to manually.\nYou get this fee back for won disputes. You don't get this fee back for lost disputes.",
+    "Smart Disputes fee\n30%\nof the disputed amount for each dispute you win.\nThere's no Smart Dispute fee for lost disputes. The dispute received fee still applies.",
+    "Cards and wallets\nAccept widely used credit cards, debit cards, and digital wallets for in-person payments.\n2.7% + 5\u00a2\nper successful transaction for domestic cards\n+\n1.5%\nfor international cards\n+\n$0.10\nper authorization for Tap to Pay",
+    "Cash App Pay 2.9% + 30\u00a2 per successful charge",
+    "Apple Pay 2.9% + 30\u00a2 per successful charge",
+    "Link Cards 2.9% + 30\u00a2 per successful transaction",
+    "5.99% + 30\u00a2\nper successful transaction for Klarna",
+    "Affirm Standard 6% + 30\u00a2 per successful charge",
+    "Stablecoins\nEnable customers globally to pay with stablecoins.\n1.5%\nof the transaction amount in USD",
+    "Post-payment invoices\nAutomatically generate an invoice after a one-time purchase.\n0.4%\non transaction total\n$2.00\ncap per invoice",
+    "Transaction fees on cards entered manually in the Dashboard or with Terminal MOTO are 3.4% + 0.30 USD for businesses on standard pricing based in the US, and 3.4% + 0.30 CAD for businesses based in Canada, Standard card payments are 2.9% + 0.30 USD in the US, and 2.9% + 0.30 CAD in Canada.",
+    "The first subscription payment using a card whose details have been typed into the Dashboard. All subsequent subscription payments using that card will be charged the standard 2.9% + 0.30 USD card processing fee.",
+    "Stripe charges Dashboard users a 1% fee for all Instant Payouts for CA, EU, UK, SG, NO, HK and MY, and a 1.5% fee for US, AU, NZ, and AE. Each Instant Payout transaction has a minimum and maximum amount dependent on the currency.",
+    "| United States | 0.50 USD | 9,999 USD |",
+    "You\u2019re limited to a maximum of 10 Instant Payouts per day.",
+    "Fees: The Instant Payout fee is pre-deducted so the balance shown reflects what you\u2019d actually receive.",
+    "Funds acquired from card payments are available for Instant Payouts as soon as the charge is complete. ACH or bank debits are only available for Instant Payouts after the payment has settled.",
+    "1.3 Stripe rounds each Stripe fee to the nearest unit (e.g., cents). For example, if the fee is 0.025, Stripe will round up to 0.03. If the fee is 0.024, Stripe will round down to 0.02.",
+    "1.4 Stripe may offer you the ability to refund a successful payment to your Customer, either in full or in part. Card Transaction refunds constitute a Charge Event (as defined in your Pricing Agreement), and for each successful refund, Stripe will charge you the fixed fee in your Pricing Agreement applicable to the Transaction that is being refunded.",
+    "Stripe rounds the Stripe fee to the nearest unit (e.g., cents). For example, if the fee is 0.025, Stripe will round up to 0.03. If the fee is 0.024, Stripe will round down to 0.02."
+  ],
+  "excluded": [
+    "Dispute/chargeback fees ($15 received, $15 countered, Smart Disputes 30%, Visa/Mastercard dispute-prevention $15/$29) \u2014 captured for reference, out of calculator scope",
+    "Card reader hardware ($59 M2, $299 S710/S700, $329 T600) and $10/reader/month cellular",
+    "Subscription products: Billing ($620/mo or 0.7%), Tax ($90/mo, 0.5% or $0.50), Sigma, Data Pipeline, Revenue Recognition, Radar, Identity, Atlas, Climate, Workflows",
+    "Connect platform fees (0.25% starting), Treasury, Issuing ($0.10 virtual / $3.50 physical card; 1% + 30\u00a2 cross-border), Global Payouts ($1.50 per payout)",
+    "Managed Payments merchant-of-record 3.5%",
+    "Financial Connections ($1.50 instant verification, etc.)",
+    "Custom / IC+ negotiated pricing",
+    "ACH failed-payment and ACH dispute fees (amounts not captured; see notes)"
+  ],
+  "notes": [
+    "The FAQ answers on stripe.com/pricing ('How are payment fees calculated?', 'Are there additional fees for refunds?', 'Do you have setup fees or monthly fees?') are rendered only on click; they were not present in either the server HTML or the JS-rendered DOM, so their text could not be captured. The Pricing Policy (1.3 rounding, 1.4 refund fixed fee) was used instead.",
+    "On stripe.com/pricing/local-payment-methods every 'Show additional fees' panel (e.g. ACH Direct Debit failure and dispute fees, international/currency-conversion surcharges per method) is click-rendered and was not captured; the ACH $5.00 cap comes from the main pricing page. The ACH docs page confirms a failure fee and a non-refundable dispute fee exist but does not state amounts.",
+    "Manual-entry pricing is stated two ways that agree: '+0.5% for manually entered cards' on the pricing page and '3.4% + 0.30 USD' on the support article (2.9% + 0.5% = 3.4%). The support article also says only the first subscription payment on a Dashboard-keyed card gets the higher rate.",
+    "International (+1.5%) and currency-conversion (+1%) surcharges are listed separately and can both apply to one payment; the pages do not state whether surcharges are rounded separately or after summing \u2014 Pricing Policy 1.3 says 'each Stripe fee' is rounded.",
+    "Refunds: Pricing Policy 1.4 says each successful refund is charged the fixed fee applicable to the refunded transaction (i.e. the $0.30). The pricing-page FAQ on refunds could not be read to confirm whether the percentage portion is also retained; calculator author must decide how to model refunds.",
+    "Instant Payouts: the 1.5% US fee is stated in docs (not on the pricing page); limits are $0.50 minimum and $9,999 maximum per payout, max 10 per day, US daily limit resets at midnight US Central Time; new accounts are not immediately eligible.",
+    "The hero shows '2.9% + $0.30' and the table shows '2.9% + 30\u00a2' \u2014 same rate. The page footer reads 'United States (English)', so these are US rates.",
+    "Terminal (in-person) domestic cards are 2.7% + 5\u00a2, plus $0.10 per authorization for Tap to Pay and an optional $0.05 P2PE fee; international cards add 1.5% in person as well."
+  ],
+  "rates": {
+    "card": [
+      0.029,
+      0.3
+    ],
+    "manual_surcharge": 0.005,
+    "international_surcharge": 0.015,
+    "currency_conversion_surcharge": 0.01,
+    "ach": {
+      "rate": 0.008,
+      "cap": 5.0
+    },
+    "terminal": [
+      0.027,
+      0.05
+    ],
+    "klarna": [
+      0.0599,
+      0.3
+    ],
+    "affirm": [
+      0.06,
+      0.3
+    ],
+    "instant_payout": 0.015
+  },
+  "summary": "Stripe charges 2.9% + 30\u00a2 per successful domestic card or wallet payment, 3.4% + 30\u00a2 for manually entered cards, +1.5% for cards issued outside the US, +1% when currency conversion applies, ACH at 0.8% capped at $5, and 2.7% + 5\u00a2 in person on Terminal. Each fee is rounded to the nearest cent.",
+  "inputs": [
+    {
+      "id": "amount",
+      "label": "Amount charged",
+      "type": "money",
+      "default": 100
+    },
+    {
+      "id": "method",
+      "label": "Payment method",
+      "type": "select",
+      "default": "card",
+      "options": [
+        [
+          "card",
+          "Card or wallet online (2.9% + 30\u00a2)"
+        ],
+        [
+          "manual",
+          "Manually entered card (3.4% + 30\u00a2)"
+        ],
+        [
+          "terminal",
+          "In person via Terminal (2.7% + 5\u00a2)"
+        ],
+        [
+          "ach",
+          "ACH Direct Debit (0.8%, max $5)"
+        ],
+        [
+          "klarna",
+          "Klarna (5.99% + 30\u00a2)"
+        ],
+        [
+          "affirm",
+          "Affirm (6% + 30\u00a2)"
+        ]
+      ]
+    },
+    {
+      "id": "international",
+      "label": "Card issued outside the US (+1.5%)",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "currency_conversion",
+      "label": "Currency conversion required (+1%)",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "instant_payout",
+      "label": "Instant Payout (1.5%)",
+      "type": "bool",
+      "default": false
+    }
+  ],
+  "examples": [
+    {
+      "description": "Arithmetic check derived from the published rates: $100 domestic card payment.",
+      "inputs": {
+        "amount": 100,
+        "method": "card"
+      },
+      "expected": {
+        "total_fees": 3.2,
+        "net": 96.8
+      },
+      "quote": "2.9% + 30\u00a2 per successful card charge",
+      "source_url": "https://stripe.com/pricing",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check of stripe's own rounding rule: a computed fee of $0.025 becomes $0.03 and $0.024 becomes $0.02 \u2014 checked in the engine's rounding test; here a $0.86 card charge (2.9% + 30\u00a2 = $0.32494) rounds to $0.32.",
+      "inputs": {
+        "amount": 0.86,
+        "method": "card"
+      },
+      "expected": {
+        "total_fees": 0.32
+      },
+      "quote": "0.025 rounds up to 0.03, 0.024 rounds down to 0.02",
+      "source_url": "https://stripe.com/pricing",
+      "derived": true
+    }
+  ]
+}

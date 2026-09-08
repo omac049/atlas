@@ -1,0 +1,158 @@
+{
+  "platform": "poshmark",
+  "name": "Poshmark",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://poshmark.com/fee_policy",
+      "title": "Fee Policy \u2013 Poshmark Legal Center (client-side tab; also reachable as https://poshmark.com/terms#fee-policy)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://support.poshmark.com/s/article/297755057?language=en_US",
+      "title": "What are the fees for selling on Poshmark?",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null,
+      "verify": false,
+      "note": "Read by a person in a browser on the loaded date; this page blocks automated checks, so it is not part of the nightly verification."
+    },
+    {
+      "url": "https://support.poshmark.com/s/article/975218789?language=en_US",
+      "title": "What are the shipping rates on Poshmark?",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null,
+      "verify": false,
+      "note": "Read by a person in a browser on the loaded date; this page blocks automated checks, so it is not part of the nightly verification."
+    },
+    {
+      "url": "https://support.poshmark.com/s/article/Texas-Seller-Fee-Tax?language=en_US",
+      "title": "What is Texas Seller Fee Tax?",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "As of October 1, 2025",
+      "verify": false,
+      "note": "Read by a person in a browser on the loaded date; this page blocks automated checks, so it is not part of the nightly verification."
+    },
+    {
+      "url": "https://blog.poshmark.com/2026/02/13/shipping-heavier-items-on-poshmark-is-now-simpler-and-cheaper/",
+      "title": "Shipping Heavier Items on Poshmark is Now Simpler and Cheaper \u2013 Poshmark Blog",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "February 13, 2026"
+    }
+  ],
+  "scope": "Poshmark's fee on US sales and the Texas Seller Fee Tax. Buyer-paid shipping and seller-funded shipping discounts are out of scope.",
+  "structure": "Listing is free. After a sale, Poshmark deducts its fee from the 'final order price' (the order/item price after seller discounts; buyer-paid shipping and sales tax are outside this base): a flat $2.95 when the sale is under $15, or 20% (seller keeps 80%) when the sale is $15 or above. The buyer pays a flat $6.49 shipping fee for a USPS Ground Advantage label covering the order (or a bundle from one closet) up to 5 lb; above 5 lb the seller pays, buying a heavier-weight label upgrade at $5.00 (5.1\u201310 lb) or $10.00 (10.1\u201315 lb), paying only the difference from the original label. Since October 1, 2025, sellers with a Texas return address also have a Texas Seller Fee Tax deducted: Texas state (6.25%) plus local sales tax applied to 80% of Poshmark's fee. Rounding rules are not published.",
+  "quotes": [
+    "It\u2019s always free to list an item for sale on Poshmark.",
+    "For Sellers, after your item sells, we deduct a small fee from the final order price. For sales under $15, the fee is a flat rate of $2.95. For sales $15 and above, the fee is 20% and you keep 80%.",
+    "Please note, estimated earnings are displayed during listing creation and actual earnings will vary based on the final order price, seller discounts, fees paid, and any other applicable taxes and discounts.",
+    "For sales under $15, Poshmark takes a flat commission of $2.95\u2014you keep the rest.",
+    "For sales of $15 or more, you keep 80% of the sale, and Poshmark takes a 20% commission.",
+    "As of October 1st, 2025, sellers located in Texas will see an additional Texas Seller Fee Tax deducted from their earnings.",
+    "Poshmark provides a flat-rate shipping fee of $6.49, paid by the buyer, for all orders.",
+    "Orders are shipped via USPS Ground Advantage (2-5 business days).",
+    "If you\u2019re purchasing multiple listings from the same closet, you can add them to a Bundle and pay a single $6.49 shipping fee, provided the total package weight does not exceed 5 lbs.",
+    "If the total weight exceeds 5 lbs, any overweight shipping costs are the responsibility of the seller.",
+    "5.1-10 lbs: Now a single, low $5.00 tier.",
+    "10.1-15 lbs: A brand-new tier for only $10.00.",
+    "Sellers, you only pay the difference between your original label and the upgraded label, and your entire order still ships together in one package.",
+    "Poshmark is required to apply this additional tax to 80% of the seller fee on sales made by sellers with a return address in Texas.",
+    "The tax rate imposed includes the 6.25% Texas state sales tax plus applicable local sales taxes (city, county, etc.) where the seller is located. Assuming the local sales tax rate is 2%, this results in a combined rate of 8.25%. This will be deducted from the seller\u2019s earnings at the time of sale."
+  ],
+  "excluded": [
+    "Canada, Australia and India fee schedules",
+    "Sales tax collected from buyers (Posh Remit)",
+    "Seller-funded shipping discounts / Closet Clear Out offers (amounts governed by the Shipping Policy, not loaded)",
+    "Promoted Closet advertising fees",
+    "Posh Shows / live-show fees (none stated on the loaded pages)",
+    "Carrier overweight/oversize postage charges"
+  ],
+  "notes": [
+    "Threshold boundary: 'under $15' -> $2.95 flat; '$15 and above' / '$15 or more' -> 20%. A sale of exactly $15.00 is charged 20% ($3.00).",
+    "The fee base is the 'final order price' after seller discounts. Whether a seller-offered shipping discount is additionally deducted from earnings is governed by the Shipping Policy (not loaded) \u2014 a calculator author must decide how to model seller-paid shipping discounts (UNVERIFIED here).",
+    "The Legal Center page at /fee_policy renders the Terms of Service first; the Fee Policy text appears only after switching to the 'Fee Policy' tab (URL becomes /terms#fee-policy). The Fee Policy tab shows no version/effective date; the Terms tab shows 'Version 4.6 (Current) Effective June 3rd 2025'.",
+    "Shipping: only $6.49 is on current official pages. A '$7.97' figure that surfaced in a search-engine snippet was not found on any loaded Poshmark page (it does appear in Mercari's carrier table) \u2014 treat as unverified/outdated.",
+    "Third-party reports (e.g., Modern Retail) say a late-2024 announced 5.99% seller fee / $5.99 buyer fee structure was rolled back after seller backlash \u2014 UNVERIFIED; the current official pages show only the $2.95 / 20% structure and the Texas Seller Fee Tax (Oct 1, 2025) as a new deduction.",
+    "Texas Seller Fee Tax: Poshmark's example shows '$1.320', so rounding of this deduction to cents is not specified; the local component varies by the seller's locality."
+  ],
+  "rates": {
+    "flat_under_threshold": 2.95,
+    "threshold": 15.0,
+    "rate_at_or_above": 0.2,
+    "buyer_shipping_label": 6.49,
+    "label_upgrade_5_to_10lb": 5.0,
+    "label_upgrade_10_to_15lb": 10.0,
+    "texas_tax_base_share": 0.8,
+    "texas_state_rate": 0.0625
+  },
+  "summary": "Poshmark takes a flat $2.95 on sales under $15 and 20% on sales of $15 or more, off the final order price. The buyer pays the $6.49 shipping label; sellers in Texas also pay sales tax on 80% of Poshmark's fee. Listing is free.",
+  "inputs": [
+    {
+      "id": "price",
+      "label": "Final order price (after your discounts)",
+      "type": "money",
+      "default": 100
+    },
+    {
+      "id": "label_upgrade",
+      "label": "Heavier shipping label you paid for",
+      "type": "select",
+      "default": "0",
+      "options": [
+        [
+          "0",
+          "None (buyer's $6.49 label covers up to 5 lb)"
+        ],
+        [
+          "5",
+          "5.1\u201310 lb upgrade ($5.00)"
+        ],
+        [
+          "10",
+          "10.1\u201315 lb upgrade ($10.00)"
+        ]
+      ]
+    },
+    {
+      "id": "texas",
+      "label": "I'm a Texas seller (sales tax on 80% of the fee)",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "texas_rate",
+      "label": "Your combined Texas sales tax rate",
+      "type": "percent",
+      "default": 0.0825
+    }
+  ],
+  "examples": [
+    {
+      "description": "Poshmark's own Texas example: a $100 sale pays the 20% fee ($20) plus Texas Seller Fee Tax at an 8.25% combined rate on 80% of the fee ($1.32).",
+      "inputs": {
+        "price": 100,
+        "texas": true,
+        "texas_rate": 0.0825
+      },
+      "expected": {
+        "poshmark_fee": 20.0,
+        "texas_fee_tax": 1.32
+      },
+      "quote": "A buyer purchases an item for $100. Poshmark\u2019s seller fee is $20 (20% of the sale). Texas applies a 8.25% tax on 80% of the seller fee ($20 \u00d7 80% = $16). The commission tax is $1.320 ($16 \u00d7 8.25%).",
+      "source_url": "https://support.poshmark.com/s/article/Texas-Seller-Fee-Tax?language=en_US"
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $12 sale pays the flat $2.95.",
+      "inputs": {
+        "price": 12
+      },
+      "expected": {
+        "total_fees": 2.95,
+        "net": 9.05
+      },
+      "quote": "flat commission of $2.95",
+      "source_url": "https://poshmark.com/fee_policy",
+      "derived": true
+    }
+  ]
+}

@@ -1,0 +1,240 @@
+{
+  "platform": "square",
+  "name": "Square",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://squareup.com/us/en/pricing",
+      "title": "Pricing \u2014 Your complete business toolkit, starting at $0 (Square, US)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://squareup.com/help/us/en/article/5068-what-are-square-s-fees",
+      "title": "Learn about Square fees (Square Support Center, US)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://squareup.com/us/en/payments/our-fees",
+      "title": "Square Payments \u2014 Know what processing fees you\u2019ll pay",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://squareup.com/us/en/payments/fee-calculator",
+      "title": "Square Payments \u2014 Calculate your Square processing fees",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://squareup.com/help/us/en/article/5092-rounding",
+      "title": "(redirects to article 5068 'Learn about Square fees'; no separate rounding article exists)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "Card and ACH processing fees for US Square sellers by plan and channel. Hardware, Afterpay disputes, gift cards and Bitcoin are out of scope.",
+  "structure": "Fee per card payment = (percentage rate x transaction total) + fixed cents, where the rate depends on plan (Square Free / Square Plus / Square Premium; monthly plan fee is $0 / $49 / $149 per location) and on how the card was taken (in person tap/dip/swipe; online or invoice; online via Square payments APIs; manually entered or card on file). The base is the whole transaction: 'Payment processing fees are taken out of the total amount of each transaction, including tax and tip', and the same rate applies to every card brand. Cards issued outside the US add a 1.5% international surcharge on top of the base rate (not applied to Afterpay, ACH, Cash App Pay, Bitcoin or EBT). ACH bank transfers cost 1% with a $1 minimum, capped at $10 per payment on invoices (Plus/Premium; the Free column shows no cap) and $5 per payment via the API. Fees are deducted before funds are transferred to the seller's bank; no rounding rule is published; chargebacks/dispute management carry no fee.",
+  "quotes": [
+    "Payment processing fees are taken out of the total amount of each transaction, including tax and tip. This fee covers all credit card fees and applies to every card brand at the same rate. The fee is deducted from the total transaction amount and applies to all businesses, including non-profit organizations.",
+    "Square\u2019s processing fees are deducted before funds are transferred to your linked bank account.",
+    "Tap, dip, or swipe\nApplies to in-person payments when a card is present.\n2.6% + 15\u00a2\n2.5% + 15\u00a2\n2.4% + 15\u00a2",
+    "Online\nApplies to card payments made online or through an invoice.\n3.3% + 30\u00a2\n2.9% + 30\u00a2\n2.9% + 30\u00a2",
+    "Online API\nApplies to card payments made within your web or mobile application's workflow using our payments APIs.\n2.9% + 30\u00a2\n2.9% + 30\u00a2\n2.9% + 30\u00a2",
+    "ACH bank transfer (via invoice)\nApplies to payments made on invoices with an ACH bank transfer.\n1%, $1 min\n1%, $1 min,\n$10 fee cap\n1%, $1 min,\n$10 fee cap",
+    "ACH bank transfer (via API)\nApplies to ACH transfers through the Web Payments SDK and Payments API.\n1%, $1 min, $5 fee cap\n1%, $1 min, $5 fee cap\n1%, $1 min, $5 fee cap",
+    "Manual entry or card on file\nApplies to payments when a card number is manually entered or when a saved card on file is used.\n3.5% + 15\u00a2\n3.5% + 15\u00a2\n3.5% + 15\u00a2",
+    "Afterpay\nYou get paid immediately, but customers pay over time in four installments.\n6% + 30\u00a2\n6% + 30\u00a2\n6% + 30\u00a2",
+    "Cash or check\nApplies to any payment made via cash or check.\nFree\nFree\nFree",
+    "Bitcoin payments\nApplies to in-person payments where buyer scans a QR code to pay in bitcoin.\n0% until 2027\n0% until 2027\n0% until 2027",
+    "EBT\nApplies to in-person payments made with an EBT card for SNAP-eligible items. Processing fees are waived for EBT payments while the feature is in beta, through fall 2026.\n1.8% + 5\u00a2\n1.8% + 5\u00a2\n1.8% + 5\u00a2",
+    "Locations\nWith Square Plus and Square Premium, the monthly fee applies to each location you run.\n$0/mo. per location\n$49/mo. per location\n$149/mo. per location",
+    "International card transaction fee\nAn additional fee applies to payments made on credit or debit cards issued outside of the United States.\n1.5%\n1.5%\n1.5%",
+    "Gift card load\nWith Square Free and Square Plus, you pay a 2.5% load fee. There are no additional fees when a gift card is redeemed.\n2.5% load fee\n2.5% load fee\n0% load fee",
+    "Processing fees vary based on the Square plan you choose. Square Premium offers the lowest processing fees. If you process over $250,000 per year, you can talk to our team about custom pricing and processing fees.",
+    "Square Plus and Square Premium each offer a free 30-day trial, and you can cancel or switch plans anytime. With Square Free, there are no monthly subscription costs \u2014 you only pay processing fees when you take a payment.",
+    "Payments made with credit or debit cards issued in a different country than the location of your Square account incur a 1.5% international transaction fee, in addition to Square\u2019s base processing fees. International transaction fees apply to in-person, online, card-not-present (CNP), and Square API transactions, as well as all Square pricing tiers.",
+    "International transaction fees don\u2019t apply to alternative payment methods such as Afterpay, ACH, Cash App Pay, Bitcoin, or EBT payments.",
+    "Here are the processing fees for legacy plan subscribers:\nSwiped Magstripe Cards: 2.6% + 15\u00a2 **\nSwiped or Inserted Chip Cards: 2.6% + 15\u00a2 **\nContactless (NFC) Payments: 2.6% + 15\u00a2 **\nTap to Pay on iPhone: 2.6% + 15\u00a2 **\nTap to Pay on Android: 2.6% + 15\u00a2 **\nPoint-of-Sale API Swiped or Inserted Payments: 2.6% + 15\u00a2 **\nSwiped Virtual Terminal Payments: 2.6% + 15\u00a2 **\nPayment Links Through Text in Virtual Terminal: 3.3% + 30\u00a2 **\nCard on File Transactions: 3.5% + 15\u00a2*\nManually Entered Card Payments: 3.5% + 15\u00a2*\nPoint-of-Sale API Keyed-In Payments: 3.5% + 15\u00a2*\nManually Entered Virtual Terminal Payments: 3.5% + 15\u00a2*\nSquare eCommerce API: 2.9% + 30\u00a2\nOnline payments: 3.3% + 30\u00a2 **\nSquare Invoices: 3.3% + 30\u00a2 **\nSquare Payment Links: 3.3% + 30\u00a2 **\nSubscription Payments: 3.3% + 30\u00a2 **\nCash App Pay (Card-Present Transactions): 2.6% + 15\u00a2 **\nCash App Pay (Card-Non-Present Transactions): 3.3% + 30\u00a2 **\nNeighborhoods on Cash App: 1% for participating Neighborhoods sellers on orders through Cash App.\nACH Transactions: 1%, minimum $1 **\n$0 fees for ACH transactions deposited into Square Checking\n$10 fee cap on all ACH bank transfer payments.\nInternational cards: 1.5% international transaction fee\nEBT processing fee: 1.8% + 5\u00a2 (waived during open beta)",
+    "**Payment processing rates may vary based on plan type. Check your Pricing & subscriptions page in Square Dashboard for rates applicable to your plan.",
+    "Bitcoin payments: 0% processing fees until December 31, 2026, after which it will be 1%.",
+    "Square sellers using Afterpay get paid the full amount at the time of purchase, minus a processing fee on the total order. Enabling Afterpay with Square is free \u2014 there are no monthly fees or startup costs. You only pay when you make a sale. There are no processing fees charged on the remaining installments or if your customer makes a late payment.",
+    "Afterpay rates are fixed and do not vary by subscription type, hardware or custom pricing.",
+    "There are no fees for:\nActivation\nDownloading the Square Point of Sale app\nChargebacks and Dispute management\nSquare Support\nAdvanced reporting tools\nAccount inactivity\nPCI compliance support\nAccount takeover protection\nEnd-to-end encrypted payments\nActive fraud prevention\nAs soon as next-business-day transfers\nFree Square Reader for magstripe\nEarly termination",
+    "You won\u2019t pay any fees for Cash, Check, and Other Tender payment types."
+  ],
+  "excluded": [
+    "Chargeback / dispute fees (Square states there are none)",
+    "Hardware prices (readers 'starting at $59')",
+    "Square KDS app ($30/$20 per device per month) and Square Kiosk app ($50/$30 per device per month)",
+    "Text message marketing overage (3\u00a2 / 1.5\u00a2 per text)",
+    "Square Payroll ($35/month + $6 per person paid)",
+    "Bitcoin buy/sell (1% plus spread), bitcoin conversions (1.0%/1.0%/0.5%), bitcoin withdrawal network fees ($2 rush / $3 priority)",
+    "Square Gift Card eGift order-site processing (3.3% + 30\u00a2 card-not-present)",
+    "Neighborhoods on Cash App 1% seller fee",
+    "Custom ('Square Pro') negotiated pricing for sellers over $250,000/year",
+    "Square Checking / Savings / Loans"
+  ],
+  "notes": [
+    "The three-column fee table on squareup.com/us/en/pricing, /payments/our-fees and /payments/fee-calculator lost its column headers in text extraction; the Free / Plus / Premium order was inferred from the plan-card order on the page and from the page text ('Lower processing fees' for Plus, 'Lowest processing fees' for Premium, and the FAQ 'Square Premium offers the lowest processing fees'), so the third column (2.4% + 15\u00a2 in person; $149/mo) = Premium, second (2.5% + 15\u00a2; $49/mo) = Plus, first (2.6% + 15\u00a2; $0/mo) = Free. Verify visually before publishing.",
+    "The help article's per-plan dropdowns ('Square Free', 'Square Plus', 'Square Premium') load only on click and could not be captured; the article's explicit rate list is for legacy plans, which match the Free column (2.6% + 15\u00a2 in person, 3.3% + 30\u00a2 online, 2.9% + 30\u00a2 eCommerce API, 3.5% + 15\u00a2 keyed/card on file).",
+    "ACH via invoice: the Free column reads '1%, $1 min' with no cap, while Plus/Premium read '1%, $1 min, $10 fee cap'; the legacy-plan help text says '$10 fee cap on all ACH bank transfer payments' and '$0 fees for ACH transactions deposited into Square Checking'. Calculator author must decide whether Free-plan ACH invoice payments are capped.",
+    "No rounding rule is published anywhere on the loaded pages; the /help/us/en/article/5092-rounding URL redirects to the general fees article.",
+    "The 'Online' rate on the new plans covers 'card payments made online or through an invoice' (3.3% + 30\u00a2 on Free, 2.9% + 30\u00a2 on Plus/Premium), while 'Online API' payments are 2.9% + 30\u00a2 on every plan \u2014 so on Square Free an invoice costs more than an API payment.",
+    "Square plans are monthly per location with no annual-billing price on the page; the free-trial length renders as an unfilled template placeholder ('{{sub2_api.num_free_trial_days}}') in the page text, while the FAQ states a 30-day trial.",
+    "The pricing page's only 'as of' dates are for savings APY (Jan 23, 2026) and do not date the fee schedule.",
+    "The in-person and online rates are the same for every card brand ('You can accept every major card \u2014 Visa, Mastercard, American Express, and Discover \u2014 all for the same processing fees').",
+    "Cash App Pay accepted through Square is priced on Square's legacy list at 2.6% + 15\u00a2 (card-present) / 3.3% + 30\u00a2 (card-not-present); the new-plan table does not list Cash App Pay separately."
+  ],
+  "rates": {
+    "in_person": {
+      "free": [
+        0.026,
+        0.15
+      ],
+      "plus": [
+        0.025,
+        0.15
+      ],
+      "premium": [
+        0.024,
+        0.15
+      ]
+    },
+    "online": {
+      "free": [
+        0.033,
+        0.3
+      ],
+      "plus": [
+        0.029,
+        0.3
+      ],
+      "premium": [
+        0.029,
+        0.3
+      ]
+    },
+    "api": [
+      0.029,
+      0.3
+    ],
+    "keyed": [
+      0.035,
+      0.15
+    ],
+    "ach_invoice": {
+      "rate": 0.01,
+      "min": 1.0,
+      "cap": {
+        "free": null,
+        "plus": 10.0,
+        "premium": 10.0
+      }
+    },
+    "ach_api": {
+      "rate": 0.01,
+      "min": 1.0,
+      "cap": 5.0
+    },
+    "afterpay": [
+      0.06,
+      0.3
+    ],
+    "international_surcharge": 0.015,
+    "plan_monthly": {
+      "free": 0,
+      "plus": 49,
+      "premium": 149
+    }
+  },
+  "summary": "Square takes a percentage plus a fixed amount of the whole transaction including tax and tip: 2.6% + 15\u00a2 in person, 3.3% + 30\u00a2 online or by invoice, and 3.5% + 15\u00a2 keyed in on the free plan, lower on the $49 Plus and $149 Premium plans. Cards issued outside the US add 1.5%.",
+  "inputs": [
+    {
+      "id": "amount",
+      "label": "Transaction total (including tax and tip)",
+      "type": "money",
+      "default": 100
+    },
+    {
+      "id": "plan",
+      "label": "Plan",
+      "type": "select",
+      "default": "free",
+      "options": [
+        [
+          "free",
+          "Square Free"
+        ],
+        [
+          "plus",
+          "Square Plus ($49/mo)"
+        ],
+        [
+          "premium",
+          "Square Premium ($149/mo)"
+        ]
+      ]
+    },
+    {
+      "id": "channel",
+      "label": "How the payment was taken",
+      "type": "select",
+      "default": "in_person",
+      "options": [
+        [
+          "in_person",
+          "In person (tap, dip, swipe)"
+        ],
+        [
+          "online",
+          "Online or invoice"
+        ],
+        [
+          "api",
+          "Online via Square APIs"
+        ],
+        [
+          "keyed",
+          "Manually entered / card on file"
+        ],
+        [
+          "ach_invoice",
+          "ACH bank payment on an invoice"
+        ],
+        [
+          "ach_api",
+          "ACH via API"
+        ],
+        [
+          "afterpay",
+          "Afterpay"
+        ]
+      ]
+    },
+    {
+      "id": "international",
+      "label": "Card issued outside the US (+1.5%)",
+      "type": "bool",
+      "default": false
+    }
+  ],
+  "examples": [
+    {
+      "description": "Arithmetic check derived from the published rates (Square publishes no worked example on the loaded pages): $100 tapped in person on Square Free.",
+      "inputs": {
+        "amount": 100,
+        "plan": "free",
+        "channel": "in_person"
+      },
+      "expected": {
+        "total_fees": 2.75,
+        "net": 97.25
+      },
+      "quote": "2.6% + 15\u00a2",
+      "source_url": "https://squareup.com/us/en/pricing",
+      "derived": true
+    }
+  ]
+}

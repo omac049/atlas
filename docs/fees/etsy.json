@@ -1,0 +1,186 @@
+{
+  "platform": "etsy",
+  "name": "Etsy (US sellers)",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://www.etsy.com/legal/etsy-payments/",
+      "title": "Etsy Payments Policy - Our House Rules | Etsy",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "Last updated on Jul 31, 2026"
+    },
+    {
+      "url": "https://help.etsy.com/hc/en-us/articles/115015628847-What-are-Payment-Processing-Fees-for-Selling-on-Etsy",
+      "title": "What are Payment Processing Fees for Selling on Etsy? \u2013 Etsy Help",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://www.etsy.com/legal/fees/",
+      "title": "Fees & Payments Policy - Our House Rules | Etsy",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "Last updated on Feb 13, 2026"
+    },
+    {
+      "url": "https://help.etsy.com/hc/en-us/articles/360035902374-Etsy-Fee-Basics",
+      "title": "Etsy Fee Basics \u2013 Etsy Help",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://help.etsy.com/hc/en-us/articles/115014483627-What-are-the-Fees-and-Taxes-for-Selling-on-Etsy",
+      "title": "What are the Fees and Taxes for Selling on Etsy? \u2013 Etsy Help",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "Etsy.com sellers paid through Etsy Payments with a US bank account. Pattern, Etsy Plus, in-person Square sales, shipping labels and currency conversion are out of scope.",
+  "quotes": [
+    "United States | 3% + 0.25 USD",
+    "Location of Bank Account | Etsy Payments Fees (% of total sale price + flat fee per order) exclusive of VAT, where applicable | Deposit fee where applicable (exclusive of VAT, where applicable)",
+    "Location of Bank Account | Fees for Etsy Payments(% of total sale price + flat fee per order)",
+    "A. Overview. Etsy charges a fee (the \u201cPayment Processing Fee\u201d) for each transaction processed through Etsy Payments. The fee amount will be assessed on the gross order amount, including shipping and tax (if applicable). Payment Processing Fees will be reflected in your payment account and will be deducted from the total amount of the payment at the time the payment is considered complete.",
+    "B. Fee Amount. Payment Processing Fees vary based on the location of a seller\u2019s bank account.",
+    "In the event of any partial or full refunds credited back to a buyer by a seller, the Payment Processing Fee and other applicable fees will be recalculated based on the adjusted sale price. The difference between the original Payment Processing Fee and the adjusted Payment Processing Fee will be applied to the refund amount being credited back to the seller.",
+    "Payment processing fees are a set rate plus a percent of the total sale price of the item. This rate and percent vary by country. The fees are taken from the item\u2019s total sale price, including its shipping fees, and any applicable sales tax.",
+    "These processing fees appear in your payment account and are deducted prior to deposit.",
+    "Payment processing fees are in addition to the 6.5% transaction fee that applies to the cost of the entire order.",
+    "The payment processing fee is assessed on the total amount of the sale, including tax and shipping. Payment processing fees are deducted from the sale amount in your payment account.",
+    "The standard Etsy Payments Payment Processing Fee (described below) applies to orders that go through integrated PayPal; there is no additional PayPal fee.",
+    "Etsy also charges the Etsy Payments payment processing fee described above on Etsy Gift Card, Etsy Credit, and Etsy Coupon transactions.",
+    "You will be charged a listing fee of $0.20 USD for each item that you list for sale on Etsy.com or Etsy's mobile apps.",
+    "You will be charged a listing fee whether or not the listed item sells, unless you create a private listing, in which case you will only be charged the listing fee when the private listing is sold. Etsy.com listings expire after four months.",
+    "If you list multiple quantities of the same item, the initial listing fee will be $0.20, and the listing will be automatically renewed at $0.20 after each of the items sells.",
+    "When you make a sale through Etsy.com, you will be charged a transaction fee of 6.5% of the price you display for each listing plus the amount you charge for shipping and gift wrapping.",
+    "If you sell from the US, the transaction fee will not apply to sales tax.",
+    "Etsy charges 6.5% of the total order amount in your designated listing currency.",
+    "As an Etsy Payments user, if you decide to list in a currency other than that of your payment account, you will be charged a 2.5% currency conversion fee on the sale amount to send funds to your payment account.",
+    "C. Listing Currency Conversion Considerations for Sellers. When a seller lists and subsequently sells an item in a currency other than the currency of the seller's payment account, Etsy will settle the associated transaction proceeds in the currency of the seller's payment account. When such a service is required, Etsy applies an additional 2.5% currency conversion fee.",
+    "E. Instant Transfer (US seller only). Eligible U.S sellers may use instant transfer to make transfers from their Etsy Payment account directly to their bank account, subject to a fee. Please note that if applicable, an instant transfer fee will be charged and displayed as part of the transfer process.",
+    "Last updated on Jul 31, 2026",
+    "Last updated on Feb 13, 2026",
+    "The standard fee you will pay is 15% on Attributed Orders, unless the 12% fee applies as described below."
+  ],
+  "excluded": [
+    "Offsite Ads fee (15% of attributed order total, or 12% for shops with >= $10,000 USD sales in prior 365 days; capped at $100 USD per order) \u2014 advertising",
+    "Etsy Ads (budgeted CPC advertising)",
+    "Etsy Plus subscription ($10 USD/month) and Pattern ($15.00 USD/month after 30-day trial)",
+    "Shipping label costs",
+    "Instant transfer fee (US; amount not published on loaded pages)",
+    "Set-up fee (one-time; amount 'varies by location', not published)",
+    "Square in-person selling fees ($0.20 'Square manual' fee for non-synced listings; Square processing)",
+    "Regulatory Operating fees (UK, France, Italy, India, Spain, T\u00fcrkiye, Vietnam, Canada only)",
+    "Deposit minimums / deposit fees (Indonesia, Israel, Malaysia, Mexico, Morocco, Philippines, South Africa, T\u00fcrkiye, Vietnam only)",
+    "VAT on seller fees (non-US) and US sales tax on certain fees"
+  ],
+  "notes": [
+    "US processing fee 3% + $0.25 USD is stated identically on the Etsy Payments Policy (Section 9B table, 'Last updated on Jul 31, 2026') and on help article 115015628847. Both label the fixed part as a 'flat fee per order'.",
+    "URL note: the task's suggested path etsy.com/legal/policy/etsy-payments-policy was not fetched; the Fees & Payments Policy links to https://www.etsy.com/legal/etsy-payments/ which is the live 'Etsy Payments Policy' page and was used.",
+    "Base difference: the processing fee base INCLUDES sales tax and shipping; the 6.5% transaction fee base is display price + shipping + gift wrap and, for US sellers, EXCLUDES sales tax. Listing fee is per listing/renewal, not per sale.",
+    "The help article rounds the Etsy Payments policy table slightly differently in places (e.g., 'India | 5%+ 25 INR' vs '5% + 25 INR'; Vietnam '11500 VND' vs '11,550 VND') \u2014 non-US, flagged only as evidence the two tables are maintained separately. US row matches exactly.",
+    "Etsy Payments policy table shows 'effective July 8, 2024' rate changes for Mexico and T\u00fcrkiye only; no dated change for the US row.",
+    "Etsy.com pages blocked the crawl4ai and plain fetchers; they loaded with the stealth Playwright fetcher. Help-center (Zendesk) pages loaded with a plain Playwright fetch.",
+    "No platform-provided worked example of the processing fee or transaction fee exists on the loaded pages; only the multi-quantity listing-fee example.",
+    "Etsy Plus includes '15 listing credits, which are visible as $3 in listings credit' (consistent with $0.20 x 15)."
+  ],
+  "rates": {
+    "listing_fee": 0.2,
+    "transaction_rate": 0.065,
+    "processing_rate_us": 0.03,
+    "processing_fixed_us": 0.25,
+    "offsite_ads_standard": 0.15,
+    "offsite_ads_reduced": 0.12,
+    "offsite_ads_cap": 100.0,
+    "currency_conversion_rate": 0.025
+  },
+  "structure": "Three fees on every US sale: a $0.20 listing fee per unit sold (the listing renews at $0.20 after each sale); a 6.5% transaction fee on the price you display plus shipping and gift wrap (US sales tax is not included in that base); and Etsy Payments processing of 3% of the gross order \u2014 including shipping and tax \u2014 plus $0.25 per order. If a sale is attributed to an Offsite Ad within 30 days of a click, an Offsite Ads fee of 15% (12% for shops that have reached $10,000 in trailing sales, for which the program is mandatory) applies to the same base as the transaction fee, capped at $100 per order.",
+  "summary": "Etsy charges $0.20 to list, 6.5% of the price plus shipping when it sells, and 3% + $0.25 to process the payment (on the order including tax). An Offsite Ads sale adds 12% or 15%, capped at $100.",
+  "inputs": [
+    {
+      "id": "price",
+      "label": "Item price",
+      "type": "money",
+      "default": 100
+    },
+    {
+      "id": "shipping",
+      "label": "Shipping charged to buyer",
+      "type": "money",
+      "default": 0
+    },
+    {
+      "id": "gift_wrap",
+      "label": "Gift wrap charged",
+      "type": "money",
+      "default": 0
+    },
+    {
+      "id": "sales_tax_rate",
+      "label": "Buyer's sales tax rate",
+      "type": "percent",
+      "default": 0,
+      "help": "Etsy collects it; it raises the processing fee base but not the 6.5% fee."
+    },
+    {
+      "id": "quantity",
+      "label": "Units in this order",
+      "type": "money",
+      "default": 1,
+      "help": "Listing fee is $0.20 per unit sold."
+    },
+    {
+      "id": "offsite_ad",
+      "label": "Sale came from an Offsite Ad",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "offsite_rate",
+      "label": "Offsite Ads rate",
+      "type": "select",
+      "default": "0.15",
+      "options": [
+        [
+          "0.15",
+          "15% (under $10,000 trailing sales)"
+        ],
+        [
+          "0.12",
+          "12% ($10,000+ trailing sales)"
+        ]
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "description": "Etsy's own multi-quantity listing example: two units sold in one order pay the $0.20 listing fee twice.",
+      "inputs": {
+        "price": 10,
+        "quantity": 2
+      },
+      "expected": {
+        "listing_fee": 0.4
+      },
+      "quote": "If you list multiple quantities of the same item, the initial listing fee will be $0.20, and the listing will be automatically renewed at $0.20 after each of the items sells.",
+      "source_url": "https://www.etsy.com/legal/fees/"
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: $100 item, $5 shipping, no tax, not an Offsite Ads sale.",
+      "inputs": {
+        "price": 100,
+        "shipping": 5,
+        "quantity": 1
+      },
+      "expected": {
+        "listing_fee": 0.2,
+        "transaction_fee": 6.83,
+        "processing_fee": 3.4,
+        "total_fees": 10.43,
+        "net": 94.57
+      },
+      "quote": "you will be charged a transaction fee of 6.5% of the price you display for each listing plus the amount you charge for shipping and gift wrapping \u2026 3% + $0.25 USD",
+      "source_url": "https://www.etsy.com/legal/etsy-payments/",
+      "derived": true
+    }
+  ]
+}

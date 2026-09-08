@@ -50,6 +50,13 @@
     tbody.appendChild(net);
     table.appendChild(tbody);
     target.appendChild(table);
+    if (result.buyer_fees && result.buyer_fees.length) {
+      const bt = el("table", { class: "fees buyer" }); const bb = el("tbody");
+      for (const b of result.buyer_fees) { const tr = el("tr"); tr.appendChild(el("td", { text: b.label })); tr.appendChild(el("td", { class: "num", text: money(b.amount) })); bb.appendChild(tr); }
+      bt.appendChild(bb); target.appendChild(el("p", { class: "muted", text: "Paid by the buyer on top — not deducted from you:" })); target.appendChild(bt);
+    }
+    if (result.note) target.appendChild(el("p", { class: "muted", text: result.note }));
+    if (result.lines.length === 0) target.insertBefore(el("p", { text: "No seller fees." }), target.firstChild);
     const eff = el("p", { class: "muted", text: "Effective rate: " + result.effective_rate.toFixed(2) + "% of what you charged" + (result.total_sale !== undefined ? " · fee base (total sale incl. tax): " + money(result.total_sale) : "") });
     target.appendChild(eff);
   }

@@ -1,0 +1,119 @@
+{
+  "platform": "mercari",
+  "name": "Mercari",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://www.mercari.com/us/help_center/article/169/",
+      "title": "Fees on Mercari | Mercari Help",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "Updated 05/07/2026"
+    },
+    {
+      "url": "https://www.mercari.com/us/help_center/article/2517/",
+      "title": "Changes to our fee structure | Mercari Help",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://www.mercari.com/us/help_center/article/2518/",
+      "title": "FAQs about our new fee structure | Mercari Help",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "Last updated: 12/9/2024; 12/18/2024; 1/6/2025"
+    },
+    {
+      "url": "https://www.mercari.com/us/help_center/article/93/",
+      "title": "How to request a direct deposit or Instant Pay | Mercari Help",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "Seller fees on US Mercari listings created or updated since January 6, 2025; the buyer-paid Buyer Protection fee is shown for context. Legacy pre-2025 listings are described in notes.",
+  "structure": "For listings created or updated on or after January 6, 2025, the seller pays a flat 10% selling fee on the combined item price plus buyer-paid shipping; no separate payment-processing fee is charged to either side. The buyer pays a 3.6% Buyer Protection fee on the same base (item price + buyer-paid shipping), shown in the checkout total and not deducted from the seller. Legacy listings created before January 6, 2025 and never updated carry the old structure instead: no seller fee, but the buyer pays a 10% service fee and a payment-processing fee of $0.50 + 2.9% of the transaction price (item + shipping + service fee + sales tax). Payouts: ACH direct deposit is free (once per day; $2 for each failed request); Instant Pay costs a flat $3 per cash-out (once per day, up to $600/month). Rounding is not published.",
+  "quotes": [
+    "Listing an item is always free on Mercari. Fees are charged when an item sells or when a service is used.",
+    "Effective January 6, 2025, a 10% selling fee will apply to item price and buyer-paid shipping for new and updated listings.",
+    "A 10% selling fee of the combined amount of item price and buyer-paid shipping will be charged to the seller.",
+    "Existing listings created before January 6, 2025 A selling fee will not be applied until the listing is updated.",
+    "Effective January 6, 2025, Mercari will no longer charge buyers a payment processing fee at the time of purchase on new or updated listings.",
+    "Until the listing is updated, a Payment Processing Fee of $0.50 plus 2.9% of the transaction price (includes the item price, shipping, service fee and sales tax) will be charged to the buyer.",
+    "Starting January 6, 2025, a Buyer Protection fee of 3.6% will apply to the item price and buyer-paid shipping for new and updated listings.",
+    "A 10% buyer fee will apply to the buyer until the listing is updated.",
+    "Effective January 6, 2025 at 2:00 PM PT, there is no longer a $2 non-refundable fee per cash-out.",
+    "There is $2 non-refundable fee for each failed direct deposit request.",
+    "You can use Instant Pay for up to $600 per month, once per day on eligible debit cards. There is a $3 flat fee per cash-out.",
+    "$3 fee For each completed Instant Pay transfer.",
+    "If a seller has frequent cancelations, Mercari may charge a cancelation fee of 5% of the item price (maximum of $25) to cover the cost of any transaction fees, operational and/or shipping label costs we incur.",
+    "Sellers will pay a flat 10% selling fee on the completed item price and buyer-paid shipping",
+    "No additional payment processing fee for either buyers or sellers",
+    "Payment processing fees (2.9% + $0.50) apply to items sold with the old fee structure.",
+    "We\u2019re removing the ACH direct deposit fee for successful withdrawal transactions. Limit to one ACH direct deposit per day."
+  ],
+  "excluded": [
+    "Buyer Protection fee (buyer-paid)",
+    "Mercari Authenticate listing fee ($5) and Certificate of Authenticity ($10)",
+    "Prepaid shipping label rates (USPS/UPS/FedEx tables; USPS rates updated May 7, 2026) and underpaid-label / wrong-packaging surcharges",
+    "Legal document processing fee ($25/hour, paid by agencies)",
+    "Third-party warranties (buyer-paid)",
+    "Sales tax"
+  ],
+  "notes": [
+    "Timeline (official): March 2024 \u2014 seller fees removed and a buyer service fee introduced ('When we initially introduced our current fee structure in March ... sellers got to keep 100% of their sales proceeds'); January 6, 2025 \u2014 10% selling fee reinstated, 3.6% Buyer Protection fee introduced, payment-processing fee dropped for new/updated listings, $2 ACH cash-out fee removed at 2:00 PM PT; January 6\u201312, 2025 \u2014 transition week with no 10% fee on old-structure listings; May 7, 2026 \u2014 prepaid USPS label rates changed for the fuel surcharge (fee page 'Updated 05/07/2026'). No 2026 change to the 10% / 3.6% structure appears on official pages.",
+    "Conflict: several third-party pages date the reinstated 10% fee to 'January 6, 2026' \u2014 UNVERIFIED and contradicted by Mercari's own pages, which say January 6, 2025.",
+    "Calculator ambiguity: the fee base is 'item price + buyer-paid shipping'. When the seller offers free shipping there is no buyer-paid shipping in the base, and the label cost comes out of the seller's proceeds (label prices from the rate table); when the buyer pays shipping via a Mercari label, the fee is 10% of item + shipping even though the shipping money passes through to the carrier.",
+    "Legacy structure applies only to listings created before Jan 6, 2025 that were never updated; Mercari said existing listings would be 'updated automatically within a week', so it should be rare in 2026.",
+    "Instant Pay details ($3 flat, $600/month, once per day, up to 30 minutes) come from the fee page; the dedicated Instant Pay how-to article (article 93) is JavaScript-rendered and returned an empty body to HTTP fetchers."
+  ],
+  "rates": {
+    "selling_fee": 0.1,
+    "processing": [
+      0.0,
+      0.0
+    ],
+    "buyer_protection_buyer_paid": 0.036,
+    "instant_pay_per_cashout": 3.0,
+    "legacy_buyer_service_fee": 0.1,
+    "legacy_processing_buyer_paid": [
+      0.029,
+      0.5
+    ]
+  },
+  "summary": "Mercari takes a 10% selling fee on the item price plus buyer-paid shipping, with no separate payment processing fee, for listings created or updated since January 6, 2025. The buyer pays a 3.6% Buyer Protection fee on top. Instant Pay costs $3 per cash-out; direct deposit is free.",
+  "inputs": [
+    {
+      "id": "price",
+      "label": "Item price",
+      "type": "money",
+      "default": 50
+    },
+    {
+      "id": "shipping",
+      "label": "Shipping paid by buyer",
+      "type": "money",
+      "default": 0,
+      "help": "If you offer free shipping, the label cost is yours and not part of the fee base."
+    },
+    {
+      "id": "instant_pay",
+      "label": "Instant Pay cash-out ($3)",
+      "type": "bool",
+      "default": false
+    }
+  ],
+  "examples": [
+    {
+      "description": "Arithmetic check derived from the published rate: $50 item with $5 buyer-paid shipping pays 10% of $55.",
+      "inputs": {
+        "price": 50,
+        "shipping": 5
+      },
+      "expected": {
+        "total_fees": 5.5,
+        "net": 49.5
+      },
+      "quote": "10% selling fee",
+      "source_url": "https://www.mercari.com/us/help_center/article/169/",
+      "derived": true
+    }
+  ]
+}

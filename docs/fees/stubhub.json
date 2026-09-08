@@ -1,0 +1,122 @@
+{
+  "platform": "stubhub",
+  "name": "StubHub (US)",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://support.stubhub.com/articles/61000276841-stubhubs-fees-to-sell-tickets",
+      "title": "StubHub\u2019s fees to sell tickets",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://support.stubhub.com/articles/61000276392-stubhubs-fees-to-buy-and-sell-tickets",
+      "title": "StubHub\u2019s fees to buy and sell tickets",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://support.stubhub.com/articles/61000276591-get-paid-for-sold-tickets",
+      "title": "Get paid for sold tickets",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://support.stubhub.com/articles/61000276706-expected-payout-from-sold-tickets",
+      "title": "Expected payout from sold tickets",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://support.stubhub.com/articles/61000276710-paypal-fees-when-selling-tickets",
+      "title": "PayPal fees when selling tickets",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://www.stubhub.com/legal?section=sp",
+      "title": "Seller Policies (stubhub.com/legal, section=sp)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://www.stubhub.com/legal?section=ua",
+      "title": "Global User Agreement (stubhub.com/legal, section=ua)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://newsroom.stubhub.com/2026/06/04/understanding-ticket-fees-why-they-exist-and-what-they-cover/",
+      "title": "Understanding Ticket Fees: Why They Exist and What They Cover \u2013 StubHub Newsroom",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": "June 4, 2026"
+    },
+    {
+      "url": "https://support.stubhub.com/articles/61000276682-cancelled-sale-charges",
+      "title": "Cancelled sale charges",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://support.stubhub.com/articles/61000276777-stubhubs-penalties-if-you-cant-deliver-tickets-you-sold",
+      "title": "StubHub's penalties if you can't deliver tickets you sold",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "Seller fees on StubHub in the US.",
+  "quotes": [
+    "It's free to list tickets on StubHub! When they sell, we collect a sell fee. This may change over time depending on ticket supply and ticket marketing costs.",
+    "StubHub's fees help us create a safe, global ticket marketplace. As long as you deliver your tickets as promised and on time, this is the only StubHub fee you'll ever pay.",
+    "There\u2019s no set percentage for sell fees. Fees adjust based on ticket price, time to event, updated event information, and supply and demand.",
+    "It's free to list tickets on StubHub. If your tickets sell, we collect a sell fee.",
+    "When listing tickets: On the \u201cSet Your Price\u201d page, under \u201cEnter your price to continue\u201d see the payout you\u2019ll get if your tickets sell. Select the question mark under your payout to see a breakdown, including the sell fee.",
+    "After your tickets sell: In your sale details, see your total payout under \u201cPrice per ticket,\u201d with the sell fee subtracted.",
+    "If you deliver your tickets on time and as promised, the sell fee is the only fee you pay to sell tickets. If you don\u2019t fulfill your seller responsibilities per our Global User Agreement and our Seller Policies, you\u2019ll be charged whichever is greater: 100% of the price of the tickets sold. The full amount incurred by us to remedy the issue for the buyer.",
+    "There\u2019s no set percentage for buy fees. Fees adjust based on ticket price, time to event, updated event information, and supply and demand.",
+    "The only fees you pay are the service fee and fulfillment fee at checkout.",
+    "Typically, payouts from selling tickets are processed within 8 business days after the event. This timeline ensures there were no issues with your tickets and includes processing time but doesn\u2019t include local bank holidays.",
+    "Sellers will usually be sent payments within five (5) business days (sometimes longer) following the event. In some cases as determined in our sole discretion, sellers will be sent payment within five (5) business days (sometimes longer) of our confirmation of the buyer's receipt of tickets or related passes.",
+    "When you sell tickets on StubHub, we don't charge extra fees for being paid through PayPal.",
+    "If you ask PayPal to send you a check, there may be an extra service fee.",
+    "As of January 1, 2025, all U.S. sellers must provide a TIN to receive payment.",
+    "We may charge fees for selling and/or buying Tickets through our Site and/or otherwise using our Services, as well as delivery or fulfillment fees (collectively referred to as \u201cService Fees\u201d). Service Fees may vary depending on various factors, including event type, Ticket type, optional features selected by you (e.g., Sponsored Listings), and location.",
+    "Any applicable Service Fees including any taxes if applicable will be disclosed to you prior to listing or buying a Ticket.",
+    "If you dropped your sale, we will charge your payment method an amount equal to the greater of (i) 100% of the price of the ticket(s) sold or (ii) the full amount incurred by us to remedy the dropped sale",
+    "If you fail to respond to this email and or to take any other actions required by us to investigate the invalid ticket claim, you may be charged an amount equal to 20% of the cost of the original tickets, in addition to the Invalid Ticket Charge described in the paragraph above.",
+    "Individual sellers set their own asking prices, and StubHub\u2019s buyer fee is calculated as a percentage of that price. Higher-priced listings carry proportionally higher fees.",
+    "As of May 2025, all major ticket platforms including StubHub display fees included in default prices, in compliance with rules from the Federal Trade Commission (FTC) and state laws to prevent hidden fees for live-event tickets."
+  ],
+  "excluded": [
+    "Buyer-side service fee and fulfillment fee (paid by buyer at checkout; no published percentage)",
+    "Sponsored Listings (seller advertising 'Service Fees', cost-per-impression or cost-per-click; no published rates)",
+    "Penalty charges for dropped sales / invalid tickets (contingent, not a fee on a completed sale)",
+    "EEA/non-US administrative fee of 25 Euros per issue (non-US events)",
+    "PayPal's own check-issuance fee",
+    "Taxes (seller responsible unless StubHub is required to collect)"
+  ],
+  "notes": [
+    "NO NUMERIC SELLER FEE PERCENTAGE EXISTS ON ANY OFFICIAL STUBHUB PAGE loaded (help center, Seller Policies, User Agreement, newsroom). Third-party sites' figures (commonly quoted ~10%) were deliberately not used per the task rules; the sell fee is only visible per listing inside the seller flow.",
+    "CONFLICT on payout timing: help article 'Get paid for sold tickets' says within 8 business days after the event; Seller Policies section 5.1 says 'usually ... within five (5) business days (sometimes longer) following the event'. Both are official and current as loaded.",
+    "The support articles initially returned empty bodies (client-rendered); they loaded fully with a Playwright fetch using network-idle wait. The WebFetch fallback for the /en/support/solutions/articles/... URL variant returned no content.",
+    "Neither the Seller Policies nor the Global User Agreement displays a 'last updated' or effective date in the rendered text.",
+    "Seller Policies note that for US/Canada events, Instant Download sellers 'get paid more quickly' (no number given).",
+    "Newsroom article (June 4, 2026) confirms buyer fee is a percentage of the seller's asking price but gives no rate.",
+    "US sellers must supply a TIN since January 1, 2025 to be paid (1099-K)."
+  ],
+  "no_calculator": true,
+  "rates": {
+    "seller_fee_rate": "NOT PUBLISHED \u2014 variable per listing; StubHub states 'There\u2019s no set percentage for sell fees.'",
+    "buyer_fee_rate": "NOT PUBLISHED \u2014 variable; 'There\u2019s no set percentage for buy fees.' Buyer pays a service fee and a fulfillment fee at checkout.",
+    "listing_fee": 0,
+    "paypal_payout_surcharge": 0,
+    "dropped_sale_or_invalid_ticket_charge": "greater of 100% of the price of the ticket(s) sold or the full amount incurred by StubHub to remedy the issue",
+    "invalid_ticket_claim_non_response_additional_charge_rate": 0.2,
+    "eea_admin_fee_per_issue_eur": 25,
+    "payout_timing_help_center_business_days_after_event": 8,
+    "payout_timing_seller_policies_business_days_after_event": 5
+  },
+  "structure": "Listing is free. When tickets sell, StubHub deducts a 'sell fee' from the seller's listed price; the seller's payout is 'Price per ticket' with the sell fee subtracted. StubHub publishes no fixed percentage: the sell fee 'adjusts based on ticket price, time to event, updated event information, and supply and demand' and is shown to the seller only inside the listing flow (Set Your Price page > question mark under payout) and in listing/sale details. Buyers separately pay a service fee plus a fulfillment fee at checkout (also no set percentage); StubHub shows 'all-in' prices including fees. The User Agreement defines all of these as 'Service Fees' that 'may vary depending on various factors, including event type, Ticket type, optional features selected by you (e.g., Sponsored Listings), and location' and may be offset against amounts owed to the seller. Payout: the help center says payouts 'are processed within 8 business days after the event'; the Seller Policies say sellers 'will usually be sent payments within five (5) business days (sometimes longer) following the event', or in some cases within five business days of confirmed buyer receipt. Payout methods: PayPal or bank transfer; no StubHub surcharge for PayPal. Penalties (not fees on a normal sale): if the seller drops the sale or delivers invalid tickets, StubHub charges the greater of 100% of the ticket price or its full remedy cost; failing to respond to an invalid-ticket investigation can add 20% of the original ticket cost. Rounding not stated.",
+  "summary": "StubHub publishes no seller fee percentage: its help center says there is no set percentage, the sell fee varies by ticket price, time to event and demand, and it is shown to you only inside the listing flow. Listing is free; buyers pay a separate service and fulfillment fee.",
+  "examples": []
+}
