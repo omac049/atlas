@@ -7,6 +7,9 @@ unset means the build stays local. Nothing here edits a schedule file.
 Environment (plist EnvironmentVariables):
   FEES_SITE_BASE_URL      canonical origin (the owner's domain once bought)
   FEES_SITE_PUBLISH_CMD   shell command run after a successful build, cwd = repo root
+
+The publish step prepends the newest nvm node to PATH: launchd's PATH has no
+node, and `npx wrangler` should run on the same node the shell uses.
 """
 
 import os
@@ -27,6 +30,21 @@ def log(message: str) -> None:
         handle.write(f"{stamp} {message}\n")
 
 
+def publish_env() -> dict[str, str]:
+    """PATH with the newest nvm node first (launchd's PATH has none)."""
+    env = dict(os.environ)
+    node_dir = Path.home() / ".nvm" / "versions" / "node"
+    versions = [p for p in node_dir.glob("v*") if (p / "bin").is_dir()]
+    if versions:
+
+        def key(p: Path) -> tuple[int, ...]:
+            return tuple(int(x) if x.isdigit() else 0 for x in p.name.lstrip("v").split("."))
+
+        newest = max(versions, key=key)
+        env["PATH"] = f"{newest / 'bin'}:{env.get('PATH', '')}"
+    return env
+
+
 def run(args: list[str], timeout: int) -> subprocess.CompletedProcess:
     return subprocess.run(args, cwd=REPO_ROOT, capture_output=True, text=True, timeout=timeout, check=False)
 
@@ -44,7 +62,10 @@ def main() -> None:
     if not publish_cmd:
         log("publish skipped: FEES_SITE_PUBLISH_CMD unset (build is local only)")
         return
-    published = subprocess.run(publish_cmd, shell=True, cwd=REPO_ROOT, capture_output=True, text=True, timeout=600, check=False)
+    published = subprocess.run(
+        publish_cmd, shell=True, cwd=REPO_ROOT, env=publish_env(),
+        capture_output=True, text=True, timeout=600, check=False,
+    )
     if published.returncode != 0:
         log(f"ERROR publish failed rc={published.returncode} {published.stderr.strip()[-300:]}")
         return
