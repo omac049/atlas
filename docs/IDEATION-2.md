@@ -138,7 +138,30 @@ disclosed on every page. Domains available at time of writing:
 Nothing is built until the owner says so. samebetornot.com keeps running
 untouched; its six-week clock is the control.
 
-### Monetization — pending
+### Monetization (criterion 3) — verified from program pages, 2026-09-08
 
-_The affiliate-program verification is still running; its table is written
-here when it lands, with the source URL per program._
+Seller and payment tools (the reader of a fee-calculator page):
+
+| Program | Pays | Network | Source loaded |
+|---|---|---|---|
+| Shopify Affiliates | **$150** one-time per qualified full-price merchant (US, CA, AU, UK…) | Impact | shopify.com/affiliates |
+| QuickBooks (Intuit) | **$25–$300** per eligible subscription, by plan | CJ / FlexOffers; business program in-house | official program page |
+| Wise | £10 per new personal customer, **£50 per business** customer | Partnerize | wise.com affiliates |
+| Printful | 10% of product price on referred stores' orders for 12 months | in-house | printful.com affiliates |
+| Printify | 5% of catalog price on referred users' orders for 12 months | PartnerStack | printify.com affiliates |
+| eBay Partner Network | % of gross merchandise bought, per-category rate card with caps (e.g., fashion 4%, $550 cap); 24-hour attribution | in-house | rate card page |
+| Payoneer, Melio, Etsy, Avalara | programs exist; payouts not published (case-by-case) | various | official pages |
+
+Criterion 3 **passes** for space A on Shopify and QuickBooks alone. Square,
+Stripe, PayPal, GoFundMe and the crosslisting tools (Vendoo, List Perfectly,
+Crosslist) are still being verified and are recorded here when they land.
+
+Adjacent, for completeness (space D readers): LLC formation pays the most of
+anything measured — ZenBusiness $75/$125/$175 per plan, Northwest $150 per
+formation, LegalZoom from $125 CPA, Bizee $50–$175 — but sits on SERPs owned
+by those same companies and by NerdWallet-class publishers, which is why D
+did not pass. Tax software pays 15–16% (TaxAct, FreeTaxUSA, TurboTax).
+Passport expediters: Swift $75 per order, RushMyPassport 10% of ~$350.
+Online notary: 10–15%. Medical-card services: NuggMD $20 CPA.
+
+Fintech (space B) program payouts: _pending from the same researcher._
