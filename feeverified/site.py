@@ -14,6 +14,8 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
+from feeverified import engine
+
 ROOT = Path(__file__).resolve().parent.parent
 FEES_DIR = ROOT / "docs" / "fees"
 STATIC_DIR = ROOT / "feeverified" / "static"
@@ -83,7 +85,16 @@ background:#fcfcfc}footer{max-width:900px;margin:0 auto;padding:22px 20px;border
 font-size:13px;color:var(--muted)}code{background:var(--soft);padding:1px 5px;border-radius:4px}
 """
 
-_NAV = (("index.html", "Calculators"), ("methodology.html", "How it's verified"), ("about.html", "About"))
+_NAV = (("index.html", "Calculators"), ("compare.html", "Compare"), ("methodology.html", "How it's verified"), ("about.html", "About"))
+
+# Comparison pages people actually search for; rendered only for the platforms
+# whose schedules exist, with each platform's declared defaults.
+COMPARISONS = (
+    ("resale-marketplaces", "eBay vs Mercari vs Poshmark vs Depop fees", ("ebay", "mercari", "poshmark", "depop")),
+    ("payment-processors", "PayPal vs Stripe vs Square fees", ("paypal", "stripe", "square")),
+    ("etsy-vs-shopify", "Etsy vs Shopify fees", ("etsy", "shopify")),
+    ("payment-apps", "Venmo vs Cash App vs PayPal fees for goods and services", ("venmo", "cashapp", "paypal")),
+)
 
 
 def _href(path: str) -> str:
@@ -117,7 +128,8 @@ def status_for(schedule: dict, verification: dict) -> tuple[str, str, str]:
 
 
 def _page(site: dict, *, title: str, path: str, body: str, description: str, head_extra: str = "") -> str:
-    nav = "".join(f'<a href="{_href(h) or "./"}">{_esc(label)}</a>' for h, label in _NAV)
+    root = "../" * path.count("/")
+    nav = "".join(f'<a href="{root}{_href(h) or "./"}">{_esc(label)}</a>' for h, label in _NAV)
     canonical = f"{site['base_url'].rstrip('/')}/{_href(path)}"
     return (
         "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\">"
@@ -126,10 +138,10 @@ def _page(site: dict, *, title: str, path: str, body: str, description: str, hea
         f"<link rel=\"canonical\" href=\"{_esc(canonical)}\">"
         f"<meta property=\"og:title\" content=\"{_esc(title)}\"><meta property=\"og:description\" content=\"{_esc(description)}\">"
         f"<style>{_CSS}</style>{head_extra}</head><body>"
-        f"<header><div class=\"top\"><a class=\"brand\" href=\"./\">Fee <span>Verified</span></a><nav>{nav}</nav></div></header>"
+        f"<header><div class=\"top\"><a class=\"brand\" href=\"{root or './'}\">Fee <span>Verified</span></a><nav>{nav}</nav></div></header>"
         f"<main>{body}</main>"
         f"<footer><p>{_esc(DISCLOSURE)}</p><p>{_esc(NOT_ADVICE)}</p>"
-        f"<p>Generated {_esc(site['stamp'])}. <a href=\"methodology\">How every number is verified</a> · <a href=\"about\">About</a></p></footer>"
+        f"<p>Generated {_esc(site['stamp'])}. <a href=\"{root}methodology\">How every number is verified</a> · <a href=\"{root}about\">About</a></p></footer>"
         "</body></html>\n"
     )
 
@@ -154,11 +166,20 @@ def render_platform(site: dict, schedule: dict, verification: dict, engine_js: s
     excluded = "".join(f"<li>{_esc(x)}</li>" for x in schedule.get("excluded", []))
     notes = "".join(f"<li>{_esc(x)}</li>" for x in schedule.get("notes", []))
     schedule_json = json.dumps(schedule).replace("</", "<\\/")
+    glance = "".join(
+        f"<tr><td>{_money(r['sale'])}</td><td class=\"num\">{_money(r['fees'])}</td><td class=\"num\">{_money(r['net'])}</td><td class=\"num\">{r['rate']:.2f}%</td></tr>"
+        for r in engine.standard_table(schedule)
+    )
     body = (
         f"<h1>{_esc(short)} fee calculator</h1>"
         f"<p class=\"lede\">{_esc(schedule.get('summary', ''))}</p>"
         f"<div class=\"status {kind}\">{_esc(text)}</div>"
         "<div class=\"calc\"><form id=\"calc-form\" autocomplete=\"off\"></form><div id=\"calc-out\"></div></div>"
+        "<h2>At a glance (default settings)</h2>"
+        "<table><thead><tr><th>Sale</th><th class=\"num\">Fees</th><th class=\"num\">You keep</th><th class=\"num\">Effective rate</th></tr></thead>"
+        f"<tbody>{glance}</tbody></table>"
+        f"<p class=\"muted\">Computed from the schedule with the calculator's default settings; change them above for your case. "
+        f"<a href=\"how-much-does-{_esc(schedule['platform'])}-take\">How much does {_esc(short)} take?</a> explains each fee in words.</p>"
         "<h2>Where these numbers come from</h2>"
         f"<ul>{sources}</ul>"
         f"<p>{_esc(schedule.get('structure', ''))}</p>"
@@ -244,6 +265,80 @@ def render_about(site: dict) -> str:
     return _page(site, title="About Fee Verified", path="about.html", body=body, description="Who makes Fee Verified and how to send a correction.")
 
 
+def render_take(site: dict, schedule: dict, verification: dict) -> str:
+    _status, kind, text = status_for(schedule, verification)
+    short = schedule["name"].split(" (")[0]
+    rows = engine.standard_table(schedule)
+    hundred = next((r for r in rows if r["sale"] == 100), rows[0])
+    table = "".join(
+        f"<tr><td>{_money(r['sale'])}</td><td class=\"num\">{_money(r['fees'])}</td><td class=\"num\">{_money(r['net'])}</td><td class=\"num\">{r['rate']:.2f}%</td></tr>"
+        for r in rows
+    )
+    quotes = "".join(f"<li>{_esc(q)}</li>" for q in schedule.get("quotes", [])[:8])
+    sources_html = " · ".join(
+        f'<a href="{_esc(src["url"])}" rel="noopener">{_esc(src["title"])}</a>' for src in schedule["sources"]
+    )
+    body = (
+        f"<h1>How much does {_esc(short)} take?</h1>"
+        f"<p class=\"lede\">On a {_money(hundred['sale'])} sale with the default settings, {_esc(short)} takes "
+        f"<strong>{_money(hundred['fees'])}</strong> and you keep <strong>{_money(hundred['net'])}</strong> — an effective "
+        f"rate of {hundred['rate']:.2f}%. {_esc(schedule.get('summary', ''))}</p>"
+        f"<div class=\"status {kind}\">{_esc(text)}</div>"
+        "<table><thead><tr><th>Sale</th><th class=\"num\">Fees</th><th class=\"num\">You keep</th><th class=\"num\">Effective rate</th></tr></thead>"
+        f"<tbody>{table}</tbody></table>"
+        f"<p><a href=\"{_esc(schedule['platform'])}\">Open the {_esc(short)} calculator →</a> for your own price, shipping, category and options.</p>"
+        f"<h2>How the fee is built</h2><p>{_esc(schedule.get('structure', ''))}</p>"
+        f"<h2>In {_esc(short)}'s own words</h2><ul>{quotes}</ul>"
+        f"<p class=\"muted\">Source: {sources_html}.</p>"
+    )
+    title = f"How much does {short} take? {short} seller fees explained ({site['year']})"
+    return _page(site, title=title, path=f"how-much-does-{schedule['platform']}-take.html", body=body,
+                 description=f"What {short} takes from a sale, computed from its published fee schedule, with the fee page quoted.")
+
+
+def render_comparison(site: dict, slug: str, title: str, schedules: list[dict], verification: dict) -> str:
+    sales = engine.STANDARD_SALES
+    head = "".join(f"<th class=\"num\">{_esc(s['name'].split(' (')[0])}</th>" for s in schedules)
+    rows = ""
+    tables = {s["platform"]: {r["sale"]: r for r in engine.standard_table(s, sales)} for s in schedules}
+    for sale in sales:
+        cells = "".join(
+            f"<td class=\"num\">{_money(tables[s['platform']][sale]['fees'])}<br><span class=\"muted\">keep {_money(tables[s['platform']][sale]['net'])}</span></td>"
+            for s in schedules
+        )
+        rows += f"<tr><td>{_money(sale)}</td>{cells}</tr>"
+    statuses = "".join(
+        f"<li>{_esc(s['name'].split(' (')[0])}: <span class=\"badge {status_for(s, verification)[1]}\">{_esc(status_for(s, verification)[2])}</span> — "
+        f"<a href=\"../{_esc(s['platform'])}\">calculator</a></li>"
+        for s in schedules
+    )
+    body = (
+        f"<h1>{_esc(title)}</h1>"
+        "<p class=\"lede\">The same sale run through each platform's published fee schedule with that "
+        "platform's default settings (no store subscription, domestic buyer, no optional upgrades). "
+        "Fees are what the platform takes; \"keep\" is what reaches you before shipping costs.</p>"
+        f"<table><thead><tr><th>Sale</th>{head}</tr></thead><tbody>{rows}</tbody></table>"
+        "<p class=\"muted\">Platforms differ in what the percentage applies to (item only, or item plus shipping "
+        "and tax) and in who pays shipping; each calculator states its base. This table is arithmetic, "
+        "not a recommendation.</p>"
+        f"<h2>Verification status</h2><ul>{statuses}</ul>"
+    )
+    return _page(site, title=f"{title} ({site['year']}): the same sale on each, from the published schedules",
+                 path=f"compare/{slug}.html", body=body,
+                 description=f"{title}: identical sales computed from each platform's own published fee schedule.")
+
+
+def render_compare_index(site: dict, available: list[tuple[str, str]]) -> str:
+    items = "".join(f"<li><a href=\"compare/{_esc(slug)}\">{_esc(title)}</a></li>" for slug, title in available)
+    body = (
+        "<h1>Fee comparisons</h1><p class=\"lede\">The same sale on each platform, computed from the "
+        "published schedules. Pages appear as their platforms are verified.</p>"
+        f"<ul>{items or '<li>No comparison has all its platforms verified yet.</li>'}</ul>"
+    )
+    return _page(site, title="Compare seller fees across platforms", path="compare.html", body=body,
+                 description="Side-by-side seller fees for the same sale, from each platform's published schedule.")
+
+
 def verify_pages(pages: dict[str, str]) -> list[str]:
     problems = []
     for path, content in pages.items():
@@ -267,8 +362,17 @@ def build(base_url: str, generated_at: datetime | None = None) -> dict[str, str]
         "methodology.html": render_methodology(site),
         "about.html": render_about(site),
     }
+    by_slug = {s["platform"]: s for s in schedules}
     for s in schedules:
         pages[f"{s['platform']}.html"] = render_platform(site, s, verification, engine_js, ui_js)
+        pages[f"how-much-does-{s['platform']}-take.html"] = render_take(site, s, verification)
+    available = []
+    for slug, title, members in COMPARISONS:
+        present = [by_slug[m] for m in members if m in by_slug]
+        if len(present) >= 2:
+            pages[f"compare/{slug}.html"] = render_comparison(site, slug, title, present, verification)
+            available.append((slug, title))
+    pages["compare.html"] = render_compare_index(site, available)
     base = base_url.rstrip("/")
     pages["sitemap.xml"] = (
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
