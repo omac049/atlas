@@ -138,6 +138,11 @@ disclosed on every page. Domains available at time of writing:
 Nothing is built until the owner says so. samebetornot.com keeps running
 untouched; its six-week clock is the control.
 
+**Update 2026-09-08:** the owner signed the charter
+(`docs/decisions/2026-09-08-fee-calculator-demand-test.md`, #37) and the build
+is live on Cloudflare Pages; build status and the weekly scoreboard are logged
+in that file.
+
 ### Monetization (criterion 3) — verified from program pages, 2026-09-08
 
 Seller and payment tools (the reader of a fee-calculator page):
