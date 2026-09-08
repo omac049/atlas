@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.atlas.fees</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/ocorral/Atlas/.venv/bin/python</string>
+        <string>/Users/ocorral/Atlas/deploy/atlas_fees.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/ocorral/Atlas</string>
+    <!-- Owner fills these in once the domain exists. Unset = local build only. -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>FEES_SITE_BASE_URL</key>
+        <string>https://example.invalid</string>
+        <key>FEES_SITE_PUBLISH_CMD</key>
+        <string></string>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+    <!-- Daily at 04:20, after the site rebuild at 04:00. -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>4</integer>
+        <key>Minute</key>
+        <integer>20</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/Users/ocorral/Library/Logs/atlas-fees-stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/ocorral/Library/Logs/atlas-fees-stdout.log</string>
+</dict>
+</plist>

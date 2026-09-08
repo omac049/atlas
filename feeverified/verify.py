@@ -19,8 +19,8 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from html import unescape as html_unescape
 from datetime import UTC, datetime
+from html import unescape as html_unescape
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
