@@ -1,13 +1,13 @@
 # deploy/ — always-on runtime
 
-Atlas runs as eight launchd agents that start at login and restart themselves on
+Atlas runs as nine launchd agents that start at login and restart themselves on
 failure. Verified working from `/Users/ocorral/Atlas` on 2026-08-18.
 
 ## Install
 
 ```bash
 cp deploy/com.atlas.*.plist ~/Library/LaunchAgents/
-for l in com.atlas.api com.atlas.monitor com.atlas.healthcheck com.atlas.backup com.atlas.study com.atlas.intel com.atlas.awake com.atlas.site; do
+for l in com.atlas.api com.atlas.monitor com.atlas.healthcheck com.atlas.backup com.atlas.study com.atlas.intel com.atlas.awake com.atlas.site com.atlas.fees; do
   launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/$l.plist
 done
 launchctl list | grep com.atlas   # third column 0 = healthy
@@ -65,6 +65,13 @@ reads the installed copy in `~/Library/LaunchAgents`, not the one in this repo.
   `ATLAS_SITE_PUBLISH_CMD`), which pushes the built site to the `gh-pages`
   branch for GitHub Pages at samebetornot.com and commits only on change. Hosting
   credentials live in the host CLI's own config, never in this repo.
+- **`com.atlas.fees.plist` + `atlas_fees.py`** — daily 04:20, the Fee Verified job
+  (`docs/FEES.md`): re-reads every platform's fee page in a headless browser and
+  records which quoted sentences still appear, rebuilds `dist/fees` for
+  `FEES_SITE_BASE_URL`, runs `FEES_SITE_PUBLISH_CMD` (wrangler → Cloudflare Pages
+  project `verifiedfees`, i.e. verifiedfees.com) and pings IndexNow. The publish
+  step prepends the newest nvm node to PATH, since launchd's PATH has no node.
+  Log: `~/Library/Logs/atlas-fees.log`.
 - **`com.atlas.healthcheck.plist` + `atlas_healthcheck.py`** — a 60s liveness probe
   covering what `KeepAlive` cannot see: a process that is alive but wedged.
   Restarts the API when `/health` stops answering (after 2 consecutive misses, so a
