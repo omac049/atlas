@@ -1,0 +1,54 @@
+{
+ "as_of": "2026-09-08",
+ "fee_schedule_pages_loaded": [
+  {
+   "platform": "eBay",
+   "url": "https://www.ebay.com/help/selling/fees-credits-invoices/selling-fees?id=4822",
+   "loaded": true,
+   "key_terms": "Final value fee 13.6% of total sale up to $7,500 + $0.30 (orders <= $10) or $0.40 per order for most categories; category table (books/media 15.3%, coins 13.25%, handbags 15%/9%, guitars 6.7%, sneakers >= $150 8%, NFTs 5%); insertion $0.35 after 250 free; international fee 1.65%; Below Standard +6%/+7%; Very High INAD +5%/+6%; dispute fee $20; currency conversion 3%"
+  },
+  {
+   "platform": "PayPal (US merchant)",
+   "url": "https://www.paypal.com/us/business/paypal-business-fees",
+   "loaded": true,
+   "last_updated_on_page": "September 1, 2026",
+   "key_terms": "PayPal Checkout 3.49% + $0.49; standard card 2.99% + $0.49; QR 2.29% + $0.09; goods & services P2P 2.99%; Pay Later 4.99% + $0.49; international +1.50%; micropayments 4.99% + $0.09; charity 1.99% + $0.49; chargeback $20; dispute $15/$30; currency conversion 3-4%; instant withdrawal 1.50% (min $0.50)"
+  },
+  {
+   "platform": "Etsy",
+   "url": "https://www.etsy.com/legal/fees/",
+   "loaded": true,
+   "last_updated_on_page": "Feb 13, 2026",
+   "key_terms": "Listing $0.20; transaction 6.5% of price + shipping + gift wrap (US: not on sales tax); Offsite Ads 15% (<$10k trailing sales, opt-out) or 12% (>= $10k, mandatory), capped $100/order; payment processing per Etsy Payments Policy by country (US 3% + $0.25 per third-party summaries; verify at build); Etsy Plus $10/mo; Pattern $15/mo; currency conversion 2.5%"
+  }
+ ],
+ "public_data_apis_verified": [
+  {
+   "name": "CFPB Consumer Complaint Database API",
+   "url": "https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/",
+   "key_required": false,
+   "verified": "company='Chime Financial Inc' date_received_min=2025-09-01 -> 12,308 complaints; aggregations by product, issue, state, company_response available with size=0"
+  },
+  {
+   "name": "FDIC BankFind Suite API",
+   "url": "https://api.fdic.gov/banks/institutions",
+   "key_required": false,
+   "verified": "filters=NAME:*Bancorp* AND ACTIVE:1 -> The Bancorp Bank, National Association, CERT 35444, Sioux Falls SD, active"
+  }
+ ],
+ "serp_source_note": "Google blocks scripted result pages (crawl4ai and DuckDuckGo html both returned nothing); top results taken from Anthropic WebSearch link lists (5-9 per query) and Bing returned an empty body. Treated as a proxy; a final check against a real browser SERP is a build-time task.",
+ "domains_available_2026_09_08": [
+  "feeverified.com",
+  "feesverified.com"
+ ],
+ "domains_taken": [
+  "sellerfees.com",
+  "feetracker.com",
+  "platformfees.com",
+  "whattheytake.com",
+  "takerate.com",
+  "feeschedules.com",
+  "sellerfee.com",
+  "feecheck.com"
+ ]
+}

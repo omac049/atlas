@@ -1,0 +1,934 @@
+{
+ "as_of": "2026-09-08",
+ "method": "Top results via Anthropic WebSearch (Google blocks scripted SERPs; results are a proxy, 5-9 links per query). Domain traffic = Keywords Everywhere estimated US monthly organic visits. Weak = traffic < 100,000 or UGC/app-store/spam slot. Criterion 2 passes at >= 3 weak slots.",
+ "queries": [
+  {
+   "cluster": "A",
+   "query": "ebay fee calculator",
+   "results": [
+    {
+     "domain": "yotpo.com",
+     "traffic": 9900,
+     "weak": true
+    },
+    {
+     "domain": "ebayfeescalculator.com",
+     "traffic": 33200,
+     "weak": true
+    },
+    {
+     "domain": "finalfeecalc.com",
+     "traffic": 12600,
+     "weak": true
+    },
+    {
+     "domain": "flowlister.com",
+     "traffic": 0,
+     "weak": true
+    },
+    {
+     "domain": "poshwatch.io",
+     "traffic": 8700,
+     "weak": true
+    },
+    {
+     "domain": "easync.io",
+     "traffic": 2100,
+     "weak": true
+    }
+   ],
+   "weak_slots": 6,
+   "criterion_2": "PASS"
+  },
+  {
+   "cluster": "A",
+   "query": "paypal fee calculator",
+   "results": [
+    {
+     "domain": "yotpo.com",
+     "traffic": 9900,
+     "weak": true
+    },
+    {
+     "domain": "salehoo.com",
+     "traffic": 10300,
+     "weak": true
+    },
+    {
+     "domain": "salecalc.com",
+     "traffic": 17000,
+     "weak": true
+    },
+    {
+     "domain": "karboncard.com",
+     "traffic": 1600,
+     "weak": true
+    },
+    {
+     "domain": "ebayfeescalculator.com",
+     "traffic": 33200,
+     "weak": true
+    },
+    {
+     "domain": "fee-calculator.org",
+     "traffic": 0,
+     "weak": true
+    },
+    {
+     "domain": "designhill.com",
+     "traffic": 37000,
+     "weak": true
+    },
+    {
+     "domain": "alternativeto.net",
+     "traffic": 60400,
+     "weak": true
+    }
+   ],
+   "weak_slots": 8,
+   "criterion_2": "PASS"
+  },
+  {
+   "cluster": "A",
+   "query": "etsy fee calculator",
+   "results": [
+    {
+     "domain": "craftybase.com",
+     "traffic": 20400,
+     "weak": true
+    },
+    {
+     "domain": "alura.io",
+     "traffic": 10100,
+     "weak": true
+    },
+    {
+     "domain": "checkoutpage.com",
+     "traffic": 980,
+     "weak": true
+    },
+    {
+     "domain": "printify.com",
+     "traffic": 253800,
+     "weak": false
+    },
+    {
+     "domain": "yotpo.com",
+     "traffic": 9900,
+     "weak": true
+    },
+    {
+     "domain": "everbee.io",
+     "traffic": 33300,
+     "weak": true
+    },
+    {
+     "domain": "omniprofitcalculator.com",
+     "traffic": 1900,
+     "weak": true
+    }
+   ],
+   "weak_slots": 6,
+   "criterion_2": "PASS"
+  },
+  {
+   "cluster": "A",
+   "query": "stripe fee calculator",
+   "results": [
+    {
+     "domain": "tipalti.com",
+     "traffic": 155200,
+     "weak": false
+    },
+    {
+     "domain": "voiceactor.com",
+     "traffic": 630,
+     "weak": true
+    },
+    {
+     "domain": "yotpo.com",
+     "traffic": 9900,
+     "weak": true
+    },
+    {
+     "domain": "aspireapp.com",
+     "traffic": 6300,
+     "weak": true
+    },
+    {
+     "domain": "pelcro.com",
+     "traffic": 430,
+     "weak": true
+    },
+    {
+     "domain": "invoiceberry.com",
+     "traffic": 3200,
+     "weak": true
+    },
+    {
+     "domain": "hellobonsai.com",
+     "traffic": 57600,
+     "weak": true
+    },
+    {
+     "domain": "invoiless.com",
+     "traffic": 120,
+     "weak": true
+    }
+   ],
+   "weak_slots": 7,
+   "criterion_2": "PASS"
+  },
+  {
+   "cluster": "A",
+   "query": "square fee calculator",
+   "results": [
+    {
+     "domain": "solvexia.com",
+     "traffic": 10400,
+     "weak": true
+    },
+    {
+     "domain": "bluevine.com",
+     "traffic": 41100,
+     "weak": true
+    },
+    {
+     "domain": "koronapos.com",
+     "traffic": 8400,
+     "weak": true
+    },
+    {
+     "domain": "ebayfeescalculator.com",
+     "traffic": 33200,
+     "weak": true
+    },
+    {
+     "domain": "financecalculatortools.com",
+     "traffic": 0,
+     "weak": true
+    },
+    {
+     "domain": "squarefeecalculator.online",
+     "traffic": 0,
+     "weak": true
+    },
+    {
+     "domain": "nerdwallet.com",
+     "traffic": 8568200,
+     "weak": false
+    }
+   ],
+   "weak_slots": 6,
+   "criterion_2": "PASS"
+  },
+  {
+   "cluster": "A",
+   "query": "depop seller fees",
+   "results": [
+    {
+     "domain": "crosslist.com",
+     "traffic": 20300,
+     "weak": true
+    },
+    {
+     "domain": "depop.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "listperfectly.com",
+     "traffic": 1300,
+     "weak": true
+    },
+    {
+     "domain": "depop.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "depop.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "exportyourstore.com",
+     "traffic": 1900,
+     "weak": true
+    },
+    {
+     "domain": "sellraze.com",
+     "traffic": 96,
+     "weak": true
+    },
+    {
+     "domain": "closetmojo.com",
+     "traffic": 340,
+     "weak": true
+    }
+   ],
+   "weak_slots": 5,
+   "criterion_2": "PASS"
+  },
+  {
+   "cluster": "A",
+   "query": "gofundme fees",
+   "results": [
+    {
+     "domain": "gofundme.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "zeffy.com",
+     "traffic": 15700,
+     "weak": true
+    },
+    {
+     "domain": "gofundme.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "gofundme.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "gofundme.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "gogetfunding.com",
+     "traffic": 3300,
+     "weak": true
+    },
+    {
+     "domain": "gofundme.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "abc7news.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "goodreads.com",
+     "traffic": null,
+     "weak": true
+    }
+   ],
+   "weak_slots": 3,
+   "criterion_2": "PASS"
+  },
+  {
+   "cluster": "A",
+   "query": "venmo fees",
+   "results": [
+    {
+     "domain": "credit.com",
+     "traffic": 38000,
+     "weak": true
+    },
+    {
+     "domain": "venmo.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "swipesum.com",
+     "traffic": 31100,
+     "weak": true
+    },
+    {
+     "domain": "bug0.com",
+     "traffic": 60,
+     "weak": true
+    },
+    {
+     "domain": "bossmoney.com",
+     "traffic": 3600,
+     "weak": true
+    },
+    {
+     "domain": "venmo.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "goodreads.com",
+     "traffic": null,
+     "weak": true
+    }
+   ],
+   "weak_slots": 5,
+   "criterion_2": "PASS"
+  },
+  {
+   "cluster": "B",
+   "query": "is chime legit",
+   "results": [
+    {
+     "domain": "finder.com",
+     "traffic": 76900,
+     "weak": true
+    },
+    {
+     "domain": "moneypantry.com",
+     "traffic": 23900,
+     "weak": true
+    },
+    {
+     "domain": "nerdwallet.com",
+     "traffic": 8568200,
+     "weak": false
+    },
+    {
+     "domain": "chime.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "wallstreetzen.com",
+     "traffic": 130500,
+     "weak": false
+    },
+    {
+     "domain": "wise.com",
+     "traffic": 25899600,
+     "weak": false
+    },
+    {
+     "domain": "goodreads.com",
+     "traffic": null,
+     "weak": true
+    }
+   ],
+   "weak_slots": 3,
+   "criterion_2": "PASS"
+  },
+  {
+   "cluster": "B",
+   "query": "is sofi legit",
+   "results": [
+    {
+     "domain": "wise.com",
+     "traffic": 25899600,
+     "weak": false
+    },
+    {
+     "domain": "bossmoney.com",
+     "traffic": 3600,
+     "weak": true
+    },
+    {
+     "domain": "wallethub.com",
+     "traffic": 1429300,
+     "weak": false
+    },
+    {
+     "domain": "neobanque.ch",
+     "traffic": 3300,
+     "weak": true
+    },
+    {
+     "domain": "trustpilot.com",
+     "traffic": 4788100,
+     "weak": false
+    },
+    {
+     "domain": "fool.com",
+     "traffic": 1492200,
+     "weak": false
+    },
+    {
+     "domain": "nasdaq.com",
+     "traffic": null,
+     "weak": false
+    }
+   ],
+   "weak_slots": 2,
+   "criterion_2": "FAIL"
+  },
+  {
+   "cluster": "B",
+   "query": "is upstart legit",
+   "results": [
+    {
+     "domain": "wallethub.com",
+     "traffic": 1429300,
+     "weak": false
+    },
+    {
+     "domain": "consumeraffairs.com",
+     "traffic": 1036300,
+     "weak": false
+    },
+    {
+     "domain": "trustpilot.com",
+     "traffic": 4788100,
+     "weak": false
+    },
+    {
+     "domain": "consumeraffairs.com",
+     "traffic": 1036300,
+     "weak": false
+    },
+    {
+     "domain": "wallethub.com",
+     "traffic": 1429300,
+     "weak": false
+    },
+    {
+     "domain": "bbb.org",
+     "traffic": 8953200,
+     "weak": false
+    },
+    {
+     "domain": "fool.com",
+     "traffic": 1492200,
+     "weak": false
+    }
+   ],
+   "weak_slots": 0,
+   "criterion_2": "FAIL"
+  },
+  {
+   "cluster": "B",
+   "query": "is rocket money safe",
+   "results": [
+    {
+     "domain": "howthemarketworks.com",
+     "traffic": 5600,
+     "weak": true
+    },
+    {
+     "domain": "ramseysolutions.com",
+     "traffic": 792800,
+     "weak": false
+    },
+    {
+     "domain": "wealthtender.com",
+     "traffic": 39500,
+     "weak": true
+    },
+    {
+     "domain": "thepennyhoarder.com",
+     "traffic": 247100,
+     "weak": false
+    },
+    {
+     "domain": "wallstreetsurvivor.com",
+     "traffic": 26100,
+     "weak": true
+    },
+    {
+     "domain": "getfinny.app",
+     "traffic": 0,
+     "weak": true
+    }
+   ],
+   "weak_slots": 4,
+   "criterion_2": "PASS"
+  },
+  {
+   "cluster": "B",
+   "query": "what bank is chime",
+   "results": [
+    {
+     "domain": "usnews.com",
+     "traffic": 11606900,
+     "weak": false
+    },
+    {
+     "domain": "wikipedia.org",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "chime.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "linkedin.com",
+     "traffic": null,
+     "weak": true
+    },
+    {
+     "domain": "chime.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "chime.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "bloomberg.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "cbinsights.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "stackshare.io",
+     "traffic": null,
+     "weak": false
+    }
+   ],
+   "weak_slots": 1,
+   "criterion_2": "FAIL"
+  },
+  {
+   "cluster": "B",
+   "query": "is klarna safe",
+   "results": [
+    {
+     "domain": "security.org",
+     "traffic": 695200,
+     "weak": false
+    },
+    {
+     "domain": "surfshark.com",
+     "traffic": 122000,
+     "weak": false
+    },
+    {
+     "domain": "colostate.edu",
+     "traffic": 189200,
+     "weak": false
+    },
+    {
+     "domain": "expressvpn.com",
+     "traffic": 192800,
+     "weak": false
+    },
+    {
+     "domain": "klarna.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "klarna.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "klarna.com",
+     "traffic": null,
+     "weak": false
+    }
+   ],
+   "weak_slots": 0,
+   "criterion_2": "FAIL"
+  },
+  {
+   "cluster": "B",
+   "query": "is moneylion legit",
+   "results": [
+    {
+     "domain": "yakimaherald.com",
+     "traffic": 128600,
+     "weak": false
+    },
+    {
+     "domain": "nerdwallet.com",
+     "traffic": 8568200,
+     "weak": false
+    },
+    {
+     "domain": "bbb.org",
+     "traffic": 8953200,
+     "weak": false
+    },
+    {
+     "domain": "apple.com",
+     "traffic": null,
+     "weak": true
+    },
+    {
+     "domain": "trustpilot.com",
+     "traffic": 4788100,
+     "weak": false
+    },
+    {
+     "domain": "benzinga.com",
+     "traffic": 387900,
+     "weak": false
+    },
+    {
+     "domain": "benzinga.com",
+     "traffic": 387900,
+     "weak": false
+    },
+    {
+     "domain": "tradingview.com",
+     "traffic": null,
+     "weak": true
+    }
+   ],
+   "weak_slots": 2,
+   "criterion_2": "FAIL"
+  },
+  {
+   "cluster": "B",
+   "query": "is brigit legit",
+   "results": [
+    {
+     "domain": "hellobrigit.com",
+     "traffic": 20100,
+     "weak": true
+    },
+    {
+     "domain": "apple.com",
+     "traffic": null,
+     "weak": true
+    },
+    {
+     "domain": "ftc.gov",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "trustpilot.com",
+     "traffic": 4788100,
+     "weak": false
+    },
+    {
+     "domain": "google.com",
+     "traffic": null,
+     "weak": true
+    },
+    {
+     "domain": "youtube.com",
+     "traffic": null,
+     "weak": true
+    },
+    {
+     "domain": "thecreditpeople.com",
+     "traffic": 11000,
+     "weak": true
+    },
+    {
+     "domain": "nerdwallet.com",
+     "traffic": 8568200,
+     "weak": false
+    }
+   ],
+   "weak_slots": 5,
+   "criterion_2": "PASS"
+  },
+  {
+   "cluster": "C",
+   "query": "is weed legal in florida",
+   "results": [
+    {
+     "domain": "wikipedia.org",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "mpp.org",
+     "traffic": 31200,
+     "weak": true
+    },
+    {
+     "domain": "fau.edu",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "foxnews.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "yahoo.com",
+     "traffic": null,
+     "weak": false
+    }
+   ],
+   "weak_slots": 1,
+   "criterion_2": "FAIL"
+  },
+  {
+   "cluster": "C",
+   "query": "legal weed states",
+   "results": [
+    {
+     "domain": "madd.org",
+     "traffic": 35100,
+     "weak": true
+    },
+    {
+     "domain": "disa.com",
+     "traffic": 49600,
+     "weak": true
+    },
+    {
+     "domain": "wikipedia.org",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "wikipedia.org",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "mjbizdaily.com",
+     "traffic": 14200,
+     "weak": true
+    },
+    {
+     "domain": "cannabis.lacity.gov",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "recovered.org",
+     "traffic": 120700,
+     "weak": false
+    },
+    {
+     "domain": "mpp.org",
+     "traffic": 31200,
+     "weak": true
+    }
+   ],
+   "weak_slots": 4,
+   "criterion_2": "PASS"
+  },
+  {
+   "cluster": "C",
+   "query": "is weed legal in new york",
+   "results": [
+    {
+     "domain": "ny.gov",
+     "traffic": 691300,
+     "weak": false
+    },
+    {
+     "domain": "stoopsnyc.com",
+     "traffic": 2400,
+     "weak": true
+    },
+    {
+     "domain": "pbs.org",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "timeout.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "pressreader.com",
+     "traffic": null,
+     "weak": false
+    }
+   ],
+   "weak_slots": 1,
+   "criterion_2": "FAIL"
+  },
+  {
+   "cluster": "D",
+   "query": "passport fees",
+   "results": [
+    {
+     "domain": "usps.com",
+     "traffic": 13021900,
+     "weak": false
+    },
+    {
+     "domain": "shastacounty.gov",
+     "traffic": 43100,
+     "weak": true
+    },
+    {
+     "domain": "state.gov",
+     "traffic": 3314200,
+     "weak": false
+    },
+    {
+     "domain": "wake.gov",
+     "traffic": 392600,
+     "weak": false
+    },
+    {
+     "domain": "state.gov",
+     "traffic": 3314200,
+     "weak": false
+    },
+    {
+     "domain": "uiowa.edu",
+     "traffic": 93200,
+     "weak": true
+    },
+    {
+     "domain": "rushmypassport.com",
+     "traffic": 31700,
+     "weak": true
+    },
+    {
+     "domain": "passportsandvisas.com",
+     "traffic": 61900,
+     "weak": true
+    }
+   ],
+   "weak_slots": 4,
+   "criterion_2": "PASS"
+  },
+  {
+   "cluster": "D",
+   "query": "sales tax by state",
+   "results": [
+    {
+     "domain": "stripe.com",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "wikipedia.org",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "taxfoundation.org",
+     "traffic": 763000,
+     "weak": false
+    },
+    {
+     "domain": "avalara.com",
+     "traffic": 576500,
+     "weak": false
+    },
+    {
+     "domain": "wikipedia.org",
+     "traffic": null,
+     "weak": false
+    },
+    {
+     "domain": "salestaxinstitute.com",
+     "traffic": 27600,
+     "weak": true
+    },
+    {
+     "domain": "taxfoundation.org",
+     "traffic": 763000,
+     "weak": false
+    }
+   ],
+   "weak_slots": 1,
+   "criterion_2": "FAIL"
+  }
+ ]
+}
