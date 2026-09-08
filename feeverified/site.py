@@ -153,6 +153,23 @@ def coverage_note(schedule: dict, verification: dict) -> str:
     return note + "."
 
 
+def _identity_jsonld(site: dict) -> str:
+    """Who publishes this site, in machine-readable form, on every page."""
+    base = site["base_url"].rstrip("/")
+    data = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Fee Verified",
+        "url": f"{base}/",
+        "description": (
+            "Independent seller-fee calculators computed from each platform's published fee "
+            "schedule and verified against it nightly. Not affiliated with any platform."
+        ),
+        "publisher": {"@type": "Organization", "name": "Fee Verified", "url": f"{base}/about"},
+    }
+    return json.dumps(data).replace("</", "<\\/")
+
+
 def _page(site: dict, *, title: str, path: str, body: str, description: str, head_extra: str = "") -> str:
     root = "../" * path.count("/")
     nav = "".join(f'<a href="{root}{_href(h) or "./"}">{_esc(label)}</a>' for h, label in _NAV)
@@ -163,6 +180,8 @@ def _page(site: dict, *, title: str, path: str, body: str, description: str, hea
         f"<title>{_esc(title)}</title><meta name=\"description\" content=\"{_esc(description)}\">"
         f"<link rel=\"canonical\" href=\"{_esc(canonical)}\">"
         f"<meta property=\"og:title\" content=\"{_esc(title)}\"><meta property=\"og:description\" content=\"{_esc(description)}\">"
+        "<meta property=\"og:site_name\" content=\"Fee Verified\"><meta name=\"author\" content=\"Fee Verified\">"
+        f"<script type=\"application/ld+json\">{_identity_jsonld(site)}</script>"
         "<link rel=\"icon\" href=\"data:,\">"
         f"<style>{_CSS}</style>{head_extra}</head><body>"
         f"<header><div class=\"top\"><a class=\"brand\" href=\"{root or './'}\">Fee <span>Verified</span></a><nav>{nav}</nav></div><p class=\"independent\">{_esc(INDEPENDENCE)}</p></header>"

@@ -112,6 +112,7 @@ def test_build_guardrails_every_page_carries_disclosure_and_status():
     assert "<loc>https://example.test/ebay</loc>" in pages["sitemap.xml"]
     assert "not affiliated with" in pages["ebay.html"] and "not affiliated with" in pages["index.html"]
     assert "not affiliated with eBay" in pages["ebay.html"]
+    assert '"@type": "WebSite"' in pages["ebay.html"] and 'og:site_name' in pages["index.html"]
     bare = {"x.html": f"<p>{site.DISCLOSURE}</p><p>{site.NOT_ADVICE}</p>"}
     assert site.verify_pages(bare) == ["x.html: missing independence line"]
 
