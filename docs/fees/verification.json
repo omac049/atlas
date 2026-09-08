@@ -18,7 +18,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "Individual $0.99 / item sold",
     "Referral fees vary by product category. For every item sold, you\u2019ll pay a percentage of the total price or a minimum amount, whichever is greater.\u00b9",
@@ -110,35 +110,35 @@
     "https://sell.amazon.com/pricing": {
      "fingerprint_drift": false,
      "hash": "6e1fb02338b48a3d2b9e82ccfa16dc828a166ed632d48c1361426ddfeb6a7d68",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T17:59:13+00:00",
      "status": "verified"
     },
     "https://sellercentral.amazon.com/help/hub/reference/external/G200336920": {
      "fingerprint_drift": false,
      "hash": "c34141ebff350a8197703bdb340547e82d9f1dfb45eaa59331810daf44ad4682",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T17:59:13+00:00",
      "status": "verified"
     },
     "https://sellercentral.amazon.com/help/hub/reference/external/GKD9U5REK5DKB38Y": {
      "fingerprint_drift": false,
      "hash": "dd120964952a7ad7947fc0c863ddc60f57eb8f0cffdfc4022348da946503b3ee",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T17:59:13+00:00",
      "status": "verified"
     },
     "https://sellercentral.amazon.com/help/hub/reference/external/GTG4BAWSY39Z98Z3": {
      "fingerprint_drift": false,
      "hash": "80c5d52a73516ecaa83f1e9fbea26996a5169a5bd88d3162aa5ba1d83023c3b8",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T17:59:13+00:00",
      "status": "verified"
     },
     "https://sellercentral.amazon.com/help/hub/reference/external/GX7NRP7C7LKZLQV6": {
      "fingerprint_drift": false,
      "hash": "72efc80f02dd4547c9699ec1e2dad0cf06b77f11bc577a8e2c3ced1fc3e8fa8b",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T17:59:13+00:00",
      "status": "verified"
     }
@@ -168,7 +168,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "| Sending money using your Cash App Balance or debit card in the U.S. | $0 |",
     "| Receive money | $0 |",
@@ -188,56 +188,56 @@
     "https://cash.app/bank/no-fees": {
      "fingerprint_drift": false,
      "hash": "af2162b7f8707c9cdf55b0384a34f0907ba40c8482ecdc261429c0c17f5b6e16",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T17:59:21+00:00",
      "status": "verified"
     },
     "https://cash.app/help/us/en-US/6521-cash-app-business-fees": {
      "fingerprint_drift": false,
      "hash": "8a045d88e2e44ef2fb3aeffdecaefa869ef0a0110909c825525d0da68ecf90d7",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T17:59:21+00:00",
      "status": "verified"
     },
     "https://cash.app/help/us/en-us/3073-cash-out-speed-options": {
      "fingerprint_drift": false,
      "hash": "7d4ccfbd03c55dbf147bdcf16b87fd2ed599e1e2a2b87f31b55a91fefbf9af85",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T17:59:21+00:00",
      "status": "verified"
     },
     "https://cash.app/help/us/en-us/6567-problems-linking-a-credit-card": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T17:59:21+00:00",
      "status": "verified"
     },
     "https://cash.app/legal/us/en-us/cash-payment-terms": {
      "fingerprint_drift": false,
      "hash": "44d11b71f612a342e82e608e31fe7e674c413d81609ed660eea017be7d6c2afa",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T17:59:21+00:00",
      "status": "verified"
     },
     "https://cash.app/legal/us/en-us/tos": {
      "fingerprint_drift": false,
      "hash": "9588ba4c65d9d5024ee73ea6767c07c998ea532119e51c1124d74e539779f2e1",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T17:59:21+00:00",
      "status": "verified"
     },
     "https://cash.app/send": {
      "fingerprint_drift": false,
      "hash": "1750ccfca7930af9bba71c8fcfb315fefc1fc99df41fbba2e63021ade55d178b",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T17:59:21+00:00",
      "status": "verified"
     },
     "https://developers.cash.app/cash-app-pay-partner-api/api-reference/network-api/merchant-fee-plans": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T17:59:21+00:00",
      "status": "verified"
     }
@@ -267,7 +267,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "These fees are in addition to selling fees (payable outside of the United Kingdom and United States) and payment processing fees. They are effective from 23 March and form part of our Terms of Service."
    ],
@@ -279,63 +279,63 @@
     "https://blog.depop.com/articles/us-depop-fee-change": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:02:35+00:00",
      "status": "verified"
     },
     "https://depophelp.zendesk.com/hc/en-gb/articles/10110299060753-Boosted-Listings": {
      "fingerprint_drift": false,
      "hash": "07385cf624554443095a74e33d2349fd86a0d7c656c42b7e21e4d33372ee78ec",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:02:35+00:00",
      "status": "verified"
     },
     "https://depophelp.zendesk.com/hc/en-gb/articles/10782996439313-Depop-Payments-fee-change-US-": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:02:35+00:00",
      "status": "verified"
     },
     "https://depophelp.zendesk.com/hc/en-gb/articles/21752555753361-What-is-the-Marketplace-fee": {
      "fingerprint_drift": false,
      "hash": "d9209544185cbf1e14f6dbe86942b1f7e19636c1e347522b7f4e9056f5f3de67",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:02:35+00:00",
      "status": "verified"
     },
     "https://depophelp.zendesk.com/hc/en-gb/articles/360001791127-Seller-fees-and-charges": {
      "fingerprint_drift": false,
      "hash": "a554dab21c8fcdf9198251943f93b07f48c4d5edd476ceeb8fecb7d2c81eaddc",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:02:35+00:00",
      "status": "verified"
     },
     "https://depophelp.zendesk.com/hc/en-gb/articles/360001791287-How-do-I-change-the-currency-of-my-items": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:02:35+00:00",
      "status": "verified"
     },
     "https://news.depop.com/company-news/depop-removes-selling-fees-in-the-united-states-evolves-fee-structure/": {
      "fingerprint_drift": false,
      "hash": "7090344ec642861b00145232c5574641abbb4521952d7eef0f8e06f1837eb886",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:02:35+00:00",
      "status": "verified"
     },
     "https://partnerapi.depop.com/api-docs/concepts/fees/": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:02:35+00:00",
      "status": "verified"
     },
     "https://www.depop.com/sell/": {
      "fingerprint_drift": false,
      "hash": "4a65d4ec6368304b85604e351f9af7f29756396f59adcc8cf099d5ba5b237187",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:02:35+00:00",
      "status": "verified"
     }
@@ -380,7 +380,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "The total amount of the sale includes the item price, any handling charges, any shipping costs collected from the buyer (some exceptions apply), sales tax, and any other applicable fees."
    ],
@@ -392,7 +392,7 @@
     "https://www.ebay.com/help/selling/fees-credits-invoices/selling-fees?id=4822": {
      "fingerprint_drift": false,
      "hash": "dd04c11f51b81ab70c274af7e933ea6424a5b3862bd809ae00190ea5f5b712e7",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:02:54+00:00",
      "status": "verified"
     }
@@ -417,7 +417,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "United States | 3% + 0.25 USD",
     "Location of Bank Account | Etsy Payments Fees (% of total sale price + flat fee per order) exclusive of VAT, where applicable | Deposit fee where applicable (exclusive of VAT, where applicable)",
@@ -437,35 +437,35 @@
     "https://help.etsy.com/hc/en-us/articles/115014483627-What-are-the-Fees-and-Taxes-for-Selling-on-Etsy": {
      "fingerprint_drift": false,
      "hash": "15bf764573d0c35fee2e5feeda67b8a955bfac6f5f87fb9261489e9eb3d1854c",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:03:41+00:00",
      "status": "verified"
     },
     "https://help.etsy.com/hc/en-us/articles/115015628847-What-are-Payment-Processing-Fees-for-Selling-on-Etsy": {
      "fingerprint_drift": false,
      "hash": "748cf7adc4e76fcb681412d84887311799838a3fcd0b69c9bd340c3630ddf105",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:03:41+00:00",
      "status": "verified"
     },
     "https://help.etsy.com/hc/en-us/articles/360035902374-Etsy-Fee-Basics": {
      "fingerprint_drift": false,
      "hash": "f2814d2aea82452096372708eb25e0f7dc66cd595ceab419a08a1cdb95c37b1c",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:03:41+00:00",
      "status": "verified"
     },
     "https://www.etsy.com/legal/etsy-payments/": {
      "fingerprint_drift": false,
      "hash": "2ba4f0766d801c01fe33806c5e873620ae4f859978eef054fa4d30d39ca73924",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:03:41+00:00",
      "status": "verified"
     },
     "https://www.etsy.com/legal/fees/": {
      "fingerprint_drift": false,
      "hash": "9276efd98058db95b04ce6903f6d55ac4701b3ef62d1b3f299346009a190125e",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:03:41+00:00",
      "status": "verified"
     }
@@ -495,7 +495,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "One transaction fee 2.9% + $0.30 Automatically deducted from each donation, so you never have to worry about paying a bill. International transaction and conversion fees may apply based on your payment method. (pricing page, United States, 'Individual or business' tab)",
     "One transaction fee\u2014that\u2019s it* 2.2% + $0.30 Automatically deducted from each donation, so you never have to worry about paying a bill. (pricing page, United States, 'Certified nonprofit' tab)",
@@ -513,49 +513,49 @@
     "https://charity.gofundme.com/c/charity-pricing": {
      "fingerprint_drift": false,
      "hash": "32f1611783ea89c6e4a6e392491817f8b39cb6ea974d255d5b1c3abae6fbecfe",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:03:50+00:00",
      "status": "verified"
     },
     "https://support.gofundme.com/hc/en-us/articles/115015446027-Extra-Charge-on-Statement": {
      "fingerprint_drift": false,
      "hash": "3477df9d11c83c7d347380fa7a939c14dd5c7ecc1825b235e864a6778a02a25a",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:03:50+00:00",
      "status": "verified"
     },
     "https://support.gofundme.com/hc/en-us/articles/203604424-Learn-about-GoFundMe-fees": {
      "fingerprint_drift": false,
      "hash": "543edd20dd0ff9c17f93a9a6ea1e3c951e98978c3134cfc215b4dd7eab51447a",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:03:50+00:00",
      "status": "verified"
     },
     "https://support.gofundme.com/hc/en-us/articles/360051144952-Choosing-a-tip-amount": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:03:50+00:00",
      "status": "verified"
     },
     "https://transparency.gofundme.com/hc/en-us/articles/25144121631643-Pricing-and-Fees": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:03:50+00:00",
      "status": "verified"
     },
     "https://www.gofundme.com/c/blog/gofundme-fees": {
      "fingerprint_drift": false,
      "hash": "fed683190df691a9fa9ad4a8f8e1ccd2dfe5715454c0dded05419908d77c499b",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:03:50+00:00",
      "status": "verified"
     },
     "https://www.gofundme.com/c/pricing": {
      "fingerprint_drift": false,
      "hash": "eb4e78899ae09425acd6b14d03214ddc689906286a43fc50f7cf13fac14de746",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:03:50+00:00",
      "status": "verified"
     }
@@ -580,7 +580,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [],
    "quotes_missing_at_review": [],
    "reviewed_at": "2026-09-08T18:04:16+00:00",
@@ -588,28 +588,28 @@
     "https://www.mercari.com/us/help_center/article/169/": {
      "fingerprint_drift": false,
      "hash": "87f3fc9bbbdc18dc005e475d50ef0d153ea780272b6c6d129291cb1fa86e283e",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:04:16+00:00",
      "status": "verified"
     },
     "https://www.mercari.com/us/help_center/article/2517/": {
      "fingerprint_drift": false,
      "hash": "2fd81f4583cb4bd89003e67cfb7d58879d54cb8ed8d7a02f923db560626abc69",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:04:16+00:00",
      "status": "verified"
     },
     "https://www.mercari.com/us/help_center/article/2518/": {
      "fingerprint_drift": false,
      "hash": "05b6ca548b3bb66815047d4c8efb15e88c480776357e461c7e26b19e092e6eaa",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:04:16+00:00",
      "status": "verified"
     },
     "https://www.mercari.com/us/help_center/article/93/": {
      "fingerprint_drift": false,
      "hash": "fc55e3cdf4d8fa30f003d74ebe7dcfc20ff6772ac849adc0a015d280043afb21",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:04:16+00:00",
      "status": "verified"
     }
@@ -654,7 +654,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [],
    "quotes_missing_at_review": [],
    "reviewed_at": "2026-09-08T18:05:13+00:00",
@@ -662,7 +662,7 @@
     "https://www.paypal.com/us/business/paypal-business-fees": {
      "fingerprint_drift": false,
      "hash": "5723eca6ec8e3594860139fe5b1ee8c6c2c4ad6150e4458f766137976fddb1f4",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:05:13+00:00",
      "status": "verified"
     }
@@ -692,7 +692,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "For sales under $15, Poshmark takes a flat commission of $2.95\u2014you keep the rest.",
     "For sales of $15 or more, you keep 80% of the sale, and Poshmark takes a 20% commission.",
@@ -724,14 +724,14 @@
     "https://blog.poshmark.com/2026/02/13/shipping-heavier-items-on-poshmark-is-now-simpler-and-cheaper/": {
      "fingerprint_drift": false,
      "hash": "a68b8329697351482258abe260ac4ae9a42c0646f3a442e8ff9f8e49717314a7",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:05:17+00:00",
      "status": "verified"
     },
     "https://poshmark.com/fee_policy": {
      "fingerprint_drift": false,
      "hash": "9ca759ab9d3cfaeacf5f54907533f5fe3cfaa1d26ed30568d3de657eb203132e",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:05:17+00:00",
      "status": "verified"
     }
@@ -761,7 +761,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "USD | $10,000 | $500 | $0.50",
     "Selling fees for Reverb are 5% of the total value of the transaction, including shipping.",
@@ -805,77 +805,77 @@
     "https://help.reverb.com/hc/en-us/articles/40917616326171-How-long-does-it-take-to-get-paid": {
      "fingerprint_drift": false,
      "hash": "89f55565903bcabed9f7a46c47bd1ffc387277c4219349884794d50489d01668",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:05:20+00:00",
      "status": "verified"
     },
     "https://help.reverb.com/hc/en-us/articles/40917652290843-What-fees-will-I-pay-for-selling-on-Reverb": {
      "fingerprint_drift": false,
      "hash": "3b2533d1bdbf572ca959927c49146fab53a8539570298ca7974b11a8f73afb1d",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:05:20+00:00",
      "status": "verified"
     },
     "https://help.reverb.com/hc/en-us/articles/41988457586715-Why-was-I-charged-a-Bump-fee": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:05:20+00:00",
      "status": "verified"
     },
     "https://help.reverb.com/hc/en-us/articles/41988469262107-What-are-my-fees-as-a-Reverb-Preferred-Seller": {
      "fingerprint_drift": false,
      "hash": "7a1a00b2896ce6033f85a34ce06f16c736a8fe5459c6100c7fa5406e0bb8dbf2",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:05:20+00:00",
      "status": "verified"
     },
     "https://help.reverb.com/hc/en-us/articles/41988473838491-Availability-and-processing-fees-for-Reverb-Payments": {
      "fingerprint_drift": false,
      "hash": "ea3407603121d27f80e6871d4ee2eb36dafb9a02eaba1563579c813e79f0e58a",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:05:20+00:00",
      "status": "verified"
     },
     "https://help.reverb.com/hc/en-us/articles/41988523307291-Why-are-my-total-earnings-lower-than-what-I-sold-my-gear-for": {
      "fingerprint_drift": false,
      "hash": "e202314b1963cb20639973b86bf08877fcab2e4d7df663ed260f27cd68295c15",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:05:20+00:00",
      "status": "verified"
     },
     "https://help.reverb.com/hc/en-us/articles/41988532258587-What-is-Bump-and-how-does-it-work": {
      "fingerprint_drift": false,
      "hash": "347ad65b092b1d36f0367dc0bd6611d1a88aa7376e8fc04b343b25984afe94f9",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:05:20+00:00",
      "status": "verified"
     },
     "https://help.reverb.com/hc/en-us/articles/41988540155931-What-is-a-payment-processing-fee": {
      "fingerprint_drift": false,
      "hash": "3d3eae58aa4252fd65ebd7377f24ec3d800bdfad5787a549e904a632334fcf4d",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:05:20+00:00",
      "status": "verified"
     },
     "https://reverb.com/legal/reverbs-billing-policy": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:05:20+00:00",
      "status": "verified"
     },
     "https://reverb.com/selling/bump": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:05:20+00:00",
      "status": "verified"
     },
     "https://reverb.com/selling/selling-fees": {
      "fingerprint_drift": false,
      "hash": "bcd4f2efba2603ae9579448671026888ccd760624657f168d8585280c32d54d6",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:05:20+00:00",
      "status": "verified"
     }
@@ -900,7 +900,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "| Pay monthly | $39 USD/mo | $105 USD/mo | $399 USD/mo | Starts at $2,300 USD/mo |",
     "| Pay yearly | $29 USD/mo | $79 USD/mo | $299 USD/mo | Not included |",
@@ -954,56 +954,56 @@
     "https://help.shopify.com/en/manual/international/pricing/fees": {
      "fingerprint_drift": false,
      "hash": "952649a5398bb42cbadb9894e71a63e631fb16b13e39ae49b3ae3e4404c8a240",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:07:52+00:00",
      "status": "verified"
     },
     "https://help.shopify.com/en/manual/intro-to-shopify/pricing-plans/pricing-overview": {
      "fingerprint_drift": false,
      "hash": "6ec98ae4e141ce66800dbfedd602b3f85bcefc4888d82a86e694fa09440704d1",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:07:52+00:00",
      "status": "verified"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/onboarding/cost-of-shopify-payments": {
      "fingerprint_drift": false,
      "hash": "b773367e4028ccf79f4f65e64e5b8e48d6d585e795f8a872de4df06ae30ad4f1",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:07:52+00:00",
      "status": "verified"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/payouts/pay-periods-and-fees": {
      "fingerprint_drift": false,
      "hash": "d5499d4ec0d70e12558890b72d0196f3e453a7319ed360df0c02efa59ffc9616",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:07:52+00:00",
      "status": "verified"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/credit-card-rates": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:07:52+00:00",
      "status": "verified"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/domestic-international-eu-credit-cards": {
      "fingerprint_drift": false,
      "hash": "02167c04c6781e066fa4ad2c4d343cb6a29fc7d4eacab8dc567439d4bed9515a",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:07:52+00:00",
      "status": "verified"
     },
     "https://help.shopify.com/en/manual/your-account/manage-billing/billing-charges/types-of-charges/third-party-charges/third-party-transaction-fees": {
      "fingerprint_drift": false,
      "hash": "6ec98ae4e141ce66800dbfedd602b3f85bcefc4888d82a86e694fa09440704d1",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:07:52+00:00",
      "status": "verified"
     },
     "https://www.shopify.com/pricing": {
      "fingerprint_drift": true,
      "hash": "160e9d93a1cb428a5853605b98c7ef646fc21c49848cbaed48899b92f855aad7",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:07:52+00:00",
      "status": "verified"
     }
@@ -1028,7 +1028,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "Here are the processing fees for legacy plan subscribers:\nSwiped Magstripe Cards: 2.6% + 15\u00a2 **\nSwiped or Inserted Chip Cards: 2.6% + 15\u00a2 **\nContactless (NFC) Payments: 2.6% + 15\u00a2 **\nTap to Pay on iPhone: 2.6% + 15\u00a2 **\nTap to Pay on Android: 2.6% + 15\u00a2 **\nPoint-of-Sale API Swiped or Inserted Payments: 2.6% + 15\u00a2 **\nSwiped Virtual Terminal Payments: 2.6% + 15\u00a2 **\nPayment Links Through Text in Virtual Terminal: 3.3% + 30\u00a2 **\nCard on File Transactions: 3.5% + 15\u00a2*\nManually Entered Card Payments: 3.5% + 15\u00a2*\nPoint-of-Sale API Keyed-In Payments: 3.5% + 15\u00a2*\nManually Entered Virtual Terminal Payments: 3.5% + 15\u00a2*\nSquare eCommerce API: 2.9% + 30\u00a2\nOnline payments: 3.3% + 30\u00a2 **\nSquare Invoices: 3.3% + 30\u00a2 **\nSquare Payment Links: 3.3% + 30\u00a2 **\nSubscription Payments: 3.3% + 30\u00a2 **\nCash App Pay (Card-Present Transactions): 2.6% + 15\u00a2 **\nCash App Pay (Card-Non-Present Transactions): 3.3% + 30\u00a2 **\nNeighborhoods on Cash App: 1% for participating Neighborhoods sellers on orders through Cash App.\nACH Transactions: 1%, minimum $1 **\n$0 fees for ACH transactions deposited into Square Checking\n$10 fee cap on all ACH bank transfer payments.\nInternational cards: 1.5% international transaction fee\nEBT processing fee: 1.8% + 5\u00a2 (waived during open beta)",
     "You won\u2019t pay any fees for Cash, Check, and Other Tender payment types."
@@ -1042,35 +1042,35 @@
     "https://squareup.com/help/us/en/article/5068-what-are-square-s-fees": {
      "fingerprint_drift": false,
      "hash": "16e776527f6056ebadb6bcde230e5701d1a0f001b5099d86344c746c968cd29d",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:08:09+00:00",
      "status": "verified"
     },
     "https://squareup.com/help/us/en/article/5092-rounding": {
      "fingerprint_drift": false,
      "hash": "16e776527f6056ebadb6bcde230e5701d1a0f001b5099d86344c746c968cd29d",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:08:09+00:00",
      "status": "verified"
     },
     "https://squareup.com/us/en/payments/fee-calculator": {
      "fingerprint_drift": false,
      "hash": "ff542386906879c679f49aff400ae5c8d2163731f1558222f9fe61927987308a",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:08:09+00:00",
      "status": "verified"
     },
     "https://squareup.com/us/en/payments/our-fees": {
      "fingerprint_drift": false,
      "hash": "f0ee876d5040a361eb3751d94b95b416181662a2b004af09a6954d8c5d2f06a5",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:08:09+00:00",
      "status": "verified"
     },
     "https://squareup.com/us/en/pricing": {
      "fingerprint_drift": false,
      "hash": "1d0a11b7d702b3e42f4d1788331bfb9d7814ef3349d8329c993ad0ec865b2ebf",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:08:09+00:00",
      "status": "verified"
     }
@@ -1100,7 +1100,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "| United States | 0.50 USD | 9,999 USD |"
    ],
@@ -1112,49 +1112,49 @@
     "https://docs.stripe.com/payments/ach-direct-debit": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:12:05+00:00",
      "status": "verified"
     },
     "https://docs.stripe.com/payouts/instant-payouts": {
      "fingerprint_drift": false,
      "hash": "6fe07c7aba95518fb48029f087dbc8bf659e951c4c71f0c9c866f83399cad413",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:12:05+00:00",
      "status": "verified"
     },
     "https://stripe.com/legal/pricing-policy": {
      "fingerprint_drift": false,
      "hash": "86350984efb01ae8ae8b2bd6a424ee8465b29d668a8b545f25e9d2ae9ce761f4",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:12:05+00:00",
      "status": "verified"
     },
     "https://stripe.com/pricing": {
-     "fingerprint_drift": false,
+     "fingerprint_drift": true,
      "hash": "743dc98c88cfe723ffe55189663b2a7d2bced2de00593cee306a79d6356bae89",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:12:05+00:00",
      "status": "verified"
     },
     "https://stripe.com/pricing/local-payment-methods": {
      "fingerprint_drift": false,
      "hash": "6c1752ada15e9e8840c8a21bb10afa6136726189cd843230609a566e85510db7",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:12:05+00:00",
      "status": "verified"
     },
     "https://support.stripe.com/questions/manually-entered-card-payments": {
      "fingerprint_drift": false,
      "hash": "5d84fc71d1729a9a6844528e46de85de08592ec3c5ac64893e108048cb8e1ac9",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:12:05+00:00",
      "status": "verified"
     },
     "https://support.stripe.com/questions/rounding-rules-for-stripe-fees": {
      "fingerprint_drift": false,
      "hash": "3d990df1b97e66a954a82b0ffd3b5d56244078d56841fdf7ed9a6430924f910d",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:12:05+00:00",
      "status": "verified"
     }
@@ -1187,11 +1187,9 @@
      ]
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "If you deliver your tickets on time and as promised, the sell fee is the only fee you pay to sell tickets. If you don\u2019t fulfill your seller responsibilities per our Global User Agreement and our Seller Policies, you\u2019ll be charged whichever is greater: 100% of the price of the tickets sold. The full amount incurred by us to remedy the issue for the buyer.",
-    "When you sell tickets on StubHub, we don't charge extra fees for being paid through PayPal.",
-    "If you ask PayPal to send you a check, there may be an extra service fee.",
     "We may charge fees for selling and/or buying Tickets through our Site and/or otherwise using our Services, as well as delivery or fulfillment fees (collectively referred to as \u201cService Fees\u201d). Service Fees may vary depending on various factors, including event type, Ticket type, optional features selected by you (e.g., Sponsored Listings), and location."
    ],
    "quotes_missing_at_review": [
@@ -1203,75 +1201,75 @@
     "https://newsroom.stubhub.com/2026/06/04/understanding-ticket-fees-why-they-exist-and-what-they-cover/": {
      "fingerprint_drift": false,
      "hash": "35231c380913f985921903385867d439cde89238f29d5619818c226416f0e9a6",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:13:51+00:00",
      "status": "verified"
     },
     "https://support.stubhub.com/articles/61000276392-stubhubs-fees-to-buy-and-sell-tickets": {
      "fingerprint_drift": false,
      "hash": "2c535dcd8f77baefdcc97ba115f5597e1f1120b76a17935ca5bbf49a5b2260a5",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:13:51+00:00",
      "status": "verified"
     },
     "https://support.stubhub.com/articles/61000276591-get-paid-for-sold-tickets": {
      "fingerprint_drift": false,
      "hash": "363967c50c32376fcf1cb4e05dcbfc9cad2526163ee5929fe52cd65f9d7aa253",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:13:51+00:00",
      "status": "verified"
     },
     "https://support.stubhub.com/articles/61000276682-cancelled-sale-charges": {
      "fingerprint_drift": false,
      "hash": "363967c50c32376fcf1cb4e05dcbfc9cad2526163ee5929fe52cd65f9d7aa253",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:13:51+00:00",
      "status": "verified"
     },
     "https://support.stubhub.com/articles/61000276706-expected-payout-from-sold-tickets": {
      "fingerprint_drift": false,
      "hash": "363967c50c32376fcf1cb4e05dcbfc9cad2526163ee5929fe52cd65f9d7aa253",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:13:51+00:00",
      "status": "verified"
     },
     "https://support.stubhub.com/articles/61000276710-paypal-fees-when-selling-tickets": {
      "fingerprint_drift": false,
      "hash": "363967c50c32376fcf1cb4e05dcbfc9cad2526163ee5929fe52cd65f9d7aa253",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:13:51+00:00",
      "status": "verified"
     },
     "https://support.stubhub.com/articles/61000276777-stubhubs-penalties-if-you-cant-deliver-tickets-you-sold": {
      "fingerprint_drift": false,
      "hash": "363967c50c32376fcf1cb4e05dcbfc9cad2526163ee5929fe52cd65f9d7aa253",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:13:51+00:00",
      "status": "verified"
     },
     "https://support.stubhub.com/articles/61000276841-stubhubs-fees-to-sell-tickets": {
      "fingerprint_drift": false,
      "hash": "363967c50c32376fcf1cb4e05dcbfc9cad2526163ee5929fe52cd65f9d7aa253",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:13:51+00:00",
      "status": "verified"
     },
     "https://www.stubhub.com/legal?section=sp": {
      "fingerprint_drift": false,
      "hash": "9d7bf6cd1880860b0af56520699ca1e1d8c0b40d221dfc4297bbdbdc2a6041e2",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:13:51+00:00",
      "status": "verified"
     },
     "https://www.stubhub.com/legal?section=ua": {
      "fingerprint_drift": false,
      "hash": "acb92e4f854c6567c7694ea83f7521d2b684b26296f67b50eff2252b63a4d4b7",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:13:51+00:00",
      "status": "verified"
     }
    },
-   "status": "changed"
+   "status": "verified"
   },
   "venmo": {
    "history": [
@@ -1291,7 +1289,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [],
    "quotes_missing_at_review": [],
    "reviewed_at": "2026-09-08T18:14:07+00:00",
@@ -1299,98 +1297,98 @@
     "https://help.venmo.com/cs/articles/business-profile-transaction-fees-vhel221": {
      "fingerprint_drift": false,
      "hash": "9486a453a65c38d51ac302cddc497f607abe25779c136ebf7137dd47b3f4020d",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:14:07+00:00",
      "status": "verified"
     },
     "https://help.venmo.com/cs/articles/buying-and-selling-on-venmo-faq-vhel138": {
      "fingerprint_drift": false,
      "hash": "e6eddf389a2e784bcc826b0ef4d438bb8eee0761d6a3b2605944d3f4ce0214a1",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:14:07+00:00",
      "status": "verified"
     },
     "https://help.venmo.com/cs/articles/buying-cryptocurrency-on-venmo-vhel164": {
      "fingerprint_drift": false,
      "hash": "93d7e21b3e04dffc2bb8d1081cf83e017b685ba85edfb7297ffb07894e1f6ded",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:14:07+00:00",
      "status": "verified"
     },
     "https://help.venmo.com/cs/articles/charity-profile-donation-fees-vhel159": {
      "fingerprint_drift": false,
      "hash": "44d6f4e054d738a9cea2a3ee9799a7b575ddaac2f4847e4dce6d233747039bfb",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:14:07+00:00",
      "status": "verified"
     },
     "https://help.venmo.com/cs/articles/credit-card-fees-on-venmo-payments-vhel257": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:14:07+00:00",
      "status": "verified"
     },
     "https://help.venmo.com/cs/articles/cryptocurrency-faq-vhel141": {
      "fingerprint_drift": false,
      "hash": "730098283ce17ef2b536787ab2c6bdf52180aac1097b0f815252aff6067991a2",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:14:07+00:00",
      "status": "verified"
     },
     "https://help.venmo.com/cs/articles/instant-bank-transfer-faq-vhel302": {
      "fingerprint_drift": false,
      "hash": "31276fa91f4c44b91340a480de2c0361cb6ca1d95ede916a7a5de9fce1748648",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:14:07+00:00",
      "status": "verified"
     },
     "https://help.venmo.com/cs/articles/selling-cryptocurrency-on-venmo-vhel204": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:14:07+00:00",
      "status": "verified"
     },
     "https://help.venmo.com/cs/articles/selling-with-personal-profiles-vhel183": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:14:07+00:00",
      "status": "verified"
     },
     "https://help.venmo.com/cs/articles/tap-to-pay-on-android-faq-vhel198": {
      "fingerprint_drift": false,
      "hash": "36c48f261bfbf81fa636e8ed8aeaa55195b49a7e936c7c03599e5291f028c76d",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:14:07+00:00",
      "status": "verified"
     },
     "https://help.venmo.com/cs/articles/tap-to-pay-on-iphone-faq-vhel116": {
      "fingerprint_drift": false,
      "hash": "24b1e79a44f52ea0d431b7451cd3fc92af26a47dd1555289e3a776e9a1ebae04",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:14:07+00:00",
      "status": "verified"
     },
     "https://venmo.com/legal/crypto-terms/": {
      "fingerprint_drift": false,
      "hash": "f3d70eef11c9b721755f3b4592b08508d7c0188ca372faec5b9348b8a41564e5",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:14:07+00:00",
      "status": "verified"
     },
     "https://venmo.com/legal/us-user-agreement/": {
      "fingerprint_drift": false,
      "hash": "2a44744dc283caad43392aaae3549292bd161e72063dbae686f03f4b580a4b11",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:14:07+00:00",
      "status": "verified"
     },
     "https://venmo.com/resources/our-fees/": {
      "fingerprint_drift": false,
      "hash": "8e9267ce7b7199ec241985914fa1686efa7e6b65c976964bb6b1ba04d188926c",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:14:07+00:00",
      "status": "verified"
     }
@@ -1415,7 +1413,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "There are no fees for uploading your items or selling them on Vinted. This means once your sale is successfully closed, you'll receive the full selling price straight to your Vinted Wallet.",
     "The calculation of this fee varies based on several factors, such as: item characteristics, order value, order type (a single item versus a bundle)",
@@ -1435,63 +1433,63 @@
     "https://www.vinted.com/help/1147-item-verification-for-designer-items": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:23:38+00:00",
      "status": "verified"
     },
     "https://www.vinted.com/help/1555-us-uk-international-sales": {
      "fingerprint_drift": false,
      "hash": "600569e29afee6811b45afd16e7f5ad2a046bfccf62b9ef77b88c1b75381c2f2",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:23:38+00:00",
      "status": "verified"
     },
     "https://www.vinted.com/help/342-buyer-protection-fee-on-vinted": {
      "fingerprint_drift": false,
      "hash": "612accdd3714f4c89654e9917c12dd7f14d0043854990220f4ae7b37b2754228",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:23:38+00:00",
      "status": "verified"
     },
     "https://www.vinted.com/help/373-is-selling-on-vinted-free": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:23:38+00:00",
      "status": "verified"
     },
     "https://www.vinted.com/help/4/1577-payments-withdrawals": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:23:38+00:00",
      "status": "verified"
     },
     "https://www.vinted.com/help/432-withdrawals": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:23:38+00:00",
      "status": "verified"
     },
     "https://www.vinted.com/help/437-vinted-wallet-how-it-works": {
      "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:23:38+00:00",
      "status": "verified"
     },
     "https://www.vinted.com/help/68-how-to-withdraw-earnings": {
      "fingerprint_drift": false,
      "hash": "8308d8c01c3b0ff045ee7724576a7e4c76f1ff3611f9726791e3ad0cae9549de",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:23:38+00:00",
      "status": "verified"
     },
     "https://www.vinted.com/pricelist": {
      "fingerprint_drift": false,
      "hash": "f173d5eab7ca2cacc82b3ca675d7494eed21dd5d4a17dbbe640304a00dad4db6",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:23:38+00:00",
      "status": "verified"
     }
@@ -1521,7 +1519,7 @@
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
     }
    ],
-   "last_checked_at": "2026-09-08T18:24:10+00:00",
+   "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "Comics, TCG, Sports Singles, Toys & Hobbies (see other restrictions) 8% on final sale price up to $1,500; 0% on portion above $1,500 (limited time; learn more). 2.9% on total order value + $0.30 transaction fee",
     "*Plus applicable taxes on fees.",
@@ -1541,42 +1539,42 @@
     "https://help.whatnot.com/hc/en-us/articles/14477076380941-Reduced-commission-on-Coins-Money": {
      "fingerprint_drift": false,
      "hash": "690c9623e52df32a5867bacd37fb0de4db157b665e8de0910d73b884f9df3882",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:24:04+00:00",
      "status": "verified"
     },
     "https://help.whatnot.com/hc/en-us/articles/27912945518733-Reduced-Commission-on-High-Value-Orders": {
      "fingerprint_drift": false,
      "hash": "50ceefde4c2b0b0ccf23d4730b8530f54268aeac5788b94bedb514c2ee3198d7",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:24:04+00:00",
      "status": "verified"
     },
     "https://help.whatnot.com/hc/en-us/articles/32083195713421-Taxes-on-Whatnot-commissions-and-fees": {
      "fingerprint_drift": false,
      "hash": "c52dbf63445249d70cb99684eedb7883e654cd5942b17aaf4f4b3225bce057dd",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:24:04+00:00",
      "status": "verified"
     },
     "https://help.whatnot.com/hc/en-us/articles/46618300974477-Sell-More-Earn-More": {
      "fingerprint_drift": false,
      "hash": "c3c853df013bec4c572849567152d23dcb27b10514596b59f112708705d7e778",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:24:04+00:00",
      "status": "verified"
     },
     "https://help.whatnot.com/hc/en-us/articles/4847069165965-Whatnot-seller-fees": {
      "fingerprint_drift": false,
      "hash": "07294d1f7c68d97fec5a9d6ade71235ead595b1de016d07780599afb3db707c9",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:24:04+00:00",
      "status": "verified"
     },
     "https://help.whatnot.com/hc/en-us/sections/44398189207565-Fees-commissions": {
      "fingerprint_drift": false,
      "hash": "62d4e6355bb6c5326c2749ccbbe0b940a093d7df77fecac220c5889593bb2744",
-     "last_checked_at": "2026-09-08T18:24:10+00:00",
+     "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:24:04+00:00",
      "status": "verified"
     }
