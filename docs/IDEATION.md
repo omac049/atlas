@@ -162,6 +162,16 @@ generation, pages, calculators, the disclosure language — is build work.
   plain-words summary composed from the verifier's codes, homepage grouped by
   event family, About page, 51-jurisdiction sourced legal table
   (`docs/site/legal-states.json`), visual identity.
+- 2026-09-08, ~20:30–21:45 UTC: **samebetornot.com served the Fee Verified site.**
+  While attaching `verifiedfees.com` to its Cloudflare Pages project, the owner
+  also attached `samebetornot.com`, and Cloudflare rewrote the apex record to
+  that project. GitHub Pages was intact throughout (its github.io address and
+  `www` redirect to the apex, so every route landed on the wrong site). Fixed
+  by detaching the domain and restoring GitHub's four A records (DNS only);
+  Cloudflare's nameservers and public resolvers confirmed within minutes. If
+  the week-2 numbers dip, this hour is the likely cause; the pass line does not
+  move for it.
+
 
 ## Scoreboard (Search Console, owner's personal account; logged Mondays)
 

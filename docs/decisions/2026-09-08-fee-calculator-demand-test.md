@@ -155,6 +155,11 @@ before it ships.
   unattended cycle at 20:57 UTC: 17/17 sources verified, built, published,
   IndexNow accepted. Still open, owner: attach `www.verifiedfees.com`; report
   what Search Console → Security issues shows.
+- 2026-09-08: side effect of the custom-domain step — `samebetornot.com` was
+  attached to this Pages project too and served Fee Verified for about an
+  hour; detached, and the other site's DNS restored (logged in
+  `docs/IDEATION.md`). Dashboard steps stay the owner's: wrangler has no DNS or
+  custom-domain commands and the owner's browser is employer-managed.
 
 ## 9. Scoreboard
 
