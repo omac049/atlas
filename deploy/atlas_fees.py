@@ -32,7 +32,7 @@ def run(args: list[str], timeout: int) -> subprocess.CompletedProcess:
 
 
 def main() -> None:
-    verify = run([str(PYTHON), "-m", "feeverified", "verify"], 600)
+    verify = run([str(PYTHON), "-m", "feeverified", "verify"], 2400)
     log(f"verify rc={verify.returncode} {verify.stdout.strip()[-200:] or verify.stderr.strip()[-200:]}")
     base_url = os.environ.get("FEES_SITE_BASE_URL", "https://example.invalid")
     build = run([str(PYTHON), "-m", "feeverified", "build", "--out", str(OUT), "--base-url", base_url], 300)

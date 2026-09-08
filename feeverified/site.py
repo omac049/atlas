@@ -127,6 +127,25 @@ def status_for(schedule: dict, verification: dict) -> tuple[str, str, str]:
     return status, kind, text
 
 
+def coverage_note(schedule: dict, verification: dict) -> str:
+    """How much of the schedule the nightly check can actually see."""
+    entry = verification.get(schedule["platform"], {})
+    total = len(schedule.get("quotes", []))
+    if not total or "quotes_missing_at_review" not in entry:
+        return ""
+    found = total - len(entry["quotes_missing_at_review"])
+    unverified_sources = sum(1 for s in schedule["sources"] if s.get("verify") is False)
+    note = f"The nightly check re-reads {found} of the {total} sentences quoted on this page"
+    if found < total:
+        note += (
+            "; the rest are in tables or on pages that block automated reading and were "
+            f"verified by a person on {str(entry.get('reviewed_at') or schedule.get('as_of'))[:10]}"
+        )
+    if unverified_sources:
+        note += f" ({unverified_sources} source page{'s' if unverified_sources > 1 else ''} read by a person only)"
+    return note + "."
+
+
 def _page(site: dict, *, title: str, path: str, body: str, description: str, head_extra: str = "") -> str:
     root = "../" * path.count("/")
     nav = "".join(f'<a href="{root}{_href(h) or "./"}">{_esc(label)}</a>' for h, label in _NAV)
@@ -177,7 +196,8 @@ def render_platform(site: dict, schedule: dict, verification: dict, engine_js: s
         f"<h1>{_esc(short)} fee calculator</h1>"
         f"<p class=\"lede\">{_esc(schedule.get('summary', ''))}</p>"
         f"<div class=\"status {kind}\">{_esc(text)}</div>"
-        "<div class=\"calc\"><form id=\"calc-form\" autocomplete=\"off\"></form><div id=\"calc-out\"></div></div>"
+        + (f"<p class=\"muted small\">{_esc(coverage_note(schedule, verification))}</p>" if coverage_note(schedule, verification) else "")
+        + "<div class=\"calc\"><form id=\"calc-form\" autocomplete=\"off\"></form><div id=\"calc-out\"></div></div>"
         "<h2>At a glance (default settings)</h2>"
         "<table><thead><tr><th>Sale</th><th class=\"num\">Fees</th><th class=\"num\">You keep</th><th class=\"num\">Effective rate</th></tr></thead>"
         f"<tbody>{glance}</tbody></table>"

@@ -12,9 +12,13 @@ pinned to the platform's worked examples, verified nightly against the page.
   **Numbers change only by a human editing this file.**
 - `feeverified/static/fees.js` — the one fee engine (browser and Node). One
   function per platform, reading rates from the schedule.
-- `feeverified/verify.py` — nightly check. Fingerprints the fee-bearing
-  sentences of each source page (whole-page hashes churn on session ids) and
-  records verified / changed / unreachable in `docs/fees/verification.json`.
+- `feeverified/verify.py` — nightly check. Renders each source page in headless
+  Chromium (Playwright; several platforms serve fee schedules only through
+  JavaScript), falls back to a browser-impersonating fetch, then checks that
+  every sentence the schedule quotes is still on the page. A missing quote
+  means **changed**; a fingerprint of all fee-bearing sentences is kept as
+  evidence. Results in `docs/fees/verification.json`. A full run takes
+  ~10–20 minutes because pages are rendered, not just fetched.
 - `feeverified/site.py` — page generator: calculator page, "how much does X
   take", comparisons, methodology, about. Disclosure on every page by guardrail.
 - `tests/test_feeverified.py` — every published example reproduced to the cent,

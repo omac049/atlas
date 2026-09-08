@@ -104,9 +104,48 @@ def text_hash(html: str) -> str:
     return fee_fingerprint(html)
 
 
+_BROWSER = {"playwright": None, "browser": None, "context": None}
+
+
+def _rendered(url: str) -> str:
+    """Render the page in headless Chromium and return its HTML after the
+    network goes quiet. Several platforms (Amazon Seller Central, StubHub's
+    help center, Shopify help) serve their fee schedules only through
+    JavaScript, so a plain fetch would verify an empty shell."""
+    from playwright.sync_api import sync_playwright
+
+    if _BROWSER["browser"] is None:
+        _BROWSER["playwright"] = sync_playwright().start()
+        _BROWSER["browser"] = _BROWSER["playwright"].chromium.launch(headless=True)
+        _BROWSER["context"] = _BROWSER["browser"].new_context(user_agent=USER_AGENT, locale="en-US")
+    page = _BROWSER["context"].new_page()
+    try:
+        try:
+            page.goto(url, wait_until="networkidle", timeout=45000)
+        except Exception:  # noqa: BLE001 - a slow tracker must not fail the page; use what rendered
+            page.wait_for_timeout(2000)
+        return page.content()
+    finally:
+        page.close()
+
+
+def close_browser() -> None:
+    if _BROWSER["browser"] is not None:
+        _BROWSER["browser"].close()
+        _BROWSER["playwright"].stop()
+        _BROWSER.update({"playwright": None, "browser": None, "context": None})
+
+
 def fetch(url: str) -> str:
-    """Browser-impersonating fetch first (several help centers block plain
-    clients), plain httpx as the fallback. Raises on failure."""
+    """Rendered browser fetch first; browser-impersonating and plain fetches
+    as fallbacks. Raises on failure."""
+    rendered_error = None
+    try:
+        html = _rendered(url)
+        if len(visible_text(html)) > 500:
+            return html
+    except Exception as exc:  # noqa: BLE001 - fall through to the lighter fetchers
+        rendered_error = str(exc)[:120]
     try:
         from curl_cffi import requests as cffi_requests
 
@@ -123,7 +162,7 @@ def fetch(url: str) -> str:
         timeout=30, follow_redirects=True,
     )
     if response.status_code != 200:
-        raise RuntimeError(f"HTTP {response.status_code} (impersonated: {status})")
+        raise RuntimeError(f"HTTP {response.status_code} (impersonated: {status}; rendered: {rendered_error})")
     return response.text
 
 
@@ -165,6 +204,7 @@ def mark_reviewed(platform: str, note: str) -> dict:
     entry["reviewed_at"] = now
     entry["history"].append({"at": now, "event": "reviewed", "note": note})
     save_state(state)
+    close_browser()
     return entry
 
 
@@ -206,6 +246,22 @@ def check_all() -> dict:
         # Quotes the reviewer already knew were absent do not count as a change.
         known = set(entry.get("quotes_missing_at_review", []))
         newly_missing = [q for q in missing if q not in known]
+        if newly_missing:
+            # Pages render slightly differently between loads (measured: a
+            # single fee line flapped on Stripe's pricing page). A quote only
+            # counts as gone if a second, independent fetch also lacks it.
+            texts2 = []
+            for source in schedule["sources"]:
+                if source.get("verify") is False:
+                    continue
+                try:
+                    texts2.append(visible_text(fetch(source["url"])))
+                except Exception as exc:  # noqa: BLE001 - the first pass already recorded reachability
+                    entry["sources"].setdefault(source["url"], {})["recheck_error"] = str(exc)[:120]
+            if texts2:
+                still_missing = set(missing_quotes("\n".join(texts2), newly_missing))
+                newly_missing = [q for q in newly_missing if q in still_missing]
+                missing = [q for q in missing if q in known or q in still_missing]
         entry["quotes_missing"] = missing
         if newly_missing and texts:
             if entry.get("status") != "changed":
@@ -219,6 +275,7 @@ def check_all() -> dict:
         entry["last_checked_at"] = now
         summary[entry["status"]] += 1
     save_state(state)
+    close_browser()
     return summary
 
 
