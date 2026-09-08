@@ -95,9 +95,16 @@ first deposit plus 20% of their perps trading fees; revenue bounties). The
 program page's own data gives its domain as `polymarket.com`, its revenue
 share is on perps, which polymarket.us does not offer, so it is the global
 venue's program and stays off the site under the decision above. Nothing was
-published; no Stripe payout account is needed for it. Originally: the owner
+published; no Stripe payout account is needed for it. The owner's Dub link
+(`poly.market/omar-seo-omar`) was followed on 2026-09-08 and lands on
+`polymarket.com/?modal=signup`, which settles it. Originally: the owner
 applied to the Dub Polymarket program (partners.dub.co/programs/polymarket),
-awaiting review. Its payout is tied to
+awaiting review.
+
+**Polymarket US application: sent 2026-09-08** from the owner's personal
+address, with the refreshed text (what is live: verdict pages, the fee
+calculator from the published schedule, the comparison, legit, referral, legal
+and tax pages; sponsored-link placement if approved). Awaiting a reply. Its payout is tied to
 "Perps trading fees", which only polymarket.com offers, so it is almost
 certainly the global venue's program: when approved, check the landing URL in
 the Dub dashboard — polymarket.us means usable, polymarket.com means not used
