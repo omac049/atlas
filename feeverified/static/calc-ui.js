@@ -78,7 +78,7 @@
         wrap.classList.add("check");
       } else {
         input = el("input", { type: "number", name: spec.id, id: "in-" + spec.id, step: spec.type === "percent" ? "0.1" : "0.01", min: "0", inputmode: "decimal" });
-        input.value = spec.type === "percent" ? (spec.default * 100) : spec.default;
+        input.value = spec.type === "percent" ? parseFloat((spec.default * 100).toFixed(8)) : spec.default;
         label.appendChild(el("span", { text: spec.label + (spec.type === "percent" ? " (%)" : " ($)") })); label.appendChild(input);
       }
       wrap.appendChild(label);

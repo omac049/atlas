@@ -138,6 +138,16 @@ before it ships.
   step was re-run under launchd's PATH: new production deployment, IndexNow
   accepted 41 URLs. The full agent run was kicked off again as the end-to-end
   check; the 04:20 nightly is the standing proof (`~/Library/Logs/atlas-fees.log`).
+- 2026-09-08, hours after the domain went live: Chrome showed a Safe Browsing
+  "Dangerous site" warning on `/cashapp`. Google's public Safe Browsing status
+  for the domain reads "No available data" (not listed), so the verdict came
+  from Chrome's real-time or on-device protection judging a day-old domain of
+  payment-brand pages with forms. Response: an independence line on every page
+  (build guardrail), "an independent calculator, not X" under every platform
+  heading, independence in the meta descriptions; owner to check Search
+  Console → Security issues, request a review if anything is listed, and file
+  a false-positive report. Recorded as a risk to the test: a warning suppresses
+  clicks and can delay indexing, and the pass line does not move for it.
 - Pending, owner: attach `www.verifiedfees.com`; confirm the sitemap is
   submitted in Search Console. **The clock has not started** until the sitemap
   is accepted; the week-six verdict date is that day plus 42.

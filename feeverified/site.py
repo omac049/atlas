@@ -34,6 +34,10 @@ NOT_ADVICE = (
     "tell you which platform to use, and it cannot see promotions, negotiated rates, or fees "
     "the platform has not published."
 )
+INDEPENDENCE = (
+    "Independent site: Fee Verified is not affiliated with, endorsed by, or operated by any "
+    "platform named here. There are no accounts or logins; the only thing you enter is a sale amount."
+)
 
 STATUS_TEXT = {
     "verified": ("verified", "Verified against {name}'s fee page"),
@@ -62,7 +66,7 @@ align-items:baseline}.brand{font-weight:800;font-size:1.05rem;color:var(--ink);t
 margin-right:auto}.brand span{color:var(--accent)}.top nav{display:flex;flex-wrap:wrap;gap:4px 14px;
 font-size:14px}.top nav a{color:var(--ink);text-decoration:none}
 h1{font-size:1.85rem;line-height:1.2;margin:.2em 0 .4em}h2{font-size:1.2rem;margin:1.8em 0 .5em}
-p{margin:.55em 0}.lede{font-size:1.08rem;color:#333}.muted{color:var(--muted);font-size:14px}
+p{margin:.55em 0}.lede{font-size:1.08rem;color:#333}header .independent{max-width:900px;margin:0 auto;padding:0 20px .6rem;font-size:.82rem;color:#5b6472}.muted{color:var(--muted);font-size:14px}
 .small{font-size:13px}.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:13px;
 font-weight:600}.badge.verified{background:var(--ok-bg);color:var(--ok)}.badge.review{background:var(--rev-bg);
 color:var(--rev)}.badge.warn{background:var(--warn-bg);color:var(--warn)}
@@ -161,7 +165,7 @@ def _page(site: dict, *, title: str, path: str, body: str, description: str, hea
         f"<meta property=\"og:title\" content=\"{_esc(title)}\"><meta property=\"og:description\" content=\"{_esc(description)}\">"
         "<link rel=\"icon\" href=\"data:,\">"
         f"<style>{_CSS}</style>{head_extra}</head><body>"
-        f"<header><div class=\"top\"><a class=\"brand\" href=\"{root or './'}\">Fee <span>Verified</span></a><nav>{nav}</nav></div></header>"
+        f"<header><div class=\"top\"><a class=\"brand\" href=\"{root or './'}\">Fee <span>Verified</span></a><nav>{nav}</nav></div><p class=\"independent\">{_esc(INDEPENDENCE)}</p></header>"
         f"<main>{body}</main>"
         f"<footer><p>{_esc(DISCLOSURE)}</p><p>{_esc(NOT_ADVICE)}</p>"
         f"<p>Generated {_esc(site['stamp'])}. <a href=\"{root}methodology\">How every number is verified</a> · <a href=\"{root}about\">About</a></p></footer>"
@@ -197,6 +201,7 @@ def render_platform(site: dict, schedule: dict, verification: dict, engine_js: s
     )
     body = (
         f"<h1>{_esc(short)} fee calculator</h1>"
+        f"<p class=\"muted small\">An independent calculator, not {_esc(short)}: nothing to sign in to and nothing to pay here. Enter a sale amount and read the fees.</p>"
         f"<p class=\"lede\">{_esc(schedule.get('summary', ''))}</p>"
         f"<div class=\"status {kind}\">{_esc(text)}</div>"
         + (f"<p class=\"muted small\">{_esc(coverage_note(schedule, verification))}</p>" if coverage_note(schedule, verification) else "")
@@ -218,7 +223,7 @@ def render_platform(site: dict, schedule: dict, verification: dict, engine_js: s
     )
     title = f"{short} fee calculator ({site['year']}): exact seller fees from {short}'s published schedule"
     return _page(site, title=title, path=f"{schedule['platform']}.html", body=body,
-                 description=f"{short} seller fees computed from the published fee schedule, verified against the page, with the platform's own examples reproduced.")
+                 description=f"{short} seller fees computed from the published fee schedule, verified against the page, with the platform's own examples reproduced. Independent site, not affiliated with {short}.")
 
 
 def render_index(site: dict, schedules: list[dict], verification: dict) -> str:
@@ -303,7 +308,9 @@ def render_fact_page(site: dict, schedule: dict, verification: dict) -> str:
     sources = "".join(f"<li><a href=\"{_esc(s['url'])}\" rel=\"noopener\">{_esc(s['title'])}</a></li>" for s in schedule["sources"])
     notes = "".join(f"<li>{_esc(x)}</li>" for x in schedule.get("notes", []))
     body = (
-        f"<h1>{_esc(short)} seller fees</h1><p class=\"lede\">{_esc(schedule.get('summary', ''))}</p>"
+        f"<h1>{_esc(short)} seller fees</h1>"
+        f"<p class=\"muted small\">An independent calculator, not {_esc(short)}: nothing to sign in to and nothing to pay here. Enter a sale amount and read the fees.</p>"
+        f"<p class=\"lede\">{_esc(schedule.get('summary', ''))}</p>"
         f"<div class=\"status {kind}\">{_esc(text)}</div>"
         f"<h2>What {_esc(short)} publishes</h2><p>{_esc(schedule.get('structure', ''))}</p>"
         f"<h2>In {_esc(short)}'s own words</h2><ul>{quotes}</ul>"
@@ -331,6 +338,7 @@ def render_take(site: dict, schedule: dict, verification: dict) -> str:
     )
     body = (
         f"<h1>How much does {_esc(short)} take?</h1>"
+        f"<p class=\"muted small\">An independent calculator, not {_esc(short)}: nothing to sign in to and nothing to pay here. Enter a sale amount and read the fees.</p>"
         f"<p class=\"lede\">On a {_money(hundred['sale'])} sale with the default settings, {_esc(short)} takes "
         f"<strong>{_money(hundred['fees'])}</strong> and you keep <strong>{_money(hundred['net'])}</strong> — an effective "
         f"rate of {hundred['rate']:.2f}%. {_esc(schedule.get('summary', ''))}</p>"
@@ -398,6 +406,8 @@ def verify_pages(pages: dict[str, str]) -> list[str]:
                 problems.append(f"{path}: missing disclosure")
             if NOT_ADVICE[:30] not in content:
                 problems.append(f"{path}: missing not-advice notice")
+            if INDEPENDENCE[:24] not in content:
+                problems.append(f"{path}: missing independence line")
     return problems
 
 
