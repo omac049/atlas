@@ -1,0 +1,894 @@
+{
+ "as_of": "2026-09-08",
+ "source": "Keywords Everywhere get_keyword_data (country=us, dataSource=gkp)",
+ "fields": [
+  "keyword",
+  "vol_12mo_avg",
+  "vol_aug_2026",
+  "cpc_usd"
+ ],
+ "clusters": {
+  "A_platform_fees": [
+   [
+    "ebay fee calculator",
+    40500,
+    49500,
+    2.16
+   ],
+   [
+    "ebay fees",
+    9900,
+    9900,
+    0.03
+   ],
+   [
+    "ebay selling fees",
+    8100,
+    9900,
+    0.04
+   ],
+   [
+    "ebay profit calculator",
+    5400,
+    5400,
+    1.11
+   ],
+   [
+    "how much does ebay take",
+    2400,
+    1900,
+    0.05
+   ],
+   [
+    "ebay store fees",
+    1300,
+    1300,
+    0.12
+   ],
+   [
+    "ebay final value fee",
+    1300,
+    1300,
+    0.04
+   ],
+   [
+    "paypal fee calculator",
+    18100,
+    18100,
+    2.74
+   ],
+   [
+    "paypal fees",
+    9900,
+    8100,
+    2.85
+   ],
+   [
+    "paypal invoice fee",
+    880,
+    880,
+    4.06
+   ],
+   [
+    "paypal international fees",
+    880,
+    590,
+    0.0
+   ],
+   [
+    "paypal business account fees",
+    720,
+    590,
+    4.07
+   ],
+   [
+    "paypal merchant fees",
+    480,
+    720,
+    4.31
+   ],
+   [
+    "shopify fees",
+    9900,
+    9900,
+    2.74
+   ],
+   [
+    "shopify transaction fees",
+    480,
+    320,
+    1.84
+   ],
+   [
+    "square fees",
+    8100,
+    6600,
+    2.32
+   ],
+   [
+    "square processing fees",
+    3600,
+    2900,
+    3.19
+   ],
+   [
+    "square fee calculator",
+    1000,
+    1300,
+    3.46
+   ],
+   [
+    "stripe fees",
+    5400,
+    5400,
+    1.49
+   ],
+   [
+    "stripe pricing",
+    3600,
+    4400,
+    1.79
+   ],
+   [
+    "stripe fee calculator",
+    1600,
+    3600,
+    2.72
+   ],
+   [
+    "venmo fees",
+    5400,
+    4400,
+    0.0
+   ],
+   [
+    "venmo business fees",
+    1900,
+    1600,
+    4.76
+   ],
+   [
+    "cash app fees",
+    3600,
+    2900,
+    0.65
+   ],
+   [
+    "cash app business fees",
+    260,
+    210,
+    5.5
+   ],
+   [
+    "gofundme fees",
+    5400,
+    4400,
+    0.19
+   ],
+   [
+    "etsy fee calculator",
+    3600,
+    3600,
+    0.06
+   ],
+   [
+    "etsy fees",
+    2900,
+    2400,
+    0.06
+   ],
+   [
+    "etsy seller fees",
+    2900,
+    2900,
+    0.05
+   ],
+   [
+    "amazon fba calculator",
+    3600,
+    2900,
+    2.0
+   ],
+   [
+    "amazon seller fees",
+    1600,
+    1300,
+    0.29
+   ],
+   [
+    "amazon fee calculator",
+    720,
+    590,
+    2.89
+   ],
+   [
+    "coinbase fees",
+    3600,
+    1900,
+    4.04
+   ],
+   [
+    "depop seller fees",
+    2900,
+    4400,
+    1.38
+   ],
+   [
+    "depop fees",
+    1900,
+    2900,
+    0.86
+   ],
+   [
+    "whatnot fees",
+    1900,
+    1900,
+    0.07
+   ],
+   [
+    "poshmark fees",
+    1900,
+    1600,
+    0.46
+   ],
+   [
+    "poshmark seller fees",
+    720,
+    880,
+    0.96
+   ],
+   [
+    "mercari fees",
+    1300,
+    1300,
+    2.57
+   ],
+   [
+    "mercari seller fees",
+    1300,
+    1300,
+    1.32
+   ],
+   [
+    "stubhub seller fees",
+    880,
+    1300,
+    0.42
+   ],
+   [
+    "ticketmaster fees",
+    1300,
+    1000,
+    1.64
+   ],
+   [
+    "facebook marketplace fees",
+    720,
+    720,
+    0.05
+   ],
+   [
+    "reverb fees",
+    590,
+    480,
+    0.0
+   ],
+   [
+    "vinted fees",
+    390,
+    1000,
+    0.41
+   ],
+   [
+    "zelle limits (adjacent)",
+    18100,
+    18100,
+    2.16
+   ]
+  ],
+  "B_fintech_legit": [
+   [
+    "is temu legit (retail, excluded)",
+    49500,
+    60500,
+    0.02
+   ],
+   [
+    "is shein legit (retail, excluded)",
+    27100,
+    27100,
+    11.03
+   ],
+   [
+    "is rocket money safe",
+    22200,
+    22200,
+    0.09
+   ],
+   [
+    "rocket money reviews",
+    22200,
+    12100,
+    0.53
+   ],
+   [
+    "is rocket money legit",
+    3600,
+    5400,
+    0.41
+   ],
+   [
+    "upstart reviews",
+    18100,
+    18100,
+    2.54
+   ],
+   [
+    "is upstart legit",
+    6600,
+    6600,
+    3.24
+   ],
+   [
+    "what bank is chime",
+    9900,
+    8100,
+    1.62
+   ],
+   [
+    "chime reviews",
+    5400,
+    3600,
+    3.43
+   ],
+   [
+    "is chime legit",
+    4400,
+    5400,
+    5.13
+   ],
+   [
+    "is chime a bank",
+    3600,
+    4400,
+    4.4
+   ],
+   [
+    "is chime fdic insured",
+    2900,
+    3600,
+    3.1
+   ],
+   [
+    "is chime safe",
+    1900,
+    2400,
+    4.67
+   ],
+   [
+    "is chime a real bank",
+    1300,
+    1600,
+    7.26
+   ],
+   [
+    "chime lawsuit",
+    590,
+    720,
+    0.0
+   ],
+   [
+    "sofi reviews",
+    8100,
+    6600,
+    5.19
+   ],
+   [
+    "is sofi fdic insured",
+    5400,
+    5400,
+    6.17
+   ],
+   [
+    "is sofi legit",
+    4400,
+    5400,
+    8.63
+   ],
+   [
+    "is sofi safe",
+    1300,
+    1300,
+    3.45
+   ],
+   [
+    "is robinhood safe",
+    6600,
+    5400,
+    3.28
+   ],
+   [
+    "is robinhood legit",
+    1000,
+    1000,
+    7.69
+   ],
+   [
+    "is coinbase safe",
+    4400,
+    2900,
+    0.88
+   ],
+   [
+    "is coinbase legit",
+    2400,
+    2400,
+    2.91
+   ],
+   [
+    "is klarna safe",
+    5400,
+    5400,
+    0.02
+   ],
+   [
+    "is klarna legit",
+    2400,
+    1900,
+    0.03
+   ],
+   [
+    "is affirm legit",
+    3600,
+    2900,
+    0.25
+   ],
+   [
+    "is affirm safe",
+    880,
+    880,
+    0.18
+   ],
+   [
+    "is moneylion legit",
+    3600,
+    2900,
+    4.04
+   ],
+   [
+    "is acorns legit",
+    2900,
+    2900,
+    0.04
+   ],
+   [
+    "is lending club legit",
+    2900,
+    4400,
+    7.08
+   ],
+   [
+    "is brigit legit",
+    2400,
+    2900,
+    4.82
+   ],
+   [
+    "is earnin legit",
+    1900,
+    2400,
+    9.99
+   ],
+   [
+    "is webull safe",
+    1900,
+    1300,
+    7.01
+   ],
+   [
+    "is wealthfront safe",
+    1600,
+    1900,
+    2.59
+   ],
+   [
+    "is fundrise legit",
+    1300,
+    1300,
+    1.35
+   ],
+   [
+    "is prizepicks legit",
+    1300,
+    1000,
+    20.87
+   ],
+   [
+    "is cash app legit",
+    1000,
+    1000,
+    0.03
+   ],
+   [
+    "is moomoo legit",
+    1000,
+    590,
+    5.42
+   ],
+   [
+    "is wealthfront legit",
+    880,
+    1000,
+    2.8
+   ],
+   [
+    "is webull legit",
+    880,
+    590,
+    5.0
+   ],
+   [
+    "is kraken legit",
+    880,
+    390,
+    4.37
+   ],
+   [
+    "is empower legit",
+    880,
+    880,
+    1.56
+   ],
+   [
+    "is stash legit",
+    720,
+    880,
+    2.57
+   ],
+   [
+    "is credit karma legit",
+    720,
+    880,
+    6.72
+   ],
+   [
+    "is cleo legit",
+    720,
+    1000,
+    6.25
+   ],
+   [
+    "is dave app legit",
+    480,
+    720,
+    5.47
+   ],
+   [
+    "is fanduel legit",
+    480,
+    590,
+    21.44
+   ]
+  ],
+  "C_state_legality": [
+   [
+    "legal weed states",
+    135000,
+    135000,
+    3.14
+   ],
+   [
+    "is weed legal in florida",
+    74000,
+    74000,
+    5.54
+   ],
+   [
+    "is weed legal in new york",
+    49500,
+    40500,
+    2.77
+   ],
+   [
+    "is weed legal in new jersey",
+    40500,
+    22200,
+    3.63
+   ],
+   [
+    "is weed legal in ohio",
+    27100,
+    33100,
+    0.0
+   ],
+   [
+    "is weed legal in arizona",
+    27100,
+    22200,
+    0.0
+   ],
+   [
+    "states where weed is legal",
+    22200,
+    22200,
+    0.05
+   ],
+   [
+    "is weed legal in georgia",
+    22200,
+    27100,
+    0.0
+   ],
+   [
+    "is weed legal in texas",
+    22200,
+    27100,
+    0.0
+   ],
+   [
+    "is weed legal in north carolina",
+    22200,
+    33100,
+    0.0
+   ],
+   [
+    "is weed legal in south carolina",
+    18100,
+    27100,
+    0.0
+   ],
+   [
+    "is weed legal in california",
+    14800,
+    14800,
+    0.0
+   ],
+   [
+    "is weed legal in nevada",
+    14800,
+    14800,
+    0.0
+   ],
+   [
+    "is weed legal in tennessee",
+    9900,
+    18100,
+    0.09
+   ],
+   [
+    "is weed legal in illinois",
+    9900,
+    14800,
+    2.27
+   ],
+   [
+    "is weed legal in pennsylvania",
+    8100,
+    12100,
+    3.82
+   ],
+   [
+    "is weed legal in michigan",
+    8100,
+    9900,
+    2.5
+   ],
+   [
+    "where is weed legal",
+    8100,
+    8100,
+    0.0
+   ],
+   [
+    "is weed legal in washington",
+    3600,
+    4400,
+    0.0
+   ],
+   [
+    "is thca legal in texas",
+    3600,
+    4400,
+    0.0
+   ],
+   [
+    "is kratom legal",
+    3600,
+    2900,
+    0.38
+   ],
+   [
+    "is weed legal in colorado",
+    2400,
+    2900,
+    0.0
+   ],
+   [
+    "is delta 8 legal in texas",
+    2400,
+    1900,
+    0.0
+   ],
+   [
+    "is thca legal in florida",
+    2400,
+    2400,
+    0.0
+   ],
+   [
+    "is kratom legal in florida",
+    1600,
+    1600,
+    0.0
+   ],
+   [
+    "is delta 8 legal in florida",
+    1300,
+    1300,
+    0.0
+   ],
+   [
+    "is thca legal",
+    1300,
+    1300,
+    0.0
+   ],
+   [
+    "how to get a medical card in florida",
+    880,
+    1000,
+    0.0
+   ],
+   [
+    "is sports betting legal in texas (gambling, excluded)",
+    3600,
+    3600,
+    22.44
+   ],
+   [
+    "is online gambling legal in texas (excluded)",
+    1000,
+    880,
+    20.12
+   ],
+   [
+    "is it illegal to drive barefoot",
+    27100,
+    33100,
+    0.02
+   ],
+   [
+    "tint laws texas",
+    12100,
+    14800,
+    0.03
+   ],
+   [
+    "open carry states",
+    12100,
+    8100,
+    0.02
+   ],
+   [
+    "constitutional carry states",
+    9900,
+    9900,
+    0.62
+   ]
+  ],
+  "D_government_fees": [
+   [
+    "states with no income tax",
+    74000,
+    60500,
+    0.01
+   ],
+   [
+    "tax deadline 2026",
+    60500,
+    4400,
+    2.09
+   ],
+   [
+    "passport fees",
+    22200,
+    18100,
+    0.11
+   ],
+   [
+    "how much does it cost to get a passport",
+    22200,
+    22200,
+    0.12
+   ],
+   [
+    "sales tax rate texas",
+    9900,
+    5400,
+    1.4
+   ],
+   [
+    "sales tax by state",
+    8100,
+    5400,
+    1.07
+   ],
+   [
+    "how much does a notary cost",
+    6600,
+    6600,
+    0.5
+   ],
+   [
+    "state income tax rates",
+    3600,
+    2400,
+    1.76
+   ],
+   [
+    "1099 deadline 2026",
+    2900,
+    50,
+    1.79
+   ],
+   [
+    "property tax rates by state",
+    2400,
+    1900,
+    0.01
+   ],
+   [
+    "overtime laws by state",
+    2400,
+    210,
+    0.02
+   ],
+   [
+    "car registration cost texas",
+    1600,
+    1300,
+    0.07
+   ],
+   [
+    "llc filing fee texas",
+    1000,
+    590,
+    7.7
+   ],
+   [
+    "drivers license renewal fee texas",
+    1000,
+    590,
+    0.0
+   ],
+   [
+    "ein number cost",
+    880,
+    590,
+    1.57
+   ]
+  ]
+ },
+ "summary": {
+  "A_platform_fees": {
+   "n_keywords": 46,
+   "monthly_volume_sum": 184820,
+   "note": "US, GKP via Keywords Everywhere, pulled 2026-09-08; sums exclude rows marked excluded/adjacent"
+  },
+  "B_fintech_legit": {
+   "n_keywords": 47,
+   "monthly_volume_sum": 177010,
+   "note": "US, GKP via Keywords Everywhere, pulled 2026-09-08; sums exclude rows marked excluded/adjacent"
+  },
+  "C_state_legality": {
+   "n_keywords": 34,
+   "monthly_volume_sum": 618080,
+   "note": "US, GKP via Keywords Everywhere, pulled 2026-09-08; sums exclude rows marked excluded/adjacent"
+  },
+  "D_government_fees": {
+   "n_keywords": 15,
+   "monthly_volume_sum": 219280,
+   "note": "US, GKP via Keywords Everywhere, pulled 2026-09-08; sums exclude rows marked excluded/adjacent"
+  }
+ }
+}
