@@ -1037,7 +1037,9 @@ def render_referral_code(site: Site, venue: str) -> str:
             "and meets a trading requirement shown in the app; then both sides receive credits. "
             "Credits must be used within 7 days unless stated otherwise, only profits made with "
             "them become withdrawable, amounts and lifetime caps are set per account and shown "
-            "in-app, and the program is US-only."
+            "in-app, and the program is US-only. As displayed in this site owner's app on "
+            "2026-09-08: the new user must trade $25, then both sides receive $25 in bonus funds "
+            "that expire after 7 days — your app may show different amounts."
         )
         venue_text = row.get("kalshi") or ""
         other = (
