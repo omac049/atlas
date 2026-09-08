@@ -89,8 +89,15 @@ referral). **Held, not used:** perps are a leveraged crypto product outside the
 site's subject, and every perps search term measured 0/month (Keywords
 Everywhere, US, 2026-09-08). Revisit only if a perps page is ever justified.
 
-**Status 2026-09-08.** The owner applied to the Dub Polymarket program
-(partners.dub.co/programs/polymarket), awaiting review. Its payout is tied to
+**Status 2026-09-08, later: approved — and not used.** The Dub Polymarket
+program approved the owner the same day ($0.01 per click; $10 on a referral's
+first deposit plus 20% of their perps trading fees; revenue bounties). The
+program page's own data gives its domain as `polymarket.com`, its revenue
+share is on perps, which polymarket.us does not offer, so it is the global
+venue's program and stays off the site under the decision above. Nothing was
+published; no Stripe payout account is needed for it. Originally: the owner
+applied to the Dub Polymarket program (partners.dub.co/programs/polymarket),
+awaiting review. Its payout is tied to
 "Perps trading fees", which only polymarket.com offers, so it is almost
 certainly the global venue's program: when approved, check the landing URL in
 the Dub dashboard — polymarket.us means usable, polymarket.com means not used
