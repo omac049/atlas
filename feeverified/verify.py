@@ -25,7 +25,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 FEES_DIR = ROOT / "docs" / "fees"
-STATE_PATH = FEES_DIR / "verification.json"
+STATE_PATH = FEES_DIR / "verification.json"          # human-reviewed baseline, in git
+CHECK_PATH = ROOT / "data" / "fees" / "check.json"     # nightly results, not in git
 USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) "
     "Chrome/128.0 Safari/537.36"
@@ -176,6 +177,34 @@ def save_state(state: dict) -> None:
     STATE_PATH.write_text(json.dumps(state, indent=1, sort_keys=True) + "\n")
 
 
+def load_check() -> dict:
+    if CHECK_PATH.exists():
+        return json.loads(CHECK_PATH.read_text())
+    return {"platforms": {}}
+
+
+def save_check(check: dict) -> None:
+    CHECK_PATH.parent.mkdir(parents=True, exist_ok=True)
+    CHECK_PATH.write_text(json.dumps(check, indent=1, sort_keys=True) + "\n")
+
+
+def merged_status() -> dict:
+    """What the site shows: the reviewed baseline with the latest nightly
+    result laid over it. A platform with no nightly result yet is 'verified as
+    of review'; a nightly 'changed' or 'unreachable' overrides."""
+    state = load_state()
+    check = load_check()
+    out = {}
+    for platform, entry in state["platforms"].items():
+        merged = dict(entry)
+        result = check["platforms"].get(platform)
+        if result:
+            merged.update({k: v for k, v in result.items() if k != "history"})
+            merged["history"] = entry.get("history", []) + result.get("history", [])
+        out[platform] = merged
+    return out
+
+
 def mark_reviewed(platform: str, note: str) -> dict:
     """A human re-read the schedule and updated the JSON: record today's
     hashes as the new baseline. This is the only way 'changed' becomes
@@ -209,14 +238,19 @@ def mark_reviewed(platform: str, note: str) -> dict:
 
 
 def check_all() -> dict:
-    """Nightly: compare every source page with its reviewed baseline."""
+    """Nightly: compare every source page with its reviewed baseline. Writes
+    only the results file; the baseline changes only through mark_reviewed."""
     state = load_state()
+    check = {"platforms": {}}
     now = datetime.now(UTC).isoformat(timespec="seconds")
     summary = {"verified": 0, "changed": 0, "unreachable": 0, "unreviewed": 0}
     for path in schedules():
         schedule = json.loads(path.read_text())
         platform = schedule["platform"]
-        entry = state["platforms"].setdefault(platform, {"sources": {}, "history": []})
+        baseline = state["platforms"].get(platform, {"sources": {}, "history": []})
+        entry = {"sources": {u: dict(r) for u, r in baseline.get("sources", {}).items()}, "history": [],
+                 "quotes_missing_at_review": baseline.get("quotes_missing_at_review", [])}
+        check["platforms"][platform] = entry
         statuses = []
         texts = []
         for source in schedule["sources"]:
@@ -274,7 +308,7 @@ def check_all() -> dict:
                 break
         entry["last_checked_at"] = now
         summary[entry["status"]] += 1
-    save_state(state)
+    save_check(check)
     close_browser()
     return summary
 

@@ -49,6 +49,24 @@ def main() -> None:
         log(f"ERROR publish failed rc={published.returncode} {published.stderr.strip()[-300:]}")
         return
     log("published")
+    indexnow(base_url)
+
+
+def indexnow(base_url: str) -> None:
+    """Best effort: tell Bing which URLs changed. Google ignores IndexNow."""
+    import re
+
+    try:
+        import httpx
+
+        host = base_url.replace("https://", "").replace("http://", "").strip("/")
+        key_file = next(OUT.glob("*.txt"))  # the generator emits exactly one key file besides robots.txt
+        key = next(p for p in OUT.glob("*.txt") if p.name != "robots.txt").stem
+        urls = re.findall(r"<loc>([^<]+)</loc>", (OUT / "sitemap.xml").read_text())
+        response = httpx.post("https://api.indexnow.org/indexnow", json={"host": host, "key": key, "keyLocation": f"https://{host}/{key}.txt", "urlList": urls}, timeout=20)
+        log(f"indexnow {len(urls)} urls status={response.status_code} ({key_file.name})")
+    except Exception as exc:  # noqa: BLE001 - never fails the publish
+        log(f"indexnow skipped: {str(exc)[:120]}")
 
 
 if __name__ == "__main__":

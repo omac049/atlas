@@ -65,16 +65,28 @@ Preview locally with the `fees-site` entry in `.claude/launch.json` (port 8767).
 2. Add the engine function in `fees.js` and register it in `engines`.
 3. Run the tests; run `reviewed <slug>`; build.
 
+## Hosting (live 2026-09-08)
+
+- Domain: `verifiedfees.com`, DNS on Cloudflare (owner's account).
+- Cloudflare Pages project `verifiedfees`, production branch `main`, production
+  alias `verifiedfees.pages.dev`. Created with
+  `npx wrangler pages project create verifiedfees --production-branch main --force`
+  (wrangler 4.130 otherwise delegates Pages to Workers and fails on static
+  sites; `--force` is only needed at creation). Deploys:
+  `npx wrangler pages deploy dist/fees --project-name verifiedfees --branch main --commit-dirty=true`.
+- Custom domain: added in the Cloudflare dashboard (Pages → verifiedfees →
+  Custom domains → verifiedfees.com and www); with DNS on Cloudflare the
+  records are created automatically. Wrangler has no command for this.
+- Nightly: `com.atlas.fees` at 04:20 runs verify → build → publish → IndexNow;
+  log at `~/Library/Logs/atlas-fees.log`. The baseline in
+  `docs/fees/verification.json` is committed; nightly results live in
+  `data/fees/check.json` (ignored) and the site merges them.
+
 ## Owner steps (not automatable)
 
-1. Buy the domain (`feeverified.com`, `verifiedfees.com`, `takerates.com`
-   were free on 2026-09-08).
-2. Hosting: a Cloudflare Pages project (wrangler is logged in on this Mac)
-   or a second GitHub Pages repository; then set `FEES_SITE_BASE_URL` and
-   `FEES_SITE_PUBLISH_CMD` in `deploy/com.atlas.fees.plist` and install it
-   (`cp` + `launchctl bootstrap`, as in `deploy/README.md`).
-3. Search Console in the personal Google account; submit `/sitemap.xml`. That
-   day the six-week clock starts; log it in the charter.
-4. Affiliate applications: Shopify (Impact), QuickBooks (CJ), Wise
+1. Custom domain in the Cloudflare dashboard (above), once.
+2. Search Console for `verifiedfees.com` in the personal Google account; submit
+   `/sitemap.xml`. That day the six-week clock starts; log it in the charter.
+3. Affiliate applications: Shopify (Impact), QuickBooks (CJ), Wise
    (Partnerize), Printful, Printify, Square (Impact), Vendoo (Awin). Etsy's
    program bars price-comparison sites and is not used.
