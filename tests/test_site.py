@@ -334,3 +334,19 @@ def test_a_pair_not_quoted_for_three_days_is_shown_closed_not_deleted():
     assert "No longer quoted" in old_page
     assert "Recently closed" in pages["index.html"] and "Tracking <strong>1 pairs" in pages["index.html"]
     assert "OLD SETTLED PAIR" not in pages["arbitrage.html"]
+
+
+def test_also_on_note_appears_only_on_global_pages_for_mapped_events_and_gives_no_verdict():
+    g = _obs(venue="polymarket_global", pid="polymarket_global:9")
+    g["event_subject"] = "us_house_control|2026"
+    us = _obs(kid="kalshi:US")
+    us["event_subject"] = "us_house_control|2026"
+    mapping = {"us_house_control|2026": {"venue": "polymarket_us", "event_slug": "usho-midterms-2026-11-03",
+                                         "title": "U.S House Midterm Winner"}}
+    _, pages = build_site([g, us], base_url="https://example.test", generated_at=AT, also_on=mapping)
+    global_page = next(h for p, h in pages.items() if "polymarket-global-9" in p)
+    us_page = next(h for p, h in pages.items() if "kalshi-us" in p)
+    assert "Also listed on Polymarket US" in global_page
+    assert 'href="https://polymarket.us/event/usho-midterms-2026-11-03"' in global_page
+    assert "no verdict is given for that pairing" in global_page
+    assert "Also listed on Polymarket US" not in us_page
