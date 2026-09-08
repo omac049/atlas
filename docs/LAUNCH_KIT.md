@@ -65,9 +65,14 @@ Send these yourself; the site already discloses on every page.
 > disclosed on every page. I'd like to apply for the Polymarket US affiliate
 > program. Site: https://samebetornot.com. Thanks — YOUR NAME
 
-**Polymarket (global) partner program** — apply at partners.dub.co/polymarket
-with the same description. Note: this program pays on the global platform,
-which US users cannot use; keep any such link clearly labeled as non-US.
+**Polymarket (global) programs — decision 2026-09-08: not used on the site.**
+The owner obtained a self-serve global referral code (`polymarket.com/?r=…`,
+10% / 5% of referred fees). It is not published: the site's readers are US
+searchers, the global venue bars US persons under its own terms and the 2022
+CFTC order, the code pays nothing until the referrer has $10,000 of own
+lifetime volume, and a self-serve code is not an "affiliate approval" under
+the demand test. The Dub partner program is the same venue and is likewise
+not used. The program that counts is Polymarket US's, by application.
 
 **Kalshi** — no cash affiliate program was reachable (the affiliate hub
 returned 403 on 2026-09-04). The refer-a-friend link from your own account
