@@ -15,9 +15,9 @@
     <key>EnvironmentVariables</key>
     <dict>
         <key>FEES_SITE_BASE_URL</key>
-        <string>https://example.invalid</string>
+        <string>https://verifiedfees.com</string>
         <key>FEES_SITE_PUBLISH_CMD</key>
-        <string></string>
+        <string>npx wrangler pages deploy dist/fees --project-name verifiedfees --branch main --commit-dirty=true</string>
         <key>PATH</key>
         <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
     </dict>

@@ -20,6 +20,8 @@ ROOT = Path(__file__).resolve().parent.parent
 FEES_DIR = ROOT / "docs" / "fees"
 STATIC_DIR = ROOT / "feeverified" / "static"
 SITE_NAME = "Fee Verified"
+# Public by design: served at /{key}.txt so search engines can verify IndexNow submissions.
+INDEXNOW_KEY = "4f6a2c9e1b7d4a3e9c0f5b8d2a6e7c1f"
 
 DISCLOSURE = (
     "Disclosure: this site may earn a referral fee when you sign up for a seller tool "
@@ -111,8 +113,9 @@ def load_schedules() -> list[dict]:
 
 
 def load_verification() -> dict:
-    path = FEES_DIR / "verification.json"
-    return json.loads(path.read_text()).get("platforms", {}) if path.exists() else {}
+    from feeverified import verify
+
+    return verify.merged_status()
 
 
 def status_for(schedule: dict, verification: dict) -> tuple[str, str, str]:
@@ -429,6 +432,7 @@ def build(base_url: str, generated_at: datetime | None = None) -> dict[str, str]
         + "</urlset>\n"
     )
     pages["robots.txt"] = f"User-agent: *\nAllow: /\nSitemap: {base}/sitemap.xml\n"
+    pages[f"{INDEXNOW_KEY}.txt"] = INDEXNOW_KEY + "\n"
     problems = verify_pages(pages)
     if problems:
         raise ValueError("guardrails failed: " + "; ".join(problems))
