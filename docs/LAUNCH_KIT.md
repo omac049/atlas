@@ -74,9 +74,29 @@ lifetime volume, and a self-serve code is not an "affiliate approval" under
 the demand test. The Dub partner program is the same venue and is likewise
 not used. The program that counts is Polymarket US's, by application.
 
-**Kalshi** — no cash affiliate program was reachable (the affiliate hub
-returned 403 on 2026-09-04). The refer-a-friend link from your own account
-pays trading credits, not cash; the referrals page already says so.
+**Kalshi** — no affiliate program exists (kalshi.com/affiliates is a 404;
+the big "promo code" sites hold private deals). The owner's own refer-a-friend
+code (trading credits) may go on the Kalshi referral page, labeled as credits.
+
+**Status 2026-09-08.** The owner applied to the Dub Polymarket program
+(partners.dub.co/programs/polymarket), awaiting review. Its payout is tied to
+"Perps trading fees", which only polymarket.com offers, so it is almost
+certainly the global venue's program: when approved, check the landing URL in
+the Dub dashboard — polymarket.us means usable, polymarket.com means not used
+on this site (see the decision above). The Polymarket US email still needs
+sending.
+
+**Other programs to apply to, in order (all pay cash, all relevant to what the
+site publishes; disclosed on every page, never affecting a verdict):**
+
+| Program | Why relevant | Where | Terms found 2026-09-08 |
+|---|---|---|---|
+| Polymarket US affiliate | The site's subject | affiliate@polymarket.com | Not published; by approval |
+| Coinbase Affiliate Program | Coinbase offers Kalshi's prediction markets to US residents | coinbase.com/affiliates (Impact) | 50% of referred users' trading fees for 3 months; PayPal/bank; $10 threshold |
+| Robinhood Affiliate Program | Robinhood carries Kalshi event contracts | affiliates.robinhood.com | Publisher application; performance-based |
+| CoinLedger affiliate | Taxes page already reaching "kalshi taxes" queries | coinledger.io/affiliate-program | 25% per report; PayPal; $30 threshold |
+| Koinly affiliate | Same | koinly.io (affiliate portal in account) | Up to 40% + recurring |
+| Webull affiliate | Webull offers prediction markets | act.webullapp.com/mktb/partners/individual | $20–$70 per funded account; requires a Webull account |
 
 ## 6. Social posts (the second traffic route)
 
