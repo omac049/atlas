@@ -1,7 +1,7 @@
 # The fee-calculator demand test (second product test)
 
-**Status: PROPOSED — awaiting owner sign-off.** Merging this file to `main`
-constitutes sign-off on the scope, the budget, and the pass/fail line below.
+**Status: SIGNED — merged to `main` by the owner on 2026-09-08 (#37).** Merging
+this file constituted sign-off on the scope, the budget, and the pass/fail line below.
 Nothing about the pass line may change after the site goes live.
 
 **Lineage.** Ideation round two (`docs/IDEATION-2.md`, merged 2026-09-08)
@@ -113,4 +113,31 @@ before it ships.
 4. Weekly scoreboard here; verdict at week six, written at equal prominence.
 
 - Proposed: 2026-09-08 (Claude, on the data in `docs/ideation2/`).
-- Owner signature: _pending — merging this file constitutes sign-off._
+- Owner signature: merged 2026-09-08 (#37).
+
+## 8. Build status
+
+- 2026-09-08: build merged (#38, #39) — 17 platforms, one JavaScript engine
+  shared by the page and the tests, every calculator pinned to the platform's
+  own published worked examples, 41 pages, nightly verification against a
+  reviewed baseline (17/17 sources). Build time: one day of the two weeks
+  allowed; spend: the domain (owner-paid) and $0 hosting.
+- 2026-09-08: domain bought by the owner — `verifiedfees.com`, DNS on
+  Cloudflare.
+- 2026-09-08: production build on Cloudflare Pages (project `verifiedfees`,
+  alias `verifiedfees.pages.dev`, clean URLs, canonical URLs already on the
+  domain); nightly agent `com.atlas.fees` installed (04:20, `docs/FEES.md`).
+- Pending, owner: attach `verifiedfees.com` and `www` to the Pages project in
+  the Cloudflare dashboard; Search Console property in the personal account
+  and sitemap. **The clock has not started.** It starts the day the sitemap is
+  accepted; the week-six verdict date is that day plus 42.
+
+## 9. Scoreboard
+
+Weekly, from the owner's personal Search Console, trailing 7 days unless
+noted. The 30-day impression count for the pass line is taken only from the
+clock start.
+
+| Week | Date | Impressions | Clicks | Avg. position | Best fee-term page (position) | Notes |
+|---|---|---|---|---|---|---|
+| 0 | 2026-09-08 | — | — | — | — | live on the Pages alias; domain and Search Console pending |
