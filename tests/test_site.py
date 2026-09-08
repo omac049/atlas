@@ -350,3 +350,15 @@ def test_also_on_note_appears_only_on_global_pages_for_mapped_events_and_gives_n
     assert 'href="https://polymarket.us/event/usho-midterms-2026-11-03"' in global_page
     assert "no verdict is given for that pairing" in global_page
     assert "Also listed on Polymarket US" not in us_page
+
+
+def test_a_referral_link_renders_as_a_sponsored_link_not_a_code():
+    url = "https://kalshi.com/sign-up/?referral=abc&m=true"
+    page = _pages(referral_codes={"kalshi": url})["kalshi-referral-code.html"]
+    # Ampersands are escaped in attributes; browsers decode them.
+    assert f'href="{url.replace("&", "&amp;")}"' in page and 'rel="sponsored noopener"' in page
+    assert "trading credits, not cash" in page
+    assert "<code>https://" not in page
+    # A non-https value is never turned into a link.
+    plain = _pages(referral_codes={"kalshi": "javascript:alert(1)"})["kalshi-referral-code.html"]
+    assert "href=\"javascript:" not in plain and "<code>javascript:alert(1)</code>" in plain

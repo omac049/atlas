@@ -78,6 +78,17 @@ not used. The program that counts is Polymarket US's, by application.
 the big "promo code" sites hold private deals). The owner's own refer-a-friend
 code (trading credits) may go on the Kalshi referral page, labeled as credits.
 
+**Kalshi links, 2026-09-08.** The owner's refer-a-friend link
+(`kalshi.com/r/<id>`) is live on the Kalshi referral page as a sponsored link,
+with the in-app terms shown that day ($25 each after the new user trades $25;
+bonus funds expire after 7 days) labeled as the owner's own view, since Kalshi
+says amounts vary by account. The owner also holds a **Kalshi perpetual-futures
+invite** (both get $25 after the friend trades $50 in perps; friend gets 10% off
+fees for 3 months; referrer earns 30% of their fees for a year, up to $1,000 per
+referral). **Held, not used:** perps are a leveraged crypto product outside the
+site's subject, and every perps search term measured 0/month (Keywords
+Everywhere, US, 2026-09-08). Revisit only if a perps page is ever justified.
+
 **Status 2026-09-08.** The owner applied to the Dub Polymarket program
 (partners.dub.co/programs/polymarket), awaiting review. Its payout is tied to
 "Perps trading fees", which only polymarket.com offers, so it is almost
