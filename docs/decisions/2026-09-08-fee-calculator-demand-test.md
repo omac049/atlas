@@ -127,10 +127,20 @@ before it ships.
 - 2026-09-08: production build on Cloudflare Pages (project `verifiedfees`,
   alias `verifiedfees.pages.dev`, clean URLs, canonical URLs already on the
   domain); nightly agent `com.atlas.fees` installed (04:20, `docs/FEES.md`).
-- Pending, owner: attach `verifiedfees.com` and `www` to the Pages project in
-  the Cloudflare dashboard; Search Console property in the personal account
-  and sitemap. **The clock has not started.** It starts the day the sitemap is
-  accepted; the week-six verdict date is that day plus 42.
+- 2026-09-08: **live on the domain.** The owner attached `verifiedfees.com`
+  to the Pages project; the apex serves every page over HTTPS with clean URLs,
+  canonical tags, the sitemap (41 URLs) and the IndexNow key on the domain;
+  the Search Console verification TXT record is in DNS. `www` was not yet
+  attached (522) — owner step.
+- 2026-09-08: first nightly run under launchd — 17/17 sources verified, build
+  fine, publish failed: launchd's PATH found Node 20 and wrangler needs 22.
+  Fixed in #42 (the publish step now runs on the shell's nvm node); the fixed
+  step was re-run under launchd's PATH: new production deployment, IndexNow
+  accepted 41 URLs. The full agent run was kicked off again as the end-to-end
+  check; the 04:20 nightly is the standing proof (`~/Library/Logs/atlas-fees.log`).
+- Pending, owner: attach `www.verifiedfees.com`; confirm the sitemap is
+  submitted in Search Console. **The clock has not started** until the sitemap
+  is accepted; the week-six verdict date is that day plus 42.
 
 ## 9. Scoreboard
 
@@ -140,4 +150,4 @@ clock start.
 
 | Week | Date | Impressions | Clicks | Avg. position | Best fee-term page (position) | Notes |
 |---|---|---|---|---|---|---|
-| 0 | 2026-09-08 | — | — | — | — | live on the Pages alias; domain and Search Console pending |
+| 0 | 2026-09-08 | — | — | — | — | live on verifiedfees.com; Search Console verified; sitemap acceptance pending |
