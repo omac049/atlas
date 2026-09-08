@@ -160,6 +160,14 @@ before it ships.
   hour; detached, and the other site's DNS restored (logged in
   `docs/IDEATION.md`). Dashboard steps stay the owner's: wrangler has no DNS or
   custom-domain commands and the owner's browser is employer-managed.
+- 2026-09-08, later: Search Console → Security issues reported **"Deceptive
+  pages"** for the whole site (sample URLs: N/A). Publisher identity markup
+  added to every page (og:site_name, author, WebSite/Organization JSON-LD,
+  #47); the owner submitted the review request the same day, stating that the
+  site has no logins or data-collecting forms, computes fees from cited
+  published schedules, and now declares its independence on every page.
+  Outcome to be logged here when Google answers; until then Chrome warns on
+  every page and clicks are expected to be near zero.
 
 ## 9. Scoreboard
 
