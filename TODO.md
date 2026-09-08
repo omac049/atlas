@@ -1093,5 +1093,5 @@ evidence. The point of the 90 days is to let this accumulate.
 - [x] Demand-test site generator (`atlas site build`, `docs/SITE.md`) — owner: domain, hosting, Search Console, affiliate applications
 - [ ] Fifth charter (market making, paper-only replay): owner signs by merging `docs/decisions/2026-09-08-market-making-charter.md`; then build `atlas/making.py`, freeze, run Arm B, run Arm A on 2026-09-17, write results
 - [x] Fee Verified build (charter merged 2026-09-08): 17 platform schedules with quotes + published examples; shared JS engine; nightly verification; live on Cloudflare Pages 2026-09-08 (`docs/FEES.md`)
-- [ ] Fee Verified go-live, owner steps: attach `verifiedfees.com` to the Pages project; Search Console (personal account) + sitemap → log the clock start in `docs/decisions/2026-09-08-fee-calculator-demand-test.md`; affiliate applications
+- [ ] Fee Verified go-live: `verifiedfees.com` live 2026-09-08 (apex); owner: attach `www`, confirm the sitemap in Search Console → log the clock start in `docs/decisions/2026-09-08-fee-calculator-demand-test.md`; affiliate applications
 - [ ] Fee Verified weekly scoreboard (Mondays, alongside samebetornot.com) in the charter; verdict at week six
