@@ -871,7 +871,9 @@ def render_referrals(site: Site) -> str:
         "credits vs Polymarket cash.\" Polymarket US's own program also pays credits; only the "
         "global venue's programs pay in a currency, and that venue is closed to US accounts.</p>"
         "<p>This site may participate in these programs — see the disclosure below. The comparison "
-        "above is the same whether or not you use a link here.</p>"
+        "above is the same whether or not you use a link here. Program details, and our own "
+        "referral link where we have one: <a href=\"kalshi-referral-code\">Kalshi</a> · "
+        "<a href=\"polymarket-referral-code\">Polymarket</a>.</p>"
         + _sources([
             ("Kalshi Help Center — Referral Program FAQ",
              "https://help.kalshi.com/en/articles/13823783-kalshi-referral-program-faq"),
@@ -1062,14 +1064,27 @@ def render_referral_code(site: Site, venue: str) -> str:
             "offering a \"Polymarket referral code\" to US readers with those terms are describing "
             "the offshore venue.</p>"
         )
-    code_html = (
-        f"<div class=\"summary\"><strong>Code:</strong> <code>{_esc(code)}</code> — entered at sign-up. "
-        "Every valid code gives the same published terms; there is no better code.</div>"
-        if code
-        else "<div class=\"summary\">We do not publish a code on this page yet. Every valid code "
-        "gives the same published terms above, so no code is \"better\" than another; the "
-        "terms are what matter, and they are quoted here from the venue's own help pages.</div>"
-    )
+    if code and code.startswith("https://"):
+        # Kalshi's program is a link, not a typed code; the link carries the referral.
+        code_html = (
+            f"<div class=\"summary\"><strong>Our referral link:</strong> "
+            f"<a class=\"ext\" href=\"{_esc(code)}\" rel=\"sponsored noopener\" target=\"_blank\">"
+            f"Sign up on {_esc(label)} through this link</a>. If you do and meet the venue's "
+            "requirements, both you and this site's owner receive the published reward — trading "
+            "credits, not cash. Every valid referral link gives the same published terms; there "
+            "is no better link.</div>"
+        )
+    elif code:
+        code_html = (
+            f"<div class=\"summary\"><strong>Code:</strong> <code>{_esc(code)}</code> — entered at "
+            "sign-up. Every valid code gives the same published terms; there is no better code.</div>"
+        )
+    else:
+        code_html = (
+            "<div class=\"summary\">We do not publish a code on this page yet. Every valid code "
+            "gives the same published terms above, so no code is \"better\" than another; the "
+            "terms are what matter, and they are quoted here from the venue's own help pages.</div>"
+        )
     srcs = [(u, u) for u in row.get("sources", [])]
     body = (
         f"<h1>{_esc(title)}</h1>"
