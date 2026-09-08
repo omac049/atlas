@@ -152,9 +152,17 @@ Seller and payment tools (the reader of a fee-calculator page):
 | eBay Partner Network | % of gross merchandise bought, per-category rate card with caps (e.g., fashion 4%, $550 cap); 24-hour attribution | in-house | rate card page |
 | Payoneer, Melio, Etsy, Avalara | programs exist; payouts not published (case-by-case) | various | official pages |
 
-Criterion 3 **passes** for space A on Shopify and QuickBooks alone. Square,
-Stripe, PayPal, GoFundMe and the crosslisting tools (Vendoo, List Perfectly,
-Crosslist) are still being verified and are recorded here when they land.
+Criterion 3 **passes** for space A on Shopify and QuickBooks alone. The rest
+of the seller-side sweep, verified: Square runs a publisher program on Impact
+(amounts unpublished; $5–$200 per action is blog-reported only); Vendoo pays
+15% of subscription (Awin, US sign-ups only); List Perfectly pays 20%
+recurring in perpetuity but requires the publisher's own paid subscription.
+Not usable: PayPal's publisher listing pays $0 (its $500–$2,500 referral
+program is for developers only), Stripe, GoFundMe, Givebutter and Zelle have
+no publisher program, and Mercari, Poshmark and Depop pay in credits or are
+creator-only. The platforms whose fees the site explains are therefore
+**not** its payers, which is the right separation: nobody can say the
+numbers are shaded toward a sponsor.
 
 Adjacent, for completeness (space D readers): LLC formation pays the most of
 anything measured — ZenBusiness $75/$125/$175 per plan, Northwest $150 per
@@ -164,4 +172,17 @@ did not pass. Tax software pays 15–16% (TaxAct, FreeTaxUSA, TurboTax).
 Passport expediters: Swift $75 per order, RushMyPassport 10% of ~$350.
 Online notary: 10–15%. Medical-card services: NuggMD $20 CPA.
 
-Fintech (space B) program payouts: _pending from the same researcher._
+Fintech (space B) program payouts, verified from loaded pages (all 76
+programs with sources in `docs/ideation2/monetization.json`): MoneyLion $80
+per funded loan; SoFi $80 per funded personal loan / $120 per student refi
+(listing deactivated on that network — live network unconfirmed); Acorns $52
+per first recurring deposit; Betterment $50 per funded account (welcomes
+comparison and review sites); moomoo $40 per deposit; Robinhood $16 per
+funded account; Chime $10.80 per enrollment on a 1-day cookie; Rocket Money
+$4–$10; Credit Karma $7 per signup; Coinbase 50% of fees for 3 months;
+Kraken up to 50% revenue share. Upstart pays 1.4% of the funded loan; Brigit
+6.4% per sale. No public program: Cleo, Albert, Varo, Current, Empower/Tilt,
+Affirm, Marcus; Klarna and Wealthfront are blog-reported only. Only M1 Finance
+publishes compliance rules with teeth (mandatory "not financial advice" and
+paid-content disclosures, no "bank" wording, crawler-enforced). Money exists
+for B; the SERPs are what hold it back.
