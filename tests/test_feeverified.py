@@ -110,6 +110,10 @@ def test_build_guardrails_every_page_carries_disclosure_and_status():
     assert 'class="status ' in pages["ebay.html"]
     assert "https://www.ebay.com/help/selling/fees-credits-invoices/selling-fees" in pages["ebay.html"]
     assert "<loc>https://example.test/ebay</loc>" in pages["sitemap.xml"]
+    assert "not affiliated with" in pages["ebay.html"] and "not affiliated with" in pages["index.html"]
+    assert "not affiliated with eBay" in pages["ebay.html"]
+    bare = {"x.html": f"<p>{site.DISCLOSURE}</p><p>{site.NOT_ADVICE}</p>"}
+    assert site.verify_pages(bare) == ["x.html: missing independence line"]
 
 
 def test_quote_check_ignores_typography_but_catches_a_reworded_fee():
