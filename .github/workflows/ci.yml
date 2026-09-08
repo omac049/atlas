@@ -33,7 +33,7 @@ jobs:
 
       - name: Static checks
         run: |
-          python -m compileall -q atlas apps tests
+          python -m compileall -q atlas apps feeverified tests
           node --check apps/dashboard/dashboard.js
           node --check apps/dashboard/dashboard-panes.js
 
