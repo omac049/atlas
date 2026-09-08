@@ -1,0 +1,385 @@
+{
+  "platform": "ebay",
+  "name": "eBay",
+  "as_of": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://www.ebay.com/help/selling/fees-credits-invoices/selling-fees?id=4822",
+      "title": "Selling fees (eBay.com, non-Store sellers)",
+      "loaded": "2026-09-08",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "eBay.com sellers without a Store subscription. Store subscribers, eBay Motors vehicles, and eBay Live have different fees and are out of scope.",
+  "rates": {
+    "insertion_fee": 0.35,
+    "free_listings_per_month": 250,
+    "per_order_fee_small": 0.3,
+    "per_order_fee_small_threshold": 10.0,
+    "per_order_fee": 0.4,
+    "international_fee": 0.0165,
+    "below_standard_surcharge": 0.06,
+    "below_standard_surcharge_4mo": 0.07,
+    "very_high_inad_surcharge": 0.05,
+    "very_high_inad_surcharge_4mo": 0.06,
+    "bold_auction": 2.0,
+    "bold_fixed": 4.0,
+    "subtitle_auction_low": 1.5,
+    "subtitle_auction_high": 3.0,
+    "subtitle_fixed_low": 2.0,
+    "subtitle_fixed_high": 6.0,
+    "subtitle_price_threshold": 150.0,
+    "gallery_plus_auction": 0.35,
+    "gallery_plus_fixed": 1.0,
+    "reserve_min": 5.0,
+    "reserve_rate": 0.075,
+    "reserve_max": 250.0
+  },
+  "categories": {
+    "most": {
+      "label": "Most categories",
+      "tiers": [
+        {
+          "upto": 7500,
+          "rate": 0.136
+        },
+        {
+          "above": 7500,
+          "rate": 0.0235
+        }
+      ]
+    },
+    "books_media": {
+      "label": "Books & Magazines, Movies & TV, Music",
+      "tiers": [
+        {
+          "upto": 7500,
+          "rate": 0.153
+        },
+        {
+          "above": 7500,
+          "rate": 0.0235
+        }
+      ]
+    },
+    "coins": {
+      "label": "Coins & Paper Money (except Bullion)",
+      "tiers": [
+        {
+          "upto": 7500,
+          "rate": 0.1325
+        },
+        {
+          "above": 7500,
+          "rate": 0.0235
+        }
+      ]
+    },
+    "bullion": {
+      "label": "Coins & Paper Money > Bullion",
+      "whole": [
+        {
+          "upto": 7500,
+          "rate": 0.136
+        },
+        {
+          "above": 7500,
+          "rate": 0.07
+        }
+      ]
+    },
+    "handbags": {
+      "label": "Women's Bags & Handbags",
+      "whole": [
+        {
+          "upto": 2000,
+          "rate": 0.15
+        },
+        {
+          "above": 2000,
+          "rate": 0.09
+        }
+      ]
+    },
+    "trading_cards": {
+      "label": "Trading cards, comics, CCG (select Collectibles)",
+      "tiers": [
+        {
+          "upto": 7500,
+          "rate": 0.1325
+        },
+        {
+          "above": 7500,
+          "rate": 0.0235
+        }
+      ]
+    },
+    "jewelry": {
+      "label": "Jewelry (except Watches)",
+      "whole": [
+        {
+          "upto": 5000,
+          "rate": 0.15
+        },
+        {
+          "above": 5000,
+          "rate": 0.09
+        }
+      ]
+    },
+    "watches": {
+      "label": "Watches, Parts & Accessories",
+      "tiers": [
+        {
+          "upto": 1000,
+          "rate": 0.15
+        },
+        {
+          "upto": 7500,
+          "rate": 0.065
+        },
+        {
+          "above": 7500,
+          "rate": 0.03
+        }
+      ]
+    },
+    "nfts": {
+      "label": "NFT categories",
+      "tiers": [
+        {
+          "above": 0,
+          "rate": 0.05
+        }
+      ]
+    },
+    "heavy_equipment": {
+      "label": "Heavy Equipment, Commercial Printing Presses, Food Trucks",
+      "tiers": [
+        {
+          "upto": 15000,
+          "rate": 0.03
+        },
+        {
+          "above": 15000,
+          "rate": 0.005
+        }
+      ],
+      "insertion_fee": 20.0
+    },
+    "guitars": {
+      "label": "Guitars & Basses",
+      "tiers": [
+        {
+          "upto": 7500,
+          "rate": 0.067
+        },
+        {
+          "above": 7500,
+          "rate": 0.0235
+        }
+      ],
+      "insertion_fee": 0
+    },
+    "athletic_shoes": {
+      "label": "Athletic Shoes (Men's / Women's)",
+      "whole": [
+        {
+          "upto": 149.99,
+          "rate": 0.136
+        },
+        {
+          "above": 149.99,
+          "rate": 0.08
+        }
+      ],
+      "no_per_order_fee_at_or_above": 150.0,
+      "insertion_free_at_or_above": 150.0
+    }
+  },
+  "structure": "One insertion fee per listing after the 250 free listings each month ($0.35; some categories differ). One final value fee when the item sells: a percentage of the total amount of the sale (item price + handling + shipping collected + sales tax + other applicable fees), calculated per item with tiers for most categories (13.6% up to $7,500 and 2.35% on the portion above), plus a per-order fee of $0.30 for orders of $10.00 or less and $0.40 for orders over $10.00. An international fee of 1.65% of the total sale applies when the buyer's delivery or registered address is outside the US and eBay International Shipping is not used. Sellers evaluated Below Standard pay an additional 6% (7% after four consecutive months); a Very High rate of 'item not as described' returns adds 5% (6%) in the affected categories \u2014 if both apply only the Below Standard fee is charged. Optional listing upgrades (bold, subtitle, gallery plus, reserve) are charged per listing.",
+  "examples": [
+    {
+      "description": "Auction-style listing example on the fees page: used smartphone, start $199, Buy It Now $400, free shipping, allowance used, meets performance expectations; sells at $400; total sale $424 with 6% sales tax.",
+      "inputs": {
+        "price": 400,
+        "shipping": 0,
+        "sales_tax_rate": 0.06,
+        "category": "most",
+        "format": "auction",
+        "insertion_fee_applies": true
+      },
+      "expected": {
+        "final_value_fee": 58.06,
+        "insertion_fee": 0.35,
+        "total_fees": 58.41,
+        "net": 341.59
+      },
+      "quote": "Final value fee (13.6% of $424, + $0.40) $58.06 \u2026 Total fees $58.41 \u2026 You make $341.59, or approximately 85% of the sale price, not including shipping costs.",
+      "source_url": "https://www.ebay.com/help/selling/fees-credits-invoices/selling-fees?id=4822"
+    },
+    {
+      "description": "Fixed price listing example on the fees page: trading card $9,500, free shipping, allowance used, Bold upgrade; total sale $10,070 with 6% sales tax.",
+      "inputs": {
+        "price": 9500,
+        "shipping": 0,
+        "sales_tax_rate": 0.06,
+        "category": "trading_cards",
+        "format": "fixed",
+        "insertion_fee_applies": true,
+        "bold": true
+      },
+      "expected": {
+        "final_value_fee": 1054.55,
+        "insertion_fee": 0.35,
+        "bold_fee": 4.0,
+        "total_fees": 1058.9,
+        "net": 8441.1
+      },
+      "quote": "Final value fee (13.25% of $7,500, + 2.35% of $2,570, + $0.40) $1,054.55 \u2026 Bold fee $4.00 \u2026 Total fees $1,058.90 \u2026 You make $8,441.10, or approximately 89% of the sale price",
+      "source_url": "https://www.ebay.com/help/selling/fees-credits-invoices/selling-fees?id=4822"
+    }
+  ],
+  "quotes": [
+    "This fee is calculated as a percentage of the total amount of the sale, plus a per order fee. For orders $10.00 or less the per order fee is $0.30, for orders over $10.00 the per order fee is $0.40.",
+    "The total amount of the sale includes the item price, any handling charges, any shipping costs collected from the buyer (some exceptions apply), sales tax, and any other applicable fees.",
+    "Most categories \u2026 First 250 listings free per month, then $0.35 per listing \u2026 13.6% on total amount of the sale up to $7,500 calculated per item \u2026 2.35% on the portion of the sale over $7,500",
+    "This fee is calculated as 1.65% of the total amount of the sale and is automatically deducted from your sales.",
+    "If your account is evaluated as Below Standard \u2026 you'll be charged an additional 6% on the final value fees applicable to sales in the following calendar month."
+  ],
+  "excluded": [
+    "Store subscription fees and Store FVF rates",
+    "eBay Motors vehicle fees",
+    "eBay Live",
+    "Dispute fee ($20)",
+    "Seller currency conversion charge (3%)",
+    "Promoted listings / advertising",
+    "Shipping label costs",
+    "Classified Ad and Real Estate fees"
+  ],
+  "notes": [
+    "The page's worked examples apply the 6% sales tax to the item price with free shipping; this calculator applies the entered tax rate to price plus shipping, which matches eBay's 'total amount of the sale' definition.",
+    "Tiered categories apply the lower rate only to the portion above the threshold; 'whole' categories (bullion, handbags, jewelry, athletic shoes) apply a single rate to the entire amount depending on which side of the threshold the total sale falls."
+  ],
+  "inputs": [
+    {
+      "id": "price",
+      "label": "Item price",
+      "type": "money",
+      "default": 100
+    },
+    {
+      "id": "shipping",
+      "label": "Shipping charged to buyer",
+      "type": "money",
+      "default": 0
+    },
+    {
+      "id": "sales_tax_rate",
+      "label": "Buyer's sales tax rate",
+      "type": "percent",
+      "default": 0,
+      "help": "eBay collects it and includes it in the fee base; you don't keep it."
+    },
+    {
+      "id": "category",
+      "label": "Category",
+      "type": "select",
+      "default": "most",
+      "options_from": "categories"
+    },
+    {
+      "id": "format",
+      "label": "Listing format",
+      "type": "select",
+      "default": "fixed",
+      "options": [
+        [
+          "fixed",
+          "Fixed price"
+        ],
+        [
+          "auction",
+          "Auction-style"
+        ]
+      ]
+    },
+    {
+      "id": "insertion_fee_applies",
+      "label": "I've used my 250 free listings this month",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "international",
+      "label": "Buyer is outside the US (not eBay International Shipping)",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "seller_level",
+      "label": "Seller level",
+      "type": "select",
+      "default": "standard",
+      "options": [
+        [
+          "standard",
+          "Above Standard / Top Rated"
+        ],
+        [
+          "below_standard",
+          "Below Standard"
+        ],
+        [
+          "below_standard_4mo",
+          "Below Standard 4+ months"
+        ]
+      ]
+    },
+    {
+      "id": "inad",
+      "label": "'Item not as described' rate",
+      "type": "select",
+      "default": "none",
+      "options": [
+        [
+          "none",
+          "Normal"
+        ],
+        [
+          "very_high",
+          "Very High"
+        ],
+        [
+          "very_high_4mo",
+          "Very High 4+ months"
+        ]
+      ]
+    },
+    {
+      "id": "bold",
+      "label": "Bold title upgrade",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "subtitle",
+      "label": "Subtitle upgrade",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "gallery_plus",
+      "label": "Gallery Plus upgrade",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "reserve",
+      "label": "Reserve price (auctions)",
+      "type": "money",
+      "default": 0
+    }
+  ],
+  "summary": "eBay charges most sellers one final value fee of 13.6% of the total sale (item, shipping, and the buyer's sales tax) plus $0.30 or $0.40 per order, with lower rates above $7,500 and different rates in a dozen categories, plus $0.35 per listing once your 250 free monthly listings are used."
+}

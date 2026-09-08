@@ -1,0 +1,74 @@
+{
+ "platforms": {
+  "ebay": {
+   "history": [
+    {
+     "at": "2026-09-08T17:35:43+00:00",
+     "event": "reviewed",
+     "note": "initial review of the schedule against the source page, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:35:47+00:00",
+     "event": "source_changed",
+     "url": "https://www.ebay.com/help/selling/fees-credits-invoices/selling-fees?id=4822"
+    },
+    {
+     "at": "2026-09-08T17:37:51+00:00",
+     "event": "reviewed",
+     "note": "baseline on fee-sentence fingerprint, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:39:23+00:00",
+     "event": "reviewed",
+     "note": "baseline on block-aware fee-sentence fingerprint, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:39:28+00:00",
+   "reviewed_at": "2026-09-08T17:39:23+00:00",
+   "sources": {
+    "https://www.ebay.com/help/selling/fees-credits-invoices/selling-fees?id=4822": {
+     "hash": "dd04c11f51b81ab70c274af7e933ea6424a5b3862bd809ae00190ea5f5b712e7",
+     "last_checked_at": "2026-09-08T17:39:28+00:00",
+     "reviewed_at": "2026-09-08T17:39:23+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "paypal": {
+   "history": [
+    {
+     "at": "2026-09-08T17:35:46+00:00",
+     "event": "reviewed",
+     "note": "initial review of the schedule against the source page, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:35:47+00:00",
+     "event": "source_changed",
+     "url": "https://www.paypal.com/us/business/paypal-business-fees"
+    },
+    {
+     "at": "2026-09-08T17:37:54+00:00",
+     "event": "reviewed",
+     "note": "baseline on fee-sentence fingerprint, 2026-09-08"
+    },
+    {
+     "at": "2026-09-08T17:39:27+00:00",
+     "event": "reviewed",
+     "note": "baseline on block-aware fee-sentence fingerprint, 2026-09-08"
+    }
+   ],
+   "last_checked_at": "2026-09-08T17:39:28+00:00",
+   "reviewed_at": "2026-09-08T17:39:27+00:00",
+   "sources": {
+    "https://www.paypal.com/us/business/paypal-business-fees": {
+     "hash": "5723eca6ec8e3594860139fe5b1ee8c6c2c4ad6150e4458f766137976fddb1f4",
+     "last_checked_at": "2026-09-08T17:39:28+00:00",
+     "reviewed_at": "2026-09-08T17:39:27+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  }
+ }
+}

@@ -24,6 +24,18 @@
         "dist/site"
       ],
       "port": 8766
+    },
+    {
+      "name": "fees-site",
+      "runtimeExecutable": ".venv/bin/python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8767",
+        "--directory",
+        "dist/fees"
+      ],
+      "port": 8767
     }
   ]
 }
