@@ -169,6 +169,9 @@ before it ships.
   Outcome: **cleared 2026-09-09**, overnight. Google's public Safe Browsing
   status moved from "No available data" to "No unsafe content found". The
   warning showed for roughly one day of the six weeks.
+- 2026-09-09: `www.verifiedfees.com` attached by the owner; it serves the site
+  with every canonical tag on the apex. Nothing owner-side remains for the
+  hosting.
 - 2026-09-09: first scheduled nightly runs on both sites completed on time
   (samebetornot 04:00, Fee Verified 04:20: 17/17 verified, published, IndexNow).
 
