@@ -34,6 +34,10 @@ NOT_ADVICE = (
     "tell you which platform to use, and it cannot see promotions, negotiated rates, or fees "
     "the platform has not published."
 )
+# Site-ownership tags that affiliate networks ask for; public by design.
+HEAD_VERIFICATION_TAGS = (
+    '<meta name="impact-site-verification" value="096c8924-cef7-413d-a04d-6410c9c8155f">',
+)
 INDEPENDENCE = (
     "Independent site: Fee Verified is not affiliated with, endorsed by, or operated by any "
     "platform named here. There are no accounts or logins; the only thing you enter is a sale amount."
@@ -181,6 +185,7 @@ def _page(site: dict, *, title: str, path: str, body: str, description: str, hea
         f"<link rel=\"canonical\" href=\"{_esc(canonical)}\">"
         f"<meta property=\"og:title\" content=\"{_esc(title)}\"><meta property=\"og:description\" content=\"{_esc(description)}\">"
         "<meta property=\"og:site_name\" content=\"Fee Verified\"><meta name=\"author\" content=\"Fee Verified\">"
+        + "".join(HEAD_VERIFICATION_TAGS) +
         f"<script type=\"application/ld+json\">{_identity_jsonld(site)}</script>"
         "<link rel=\"icon\" href=\"data:,\">"
         f"<style>{_CSS}</style>{head_extra}</head><body>"
