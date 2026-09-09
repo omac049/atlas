@@ -1701,6 +1701,23 @@ async def _polymarket_us_event_slugs(
     return found
 
 
+async def _polymarket_us_event_open(venue: PolymarketUSVenue, event_slug: str) -> bool:
+    """Whether one PM-US event is open, looked up by slug. False on any failure."""
+    if not event_slug:
+        return False
+    try:
+        payload = await venue._get(
+            "/v1/events",
+            params=[("slug", event_slug), ("active", "true"), ("closed", "false"), ("limit", "1")],
+        )
+    except (httpx.HTTPError, ValueError):
+        return False
+    events = payload.get("events", []) if isinstance(payload, dict) else []
+    return any(
+        e.get("slug") == event_slug and bool(e.get("active")) and not e.get("closed") for e in events
+    )
+
+
 async def site_build(
     out: str, base_url: str, live: bool, analytics_id: str | None = None
 ) -> None:
@@ -1811,18 +1828,26 @@ async def site_build(
     if SITE_LEGIT_PATH.exists():
         legit = json.loads(SITE_LEGIT_PATH.read_text())
     also_on: dict[str, dict] = {}
+    also_on_check = "skipped"
     if SITE_ALSO_ON_PATH.exists():
         also_on = dict(json.loads(SITE_ALSO_ON_PATH.read_text()).get("events") or {})
         if live and also_on:
             # Drop entries whose event is no longer open, so the note never links
-            # to a closed page. Failure to check keeps nothing rather than guessing.
+            # to a closed page. If the category sweep fails, check each entry by
+            # slug instead; an entry survives only when the venue says it is open.
             try:
                 open_events = set(
                     (await _polymarket_us_event_slugs(pm_us, ("politics",))).values()
                 )
                 also_on = {k: v for k, v in also_on.items() if v.get("event_slug") in open_events}
-            except (httpx.HTTPError, ValueError):
-                also_on = {}
+                also_on_check = "sweep"
+            except (httpx.HTTPError, ValueError) as exc:
+                also_on = {
+                    k: v
+                    for k, v in also_on.items()
+                    if await _polymarket_us_event_open(pm_us, str(v.get("event_slug", "")))
+                }
+                also_on_check = f"sweep_failed:{type(exc).__name__};by_slug"
     # ATLAS_SITE_REFERRAL_CODES="kalshi=ABC,polymarket_us=XYZ" — the owner's own
     # codes, set in the plist once accounts exist; never read from any file.
     referral_codes = {
@@ -1854,6 +1879,7 @@ async def site_build(
         f"grades={len(grades)} quotes={len(quotes)} links={linked} "
         f"legal_states={len((legal_states or {}).get('states', []))} "
         f"comparison_rows={len((comparison or {}).get('rows', []))} also_on={len(also_on)} "
+        f"also_on_check={also_on_check} "
         f"live_fetches={fetches} live_failures={failures} out={out}"
     )
 

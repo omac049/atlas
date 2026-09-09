@@ -362,3 +362,26 @@ def test_a_referral_link_renders_as_a_sponsored_link_not_a_code():
     # A non-https value is never turned into a link.
     plain = _pages(referral_codes={"kalshi": "javascript:alert(1)"})["kalshi-referral-code.html"]
     assert "href=\"javascript:" not in plain and "<code>javascript:alert(1)</code>" in plain
+
+
+async def test_polymarket_us_event_open_by_slug_is_strict():
+    from atlas.cli import _polymarket_us_event_open
+
+    class Venue:
+        def __init__(self, payload):
+            self.payload = payload
+
+        async def _get(self, path, params=None):
+            return self.payload
+
+    assert await _polymarket_us_event_open(
+        Venue({"events": [{"slug": "e", "active": True, "closed": False}]}), "e"
+    )
+    assert not await _polymarket_us_event_open(
+        Venue({"events": [{"slug": "e", "active": True, "closed": True}]}), "e"
+    )
+    assert not await _polymarket_us_event_open(
+        Venue({"events": [{"slug": "other", "active": True, "closed": False}]}), "e"
+    )
+    assert not await _polymarket_us_event_open(Venue({"events": []}), "e")
+    assert not await _polymarket_us_event_open(Venue({}), "")
