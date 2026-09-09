@@ -166,8 +166,11 @@ before it ships.
   #47); the owner submitted the review request the same day, stating that the
   site has no logins or data-collecting forms, computes fees from cited
   published schedules, and now declares its independence on every page.
-  Outcome to be logged here when Google answers; until then Chrome warns on
-  every page and clicks are expected to be near zero.
+  Outcome: **cleared 2026-09-09**, overnight. Google's public Safe Browsing
+  status moved from "No available data" to "No unsafe content found". The
+  warning showed for roughly one day of the six weeks.
+- 2026-09-09: first scheduled nightly runs on both sites completed on time
+  (samebetornot 04:00, Fee Verified 04:20: 17/17 verified, published, IndexNow).
 
 ## 9. Scoreboard
 
