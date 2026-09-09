@@ -34,6 +34,40 @@ NOT_ADVICE = (
     "tell you which platform to use, and it cannot see promotions, negotiated rates, or fees "
     "the platform has not published."
 )
+# Sponsored links. Two rules, enforced by verify_pages() and its test:
+#   1. A partner link appears only on that platform's OWN pages. Never on a
+#      comparison page or the index, where one paid link beside an unpaid
+#      competitor would tilt a page whose entire job is arithmetic.
+#   2. No price or offer claim lives here. Prices belong in the calculator,
+#      which is computed from the published schedule and checked nightly.
+PARTNERS = {
+    "shopify": {
+        "url": "https://shopify.pxf.io/c/7753483/1061744/13624",
+        "label": "Start a Shopify store",
+        "network": "Impact",
+        "since": "2026-09-09",
+    },
+}
+
+
+def partner_box(schedule: dict) -> str:
+    """The sponsored link for one platform, or nothing. Labeled, never styled
+    as editorial text, and always below the numbers it must not influence."""
+    partner = PARTNERS.get(schedule["platform"])
+    if not partner:
+        return ""
+    short = _esc(schedule["name"].split(" (")[0])
+    return (
+        '<div class="partner"><p class="tag">Sponsored link</p>'
+        f"<p>{short} pays this site a referral fee if you sign up through the link below. It changes "
+        f"nothing above: every rate on this page is computed from {short}'s own published fee "
+        "schedule and re-checked nightly. The link carries no discount and no special terms — you "
+        f"get {short}'s standard published pricing, the same as typing the address yourself.</p>"
+        f'<p><a class="ext" href="{_esc(partner["url"])}" rel="sponsored nofollow noopener" '
+        f'target="_blank">{_esc(partner["label"])}</a></p></div>'
+    )
+
+
 # Site-ownership tags that affiliate networks ask for; public by design.
 HEAD_VERIFICATION_TAGS = (
     '<meta name="impact-site-verification" value="096c8924-cef7-413d-a04d-6410c9c8155f">',
@@ -71,6 +105,8 @@ margin-right:auto}.brand span{color:var(--accent)}.top nav{display:flex;flex-wra
 font-size:14px}.top nav a{color:var(--ink);text-decoration:none}
 h1{font-size:1.85rem;line-height:1.2;margin:.2em 0 .4em}h2{font-size:1.2rem;margin:1.8em 0 .5em}
 p{margin:.55em 0}.lede{font-size:1.08rem;color:#333}header .independent{max-width:900px;margin:0 auto;padding:0 20px .6rem;font-size:.82rem;color:#5b6472}.muted{color:var(--muted);font-size:14px}
+.partner{border:1px solid var(--line);border-left:3px solid var(--muted);background:var(--soft);border-radius:10px;padding:10px 16px;margin:2em 0 1em}
+.partner p{margin:.5em 0}.partner .tag{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:.2em 0}
 .small{font-size:13px}.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:13px;
 font-weight:600}.badge.verified{background:var(--ok-bg);color:var(--ok)}.badge.review{background:var(--rev-bg);
 color:var(--rev)}.badge.warn{background:var(--warn-bg);color:var(--warn)}
@@ -241,6 +277,7 @@ def render_platform(site: dict, schedule: dict, verification: dict, engine_js: s
         + (f"<h2>Checked against {_esc(short)}'s own examples</h2><p class=\"muted\">The calculator reproduces every worked example the platform publishes; these are run as tests before any page is built.</p><ul>{examples}</ul>" if examples else "")
         + (f"<h2>Not included</h2><ul>{excluded}</ul>" if excluded else "")
         + (f"<h2>Notes</h2><ul>{notes}</ul>" if notes else "")
+        + partner_box(schedule)
         + "<p class=\"muted\">See a mistake? The schedule file behind this page is public; corrections that cite the platform's page are applied.</p>"
         f"<script>{engine_js}</script><script>{ui_js}</script>"
         f"<script>window.addEventListener('DOMContentLoaded',function(){{window.FeeVerifiedUI.mount({schedule_json},'calc-form','calc-out');}});</script>"
@@ -299,6 +336,14 @@ def render_methodology(site: dict) -> str:
         "<h2>What is deliberately left out</h2><p>Promotions, negotiated rates, store subscriptions "
         "unless stated, chargebacks and disputes, shipping label costs, and anything the platform "
         "has not published. Each page lists its exclusions.</p>"
+        "<h2>How this site makes money</h2><p>Some pages carry a sponsored link to the platform "
+        "that page is about. If you sign up through one, this site receives a referral fee and you "
+        "pay that platform's standard published price — there is no discount, and no better link. "
+        "Three rules keep the money away from the numbers. A sponsored link never changes a computed "
+        "fee. It appears only on that platform's own pages, never on a page comparing two platforms, "
+        "so no comparison here has a paid side and an unpaid side. And no platform pays to be "
+        "included, ranked, or described in any particular way; the platforms whose fees are "
+        "calculated here do not pay for the calculators.</p>"
         "<p>The code and the schedule files are public. Corrections that cite the platform's own "
         "page are applied.</p>"
     )
@@ -373,6 +418,7 @@ def render_take(site: dict, schedule: dict, verification: dict) -> str:
         f"<h2>How the fee is built</h2><p>{_esc(schedule.get('structure', ''))}</p>"
         f"<h2>In {_esc(short)}'s own words</h2><ul>{quotes}</ul>"
         f"<p class=\"muted\">Source: {sources_html}.</p>"
+        + partner_box(schedule)
     )
     title = f"How much does {short} take? {short} seller fees explained ({site['year']})"
     return _page(site, title=title, path=f"how-much-does-{schedule['platform']}-take.html", body=body,
@@ -432,6 +478,10 @@ def verify_pages(pages: dict[str, str]) -> list[str]:
                 problems.append(f"{path}: missing not-advice notice")
             if INDEPENDENCE[:24] not in content:
                 problems.append(f"{path}: missing independence line")
+            if path.startswith("compare/") or path == "index.html":
+                for platform, partner in PARTNERS.items():
+                    if partner["url"] in content:
+                        problems.append(f"{path}: {platform} sponsored link on a comparison/index page")
     return problems
 
 

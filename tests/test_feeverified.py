@@ -114,6 +114,16 @@ def test_build_guardrails_every_page_carries_disclosure_and_status():
     assert "not affiliated with eBay" in pages["ebay.html"]
     assert '"@type": "WebSite"' in pages["ebay.html"] and 'og:site_name' in pages["index.html"]
     assert "impact-site-verification" in pages["index.html"] and "impact-site-verification" in pages["ebay.html"]
+    shopify_link = site.PARTNERS["shopify"]["url"]
+    assert shopify_link in pages["shopify.html"]
+    assert shopify_link in pages["how-much-does-shopify-take.html"]
+    assert "Sponsored link" in pages["shopify.html"]
+    # The money never sits on a page that compares a paid platform with an unpaid one.
+    assert shopify_link not in pages["compare/etsy-vs-shopify.html"]
+    assert shopify_link not in pages["index.html"]
+    assert shopify_link not in pages["etsy.html"]
+    tilted = {"compare/x.html": f"{site.DISCLOSURE}{site.NOT_ADVICE}{site.INDEPENDENCE}{shopify_link}"}
+    assert site.verify_pages(tilted) == ["compare/x.html: shopify sponsored link on a comparison/index page"]
     bare = {"x.html": f"<p>{site.DISCLOSURE}</p><p>{site.NOT_ADVICE}</p>"}
     assert site.verify_pages(bare) == ["x.html: missing independence line"]
 

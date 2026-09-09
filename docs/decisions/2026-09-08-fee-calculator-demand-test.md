@@ -172,6 +172,17 @@ before it ships.
 - 2026-09-09: `www.verifiedfees.com` attached by the owner; it serves the site
   with every canonical tag on the apex. Nothing owner-side remains for the
   hosting.
+- 2026-09-09: **first money on the page.** Shopify's affiliate program (Impact)
+  approved the owner; the Impact site-verification tag went on every page (#54)
+  and the referral link went live on the two Shopify pages (#55). Placement is
+  governed by a rule enforced in `verify_pages()` and pinned by a test: a
+  sponsored link appears only on that platform's own calculator and "how much
+  does X take" pages, never on a comparison page or the index, so no
+  comparison on this site has a paid side and an unpaid side. The box sits
+  below the numbers, is labeled "Sponsored link", carries no price or offer
+  claim, and uses `rel="sponsored nofollow noopener"`. The methodology page now
+  states how the site makes money. No fee number is affected; the charter's
+  "never affecting a number" condition holds by construction.
 - 2026-09-09: first scheduled nightly runs on both sites completed on time
   (samebetornot 04:00, Fee Verified 04:20: 17/17 verified, published, IndexNow).
 
