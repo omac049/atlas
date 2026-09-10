@@ -186,6 +186,24 @@ before it ships.
 - 2026-09-09: first scheduled nightly runs on both sites completed on time
   (samebetornot 04:00, Fee Verified 04:20: 17/17 verified, published, IndexNow).
 
+- 2026-09-10: **platform 18, QuickBooks Payments.** Prompted by the owner's
+  Intuit Product Referrals approval that day, and admitted only on the same two
+  tests the original 17 passed, measured before building. Demand (Keywords
+  Everywhere, US, 2026-09-10): "quickbooks payments fees" 1,000 a month,
+  "quickbooks payment fees" 880, "quickbooks credit card processing fees" 720,
+  "quickbooks ach fee" 480, "quickbooks fees" 480, "quickbooks invoice fees" 210,
+  about 3,800 a month for processing-fee queries. Schedule: Intuit's Standard
+  Pricing Schedule of September 12, 2023, which agrees with the payment-rates
+  page dated 04/30/2026. Every quote was taken from the text the nightly
+  fetcher renders. A summarizing fetch tool had misread the same pages,
+  reporting another provider's column and a stale date, so quotes are never
+  taken from summaries. Built inside the two-week window. The referral link is
+  not placed yet: it goes on the QuickBooks pages only, under the Shopify rules,
+  once the owner copies it from the Intuit Partner Portal. That link carries
+  Intuit's standard new-customer discount (program guide: up to 50% off for 3
+  months, subject to change), so its sponsored box will say a discount applies
+  instead of Shopify's "no discount" line.
+
 ## 9. Scoreboard
 
 Weekly, from the owner's personal Search Console, trailing 7 days unless

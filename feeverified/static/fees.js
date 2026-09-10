@@ -345,7 +345,25 @@
     return finish(price, [], { buyer_fees: [{ label: "Buyer Protection fee paid by the buyer ($0.70 + 5%)", amount: cents(price * r.buyer_protection[0] + r.buyer_protection[1]) }] });
   }
 
-  const engines = { ebay, paypal, etsy, reverb, amazon, square, stripe, shopify, venmo, cashapp, gofundme, depop, poshmark, mercari, whatnot, vinted };
+  // -------------------------------------------------------- QuickBooks Payments
+  // Standard QuickBooks Online chart: one percentage per payment method, +1% for
+  // international cards/PayPal (not ACH), no fixed fee; instant deposit 1.75% of
+  // the amount deposited. Intuit rounds each fee to the nearest cent.
+  function quickbooks(s, i) {
+    const r = s.rates, amount = num(i.amount);
+    const names = { invoiced_card: "Invoice, card or wallet", invoiced_ach: "Invoice, ACH bank payment",
+      card_reader: "Card reader / Tap to Pay", keyed: "Keyed-in card", pin_debit: "PIN debit" };
+    const ch = names[i.channel] ? i.channel : "invoiced_card";
+    const intl = i.international && ch !== "invoiced_ach" ? r.international_surcharge : 0;
+    const f = pctFixed(amount, [r[ch], 0], intl);
+    const lines = [{ id: "processing_fee", label: `${names[ch]} (${label(f.rate, 0, intl ? " incl. 1% international" : "")})`, amount: f.fee }];
+    if (i.instant_deposit) {
+      lines.push({ id: "instant_deposit", label: "Instant deposit (1.75% of the amount deposited)", amount: cents((amount - f.fee) * r.instant_deposit) });
+    }
+    return finish(amount, lines);
+  }
+
+  const engines = { ebay, paypal, etsy, reverb, amazon, square, stripe, shopify, venmo, cashapp, gofundme, depop, poshmark, mercari, whatnot, vinted, quickbooks };
 
   function computeFees(schedule, inputs) {
     const fn = engines[schedule.platform];
