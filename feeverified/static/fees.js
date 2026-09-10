@@ -363,7 +363,26 @@
     return finish(amount, lines);
   }
 
-  const engines = { ebay, paypal, etsy, reverb, amazon, square, stripe, shopify, venmo, cashapp, gofundme, depop, poshmark, mercari, whatnot, vinted, quickbooks };
+  // ------------------------------------------------------------------ Grailed
+  // Seller fee on the sale price (listing price, plus buyer-paid shipping unless a
+  // Grailed Label is used): 9% at $120 and above, else 6% with a $1.99 minimum.
+  // Payment processing is separate, by payout setup and domestic/international.
+  function grailed(s, i) {
+    const r = s.rates, c = r.commission, price = num(i.price), shipping = num(i.shipping);
+    const base = price + (i.grailed_label ? 0 : shipping);
+    const standard = base >= c.threshold;
+    const fee = standard ? cents(base * c.standard) : cents(Math.max(c.reduced_min, base * c.reduced));
+    const lines = [{ id: "commission", amount: fee, label: standard
+      ? `Seller fee (${label(c.standard, 0)} on sales of $${c.threshold} and above)`
+      : `Seller fee (${label(c.reduced, 0)} under $${c.threshold}, minimum $${c.reduced_min.toFixed(2)})` }];
+    const setup = r.processing[i.processing] ? i.processing : "stripe_onboarded";
+    const charged = price + shipping;
+    const f = pctFixed(charged, r.processing[setup][i.international ? "international" : "domestic"]);
+    lines.push({ id: "processing_fee", label: `Payment processing (${label(f.rate, f.fixed)})`, amount: f.fee });
+    return finish(charged, lines);
+  }
+
+  const engines = { ebay, paypal, etsy, reverb, amazon, square, stripe, shopify, venmo, cashapp, gofundme, depop, poshmark, mercari, whatnot, vinted, quickbooks, grailed };
 
   function computeFees(schedule, inputs) {
     const fn = engines[schedule.platform];

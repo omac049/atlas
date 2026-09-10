@@ -1,0 +1,229 @@
+{
+  "platform": "grailed",
+  "name": "Grailed",
+  "as_of": "2026-09-10",
+  "sources": [
+    {
+      "url": "https://support.grailed.com/hc/en-us/articles/30282580172045-What-are-the-fees",
+      "title": "What are the fees? – Grailed (Help Center)",
+      "loaded": "2026-09-10",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://support.grailed.com/hc/en-us/articles/30299544492301-Does-Grailed-charge-a-payment-processing-fee",
+      "title": "Does Grailed charge a payment processing fee? – Grailed (Help Center)",
+      "loaded": "2026-09-10",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "Grailed's seller fee and payment processing fee, as published in Grailed's help center. Buyers pay no Grailed fee. Shipping label costs, taxes, duties and promotional commission rates are out of scope.",
+  "structure": "Grailed charges sellers two fees. The seller fee is 9% of the sale price for sales of $120 and above, and 6% with a $1.99 minimum for sales under $120 (Grailed marks the reduced tier as applicable to sales on or after May 20, 2026). The sale price is the listing price plus any shipping charged to the buyer, unless you ship with a Grailed Label, in which case it is the listing price only. Payment processing is separate: 3.49% + $0.49 for US domestic payments and 4.99% + $0.49 for international payments when you are onboarded with Stripe; 3.49% + $0.99 and 5.49% + $0.99 in a Stripe-supported country without onboarding; and 4.99% + $0.49 outside Stripe-eligible countries.",
+  "summary": "Grailed takes a seller fee of 9% on sales of $120 and above, or 6% with a $1.99 minimum on sales under $120, plus payment processing of 3.49% + $0.49 on US payments for sellers onboarded with Stripe. Buyers pay no Grailed fee.",
+  "rates": {
+    "commission": {
+      "threshold": 120,
+      "standard": 0.09,
+      "reduced": 0.06,
+      "reduced_min": 1.99
+    },
+    "processing": {
+      "stripe_onboarded": {
+        "domestic": [
+          0.0349,
+          0.49
+        ],
+        "international": [
+          0.0499,
+          0.49
+        ]
+      },
+      "stripe_not_onboarded": {
+        "domestic": [
+          0.0349,
+          0.99
+        ],
+        "international": [
+          0.0549,
+          0.99
+        ]
+      },
+      "not_stripe_eligible": {
+        "domestic": [
+          0.0499,
+          0.49
+        ],
+        "international": [
+          0.0499,
+          0.49
+        ]
+      }
+    }
+  },
+  "inputs": [
+    {
+      "id": "price",
+      "label": "Listing price the item sold for",
+      "type": "money",
+      "default": 100
+    },
+    {
+      "id": "shipping",
+      "label": "Shipping charged to the buyer",
+      "type": "money",
+      "default": 0
+    },
+    {
+      "id": "grailed_label",
+      "label": "Shipped with a Grailed Label",
+      "type": "bool",
+      "default": false,
+      "help": "With a Grailed Label, the seller fee is on the listing price only."
+    },
+    {
+      "id": "processing",
+      "label": "Your payout setup",
+      "type": "select",
+      "default": "stripe_onboarded",
+      "options": [
+        [
+          "stripe_onboarded",
+          "Onboarded with Stripe"
+        ],
+        [
+          "stripe_not_onboarded",
+          "Stripe-supported country, not onboarded"
+        ],
+        [
+          "not_stripe_eligible",
+          "Not in a Stripe-eligible country"
+        ]
+      ]
+    },
+    {
+      "id": "international",
+      "label": "International payment",
+      "type": "bool",
+      "default": false,
+      "help": "Grailed charges a higher processing rate on international payments."
+    }
+  ],
+  "examples": [
+    {
+      "description": "Arithmetic check derived from the published rates (Grailed publishes no worked example on the loaded pages): a $100 item with $10 shipping charged to the buyer, no Grailed Label, onboarded with Stripe. Sale price $110 is under $120, so 6%.",
+      "inputs": {
+        "price": 100,
+        "shipping": 10
+      },
+      "expected": {
+        "commission": 6.6,
+        "processing_fee": 4.33,
+        "total_fees": 10.93,
+        "net": 99.07
+      },
+      "quote": "Under $120 6% (minimum $1.99)",
+      "source_url": "https://support.grailed.com/hc/en-us/articles/30282580172045-What-are-the-fees",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $20 sale, where 6% ($1.20) is below the $1.99 minimum.",
+      "inputs": {
+        "price": 20
+      },
+      "expected": {
+        "commission": 1.99,
+        "processing_fee": 1.19,
+        "total_fees": 3.18,
+        "net": 16.82
+      },
+      "quote": "6% (minimum $1.99)",
+      "source_url": "https://support.grailed.com/hc/en-us/articles/30282580172045-What-are-the-fees",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $119 sale, the top of the 6% tier.",
+      "inputs": {
+        "price": 119
+      },
+      "expected": {
+        "commission": 7.14,
+        "processing_fee": 4.64,
+        "total_fees": 11.78,
+        "net": 107.22
+      },
+      "quote": "Under $120 6% (minimum $1.99)",
+      "source_url": "https://support.grailed.com/hc/en-us/articles/30282580172045-What-are-the-fees",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $120 sale, the bottom of the 9% tier ('$120 and above').",
+      "inputs": {
+        "price": 120
+      },
+      "expected": {
+        "commission": 10.8,
+        "processing_fee": 4.68,
+        "total_fees": 15.48,
+        "net": 104.52
+      },
+      "quote": "$120 and above 9%",
+      "source_url": "https://support.grailed.com/hc/en-us/articles/30282580172045-What-are-the-fees",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $200 international payment for a seller in a Stripe-supported country who is not onboarded.",
+      "inputs": {
+        "price": 200,
+        "processing": "stripe_not_onboarded",
+        "international": true
+      },
+      "expected": {
+        "commission": 18.0,
+        "processing_fee": 11.97,
+        "total_fees": 29.97,
+        "net": 170.03
+      },
+      "quote": "International payments 5.49% + .99 USD",
+      "source_url": "https://support.grailed.com/hc/en-us/articles/30299544492301-Does-Grailed-charge-a-payment-processing-fee",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $100 item shipped with a Grailed Label and $15 shipping charged to the buyer; the seller fee is on the listing price only.",
+      "inputs": {
+        "price": 100,
+        "shipping": 15,
+        "grailed_label": true
+      },
+      "expected": {
+        "commission": 6.0,
+        "processing_fee": 4.5,
+        "total_fees": 10.5,
+        "net": 104.5
+      },
+      "quote": "If you use a Grailed Label, the sale price is based on the listing price only.",
+      "source_url": "https://support.grailed.com/hc/en-us/articles/30282580172045-What-are-the-fees",
+      "derived": true
+    }
+  ],
+  "quotes": [
+    "Grailed is free for buyers. Sellers pay a seller commission fee, as described below.",
+    "GRAILED SELLER FEE\nSale Price\nSeller Fee\nStandard\n$120 and above\n9%\nReduced\n*Applicable to sales on/after 5/20/26\nUnder $120\n6% (minimum $1.99)",
+    "*Seller fee applies to all domestic and international transactions. Promotional commission rates may apply to certain transactions and are subject to separate terms communicated by Grailed.",
+    "The listing price your item sells for, plus\nAny shipping costs charged to the buyer, if you are not using a Grailed Label\nIf you use a Grailed Label, the sale price is based on the listing price only.",
+    "There is a payment processing fee on all transactions. The rates may vary depending on how the buyer purchases your listing.",
+    "When onboarded with Stripe, the payment processing fees are as follows:\nUS domestic payments 3.49% + .49 USD\nInternational payments 4.99% + .49 USD",
+    "If you are in a country supported by Stripe, however are not onboarded, your payment processing fees are as follows:\nUS domestic payments 3.49% + .99 USD\nInternational payments 5.49% + .99 USD",
+    "If you are not located in a Stripe eligible country, your payment processing fee will default to 4.99% +.49 USD.",
+    "Grailed reserves the right to modify all fees at any time."
+  ],
+  "excluded": [
+    "Shipping label costs, including Grailed Labels.",
+    "Promotional commission rates, which Grailed says may apply to certain transactions under separate terms.",
+    "Sales tax, VAT and duties collected from buyers."
+  ],
+  "notes": [
+    "Grailed's page marks the reduced tier 'Applicable to sales on/after 5/20/26'. A sale of exactly $120 is in the 9% tier ('$120 and above').",
+    "Grailed does not state what amount the payment processing fee is charged on. The calculator applies it to the listing price plus the shipping charged to the buyer, which is what the buyer pays.",
+    "Grailed publishes no rounding rule; the calculator rounds each fee half-up to the cent.",
+    "Grailed publishes no worked example; the examples here are arithmetic checks derived from the published rates."
+  ]
+}

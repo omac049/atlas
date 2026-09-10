@@ -562,6 +562,32 @@
    },
    "status": "verified"
   },
+  "grailed": {
+   "history": [
+    {
+     "at": "2026-09-10T23:27:54+00:00",
+     "event": "reviewed",
+     "note": "Platform 19 added 2026-09-10: Grailed help-center seller-fee and payment-processing articles; 9 quotes taken from the verifier's own rendered text."
+    }
+   ],
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-09-10T23:27:54+00:00",
+   "sources": {
+    "https://support.grailed.com/hc/en-us/articles/30282580172045-What-are-the-fees": {
+     "hash": "3aac5fe82911027e54e368ed915331100f78ad902028b14830c7ac40f48b20eb",
+     "last_checked_at": "2026-09-10T23:27:54+00:00",
+     "reviewed_at": "2026-09-10T23:27:54+00:00",
+     "status": "verified"
+    },
+    "https://support.grailed.com/hc/en-us/articles/30299544492301-Does-Grailed-charge-a-payment-processing-fee": {
+     "hash": "57a3cc4c7dac7f62d706dc519dffb159d0e53177cf8a7eee1b3c1c817769f1d8",
+     "last_checked_at": "2026-09-10T23:27:54+00:00",
+     "reviewed_at": "2026-09-10T23:27:54+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
   "mercari": {
    "history": [
     {
