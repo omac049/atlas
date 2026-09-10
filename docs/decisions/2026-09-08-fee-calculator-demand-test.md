@@ -204,6 +204,28 @@ before it ships.
   months, subject to change), so its sponsored box will say a discount applies
   instead of Shopify's "no discount" line.
 
+- 2026-09-10: **platform 19, Grailed**, chosen from a fresh demand pull once
+  the round-two seller-fee cluster was built out. Candidates were scored the way
+  round two scored its winner: US search volume (Keywords Everywhere,
+  2026-09-10) and the study's weak-slot test on the top results (weak means
+  under 100,000 monthly US visits, or a spam slot; 3 or more weak slots pass).
+  - Grailed: "grailed fees" 1,900 a month and rising; 6 of 7 slots weak. PASS,
+    built. Grailed's own help center shows a tiered seller fee: 9% at $120 and
+    above, 6% with a $1.99 minimum under $120, for sales on or after May 20,
+    2026. Every quote was taken from the verifier's rendered text.
+  - Facebook Marketplace: 890 a month; 7 of 7 weak. Deferred. Meta's fee answer
+    sits in a collapsed section the nightly fetcher cannot read, and Meta ended
+    checkout for Shops in September 2025, so the fee could not be verified.
+  - TCGplayer: about 2,080 a month. "tcgplayer fee calculator" has 3 of 7 weak
+    (pass) but "tcgplayer fees" only 1 of 7, because TCGplayer's help center
+    holds the top slots. It publishes worked examples, but one does not add up
+    on its own page (shipping raised from $1.31 to $1.49, total left at $1.08).
+    Deferred.
+  - Clover: 1,300 a month; 5 of 9 weak. Deferred: its rates depend on which bank
+    or reseller sells it.
+  - Eventbrite: excluded by section 2, since its ticketing fees fall on buyers
+    by default.
+
 ## 9. Scoreboard
 
 Weekly, from the owner's personal Search Console, trailing 7 days unless
