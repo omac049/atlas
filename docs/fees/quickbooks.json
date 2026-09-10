@@ -1,0 +1,201 @@
+{
+  "platform": "quickbooks",
+  "name": "QuickBooks Payments",
+  "as_of": "2026-09-10",
+  "sources": [
+    {
+      "url": "https://quickbooks.intuit.com/payments/legal/toc102017/standard-pricing-schedule-sep2023/",
+      "title": "Intuit Payments Standard Pricing Schedule (U.S. only), Standard Customers — September 12, 2023",
+      "loaded": "2026-09-10",
+      "last_updated_on_page": "Last updated September 12, 2023"
+    },
+    {
+      "url": "https://quickbooks.intuit.com/payments/payment-rates/",
+      "title": "Credit Card Processing Fees & Rates Explained | QuickBooks (payment-rates page)",
+      "loaded": "2026-09-10",
+      "last_updated_on_page": "Rates are accurate as of 04/30/2026"
+    }
+  ],
+  "scope": "QuickBooks Payments fees on QuickBooks Online (the same chart covers QuickBooks Money, GoPayment and the Gmail plug-in) for Standard customers, meaning accounts approved or first used on or after September 12, 2023. QuickBooks Desktop, the Payments API, Legacy customers and accounts with a negotiated rate are out of scope; their published rates are listed under Not included. QuickBooks Online subscription prices are a separate charge and are not part of this calculator.",
+  "structure": "QuickBooks Payments takes a percentage of each payment, set by how your customer pays: 2.99% for an invoice paid by card or digital wallet (Apple Pay, PayPal, Venmo), 1% for an invoice paid by ACH bank transfer, 2.5% in person with a card reader or Tap to Pay, 3.5% for a card number typed in, and 1% for PIN debit. International cards and international PayPal accounts add 1%. The Standard QuickBooks Online chart has no monthly fee and no fixed per-transaction fee on card payments. Instant deposit costs 1.75% of the amount deposited. Intuit rounds each fee to the nearest cent.",
+  "summary": "QuickBooks Payments takes 2.99% of invoices paid by card or digital wallet, 1% of invoices paid by ACH bank transfer with no maximum listed, 2.5% in person and 3.5% for typed-in cards, plus 1% for international cards. No monthly fee on the Standard QuickBooks Online chart; instant deposit costs 1.75%.",
+  "rates": {
+    "invoiced_card": 0.0299,
+    "invoiced_ach": 0.01,
+    "card_reader": 0.025,
+    "keyed": 0.035,
+    "pin_debit": 0.01,
+    "international_surcharge": 0.01,
+    "instant_deposit": 0.0175
+  },
+  "inputs": [
+    {
+      "id": "amount",
+      "label": "Payment amount",
+      "type": "money",
+      "default": 100
+    },
+    {
+      "id": "channel",
+      "label": "How the customer paid",
+      "type": "select",
+      "default": "invoiced_card",
+      "options": [
+        [
+          "invoiced_card",
+          "Invoice paid by card or digital wallet (2.99%)"
+        ],
+        [
+          "invoiced_ach",
+          "Invoice paid by ACH bank transfer (1%, no maximum listed)"
+        ],
+        [
+          "card_reader",
+          "In person with a card reader or Tap to Pay (2.5%)"
+        ],
+        [
+          "keyed",
+          "Card number typed in (3.5%)"
+        ],
+        [
+          "pin_debit",
+          "PIN debit (1%)"
+        ]
+      ]
+    },
+    {
+      "id": "international",
+      "label": "International card or PayPal account (+1%)",
+      "type": "bool",
+      "default": false,
+      "help": "Applies to card and digital wallet payments, not to ACH."
+    },
+    {
+      "id": "instant_deposit",
+      "label": "Instant deposit (1.75% of the amount deposited)",
+      "type": "bool",
+      "default": false
+    }
+  ],
+  "examples": [
+    {
+      "description": "Arithmetic check derived from the published rates (Intuit publishes no worked example on the loaded pages): a $100 invoice paid by card.",
+      "inputs": {
+        "amount": 100,
+        "channel": "invoiced_card"
+      },
+      "expected": {
+        "total_fees": 2.99,
+        "net": 97.01
+      },
+      "quote": "Invoiced - card and digital wallet: 2.99%",
+      "source_url": "https://quickbooks.intuit.com/payments/legal/toc102017/standard-pricing-schedule-sep2023/",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: $100 taken in person with a card reader.",
+      "inputs": {
+        "amount": 100,
+        "channel": "card_reader"
+      },
+      "expected": {
+        "total_fees": 2.5,
+        "net": 97.5
+      },
+      "quote": "Card reader - card and digital wallet: 2.5%",
+      "source_url": "https://quickbooks.intuit.com/payments/legal/toc102017/standard-pricing-schedule-sep2023/",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $100 card number typed in.",
+      "inputs": {
+        "amount": 100,
+        "channel": "keyed"
+      },
+      "expected": {
+        "total_fees": 3.5,
+        "net": 96.5
+      },
+      "quote": "Keyed-in - card: 3.5%",
+      "source_url": "https://quickbooks.intuit.com/payments/legal/toc102017/standard-pricing-schedule-sep2023/",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $5,000 invoice paid by ACH. The Standard schedule lists 1% with no maximum, so the fee is not capped.",
+      "inputs": {
+        "amount": 5000,
+        "channel": "invoiced_ach"
+      },
+      "expected": {
+        "total_fees": 50.0,
+        "net": 4950.0
+      },
+      "quote": "Invoiced - ACH bank payment: 1%",
+      "source_url": "https://quickbooks.intuit.com/payments/legal/toc102017/standard-pricing-schedule-sep2023/",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $100 invoice paid with an international card (2.99% + 1%).",
+      "inputs": {
+        "amount": 100,
+        "channel": "invoiced_card",
+        "international": true
+      },
+      "expected": {
+        "total_fees": 3.99,
+        "net": 96.01
+      },
+      "quote": "International Card or International PayPal: 1%",
+      "source_url": "https://quickbooks.intuit.com/payments/legal/toc102017/standard-pricing-schedule-sep2023/",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $100 card invoice, then an instant deposit of the $97.01 that remains (1.75% = $1.70).",
+      "inputs": {
+        "amount": 100,
+        "channel": "invoiced_card",
+        "instant_deposit": true
+      },
+      "expected": {
+        "processing_fee": 2.99,
+        "instant_deposit": 1.7,
+        "total_fees": 4.69,
+        "net": 95.31
+      },
+      "quote": "For Instant Deposit: a 1.75% fee applies to each amount you select for deposit",
+      "source_url": "https://quickbooks.intuit.com/payments/legal/toc102017/standard-pricing-schedule-sep2023/",
+      "derived": true
+    }
+  ],
+  "quotes": [
+    "Invoices, recurring payments, or quick requests paid using Visa, Mastercard, Discover, American Express, Apple Pay, PayPal, and Venmo\n2.99%",
+    "Invoices or quick requests paid using an electronic transfer that pulls money from a customer’s bank account into yours\n1%",
+    "Payments taken in-person with a card reader or Tap to Pay on iPhone. Accept Visa, Mastercard, Discover, American Express, Apple Pay, Google Pay, and Samsung Pay.\n2.5%",
+    "Payments processed by manually entering a customer’s card information.\n3.5%",
+    "For Instant Deposit: a 1.75% fee applies to each amount you select for deposit in up to 30 minutes in your designated bank account.",
+    "No. The rates listed are exactly the rates you’ll pay for making a credit card transaction, regardless if it’s Visa, MasterCard, Discover, or American Express, or if your customer is using a corporate card.",
+    "Rates are accurate as of 04/30/2026. All listed rates are per transaction.",
+    "Final fees are calculated based on the then-current rate and rounded to the nearest cent.",
+    "These pricing terms apply to customers (“Standard Customers”) that were approved or first used QuickBooks Payments (online or desktop), GoPayment, and/or Gmail plug-in processing services (collectively, “Services”) on September 12, 2023 or thereafter.",
+    "A per transaction fee may apply for each ACH or electronic bank payment, where applicable.",
+    "Last updated September 12, 2023",
+    "QuickBooks Online, QuickBooks Money, GoPayment 1 and Gmail Plug-in\nFee Type\nRate\nCard reader - card and digital wallet\n2.5%\nInvoiced - card and digital wallet 2\n2.99%\nKeyed-in - card\n3.5%\nInvoiced - ACH bank payment 2\n1%\nInternational Card or International PayPal\n1%\nPIN Debit\n1%"
+  ],
+  "excluded": [
+    "QuickBooks Desktop Payments, a separate chart on the same schedule. Pay-as-you-go: 2.4% card reader, 3.5% keyed-in or invoiced card, 1% ACH, 1% international, $0.30 per transaction. Monthly plan ($20 a month): 1.6% card reader, 3.3% keyed-in or invoiced card, 1% ACH, 1% international, $0.30 per transaction.",
+    "QuickBooks Payments API for third-party apps: 3.5% for online card payments, 1% ACH, 1% international.",
+    "Legacy customers (merchant agreements on or before September 12, 2023, or 3-tier qualified pricing). Their rates follow an older schedule, such as the Qualified Pricing Schedule's $20 monthly fee with 1.69% / 2.52% / 3.96% tiers plus $0.30 per card transaction.",
+    "Negotiated rates after a pricing rate review, including the 'up to 25% off transaction costs' Intuit offers by phone to businesses processing over $2,500 a month.",
+    "Chargeback fee ($25 plus the full chargeback amount), ACH or electronic bank reject fee ($25), returned check ($10).",
+    "Payment dispute protection, an optional add-on ('Starting at .99%').",
+    "Buy now, pay later through Affirm (2.99% on the payment-rates page, which says the feature has limited availability); it is not in the Standard schedule chart.",
+    "QuickBooks Online subscription prices, which are billed separately from payment processing."
+  ],
+  "notes": [
+    "Two Intuit pages agree on the QuickBooks Online rates: the Standard Pricing Schedule (last updated September 12, 2023) and the payment-rates page ('accurate as of 04/30/2026'). The calculator follows the legal schedule, and both pages are re-read nightly.",
+    "ACH: the Standard schedule lists 1% with no maximum. Accounts on older Legacy pricing had capped ACH fees, so if your account predates September 12, 2023 your rate may differ. The schedule also says a per-transaction fee 'may apply for each ACH or electronic bank payment, where applicable' without stating an amount; the calculator adds none.",
+    "The payment-rates page says card rates are the same for every brand, including American Express and corporate cards.",
+    "The 1% international surcharge applies to international cards and international PayPal accounts. The calculator adds it to card and wallet payments only, not to ACH.",
+    "Instant deposit is charged on the amount you choose to deposit. The calculator assumes you instantly deposit the whole payment after processing fees."
+  ]
+}

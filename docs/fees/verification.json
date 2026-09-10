@@ -738,6 +738,32 @@
    },
    "status": "verified"
   },
+  "quickbooks": {
+   "history": [
+    {
+     "at": "2026-09-10T23:03:14+00:00",
+     "event": "reviewed",
+     "note": "Platform 18 added 2026-09-10: Intuit Standard Pricing Schedule (Sep 12, 2023) and payment-rates page (accurate as of 04/30/2026); 12 quotes taken from the verifier's own rendered text."
+    }
+   ],
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-09-10T23:03:14+00:00",
+   "sources": {
+    "https://quickbooks.intuit.com/payments/legal/toc102017/standard-pricing-schedule-sep2023/": {
+     "hash": "e7979ded4022a47124e3d25c76f9330627e7504c56b56c65ca8abe2708845b0b",
+     "last_checked_at": "2026-09-10T23:03:14+00:00",
+     "reviewed_at": "2026-09-10T23:03:14+00:00",
+     "status": "verified"
+    },
+    "https://quickbooks.intuit.com/payments/payment-rates/": {
+     "hash": "8c28dc469ca2d7dd9121a08120e73edee0a62f45f9dc5f94aed2babda8fcb417",
+     "last_checked_at": "2026-09-10T23:03:14+00:00",
+     "reviewed_at": "2026-09-10T23:03:14+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
   "reverb": {
    "history": [
     {
