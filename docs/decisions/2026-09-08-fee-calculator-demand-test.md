@@ -262,6 +262,19 @@ before it ships.
   scope; the nightly job stays read-only. Requesting indexing for a page has no
   API and remains the owner's manual step.
 
+- 2026-09-11: **the Intuit referral link is live** on the two QuickBooks pages.
+  Checked before placing: the link keeps its tracking through its one redirect
+  and lands on a QuickBooks Online buy page showing Intuit's new-customer
+  discount, not on the affiliate signup page. Because that link carries a
+  discount and Shopify's does not, the sponsored box now states each partner's
+  own terms, and the methodology page no longer claims every link is at the
+  platform's standard price. The placement rule was widened at the same time: a
+  sponsored link belongs on the page about the thing it sells, and never on a
+  page comparing a paid option against an unpaid one. The build still fails if
+  one lands on a comparison page or the index, and a test pins that the Intuit
+  link is absent from both. Square's application through Impact is awaiting
+  approval.
+
 ## 9. Scoreboard
 
 Weekly, from the owner's personal Search Console, trailing 7 days unless
