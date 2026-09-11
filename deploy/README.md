@@ -1,13 +1,13 @@
 # deploy/ — always-on runtime
 
-Atlas runs as nine launchd agents that start at login and restart themselves on
+Atlas runs as ten launchd agents that start at login and restart themselves on
 failure. Verified working from `/Users/ocorral/Atlas` on 2026-08-18.
 
 ## Install
 
 ```bash
 cp deploy/com.atlas.*.plist ~/Library/LaunchAgents/
-for l in com.atlas.api com.atlas.monitor com.atlas.healthcheck com.atlas.backup com.atlas.study com.atlas.intel com.atlas.awake com.atlas.site com.atlas.fees; do
+for l in com.atlas.api com.atlas.monitor com.atlas.healthcheck com.atlas.backup com.atlas.study com.atlas.intel com.atlas.awake com.atlas.site com.atlas.fees com.atlas.gsc; do
   launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/$l.plist
 done
 launchctl list | grep com.atlas   # third column 0 = healthy
@@ -72,6 +72,10 @@ reads the installed copy in `~/Library/LaunchAgents`, not the one in this repo.
   project `verifiedfees`, i.e. verifiedfees.com) and pings IndexNow. The publish
   step prepends the newest nvm node to PATH, since launchd's PATH has no node.
   Log: `~/Library/Logs/atlas-fees.log`.
+- **`com.atlas.gsc.plist` + `atlas_gsc.py`**: daily 06:15, loop 1 (`docs/GSC.md`).
+  Pulls Search Console data for both sites through the owner's personal-account
+  service account, then writes `data/gsc/report.md`. Until the key file exists it
+  logs a skip and exits cleanly. Log: `~/Library/Logs/atlas-gsc.log`.
 - **`com.atlas.healthcheck.plist` + `atlas_healthcheck.py`** — a 60s liveness probe
   covering what `KeepAlive` cannot see: a process that is alive but wedged.
   Restarts the API when `/health` stops answering (after 2 consecutive misses, so a
