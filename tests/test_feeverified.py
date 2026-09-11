@@ -118,6 +118,15 @@ def test_build_guardrails_every_page_carries_disclosure_and_status():
     assert shopify_link in pages["shopify.html"]
     assert shopify_link in pages["how-much-does-shopify-take.html"]
     assert "Sponsored link" in pages["shopify.html"]
+    # Each partner states its own terms: Shopify has no discount, Intuit's link carries one.
+    assert "carries no discount" in pages["shopify.html"]
+    quickbooks_link = site.PARTNERS["quickbooks"]["url"]
+    assert quickbooks_link in pages["quickbooks.html"]
+    assert quickbooks_link in pages["how-much-does-quickbooks-take.html"]
+    assert "own new-customer discount" in pages["quickbooks.html"]
+    assert "carries no discount" not in pages["quickbooks.html"]
+    assert quickbooks_link not in pages["compare/payment-processors.html"]
+    assert quickbooks_link not in pages["index.html"]
     # The money never sits on a page that compares a paid platform with an unpaid one.
     assert shopify_link not in pages["compare/etsy-vs-shopify.html"]
     assert shopify_link not in pages["index.html"]

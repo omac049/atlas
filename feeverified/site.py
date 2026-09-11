@@ -46,6 +46,21 @@ PARTNERS = {
         "label": "Start a Shopify store",
         "network": "Impact",
         "since": "2026-09-09",
+        "payer": "Shopify",
+        "action": "sign up",
+        "terms": ("The link carries no discount and no special terms: you get Shopify's standard "
+                  "published pricing, the same as typing the address yourself."),
+    },
+    "quickbooks": {
+        "url": "https://quickbooks.intuit.com/partners/affiliates?cid=par_pim_OyKbIlVvNWMi",
+        "label": "See QuickBooks Online plans",
+        "network": "Intuit Product Referrals",
+        "since": "2026-09-11",
+        "payer": "Intuit, which makes QuickBooks",
+        "action": "subscribe to QuickBooks Online",
+        "terms": ("The link applies Intuit's own new-customer discount, which Intuit sets and shows "
+                  "on its page before you pay. Every referral link gets the same offer, so there is "
+                  "no better link."),
     },
 }
 
@@ -57,12 +72,13 @@ def partner_box(schedule: dict) -> str:
     if not partner:
         return ""
     short = _esc(schedule["name"].split(" (")[0])
+    payer = _esc(partner.get("payer") or short)
+    action = _esc(partner.get("action") or "sign up")
     return (
         '<div class="partner"><p class="tag">Sponsored link</p>'
-        f"<p>{short} pays this site a referral fee if you sign up through the link below. It changes "
+        f"<p>{payer} pays this site a referral fee if you {action} through the link below. It changes "
         f"nothing above: every rate on this page is computed from {short}'s own published fee "
-        "schedule and re-checked nightly. The link carries no discount and no special terms — you "
-        f"get {short}'s standard published pricing, the same as typing the address yourself.</p>"
+        f"schedule and re-checked nightly. {_esc(partner['terms'])}</p>"
         f'<p><a class="ext" href="{_esc(partner["url"])}" rel="sponsored nofollow noopener" '
         f'target="_blank">{_esc(partner["label"])}</a></p></div>'
     )
@@ -337,13 +353,15 @@ def render_methodology(site: dict) -> str:
         "unless stated, chargebacks and disputes, shipping label costs, and anything the platform "
         "has not published. Each page lists its exclusions.</p>"
         "<h2>How this site makes money</h2><p>Some pages carry a sponsored link to the platform "
-        "that page is about. If you sign up through one, this site receives a referral fee and you "
-        "pay that platform's standard published price — there is no discount, and no better link. "
-        "Three rules keep the money away from the numbers. A sponsored link never changes a computed "
-        "fee. It appears only on that platform's own pages, never on a page comparing two platforms, "
-        "so no comparison here has a paid side and an unpaid side. And no platform pays to be "
-        "included, ranked, or described in any particular way; the platforms whose fees are "
-        "calculated here do not pay for the calculators.</p>"
+        "that page is about. If you sign up through one, this site receives a referral fee. You "
+        "either pay that platform's standard published price, or you get the platform's own "
+        "new-customer offer, which every referral link gets. The box beside each link says which, "
+        "and there is never a better link. Three rules keep the money away from the numbers. A "
+        "sponsored link never changes a computed fee. It appears only on the page about the thing it "
+        "sells, and never on a page comparing one paid option against an unpaid one, so no "
+        "comparison here has a paid side and an unpaid side. And no platform pays to be included, "
+        "ranked, or described in any particular way; the platforms whose fees are calculated here "
+        "do not pay for the calculators.</p>"
         "<p>The code and the schedule files are public. Corrections that cite the platform's own "
         "page are applied.</p>"
     )
