@@ -54,10 +54,26 @@ Then check it:
 .venv/bin/python -m atlas.gsc status   # key present, file mode, days of data per site
 .venv/bin/python -m atlas.gsc pull     # pull the trailing 35 days now
 .venv/bin/python -m atlas.gsc report   # write data/gsc/report.md and report.json
+.venv/bin/python -m atlas.gsc sitemaps sc-domain:verifiedfees.com        # what Google holds
+.venv/bin/python -m atlas.gsc sitemap-submit sc-domain:verifiedfees.com  # ask for a re-fetch
 ```
 
 The nightly log is `~/Library/Logs/atlas-gsc.log`. Until step 6 is done, each
 run logs `skipped: not configured` and exits cleanly.
+
+## Reads and writes
+
+The nightly job only reads: its token asks for `webmasters.readonly`. A write
+has to ask for the `webmasters` scope on purpose, and no scheduled job does.
+
+The only write implemented is sitemap resubmission, which tells Google to
+re-fetch a sitemap it already has. That needs the service account to be a Full
+user or an Owner on the property; a Restricted user gets HTTP 403.
+
+Requesting indexing for a page is not available through any API. Google's
+Indexing API accepts only job postings and livestream pages, so that stays a
+manual step in Search Console: paste the address into the inspection box at the
+top, then click Request indexing.
 
 ## How the report maps to the charters
 

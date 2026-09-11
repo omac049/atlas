@@ -37,9 +37,12 @@ DEFAULT_DATA_DIR = REPO_ROOT / "data" / "gsc"
 DEFAULT_KEY_FILE = Path.home() / ".config" / "atlas" / "gsc-service-account.json"
 DEFAULT_SITES = ("sc-domain:samebetornot.com", "sc-domain:verifiedfees.com")
 SCOPE = "https://www.googleapis.com/auth/webmasters.readonly"
+# Write actions (sitemap submission) are never used by the nightly job.
+WRITE_SCOPE = "https://www.googleapis.com/auth/webmasters"
 GOOGLE_OAUTH_URL = "https://oauth2.googleapis.com/token"
 JWT_BEARER = "urn:ietf:params:oauth:grant-type:jwt-bearer"
 QUERY_URL = "https://searchconsole.googleapis.com/webmasters/v3/sites/{site}/searchAnalytics/query"
+SITEMAPS_URL = "https://searchconsole.googleapis.com/webmasters/v3/sites/{site}/sitemaps"
 ROW_LIMIT = 25_000
 MAX_PAGES = 20
 STRIKING = (8.0, 30.0)
@@ -91,9 +94,10 @@ def _json_b64(value: dict) -> str:
     return _b64(json.dumps(value, separators=(",", ":")).encode())
 
 
-def signed_assertion(client_email: str, private_key, audience: str, now: int) -> str:
+def signed_assertion(client_email: str, private_key, audience: str, now: int,
+                     scope: str = SCOPE) -> str:
     """The RS256 JWT that Google's service-account token exchange expects."""
-    claims = {"iss": client_email, "scope": SCOPE, "aud": audience, "iat": now, "exp": now + 3600}
+    claims = {"iss": client_email, "scope": scope, "aud": audience, "iat": now, "exp": now + 3600}
     signing_input = f"{_json_b64({'alg': 'RS256', 'typ': 'JWT'})}.{_json_b64(claims)}"
     signature = private_key.sign(signing_input.encode(), padding.PKCS1v15(), hashes.SHA256())
     return f"{signing_input}.{_b64(signature)}"
@@ -122,9 +126,12 @@ def load_key(path: Path) -> dict:
     }
 
 
-def access_token(client: httpx.Client, key: dict, now: int | None = None) -> str:
+def access_token(client: httpx.Client, key: dict, now: int | None = None,
+                 scope: str = SCOPE) -> str:
+    """A bearer token. Read-only by default; writes must ask for WRITE_SCOPE on purpose."""
     moment = int(time.time()) if now is None else now
-    assertion = signed_assertion(key["client_email"], key["private_key"], key["token_uri"], moment)
+    assertion = signed_assertion(key["client_email"], key["private_key"], key["token_uri"], moment,
+                                 scope=scope)
     response = client.post(key["token_uri"], data={"grant_type": JWT_BEARER, "assertion": assertion})
     if response.status_code != 200:
         raise RuntimeError(
@@ -155,6 +162,31 @@ def query_rows(client: httpx.Client, token: str, site: str, body: dict) -> list[
         if len(batch) < ROW_LIMIT:
             return rows
     raise RuntimeError(f"{site}: more than {MAX_PAGES * ROW_LIMIT:,} rows; raise MAX_PAGES on purpose")
+
+
+def list_sitemaps(client: httpx.Client, key: dict, site: str) -> list[dict]:
+    """The sitemaps Google holds for a property, with its own submitted and downloaded dates."""
+    token = access_token(client, key)
+    response = client.get(SITEMAPS_URL.format(site=quote(site, safe="")),
+                          headers={"Authorization": f"Bearer {token}"})
+    response.raise_for_status()
+    return response.json().get("sitemap", [])
+
+
+def submit_sitemap(client: httpx.Client, key: dict, site: str, sitemap_url: str) -> int:
+    """Ask Google to re-fetch a sitemap: the one write this module performs, never nightly.
+
+    Needs WRITE_SCOPE and a Full user or Owner on the property.
+    """
+    token = access_token(client, key, scope=WRITE_SCOPE)
+    url = (f"{SITEMAPS_URL.format(site=quote(site, safe=''))}/{quote(sitemap_url, safe='')}")
+    response = client.put(url, headers={"Authorization": f"Bearer {token}"})
+    if response.status_code in (401, 403):
+        raise RuntimeError(
+            f"{site}: HTTP {response.status_code} submitting {sitemap_url}. {response.text[:200]}"
+        )
+    response.raise_for_status()
+    return response.status_code
 
 
 def _metrics(row: dict) -> dict:
@@ -419,11 +451,33 @@ def main(argv: list[str] | None = None) -> int:
     pull_cmd = sub.add_parser("pull", help="pull the trailing window for every configured site")
     pull_cmd.add_argument("--days", type=int, default=35)
     sub.add_parser("report", help="write data/gsc/report.md and report.json")
+    sitemaps_cmd = sub.add_parser("sitemaps", help="list the sitemaps Google holds for a property")
+    sitemaps_cmd.add_argument("site")
+    submit_cmd = sub.add_parser("sitemap-submit", help="ask Google to re-fetch a sitemap (write)")
+    submit_cmd.add_argument("site")
+    submit_cmd.add_argument("url", nargs="?")
     sub.add_parser("status", help="setup state and data coverage; never prints key contents")
     args = parser.parse_args(argv)
     out = data_dir()
     if args.command == "status":
         return _status(out)
+    if args.command in {"sitemaps", "sitemap-submit"}:
+        try:
+            key = load_key(key_path())
+        except NotConfigured as exc:
+            print(f"not configured ({exc}); see docs/GSC.md")
+            return 1
+        with httpx.Client(timeout=TIMEOUT) as client:
+            if args.command == "sitemaps":
+                for entry in list_sitemaps(client, key, args.site):
+                    print(f"{entry.get('path')} | submitted {(entry.get('lastSubmitted') or '?')[:19]}"
+                          f" | downloaded {(entry.get('lastDownloaded') or 'never')[:19]}"
+                          f" | errors {entry.get('errors', 0)} | pending {entry.get('isPending')}")
+                return 0
+            target = args.url or f"https://{args.site.removeprefix('sc-domain:')}/sitemap.xml"
+            code = submit_sitemap(client, key, args.site, target)
+        print(f"submitted {target} for {args.site}: HTTP {code}")
+        return 0
     today = datetime.now(UTC).date()
     if args.command == "pull":
         try:

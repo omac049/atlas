@@ -41,6 +41,37 @@ def test_signed_assertion_verifies_and_asks_only_for_read_access(rsa_key):
     }
 
 
+def test_writes_ask_for_the_write_scope_and_reads_do_not(rsa_key):
+    read = gsc.signed_assertion(EMAIL, rsa_key, gsc.GOOGLE_OAUTH_URL, now=1_800_000_000)
+    write = gsc.signed_assertion(EMAIL, rsa_key, gsc.GOOGLE_OAUTH_URL, now=1_800_000_000,
+                                 scope=gsc.WRITE_SCOPE)
+    assert json.loads(_unb64(read.split(".")[1]))["scope"].endswith("webmasters.readonly")
+    assert json.loads(_unb64(write.split(".")[1]))["scope"] == "https://www.googleapis.com/auth/webmasters"
+
+
+def test_sitemap_submit_puts_to_the_encoded_path_with_a_write_token(rsa_key):
+    seen = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.host == "oauth2.googleapis.com":
+            form = parse_qs(request.content.decode())
+            claims = json.loads(_unb64(form["assertion"][0].split(".")[1]))
+            seen["scope"] = claims["scope"]
+            return httpx.Response(200, json={"access_token": "w-1"})
+        seen["method"] = request.method
+        seen["path"] = request.url.path
+        seen["auth"] = request.headers["Authorization"]
+        return httpx.Response(204)
+
+    with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+        code = gsc.submit_sitemap(client, _key(rsa_key), "sc-domain:verifiedfees.com",
+                                  "https://verifiedfees.com/sitemap.xml")
+    assert code == 204
+    assert seen["scope"] == gsc.WRITE_SCOPE and seen["auth"] == "Bearer w-1"
+    assert seen["method"] == "PUT"
+    assert seen["path"].endswith("/sites/sc-domain:verifiedfees.com/sitemaps/https://verifiedfees.com/sitemap.xml")
+
+
 def test_pull_pages_through_rows_and_writes_one_file_per_day(tmp_path, rsa_key, monkeypatch):
     monkeypatch.setattr(gsc, "ROW_LIMIT", 2)
     totals_rows = [
