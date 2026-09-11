@@ -241,6 +241,19 @@ before it ships.
   - **Patreon's** Founders section mentions micropayment rates for tiers of $3
     or less without publishing them. The page says so.
 
+- 2026-09-11: **loop 1 is live** (`docs/GSC.md`, #59). A nightly job pulls Search
+  Console for both sites through a service account in the owner's personal
+  Google account and writes `data/gsc/report.md`, including each pass line's
+  numbers. What the first automated pull shows for this site: **0 impressions**
+  in the trailing 30 days. The home page is indexed and was crawled 2026-09-11,
+  but all seven inner pages sampled (`/ebay`, `/paypal`, `/shopify`,
+  `/quickbooks`, `/compare/payment-processors`, `/how-much-does-etsy-take`,
+  `/methodology`) return "URL is unknown to Google" and have never been crawled.
+  The sitemap was accepted 2026-09-09 with 41 URLs and no errors, so Google has
+  the list. Nothing on the site blocks crawling: robots.txt allows, the home
+  page fetch succeeded, and Google's canonical is the page itself. The site is
+  three days old and carried a Safe Browsing warning for one of those days.
+
 ## 9. Scoreboard
 
 Weekly, from the owner's personal Search Console, trailing 7 days unless
@@ -250,3 +263,4 @@ clock start.
 | Week | Date | Impressions | Clicks | Avg. position | Best fee-term page (position) | Notes |
 |---|---|---|---|---|---|---|
 | 0 | 2026-09-08 | — | — | — | — | clock started; live on verifiedfees.com; Chrome Safe Browsing warning reported as a false positive |
+| 1 | 2026-09-11 | 0 | 0 | — | — | first automated pull; home page indexed, 7 of 7 sampled inner pages unknown to Google; sitemap accepted 2026-09-09, 41 URLs, 0 errors |

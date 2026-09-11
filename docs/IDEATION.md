@@ -178,6 +178,9 @@ generation, pages, calculators, the disclosure language — is build work.
 | Logged | Window | Impressions | Clicks | Avg position | Notes |
 |---|---|---|---|---|---|
 | 2026-09-07 | last 7 days (site live since 09-04) | 176 | 1 | 7.9 | 3 days of data; 68 URLs discovered 09-04. Pace ≈ 1,700 impressions / 30 days against the 2,000 pass line. |
+| 2026-09-11 | last 7 days, data through 2026-09-10 | 1,385 | 2 | 8.3 | first automated pull (loop 1, `docs/GSC.md`); 1,385 of 2,000 impressions in the trailing 30 days; best query "kalshi democrats win senate" at position 5.0 |
+
+Reading, 2026-09-11 (first automated pull): 213 to 256 impressions a day at position 8 to 10, a pace of about 5,900 per 30 days against the 2,000 pass line, still led by the 2026 House and Senate control pairs. The numbers now come from the Search Console API nightly (`docs/GSC.md`) rather than from a person reading the dashboard.
 
 Top queries, 2026-09-07 (impressions): kalshi us house 2026 (4), polymarket
 senate control 2026 (4), polymarket house control 2026 (3), kalshi democrats win
