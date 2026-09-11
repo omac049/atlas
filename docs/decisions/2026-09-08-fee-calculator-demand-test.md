@@ -254,6 +254,14 @@ before it ships.
   page fetch succeeded, and Google's canonical is the page itself. The site is
   three days old and carried a Safe Browsing warning for one of those days.
 
+- 2026-09-11: sitemap resubmitted through the API (HTTP 204). Search Console had
+  last downloaded it on 2026-09-09, when it listed 41 URLs; it now lists 51, all
+  returning 200 with self-matching canonicals and lastmod dates, and the
+  property now shows the sitemap submitted 22:18 UTC and pending a re-fetch.
+  Resubmission is the one write `atlas/gsc.py` performs, behind a separate
+  scope; the nightly job stays read-only. Requesting indexing for a page has no
+  API and remains the owner's manual step.
+
 ## 9. Scoreboard
 
 Weekly, from the owner's personal Search Console, trailing 7 days unless
