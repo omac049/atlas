@@ -1,0 +1,201 @@
+{
+  "platform": "upwork",
+  "name": "Upwork",
+  "as_of": "2026-09-10",
+  "sources": [
+    {
+      "url": "https://support.upwork.com/hc/en-us/articles/211062538-Learn-about-the-Freelancer-Service-Fee",
+      "title": "Learn about the Freelancer Service Fee – Upwork Help",
+      "loaded": "2026-09-10",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://support.upwork.com/hc/en-us/articles/211060918-How-to-get-paid-on-Upwork",
+      "title": "How to get paid on Upwork – Upwork Help",
+      "loaded": "2026-09-10",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://support.upwork.com/hc/en-us/articles/211060578-What-are-the-fees-limits-and-timing-of-Direct-to-Local-Bank-payments",
+      "title": "What are the fees, limits, and timing of Direct to Local Bank payments? – Upwork Help",
+      "loaded": "2026-09-10",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://support.upwork.com/hc/en-us/articles/227022468-Direct-to-U-S-Bank-timing-and-fees-explained",
+      "title": "Direct to U.S. Bank: timing and fees explained – Upwork Help",
+      "loaded": "2026-09-10",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "Fees an Upwork freelancer pays: the Freelancer Service Fee on earnings and the fee for withdrawing them. Client-side fees, Connects, PayPal and Payoneer withdrawal fees and sales tax on fees are out of scope.",
+  "structure": "Upwork charges freelancers a Freelancer Service Fee on earnings. The rate ranges from 0% to 15% per contract, is shown on the offer or proposal before you accept, and is fixed once the contract begins. Upwork Payroll and Any Hire contracts pay no service fee; Direct Contracts pay a reduced fee. Withdrawals cost nothing to a U.S. bank for freelancers with a US tax address, $2.99 to a U.S. bank for freelancers with an international tax address (from September 1, 2026), $0.99 to a local bank outside the US, $50.00 by U.S. dollar wire and $2.00 by Instant Pay.",
+  "summary": "Upwork takes a Freelancer Service Fee of 0% to 15% of your earnings, set per contract and shown before you accept. Withdrawing to a U.S. bank is free for US-based freelancers; other methods cost $0.99 to $50.00 per withdrawal.",
+  "rates": {
+    "service_fee_min": 0.0,
+    "service_fee_max": 0.15,
+    "withdrawal": {
+      "none": 0,
+      "us_bank_us": 0,
+      "us_bank_intl": 2.99,
+      "local_bank": 0.99,
+      "wire": 50.0,
+      "instant": 2.0
+    }
+  },
+  "inputs": [
+    {
+      "id": "earnings",
+      "label": "Amount billed to the client (rate × hours, or the fixed price)",
+      "type": "money",
+      "default": 500
+    },
+    {
+      "id": "fee_rate",
+      "label": "Freelancer Service Fee on your offer or proposal",
+      "type": "percent",
+      "default": 0.1,
+      "help": "Upwork sets it per contract, from 0% to 15%. Enter 0% for Any Hire or Upwork Payroll contracts."
+    },
+    {
+      "id": "withdrawal",
+      "label": "Withdrawal method",
+      "type": "select",
+      "default": "none",
+      "options": [
+        [
+          "none",
+          "Not withdrawn yet"
+        ],
+        [
+          "us_bank_us",
+          "Direct to U.S. Bank, US tax address (free)"
+        ],
+        [
+          "us_bank_intl",
+          "Direct to U.S. Bank, international tax address ($2.99)"
+        ],
+        [
+          "local_bank",
+          "Direct to Local Bank, outside the US ($0.99)"
+        ],
+        [
+          "wire",
+          "U.S. Dollar Wire Transfer ($50.00)"
+        ],
+        [
+          "instant",
+          "Instant Pay, U.S. freelancers ($2.00)"
+        ]
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "description": "Upwork's published example: 12 hours at $22.22, so the client is charged $266.64; at a 10% fee Upwork takes $26.66 and you net $239.98.",
+      "inputs": {
+        "earnings": 266.64,
+        "fee_rate": 0.1
+      },
+      "expected": {
+        "service_fee": 26.66,
+        "net": 239.98
+      },
+      "quote": "The 10% fee is $26.664 USD or $26.66 USD when rounded down to nearest cent",
+      "source_url": "https://support.upwork.com/hc/en-us/articles/211062538-Learn-about-the-Freelancer-Service-Fee"
+    },
+    {
+      "description": "Upwork's published example: 12 hours at $27.78, so the client is charged $333.36; at a 10% fee Upwork takes $33.34 and you net $300.02.",
+      "inputs": {
+        "earnings": 333.36,
+        "fee_rate": 0.1
+      },
+      "expected": {
+        "service_fee": 33.34,
+        "net": 300.02
+      },
+      "quote": "The 10% fee is $33.336 USD or $33.34 USD when rounded up to nearest cent",
+      "source_url": "https://support.upwork.com/hc/en-us/articles/211062538-Learn-about-the-Freelancer-Service-Fee"
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: $1,000 at the 15% maximum, withdrawn to a local bank outside the US.",
+      "inputs": {
+        "earnings": 1000,
+        "fee_rate": 0.15,
+        "withdrawal": "local_bank"
+      },
+      "expected": {
+        "service_fee": 150.0,
+        "withdrawal_fee": 0.99,
+        "total_fees": 150.99,
+        "net": 849.01
+      },
+      "quote": "The cost per withdrawal direct to your local bank is $0.99 USD",
+      "source_url": "https://support.upwork.com/hc/en-us/articles/211060578-What-are-the-fees-limits-and-timing-of-Direct-to-Local-Bank-payments",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: $500 on an Any Hire contract (no service fee) withdrawn by Instant Pay.",
+      "inputs": {
+        "earnings": 500,
+        "fee_rate": 0,
+        "withdrawal": "instant"
+      },
+      "expected": {
+        "service_fee": 0,
+        "withdrawal_fee": 2.0,
+        "total_fees": 2.0,
+        "net": 498.0
+      },
+      "quote": "Instant Pay for U.S. Freelancers — $2.00 USD per transfer",
+      "source_url": "https://support.upwork.com/hc/en-us/articles/211060918-How-to-get-paid-on-Upwork",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: $2,000 at 10%, withdrawn by U.S. dollar wire.",
+      "inputs": {
+        "earnings": 2000,
+        "fee_rate": 0.1,
+        "withdrawal": "wire"
+      },
+      "expected": {
+        "service_fee": 200.0,
+        "withdrawal_fee": 50.0,
+        "total_fees": 250.0,
+        "net": 1750.0
+      },
+      "quote": "U.S. Dollar Wire Transfer — $50.00 USD per transfer",
+      "source_url": "https://support.upwork.com/hc/en-us/articles/211060918-How-to-get-paid-on-Upwork",
+      "derived": true
+    }
+  ],
+  "quotes": [
+    "It’s the fee you pay on your Upwork earnings. The fee ranges from 0% to 15% per contract, and helps us provide you with payment protection, fraud prevention, dispute resolution, and all the tools that help you run your business more smoothly.",
+    "Once your contract begins, the fee is fixed and won’t change.",
+    "You’ll see the fee percentage when a client sends you an offer, or you are submitting a proposal, so you always know the exact fee that applies beforehand.",
+    "The 10% fee is $26.664 USD or $26.66 USD when rounded down to nearest cent",
+    "Your net earnings are $239.98 USD ($0.02 less than estimated, 12 x $20 = $240 USD)",
+    "The 10% fee is $33.336 USD or $33.34 USD when rounded up to nearest cent",
+    "Your net earnings are $300.02 USD ($0.02 more than estimated, 12 x $25 USD = $300 USD)",
+    "No, we are not offering any regular discounts.",
+    "Upwork Payroll: Freelancers participating in the Upwork Payroll service are paid through a third-party staffing firm and are therefore excluded from paying an Upwork Freelancer Service Fee.",
+    "Any Hire: If you work for a client on an Any Hire contract, you will not pay a Freelancer Service Fee.",
+    "Direct Contracts: If you have created a Direct Contracts contract with a client you brought to Upwork, you’ll pay a reduced Freelancer Service Fee.",
+    "Free for Freelancers with US Tax Address\n2.99 for Freelancers with International Tax Address (Effective September 1st, 2026)\nDirect to Local Bank (outside of U.S.) — $0.99 USD per transfer\nU.S. Dollar Wire Transfer — $50.00 USD per transfer\nInstant Pay for U.S. Freelancers — $2.00 USD per transfer",
+    "The cost per withdrawal direct to your local bank is $0.99 USD (plus incoming fees at some banks).",
+    "Direct to U.S. Bank withdrawals are free for freelancers with a United States tax address."
+  ],
+  "excluded": [
+    "Client-side fees: the client marketplace fee and the contract initiation fee.",
+    "Connects, the credits freelancers spend to send proposals.",
+    "PayPal and Payoneer withdrawals, whose fees Upwork says vary by location.",
+    "Sales tax on service fees where it applies.",
+    "The reduced Direct Contracts fee and Enterprise rates, which Upwork does not state as a number on the loaded pages."
+  ],
+  "notes": [
+    "Upwork does not publish how it sets each contract's rate within 0% to 15%; it shows the rate before you accept. Enter that rate in the calculator.",
+    "Upwork's two worked examples round to the nearest cent: $26.664 becomes $26.66 and $33.336 becomes $33.34. The calculator reproduces both.",
+    "Upwork says it is 'not offering any regular discounts' on the service fee.",
+    "The withdrawal fee is charged per withdrawal, not per contract. The calculator applies it as if these earnings were withdrawn on their own."
+  ]
+}

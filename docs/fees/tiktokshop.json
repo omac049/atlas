@@ -1,0 +1,197 @@
+{
+  "platform": "tiktokshop",
+  "name": "TikTok Shop",
+  "as_of": "2026-09-10",
+  "sources": [
+    {
+      "url": "https://seller-us.tiktok.com/university/essay?knowledge_id=5982454398175018&lang=en",
+      "title": "TikTok Shop Referral Fee Updates - 2024 (TikTok Shop US Academy)",
+      "loaded": "2026-09-10",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://seller-us.tiktok.com/university/essay?knowledge_id=5988482086864682",
+      "title": "TikTok Shop Referral Fees in 2024 by Category (TikTok Shop US Academy)",
+      "loaded": "2026-09-10",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://seller-us.tiktok.com/university/essay?knowledge_id=1017269682849550&lang=en",
+      "title": "Sales Tax on Referral Fees — Effective November 1, 2025 (TikTok Shop US Academy)",
+      "loaded": "2026-09-10",
+      "last_updated_on_page": "10/30/2025"
+    }
+  ],
+  "scope": "TikTok Shop US referral fees on completed orders. Shipping labels, Fulfilled by TikTok, affiliate creator commissions and new-seller promotional rates are out of scope.",
+  "structure": "TikTok Shop US charges one referral fee, which its policy says 'encompasses all TikTok Shop fees, with the exception of shipping and tax fees.' The fee is 6% for most categories and 5% for diamond, gold, jade, platinum or carat gold, and ruby, sapphire or emerald jewelry. Collectibles pay 6% and pre-owned items pay 5%, and both pay 3% on any portion of a sale above $10,000. The fee base is 'Buyer Paid + Platform Discount - Tax': discounts TikTok funds do not lower the fee, discounts you fund do, and shipping the buyer pays is included.",
+  "summary": "TikTok Shop US charges a 6% referral fee on most categories, 5% on precious jewelry and pre-owned items, and 3% on the part of a collectible or pre-owned sale above $10,000. TikTok's policy lists no separate transaction or payment processing fee.",
+  "rates": {
+    "groups": {
+      "standard": {
+        "rate": 0.06
+      },
+      "jewelry_precious": {
+        "rate": 0.05
+      },
+      "collectibles": {
+        "rate": 0.06,
+        "over": 10000,
+        "over_rate": 0.03
+      },
+      "pre_owned": {
+        "rate": 0.05,
+        "over": 10000,
+        "over_rate": 0.03
+      }
+    }
+  },
+  "inputs": [
+    {
+      "id": "price",
+      "label": "Item price, after any discount you fund",
+      "type": "money",
+      "default": 25
+    },
+    {
+      "id": "shipping",
+      "label": "Shipping paid by the buyer",
+      "type": "money",
+      "default": 0
+    },
+    {
+      "id": "category",
+      "label": "Category",
+      "type": "select",
+      "default": "standard",
+      "options": [
+        [
+          "standard",
+          "Most categories (6%)"
+        ],
+        [
+          "jewelry_precious",
+          "Jewelry: diamond, gold, jade, platinum or carat gold, ruby, sapphire, emerald (5%)"
+        ],
+        [
+          "collectibles",
+          "Collectibles: cultural items, entertainment, sports collectibles, trading cards (6%; 3% above $10,000)"
+        ],
+        [
+          "pre_owned",
+          "Pre-owned: bags, watches, footwear, clothing, collectibles, refurbished electronics and more (5%; 3% above $10,000)"
+        ]
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "description": "Arithmetic check derived from the published rates (TikTok's refund scenarios compute '$10*6%*20%', a $0.60 referral fee on a $10 SKU): a $10 item in a standard category.",
+      "inputs": {
+        "price": 10
+      },
+      "expected": {
+        "referral_fee": 0.6,
+        "net": 9.4
+      },
+      "quote": "$10*6%*20%",
+      "source_url": "https://seller-us.tiktok.com/university/essay?knowledge_id=5982454398175018&lang=en",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $25 item with $5 shipping paid by the buyer, standard category, so 6% of $30.",
+      "inputs": {
+        "price": 25,
+        "shipping": 5
+      },
+      "expected": {
+        "referral_fee": 1.8,
+        "net": 28.2
+      },
+      "quote": "Buyer Paid + Platform Discount - Tax",
+      "source_url": "https://seller-us.tiktok.com/university/essay?knowledge_id=5982454398175018&lang=en",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: $1,000 of diamond jewelry at 5%.",
+      "inputs": {
+        "price": 1000,
+        "category": "jewelry_precious"
+      },
+      "expected": {
+        "referral_fee": 50.0,
+        "net": 950.0
+      },
+      "quote": "Jewelry Accessories & Derivatives+ Diamond 5%",
+      "source_url": "https://seller-us.tiktok.com/university/essay?knowledge_id=5988482086864682",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: $15,000 of trading cards, 6% of the first $10,000 plus 3% of the $5,000 above it.",
+      "inputs": {
+        "price": 15000,
+        "category": "collectibles"
+      },
+      "expected": {
+        "referral_fee": 750.0,
+        "net": 14250.0
+      },
+      "quote": "Any portion of the sale over $10K, 3%",
+      "source_url": "https://seller-us.tiktok.com/university/essay?knowledge_id=5988482086864682",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $12,000 pre-owned watch, 5% of $10,000 plus 3% of $2,000.",
+      "inputs": {
+        "price": 12000,
+        "category": "pre_owned"
+      },
+      "expected": {
+        "referral_fee": 560.0,
+        "net": 11440.0
+      },
+      "quote": "Pre-Owned+ Watches 5% Any portion of the sale over $10K, 3%",
+      "source_url": "https://seller-us.tiktok.com/university/essay?knowledge_id=5988482086864682",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: $9,999 of trading cards stays below the $10,000 threshold, so all of it is at 6%.",
+      "inputs": {
+        "price": 9999,
+        "category": "collectibles"
+      },
+      "expected": {
+        "referral_fee": 599.94,
+        "net": 9399.06
+      },
+      "quote": "Any portion of the sale over $10K, 3%",
+      "source_url": "https://seller-us.tiktok.com/university/essay?knowledge_id=5988482086864682",
+      "derived": true
+    }
+  ],
+  "quotes": [
+    "TikTok Shop charges a fee from sellers on all qualified transactions. This policy document defines such a fee as a \"referral\" fee which encompasses all TikTok Shop fees, with the exception of shipping and tax fees.",
+    "Starting April 1, 2024, TikTok Shop will increase the referral fee on all qualified transactions to 6% per order",
+    "Qualified Orders : Orders that have been completed are eligible orders. The baseline GMV used for the calculation will be referred to as Buyer Paid + Platform Discount - Tax.",
+    "This chart details out the latest referral fee rates by category.",
+    "Effective October 31, 2024 (GMT-8) , the referral fee drops from 6% to 5% for five jewelry sub-categories: Diamond, Gold, Jade, Platinum/Carat Gold, and Ruby/Sapphire/Emerald . Most other listed categories remain at 6% , while many Pre-Owned categories stay at 5% and Collectibles/Pre-Owned sales above $10K are charged 3% on the portion over that threshold.",
+    "Jewelry Accessories & Derivatives+ Diamond\nJewelry Accessories & Derivatives+ Gold\nJewelry Accessories & Derivatives+ Jade\nJewelry Accessories & Derivatives+ Platinum, Carat Gold\nJewelry Accessories & Derivatives+ Ruby, Sapphire & Emerald\nThis chart details out the latest referral fee rates by category.\nLevel 1+Level 2 Category\nReferral Fee Rate\nNotes\nAutomotive & Motorcycle+ Car Electronics\n6%\nAutomotive & Motorcycle+ Car Exterior Accessories\n6%\nAutomotive & Motorcycle+ Car Interior Accessories\n6%\nAutomotive & Motorcycle+ Car Lights\n6%\nAutomotive & Motorcycle+ Car Repair Tools\n6%\nAutomotive & Motorcycle+ Car Washing & Maintenance\n6%\nAutomotive & Motorcycle+ Motorcycle Accessories\n6%\nAutomotive & Motorcycle+ Motorcycles\n6%\nAutomotive & Motorcycle+ Quads, Motorhomes & Boats\n6%\nBaby & Maternity+ Baby Care & Health\n6%\nBaby & Maternity+ Baby Clothing & Shoes\n6%\nBaby & Maternity+ Baby Fashion Accessories\n6%\nBaby & Maternity+ Baby Furniture\n6%\nBaby & Maternity+ Baby Safety\n6%\nBaby & Maternity+ Baby Toys\n6%\nBaby & Maternity+ Baby Travel Gear\n6%\nBaby & Maternity+ Maternity Supplies\n6%\nBaby & Maternity+ Nursing & Feeding\n6%\nBeauty & Personal Care+ Bath & Body Care\n6%\nBeauty & Personal Care+ Eye & Ear Care\n6%\nBeauty & Personal Care+ Feminine Care\n6%\nBeauty & Personal Care+ Haircare & Styling\n6%\nBeauty & Personal Care+ Hand, Foot & Nail Care\n6%\nBeauty & Personal Care+ Makeup\n6%\nBeauty & Personal Care+ Men's Care\n6%\nBeauty & Personal Care+ Nasal & Oral Care\n6%\nBeauty & Personal Care+ Fragrance\n6%\nBeauty & Personal Care+ Personal Care Appliances\n6%\nBeauty & Personal Care+ Skincare\n6%\nBeauty & Personal Care+ Special Personal Care\n6%\nBooks, Magazines & Audio+ Children's & Infants' Books\n6%\nBooks, Magazines & Audio+ Economics & Management\n6%\nBooks, Magazines & Audio+ Education & Schooling\n6%\nBooks, Magazines & Audio+ Humanities & Social Sciences\n6%\nBooks, Magazines & Audio+ Lifestyle & Hobbies\n6%\nBooks, Magazines & Audio+ Literature & Art\n6%\nBooks, Magazines & Audio+ Magazines & Newspapers\n6%\nBooks, Magazines & Audio+ Science & Technology\n6%\nBooks, Magazines & Audio+ Video & Music\n6%\nCollectibles+ Cultural Items\n6%\nAny portion of the sale over $10K, 3%\nCollectibles+ Entertainment\n6%\nAny portion of the sale over $10K, 3%\nCollectibles+ Sports Collectibles\n6%\nAny portion of the sale over $10K, 3%\nCollectibles+ Trading Cards & Accessories\n6%\nAny portion of the sale over $10K, 3%\nComputers & Office Equipment+ Computer Accessories\n6%\nComputers & Office Equipment+ Data Storage & Software\n6%\nComputers & Office Equipment+ Desktop & Laptop Components\n6%\nComputers & Office Equipment+ Desktop Computers, Laptops & Tablets\n6%\nComputers & Office Equipment+ Network Components\n6%\nComputers & Office Equipment+ Office Equipment\n6%\nComputers & Office Equipment+ Office Stationery & Supplies\n6%\nFashion Accessories+ Clothes Accessories\n6%\nFashion Accessories+ Costume Jewelry & Accessories\n6%\nFashion Accessories+ Dressmaking Fabrics\n6%\nFashion Accessories+ Eyewear\n6%\nFashion Accessories+ Hair Accessories\n6%\nFashion Accessories+ Hair Extensions & Wigs\n6%\nFashion Accessories+ Fashion Watches & Accessories\n6%\nFood & Beverages+ Baking\n6%\nFood & Beverages+ Drinks\n6%\nFood & Beverages+ Pantry Food\n6%\nFood & Beverages+ Milk & Dairy\n6%\nFood & Beverages+ Snacks\n6%\nFood & Beverages+ Staples & Cooking Essentials\n6%\nFurniture+ Children's Furniture\n6%\nFurniture+ Commercial Furniture\n6%\nFurniture+ Furniture Parts\n6%\nFurniture+ Indoor Furniture\n6%\nFurniture+ Outdoor Furniture\n6%\nHealth+ Alternative Medications & Treatments\n6%\nHealth+ Nutrition & Wellness\n6%\nHealth+ Medical Supplies\n6%\nHome Improvement+ Bathroom Fixtures\n6%\nHome Improvement+ Building Supplies\n6%\nHome Improvement+ Electrical Equipment & Supplies\n6%\nHome Improvement+ Garden Supplies\n6%\nHome Improvement+ Kitchen Fixtures\n6%\nHome Improvement+ Lights & Lighting\n6%\nHome Improvement+ Security & Safety\n6%\nHome Improvement+ Smart Home Systems\n6%\nHome Improvement+ Solar & Wind Power\n6%\nHome Supplies+ Bathroom Supplies\n6%\nHome Supplies+ Festive & Party Supplies\n6%\nHome Supplies+ Home Care Supplies\n6%\nHome Supplies+ Home Decor\n6%\nHome Supplies+ Home Organizers\n6%\nHome Supplies+ Laundry Tools & Accessories\n6%\nHome Supplies+ Miscellaneous Home\n6%\nHousehold Appliances+ Commercial Appliances\n6%\nHousehold Appliances+ Home Appliances\n6%\nHousehold Appliances+ Kitchen Appliances\n6%\nHousehold Appliances+ Large Home Appliances\n6%\nJewelry Accessories & Derivatives+ Diamond\n5%\nJewelry Accessories & Derivatives+ Gold\n5%\nJewelry Accessories & Derivatives+ Jade\n5%\nJewelry Accessories & Derivatives+ Platinum, Carat Gold\n5%\nJewelry Accessories & Derivatives+ Ruby, Sapphire & Emerald\n5%",
+    "Collectibles+ Trading Cards & Accessories\n6%\nAny portion of the sale over $10K, 3%",
+    "Pre-Owned+ Watches\n5%\nAny portion of the sale over $10K, 3%",
+    "TikTok Shop will refund the referral fee amount for the product(s), minus the appropriate \"Refund Administration Fee,\" which is 20% of the referral fee.",
+    "For each refund, the maximum \"Refund Administration Fee\" for each SKU type is capped at $5",
+    "As of November 1, 2025 , TikTok Shop will begin collecting sales tax on referral fees for sellers whose business registration address is located in West Virginia (WV) or Texas (TX)"
+  ],
+  "excluded": [
+    "Shipping label costs and Fulfilled by TikTok (FBT) fees.",
+    "Affiliate creator commissions, which you set per product.",
+    "New-seller promotional referral rates, which TikTok says continue until the end of each promotional period.",
+    "Sales tax on referral fees for sellers whose business address is in West Virginia or Texas, collected since November 1, 2025; the rate depends on the state.",
+    "The Refund Administration Fee on refunds: 20% of the referral fee, capped at $5 per SKU."
+  ],
+  "notes": [
+    "TikTok's policy lists no separate transaction or payment processing fee: the referral fee 'encompasses all TikTok Shop fees, with the exception of shipping and tax fees.'",
+    "The calculator's item price is the price after any discount you fund. Discounts TikTok funds are added back into the base, so they do not change the fee.",
+    "TikTok calls the 2024 chart 'the latest referral fee rates by category'. The 3% rate applies only to the portion of a collectible or pre-owned sale above $10,000.",
+    "TikTok publishes no rounding rule; the calculator rounds half-up to the cent."
+  ]
+}

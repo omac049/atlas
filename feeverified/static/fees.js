@@ -382,7 +382,64 @@
     return finish(charged, lines);
   }
 
-  const engines = { ebay, paypal, etsy, reverb, amazon, square, stripe, shopify, venmo, cashapp, gofundme, depop, poshmark, mercari, whatnot, vinted, quickbooks, grailed };
+  // -------------------------------------------------------------- TikTok Shop
+  // One referral fee on Buyer Paid + Platform Discount - Tax, by category group;
+  // collectibles and pre-owned pay a lower rate on the portion above a threshold.
+  function tiktokshop(s, i) {
+    const g = s.rates.groups[i.category] || s.rates.groups.standard;
+    const base = num(i.price) + num(i.shipping);
+    let fee = base * g.rate, text = `Referral fee (${label(g.rate, 0)})`;
+    if (g.over && base > g.over) {
+      fee = g.over * g.rate + (base - g.over) * g.over_rate;
+      text = `Referral fee (${label(g.rate, 0)} up to $${g.over.toLocaleString("en-US")}, ${label(g.over_rate, 0)} above)`;
+    }
+    return finish(base, [{ id: "referral_fee", label: text, amount: cents(fee) }]);
+  }
+
+  // ------------------------------------------------------------------ Patreon
+  // Platform fee on the payment before tax; processing and currency conversion on
+  // the payment including tax; legacy plans use micropayment rates at $3 or less.
+  function patreon(s, i) {
+    const r = s.rates, amount = num(i.amount), tax = num(i.tax), charged = amount + tax;
+    const plan = r.platform[i.plan] !== undefined ? i.plan : "standard";
+    const method = r.processing_standard[i.method] ? i.method : "card";
+    const lines = [{ id: "platform_fee", label: `Platform fee (${label(r.platform[plan], 0)} of the payment before tax)`, amount: cents(amount * r.platform[plan]) }];
+    let pair, why;
+    if (plan === "founders") { pair = method === "card" ? r.processing_founders.card : r.processing_founders.paypal; why = "Founders rate"; }
+    else if (plan !== "standard" && amount <= r.micropayment_max) { pair = r.processing_legacy_micro[method]; why = `micropayment rate, tier $${r.micropayment_max} or less`; }
+    else { pair = r.processing_standard[method]; why = plan === "standard" ? "standard plan" : "standard rate"; }
+    const f = pctFixed(charged, pair);
+    lines.push({ id: "processing_fee", label: `Payment processing (${label(f.rate, f.fixed)}, ${why}${tax ? ", on payment plus tax" : ""})`, amount: f.fee });
+    if (i.currency_conversion) {
+      lines.push({ id: "currency_conversion", label: `Currency conversion (${label(r.currency_conversion, 0)} of payment plus tax)`, amount: cents(charged * r.currency_conversion) });
+    }
+    const left = amount - lines.reduce((a, l) => a + l.amount, 0);
+    if (i.payout === "direct_deposit") {
+      lines.push({ id: "payout_fee", label: `Payout by direct deposit ($${r.payout.direct_deposit.fixed.toFixed(2)} per payout)`, amount: r.payout.direct_deposit.fixed });
+    } else if (i.payout === "paypal") {
+      const p = r.payout.paypal;
+      lines.push({ id: "payout_fee", label: `Payout to PayPal (${label(p.rate, 0)}, minimum $${p.min.toFixed(2)}, capped at $${p.max})`, amount: cents(Math.min(p.max, Math.max(p.min, left * p.rate))) });
+    }
+    return finish(amount, lines);
+  }
+
+  // ------------------------------------------------------------------- Upwork
+  // Freelancer Service Fee: a per-contract rate between 0% and 15% (shown on the
+  // offer), rounded to the nearest cent; plus a flat fee per withdrawal method.
+  function upwork(s, i) {
+    const r = s.rates, earnings = num(i.earnings);
+    const rate = Math.min(r.service_fee_max, Math.max(r.service_fee_min, num(i.fee_rate, 0.10)));
+    const lines = [{ id: "service_fee", label: `Freelancer Service Fee (${label(rate, 0)} of earnings)`, amount: cents(earnings * rate) }];
+    const w = i.withdrawal && r.withdrawal[i.withdrawal] !== undefined ? i.withdrawal : "none";
+    if (w !== "none") {
+      const names = { us_bank_us: "Direct to U.S. Bank, US tax address", us_bank_intl: "Direct to U.S. Bank, international tax address",
+        local_bank: "Direct to Local Bank", wire: "U.S. Dollar Wire Transfer", instant: "Instant Pay" };
+      lines.push({ id: "withdrawal_fee", label: `Withdrawal: ${names[w]}`, amount: r.withdrawal[w] });
+    }
+    return finish(earnings, lines);
+  }
+
+  const engines = { ebay, paypal, etsy, reverb, amazon, square, stripe, shopify, venmo, cashapp, gofundme, depop, poshmark, mercari, whatnot, vinted, quickbooks, grailed, tiktokshop, patreon, upwork };
 
   function computeFees(schedule, inputs) {
     const fn = engines[schedule.platform];
