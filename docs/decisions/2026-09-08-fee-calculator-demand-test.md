@@ -226,6 +226,21 @@ before it ships.
   - Eventbrite: excluded by section 2, since its ticketing fees fall on buyers
     by default.
 
+- 2026-09-10: **platforms 20 to 22, TikTok Shop, Upwork and Patreon**, on the
+  owner's instruction after the demand pull. Demand is about 780, 720 and 480 US
+  searches a month. On the weak-slot test, "tiktok shop seller fees" had 3 of 8
+  weak, "upwork fees" 4 of 9, and "patreon fees" 3 of 7. All three publish fee
+  pages the nightly fetcher can read, and every figure was checked against
+  those pages rather than the search summaries, which were wrong three times:
+  - **TikTok Shop's** policy says the referral fee "encompasses all TikTok Shop
+    fees, with the exception of shipping and tax fees." The per-order
+    transaction fee and processing fee that summaries add are not modeled.
+  - **Upwork's** page says it is "not offering any regular discounts", so a
+    summary's "0% with Freelancer Plus" was left out. Upwork's two worked
+    examples ($26.66 on $266.64; $33.34 on $333.36) are reproduced to the cent.
+  - **Patreon's** Founders section mentions micropayment rates for tiers of $3
+    or less without publishing them. The page says so.
+
 ## 9. Scoreboard
 
 Weekly, from the owner's personal Search Console, trailing 7 days unless

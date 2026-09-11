@@ -1,0 +1,317 @@
+{
+  "platform": "patreon",
+  "name": "Patreon",
+  "as_of": "2026-09-10",
+  "sources": [
+    {
+      "url": "https://support.patreon.com/hc/en-us/articles/11111747095181-Creator-fees-overview",
+      "title": "Creator fees overview – Patreon Help Center",
+      "loaded": "2026-09-10",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://support.patreon.com/hc/en-us/articles/36426991446797-A-standard-platform-fee-for-new-creators-effective-after-August-4-2025",
+      "title": "A standard platform fee for new creators — effective after August 4, 2025 – Patreon Help Center",
+      "loaded": "2026-09-10",
+      "last_updated_on_page": null
+    },
+    {
+      "url": "https://support.patreon.com/hc/en-us/articles/22581195376909-Creator-fees-FAQ",
+      "title": "Creator fees FAQ – Patreon Help Center",
+      "loaded": "2026-09-10",
+      "last_updated_on_page": null
+    }
+  ],
+  "scope": "Patreon creator fees on a membership payment for a creator paid out in US dollars: platform fee, payment processing, currency conversion and US payout fees. Non-USD payout currencies, Apple's App Store fee on iOS purchases and taxes on fees are out of scope.",
+  "structure": "Patreon takes a platform fee on each successfully processed payment, excluding sales tax: 10% on the standard plan for pages published after August 4, 2025, and 5%, 8% or 11% on the legacy Founders, Pro and Pro + Merch plans. Payment processing is charged on the payment including tax: 2.9% + $0.30 for cards, Apple Pay and US PayPal or Venmo, and 3.9% + $0.30 for PayPal or Venmo members outside the US. Legacy plans pay micropayment rates of 5% + $0.10 (6% + $0.10 for non-US PayPal) on tiers of $3 or less; the standard plan does not. Founders pay 1.6% + $0.30 on cards and 2.65% + $0.28 on PayPal or Venmo. A 2.5% currency conversion fee applies when a member pays in another currency. Payouts cost $0.25 by US direct deposit or 1% to PayPal (minimum $0.25, capped at $20).",
+  "summary": "Patreon's standard plan takes 10% of each payment plus 2.9% + $0.30 processing (3.9% + $0.30 for PayPal or Venmo members outside the US). Legacy plans take 5%, 8% or 11%, with micropayment rates on tiers of $3 or less.",
+  "rates": {
+    "platform": {
+      "standard": 0.1,
+      "pro": 0.08,
+      "pro_merch": 0.11,
+      "founders": 0.05
+    },
+    "processing_standard": {
+      "card": [
+        0.029,
+        0.3
+      ],
+      "paypal_us": [
+        0.029,
+        0.3
+      ],
+      "paypal_non_us": [
+        0.039,
+        0.3
+      ]
+    },
+    "processing_legacy_micro": {
+      "card": [
+        0.05,
+        0.1
+      ],
+      "paypal_us": [
+        0.05,
+        0.1
+      ],
+      "paypal_non_us": [
+        0.06,
+        0.1
+      ]
+    },
+    "micropayment_max": 3,
+    "processing_founders": {
+      "card": [
+        0.016,
+        0.3
+      ],
+      "paypal": [
+        0.0265,
+        0.28
+      ]
+    },
+    "currency_conversion": 0.025,
+    "payout": {
+      "direct_deposit": {
+        "fixed": 0.25
+      },
+      "paypal": {
+        "rate": 0.01,
+        "min": 0.25,
+        "max": 20
+      }
+    }
+  },
+  "inputs": [
+    {
+      "id": "amount",
+      "label": "Membership payment (tier price, before tax)",
+      "type": "money",
+      "default": 10
+    },
+    {
+      "id": "tax",
+      "label": "Sales tax or VAT added to the payment",
+      "type": "money",
+      "default": 0
+    },
+    {
+      "id": "plan",
+      "label": "Your plan",
+      "type": "select",
+      "default": "standard",
+      "options": [
+        [
+          "standard",
+          "Standard, pages published after August 4, 2025 (10%)"
+        ],
+        [
+          "pro",
+          "Pro, legacy (8%)"
+        ],
+        [
+          "pro_merch",
+          "Pro + Merch, legacy (11%)"
+        ],
+        [
+          "founders",
+          "Founders, legacy (5%)"
+        ]
+      ]
+    },
+    {
+      "id": "method",
+      "label": "How the member paid",
+      "type": "select",
+      "default": "card",
+      "options": [
+        [
+          "card",
+          "Credit card or Apple Pay"
+        ],
+        [
+          "paypal_us",
+          "PayPal or Venmo, member in the US"
+        ],
+        [
+          "paypal_non_us",
+          "PayPal or Venmo, member outside the US"
+        ]
+      ]
+    },
+    {
+      "id": "currency_conversion",
+      "label": "Member paid in a different currency than your payout currency (+2.5%)",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "id": "payout",
+      "label": "Payout",
+      "type": "select",
+      "default": "none",
+      "options": [
+        [
+          "none",
+          "Not paid out yet"
+        ],
+        [
+          "direct_deposit",
+          "Direct deposit, US ($0.25 per payout)"
+        ],
+        [
+          "paypal",
+          "PayPal (1%, minimum $0.25, capped at $20)"
+        ]
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "description": "Arithmetic check derived from the published rates (Patreon publishes no worked example on the loaded pages): a $10 payment by card on the standard plan.",
+      "inputs": {
+        "amount": 10
+      },
+      "expected": {
+        "platform_fee": 1.0,
+        "processing_fee": 0.59,
+        "total_fees": 1.59,
+        "net": 8.41
+      },
+      "quote": "2.9% + $0.30",
+      "source_url": "https://support.patreon.com/hc/en-us/articles/11111747095181-Creator-fees-overview",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $3 payment by card on the standard plan, which uses the same processing rate at any amount.",
+      "inputs": {
+        "amount": 3
+      },
+      "expected": {
+        "platform_fee": 0.3,
+        "processing_fee": 0.39,
+        "total_fees": 0.69,
+        "net": 2.31
+      },
+      "quote": "the standard 10% plan applies the same processing rates to all payments, regardless of amount",
+      "source_url": "https://support.patreon.com/hc/en-us/articles/11111747095181-Creator-fees-overview",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $3 payment by card on the legacy Pro plan, at the micropayment rate.",
+      "inputs": {
+        "amount": 3,
+        "plan": "pro"
+      },
+      "expected": {
+        "platform_fee": 0.24,
+        "processing_fee": 0.25,
+        "total_fees": 0.49,
+        "net": 2.51
+      },
+      "quote": "5% + $0.10",
+      "source_url": "https://support.patreon.com/hc/en-us/articles/11111747095181-Creator-fees-overview",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $10 PayPal payment from a member outside the US, legacy Pro plan.",
+      "inputs": {
+        "amount": 10,
+        "plan": "pro",
+        "method": "paypal_non_us"
+      },
+      "expected": {
+        "platform_fee": 0.8,
+        "processing_fee": 0.69,
+        "total_fees": 1.49,
+        "net": 8.51
+      },
+      "quote": "3.9% + $0.30",
+      "source_url": "https://support.patreon.com/hc/en-us/articles/11111747095181-Creator-fees-overview",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $10 card payment on the Founders plan.",
+      "inputs": {
+        "amount": 10,
+        "plan": "founders"
+      },
+      "expected": {
+        "platform_fee": 0.5,
+        "processing_fee": 0.46,
+        "total_fees": 0.96,
+        "net": 9.04
+      },
+      "quote": "1.6% + $0.30",
+      "source_url": "https://support.patreon.com/hc/en-us/articles/11111747095181-Creator-fees-overview",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: $10 plus $1 tax, paid in another currency; processing and conversion are on $11, the platform fee on $10.",
+      "inputs": {
+        "amount": 10,
+        "tax": 1,
+        "currency_conversion": true
+      },
+      "expected": {
+        "platform_fee": 1.0,
+        "processing_fee": 0.62,
+        "currency_conversion": 0.28,
+        "total_fees": 1.9,
+        "net": 8.1
+      },
+      "quote": "a 2.5% currency conversion fee",
+      "source_url": "https://support.patreon.com/hc/en-us/articles/11111747095181-Creator-fees-overview",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $100 card payment on the standard plan paid out to PayPal, 1% of the $86.80 left.",
+      "inputs": {
+        "amount": 100,
+        "payout": "paypal"
+      },
+      "expected": {
+        "platform_fee": 10.0,
+        "processing_fee": 3.2,
+        "payout_fee": 0.87,
+        "total_fees": 14.07,
+        "net": 85.93
+      },
+      "quote": "1% (minimum of $0.25, capped at $20 USD)",
+      "source_url": "https://support.patreon.com/hc/en-us/articles/11111747095181-Creator-fees-overview",
+      "derived": true
+    }
+  ],
+  "quotes": [
+    "The platform fee covers the use of Patreon’s platform and is a percentage of successfully processed membership and one-time purchases. We calculate your platform fee based on the payment amount, excluding sales tax.",
+    "The standard 10% pricing plan + relevant taxes applies to any creator who publishes their Patreon page after August 4, 2025.",
+    "Founders\n5%\nUnavailable for new creators\n(as of May 7, 2019)\nMust not have changed plan after May 7, 2019\nPro\n8%\nUnavailable for new creators\n(after August 4, 2025)\nIncludes core Patreon tools\nPro + Merch\n11%",
+    "Credit card / Apple Pay\nAny\n2.9% + $0.30\nPayPal / Venmo\nUS\n2.9% + $0.30\nPayPal / Venmo\nNon-US\n3.9% + $0.30",
+    "Unlike legacy plans, the standard 10% plan applies the same processing rates to all payments, regardless of amount.",
+    "Micropayment rate (≤ $3)\nStandard payment rate (> $3)\nCredit card / Apple Pay\n5% + $0.10\n2.9% + $0.30\nPayPal / Venmo (US)\n5% + $0.10\n2.9% + $0.30\nPayPal / Venmo (non-US)\n6% + $0.10\n3.9% + $0.30",
+    "tiers priced at $3 or less are subject to micropayment rates; tiers priced over $3 are subject to standard rates",
+    "Your payment processing fee is calculated based on the total payment amount, including any applicable tax.",
+    "a 2.5% currency conversion fee applies when a member pays in a currency different from your payout currency. This fee is calculated on the full processed amount, including tax",
+    "Founders payment processing rates (USD only)\nMember's payment method\nStandard rate\nCredit card / Apple Pay\n1.6% + $0.30\nPayPal / Venmo\n2.65% + $0.28",
+    "Founders who have changed their payout currency remain on the Founders plan and retain their 5% platform fee, but are subject to the standard processing rates below rather than the Founders processing rates.",
+    "Direct deposit (processed by Stripe)\n$0.25 USD per payout",
+    "1% (minimum of $0.25, capped at $20 USD)",
+    "App Store fee (iOS purchases) – If a member makes a purchase through Apple’s in-app purchase system within the Patreon iOS app, Apple takes a 30% service fee. This fee replaces Patreon’s standard payment processing fee for that transaction"
+  ],
+  "excluded": [
+    "Apple's 30% App Store fee on purchases made through Apple's in-app purchase system in the Patreon iOS app. Patreon says it replaces the processing fee for that transaction but does not state the amount it is charged on.",
+    "VAT, GST or sales tax that Patreon collects on platform fees in some locations.",
+    "Non-USD payout currencies. Patreon publishes separate processing rates for EUR, GBP, CAD, AUD and nine other currencies.",
+    "Payoneer payouts and bank transfers for creators outside the US, and PayPal's own fees for moving money to a bank."
+  ],
+  "notes": [
+    "The standard 10% plan applies to pages published after August 4, 2025. Earlier pages keep their legacy plan unless the page is unpublished and republished.",
+    "Patreon's overview says the standard plan 'applies the same processing rates to all payments, regardless of amount', while its August 2025 article labels that column '> $3'. The calculator follows the overview, so standard-plan payments of $3 or less pay 2.9% + $0.30.",
+    "The platform fee is charged on the payment excluding tax. Processing and currency conversion are charged on the payment including tax.",
+    "Founders who changed their payout currency keep the 5% platform fee but pay standard processing rates instead of the Founders rates. The calculator's Founders option uses the Founders rates.",
+    "The payout fee is charged per payout, not per payment. The calculator applies it as if this payment were paid out on its own.",
+    "Patreon's Founders section says tiers of $3 or less are subject to micropayment rates, but its Founders table lists only 1.6% + $0.30 and 2.65% + $0.28. For Founders tiers of $3 or less the calculator uses those listed rates, so your actual rate may differ.",
+    "Patreon publishes no rounding rule; the calculator rounds each fee half-up to the cent."
+  ]
+}

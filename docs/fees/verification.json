@@ -642,6 +642,38 @@
    },
    "status": "verified"
   },
+  "patreon": {
+   "history": [
+    {
+     "at": "2026-09-11T00:21:41+00:00",
+     "event": "reviewed",
+     "note": "Platform added 2026-09-10 on the owner's instruction; quotes taken from the verifier's own rendered text."
+    }
+   ],
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-09-11T00:21:41+00:00",
+   "sources": {
+    "https://support.patreon.com/hc/en-us/articles/11111747095181-Creator-fees-overview": {
+     "hash": "e21d36f95538baa0f1b4f1407abee78923a705f197ff76f4b04873f424cd22b3",
+     "last_checked_at": "2026-09-11T00:21:41+00:00",
+     "reviewed_at": "2026-09-11T00:21:41+00:00",
+     "status": "verified"
+    },
+    "https://support.patreon.com/hc/en-us/articles/22581195376909-Creator-fees-FAQ": {
+     "hash": "a4d96e1576c0465f50d4f51d6b09ec5e71dfbfbb438469b6799fce55fbc907a3",
+     "last_checked_at": "2026-09-11T00:21:41+00:00",
+     "reviewed_at": "2026-09-11T00:21:41+00:00",
+     "status": "verified"
+    },
+    "https://support.patreon.com/hc/en-us/articles/36426991446797-A-standard-platform-fee-for-new-creators-effective-after-August-4-2025": {
+     "hash": "39b40a8793a7ea3e784fba7960b6ab5960304bce504f43a48f30bde8f741fe38",
+     "last_checked_at": "2026-09-11T00:21:41+00:00",
+     "reviewed_at": "2026-09-11T00:21:41+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
   "paypal": {
    "history": [
     {
@@ -1318,6 +1350,76 @@
      "hash": "acb92e4f854c6567c7694ea83f7521d2b684b26296f67b50eff2252b63a4d4b7",
      "last_checked_at": "2026-09-08T18:49:32+00:00",
      "reviewed_at": "2026-09-08T18:13:51+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "tiktokshop": {
+   "history": [
+    {
+     "at": "2026-09-11T00:21:34+00:00",
+     "event": "reviewed",
+     "note": "Platform added 2026-09-10 on the owner's instruction; quotes taken from the verifier's own rendered text."
+    }
+   ],
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-09-11T00:21:34+00:00",
+   "sources": {
+    "https://seller-us.tiktok.com/university/essay?knowledge_id=1017269682849550&lang=en": {
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-09-11T00:21:34+00:00",
+     "reviewed_at": "2026-09-11T00:21:34+00:00",
+     "status": "verified"
+    },
+    "https://seller-us.tiktok.com/university/essay?knowledge_id=5982454398175018&lang=en": {
+     "hash": "8ddce1cc3c4c9c2b8133ec7227ce2c47e51c93f2a0a65c25360e580806c5f0ea",
+     "last_checked_at": "2026-09-11T00:21:34+00:00",
+     "reviewed_at": "2026-09-11T00:21:34+00:00",
+     "status": "verified"
+    },
+    "https://seller-us.tiktok.com/university/essay?knowledge_id=5988482086864682": {
+     "hash": "67d5cf70241ee85b36adcb3b5e53b61aecf6a60c1b1558c6bfab8707be67180c",
+     "last_checked_at": "2026-09-11T00:21:34+00:00",
+     "reviewed_at": "2026-09-11T00:21:34+00:00",
+     "status": "verified"
+    }
+   },
+   "status": "verified"
+  },
+  "upwork": {
+   "history": [
+    {
+     "at": "2026-09-11T00:23:26+00:00",
+     "event": "reviewed",
+     "note": "Platform added 2026-09-10 on the owner's instruction; quotes and both worked examples taken from the verifier's own rendered text."
+    }
+   ],
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-09-11T00:23:26+00:00",
+   "sources": {
+    "https://support.upwork.com/hc/en-us/articles/211060578-What-are-the-fees-limits-and-timing-of-Direct-to-Local-Bank-payments": {
+     "hash": "9680f389ef9fc1c6d7df6b804d1894645534fca2895da21c52921fc0b1bdfc4d",
+     "last_checked_at": "2026-09-11T00:23:26+00:00",
+     "reviewed_at": "2026-09-11T00:23:26+00:00",
+     "status": "verified"
+    },
+    "https://support.upwork.com/hc/en-us/articles/211060918-How-to-get-paid-on-Upwork": {
+     "hash": "08e39c99871bef16789fb9d6c08b03b038c9934ebc65974b9fa6477031c66777",
+     "last_checked_at": "2026-09-11T00:23:26+00:00",
+     "reviewed_at": "2026-09-11T00:23:26+00:00",
+     "status": "verified"
+    },
+    "https://support.upwork.com/hc/en-us/articles/211062538-Learn-about-the-Freelancer-Service-Fee": {
+     "hash": "94d1b3a6af1db67e6f1626af944732581bcc8195f450d4c53a8d4a82d0daf7a1",
+     "last_checked_at": "2026-09-11T00:23:26+00:00",
+     "reviewed_at": "2026-09-11T00:23:26+00:00",
+     "status": "verified"
+    },
+    "https://support.upwork.com/hc/en-us/articles/227022468-Direct-to-U-S-Bank-timing-and-fees-explained": {
+     "hash": "eb6cfad1a3de55dcc88fb57495c4a0ae582cee5cbc3f795544b133a24b8343a1",
+     "last_checked_at": "2026-09-11T00:23:26+00:00",
+     "reviewed_at": "2026-09-11T00:23:26+00:00",
      "status": "verified"
     }
    },
