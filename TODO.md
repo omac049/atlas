@@ -1088,6 +1088,7 @@ evidence. The point of the 90 days is to let this accumulate.
 
 ### Housekeeping
 
+- [x] Disk cleanup 2026-09-14: nightly backups now gzip-compressed and verified (about 14x smaller; three kept); August 20 pre-vacuum checkpoint deleted after proving no evidence or label key was unique to it, its 61 superseded rows exported to `data/backups/audit/`; empty `data/atlas.db` stub removed
 - [ ] Delete 3 stale `worktree-agent-*` branches (core PCE, GDP, payrolls) — their
   families are already on `main` with tests; the branches are dead duplicates.
 - [x] Demand-test site generator (`atlas site build`, `docs/SITE.md`) — owner: domain, hosting, Search Console, affiliate applications

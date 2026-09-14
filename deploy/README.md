@@ -121,3 +121,20 @@ pauses collection regardless of any restart policy, and macOS may also throttle 
 suspend background work on battery. For genuine 24/7 coverage — so releases like the
 monthly CPI print and FOMC decisions are never missed — Atlas needs an always-on
 host (a machine that does not sleep, or a small cloud server).
+
+## Restoring a backup
+
+Nightly snapshots are gzip-compressed as `data/backups/atlas-auto-<stamp>.sqlite3.gz`.
+Each one passes `PRAGMA quick_check` and a full read-back before its uncompressed copy
+is removed, and the newest three are kept. To restore one:
+
+```bash
+launchctl bootout gui/$(id -u)/com.atlas.monitor
+launchctl bootout gui/$(id -u)/com.atlas.api
+gunzip -k data/backups/atlas-auto-<stamp>.sqlite3.gz
+cp data/backups/atlas-auto-<stamp>.sqlite3 data/atlas.sqlite3
+```
+
+Then bootstrap the agents again as in Install. Hand-made checkpoints and
+`data/backups/audit/` are never rotated.
+
