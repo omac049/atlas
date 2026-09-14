@@ -7,11 +7,18 @@ sqlite3's online backup API rather than copying the file, so it is safe to run
 while the API and monitor hold the database open — a plain ``cp`` of a live
 SQLite file can capture a torn write.
 
-Run daily by com.atlas.backup. Snapshots are named ``atlas-auto-*.sqlite3``; only
-those are rotated, so hand-made checkpoints (``atlas-before-*.sqlite3``) are never
-deleted by this script.
+Each snapshot is verified, then gzip-compressed (this data shrinks about 14x) and
+proven to read back whole before the uncompressed copy is removed. Run daily by
+com.atlas.backup. Snapshots are named ``atlas-auto-*.sqlite3.gz``; only those are
+rotated, so hand-made checkpoints (``atlas-before-*.sqlite3``) are never deleted
+by this script.
+
+Restore: stop the agents, ``gunzip -k data/backups/atlas-auto-<stamp>.sqlite3.gz``,
+and copy the resulting ``.sqlite3`` over ``data/atlas.sqlite3`` (deploy/README.md).
 """
 
+import gzip
+import shutil
 import sqlite3
 import time
 from pathlib import Path
@@ -21,10 +28,12 @@ DB = REPO_ROOT / "data" / "atlas.sqlite3"
 BACKUP_DIR = REPO_ROOT / "data" / "backups"
 LOG = Path.home() / "Library" / "Logs" / "atlas-backup.log"
 
-# Three days of history against a bad write, at ~1 GB each. Raising this is a
-# disk-space decision: check `df -h /` before increasing it.
+# Three days of history against a bad write. Compressed, each snapshot is about a
+# fourteenth of the database. Raising this is a disk-space decision: check
+# `df -h /` before increasing it.
 KEEP = 3
 PREFIX = "atlas-auto-"
+CHUNK = 8 * 1024 * 1024
 
 
 def log(message: str) -> None:
@@ -32,6 +41,39 @@ def log(message: str) -> None:
     stamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     with LOG.open("a", encoding="utf-8") as handle:
         handle.write(f"{stamp} {message}\n")
+
+
+def verify_sqlite(path: Path) -> int:
+    """A snapshot must pass quick_check. Returns its trusted-label count."""
+    with sqlite3.connect(f"file:{path}?mode=ro", uri=True) as check:
+        if check.execute("PRAGMA quick_check").fetchone()[0] != "ok":
+            raise sqlite3.DatabaseError("quick_check did not return ok")
+        return check.execute(
+            "SELECT COUNT(*) FROM learning_examples WHERE label != 'UNLABELED'"
+        ).fetchone()[0]
+
+
+def compress(path: Path) -> Path:
+    """Gzip a verified snapshot, prove the archive reads back whole, then remove the original.
+
+    Reading the archive to the end checks gzip's CRC; comparing the byte count
+    proves nothing was truncated. Only then is the uncompressed file deleted.
+    """
+    target = path.with_name(path.name + ".gz")
+    partial = target.with_name(target.name + ".partial")
+    with path.open("rb") as source, gzip.open(partial, "wb", compresslevel=1) as sink:
+        shutil.copyfileobj(source, sink, CHUNK)
+    restored = 0
+    with gzip.open(partial, "rb") as reader:
+        while block := reader.read(CHUNK):
+            restored += len(block)
+    expected = path.stat().st_size
+    if restored != expected:
+        partial.unlink(missing_ok=True)
+        raise OSError(f"{path.name} reads back {restored} bytes compressed, expected {expected}")
+    partial.replace(target)
+    path.unlink()
+    return target
 
 
 def main() -> None:
@@ -53,23 +95,35 @@ def main() -> None:
         return
 
     # A backup that cannot be opened is worse than none: it reads as protection
-    # that does not exist. Verify before rotating older snapshots out.
+    # that does not exist. Verify before compressing or rotating anything.
     try:
-        with sqlite3.connect(f"file:{target}?mode=ro", uri=True) as check:
-            if check.execute("PRAGMA quick_check").fetchone()[0] != "ok":
-                raise sqlite3.DatabaseError("quick_check did not return ok")
-            labels = check.execute(
-                "SELECT COUNT(*) FROM learning_examples WHERE label != 'UNLABELED'"
-            ).fetchone()[0]
+        labels = verify_sqlite(target)
     except sqlite3.Error as exc:
         log(f"ERROR verification failed, keeping older backups: {exc}")
         target.unlink(missing_ok=True)
         return
 
-    size_mb = target.stat().st_size / 1_048_576
-    log(f"backup ok: {target.name} ({size_mb:.0f} MB, {labels} trusted labels)")
+    raw_mb = target.stat().st_size / 1_048_576
+    try:
+        archive = compress(target)
+    except OSError as exc:
+        log(f"ERROR compression failed, keeping the uncompressed snapshot and older backups: {exc}")
+        return
+    packed_mb = archive.stat().st_size / 1_048_576
+    log(f"backup ok: {archive.name} ({raw_mb:.0f} MB raw, {packed_mb:.0f} MB compressed, "
+        f"{labels} trusted labels)")
 
-    snapshots = sorted(BACKUP_DIR.glob(f"{PREFIX}*.sqlite3"))
+    # Snapshots written before compression existed are verified and compressed,
+    # never deleted raw, so the switch loses no history.
+    for legacy in sorted(BACKUP_DIR.glob(f"{PREFIX}*.sqlite3")):
+        try:
+            verify_sqlite(legacy)
+            compress(legacy)
+            log(f"compressed older snapshot {legacy.name}")
+        except (sqlite3.Error, OSError) as exc:
+            log(f"WARN older snapshot {legacy.name} left uncompressed: {exc}")
+
+    snapshots = sorted(BACKUP_DIR.glob(f"{PREFIX}*.sqlite3.gz"))
     for stale in snapshots[:-KEEP]:
         stale.unlink()
         log(f"rotated out {stale.name}")
