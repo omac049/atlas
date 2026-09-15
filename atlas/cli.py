@@ -750,6 +750,7 @@ async def watch_pairs(
     monitors: dict[str, asyncio.Task] = {}
     store = AtlasStore()
     last_pruned_at: datetime | None = None
+    last_backfill_attempt_at: datetime | None = None
     # Printed BEFORE any network work: the liveness watchdog measures this
     # log's mtime, and the first cycle print otherwise lands only after minutes
     # of venue sweeps. A monitor that started must be distinguishable from one
@@ -775,7 +776,8 @@ async def watch_pairs(
                         )
                     )
                     monitors[pair.pair_id] = task
-            if await _historical_backfill_due(store, backfill_interval):
+            if await _historical_backfill_due(store, backfill_interval, last_backfill_attempt_at):
+                last_backfill_attempt_at = datetime.now(UTC)
                 try:
                     report = await _run_scheduled_backfill()
                     print(
@@ -862,7 +864,21 @@ async def prune_stale_data(store: AtlasStore | None = None) -> None:
     )
 
 
-async def _historical_backfill_due(store: AtlasStore, interval: int) -> bool:
+async def _historical_backfill_due(
+    store: AtlasStore, interval: int, last_attempt: datetime | None = None
+) -> bool:
+    """Due once per interval, counted from the last *attempt* when one is known.
+
+    A batch that times out saves no report, so counting from the last saved
+    report retried it on every monitor pass — about thirteen minutes of
+    timeouts each — and starved the gap radar (197 of 221 runs had timed out
+    by 2026-09-15; passes had slowed from ~8 to ~20 minutes).
+    """
+    if (
+        last_attempt is not None
+        and datetime.now(UTC) - last_attempt < timedelta(seconds=max(interval, 60))
+    ):
+        return False
     latest = await store.latest_historical_backfill()
     if latest is None:
         return True

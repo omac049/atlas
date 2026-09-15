@@ -474,6 +474,18 @@ async def test_recent_historical_backfill_is_not_due(tmp_path):
     assert await _historical_backfill_due(store, 86_400) is False
 
 
+@pytest.mark.asyncio
+async def test_backfill_attempted_this_interval_is_not_due_even_when_nothing_was_saved(tmp_path):
+    """A timed-out batch saves no report; it must still wait a full interval."""
+    from datetime import UTC, datetime, timedelta
+
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    assert await _historical_backfill_due(store, 86_400) is True
+    assert await _historical_backfill_due(store, 86_400, datetime.now(UTC)) is False
+    two_days_ago = datetime.now(UTC) - timedelta(days=2)
+    assert await _historical_backfill_due(store, 86_400, two_days_ago) is True
+
+
 class CountingKalshiVenue(HistoricalKalshiVenue):
     """Counts catalog scans so a shared catalog can be proven to skip them."""
 

@@ -50,6 +50,16 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   9/7 have no basket size for that reason alone. Radar reads now spaced 2.5 s
   (`VenuePacer`); the burst samples Kalshi at 250 ms and PM-US at 2.5 s and
   obeys Retry-After. Charter amendment (b) recorded.
+- [x] **2026-09-15 — the daily backfill was starving the radar.** It has timed
+  out on 197 of 221 runs (shared catalog fetch > 300 s, every tag > 120 s); a
+  timed-out batch saves no report, so it was retried on *every* monitor pass —
+  ~13 minutes of timeouts each — and radar passes slowed from ~8 to ~20 min
+  (PM-US observations/day fell from ~7,000 to ~2,300 on 9/13). Now counted
+  from the last attempt: once a day, whatever the outcome.
+- [ ] OWNER DECISION, not urgent: the daily historical backfill almost never
+  completes any more (catalogs outgrew its 300 s budget). Keep it as a daily
+  attempt, raise its budget, or retire it — the label loop it feeds is not a
+  study input.
 - [ ] After 9/21: read `data/study/latency-report-*.json`; if `observations_with_bursts`
   stays 0 for a week, the radar is not seeing tradeable executable PM-US gaps at
   all — record that as the phase-2 result rather than widening the sampler.
