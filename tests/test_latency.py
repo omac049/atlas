@@ -1,7 +1,10 @@
 """Study phase 2: burst sampling and the latency replay, on synthetic books only."""
 
+import asyncio
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+
+import httpx
 
 from atlas import latency
 from atlas.models import OrderBook, OrderBookLevel, VenueName
@@ -57,16 +60,78 @@ async def test_burst_samples_both_legs_through_the_ordinary_snapshot_path(tmp_pa
                          polymarket_market_id="polymarket_us:PM-FED-SEP26")
     counts = await latency.burst_books(
         KalshiVenue(fixture=True), PolymarketUSVenue(fixture=True), store, target,
-        seconds=0.3, interval=0.1,
+        seconds=0.4, intervals={"kalshi": 0.05, "polymarket_us": 0.15},
     )
-    assert counts["errors"] == 0 and counts["rounds"] >= 2
-    assert counts["kalshi"] == counts["rounds"] == counts["polymarket_us"]
-    saved = await store.latest_orderbooks(20)
+    assert counts["errors"] == 0 and counts["error_types"] == {}
+    assert counts["kalshi"] >= 4 and counts["polymarket_us"] >= 2
+    assert counts["kalshi"] > counts["polymarket_us"]  # each leg keeps its own cadence
+    saved = await store.latest_orderbooks(50)
     assert {b.market_id for b in saved} == {"kalshi:KALSHI-FED-SEP26", "polymarket_us:PM-FED-SEP26"}
     kalshi_books = await store.orderbooks_between(
         "kalshi:KALSHI-FED-SEP26", T0, datetime.now(UTC) + timedelta(seconds=1)
     )
     assert len(kalshi_books) == counts["kalshi"]
+
+
+class _RateLimitedOnce:
+    """A venue that answers 429 with a Retry-After on its first read only."""
+
+    def __init__(self, inner, retry_after: str):
+        self.inner, self.retry_after, self.calls = inner, retry_after, 0
+
+    async def get_orderbook(self, market_id: str):
+        self.calls += 1
+        if self.calls == 1:
+            request = httpx.Request("GET", "https://example.test/book")
+            response = httpx.Response(429, headers={"retry-after": self.retry_after},
+                                      request=request)
+            raise httpx.HTTPStatusError("429", request=request, response=response)
+        return await self.inner.get_orderbook(market_id)
+
+
+async def test_burst_obeys_retry_after_and_keeps_the_other_leg_running(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    target = observation(kalshi_market_id="kalshi:KALSHI-FED-SEP26",
+                         polymarket_market_id="polymarket_us:PM-FED-SEP26")
+    sleeps: list[float] = []
+
+    async def recording_sleep(seconds: float) -> None:
+        sleeps.append(seconds)
+        await asyncio.sleep(seconds)
+
+    pmus = _RateLimitedOnce(PolymarketUSVenue(fixture=True), retry_after="0.3")
+    counts = await latency.burst_books(
+        KalshiVenue(fixture=True), pmus, store, target, seconds=0.6,
+        intervals={"kalshi": 0.05, "polymarket_us": 0.1}, sleep=recording_sleep,
+    )
+    assert counts["error_types"] == {"polymarket_us:http_429": 1} and counts["errors"] == 1
+    assert any(0.25 <= s <= 0.3 for s in sleeps)  # the Retry-After, not the 0.1 s cadence
+    assert counts["polymarket_us"] >= 1 and counts["kalshi"] >= 5
+    assert counts["kalshi"] > counts["polymarket_us"]
+
+
+def test_retry_after_parsing_falls_back_to_the_cadence():
+    assert latency.retry_after_seconds("9", 2.5) == 9.0
+    assert latency.retry_after_seconds(None, 2.5) == 2.5
+    assert latency.retry_after_seconds("soon", 2.5) == 2.5
+    assert latency.retry_after_seconds("-1", 2.5) == 0.0
+
+
+async def test_pacer_spaces_reads_of_one_venue():
+    now = [100.0]
+    sleeps: list[float] = []
+
+    async def fake_sleep(seconds: float) -> None:
+        sleeps.append(seconds)
+        now[0] += seconds
+
+    pacer = latency.VenuePacer(2.5, clock=lambda: now[0], sleep=fake_sleep)
+    await pacer.wait()          # first read goes straight through
+    now[0] += 0.4
+    await pacer.wait()          # 0.4 s later: wait the remaining 2.1 s
+    now[0] += 3.0
+    await pacer.wait()          # 3 s later: nothing to wait for
+    assert [round(x, 6) for x in sleeps] == [2.1, 0.0]
 
 
 def test_book_quotes_take_the_best_ask_on_each_side():

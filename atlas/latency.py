@@ -8,9 +8,12 @@ watches only the twelve Fed-decision markets, so no such quotes existed. This
 module adds the missing instrument and the measurement it enables:
 
 - ``burst_books``: the moment a radar pass records its first tradeable
-  executable gap, both legs are sampled every 250 ms for 20 s and saved as
+  executable gap, both legs are sampled for 20 s (Kalshi every 250 ms, the
+  Polymarket US gateway every 2.5 s, which is what it permits) and saved as
   ordinary snapshots through the ordinary path. Instrumentation only; no rule
   changes, and the observation itself is untouched.
+- ``VenuePacer``: the same spacing for the radar's own Polymarket US depth
+  reads, which a back-to-back sweep was losing to 429s.
 - ``replay_observation``: for an observation that has burst data, the
   fee-adjusted basket is rebuilt from the latest book at or before each delay
   with the radar's own basket arithmetic, and judged fillable or not.
@@ -27,13 +30,20 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from statistics import median
 
+import httpx
+
 from atlas.gap_radar import _baskets
 from atlas.models import OrderBook
 
 DELAYS = (Decimal("0.25"), Decimal("0.5"), Decimal(1), Decimal(2))
 BURST_SECONDS = 20.0
-BURST_INTERVAL_SECONDS = 0.25
-# One pair per radar pass: two legs at 4 requests/s stays inside both venues' public read limits.
+# Each leg is sampled at its own cadence. Kalshi's public book endpoint answers
+# four reads a second without complaint. The Polymarket US gateway allows about
+# five reads per ten seconds and then answers 429 with a Retry-After (measured
+# 2026-09-15: a back-to-back pass over 36 legs failed on 26), so its leg is read
+# every 2.5 s and backs off exactly as told. One pair per radar pass.
+BURST_INTERVALS: dict[str, float] = {"kalshi": 0.25, "polymarket_us": 2.5}
+POLYMARKET_US_MIN_SPACING = BURST_INTERVALS["polymarket_us"]
 LOOKAHEAD = timedelta(seconds=3)  # the widest delay plus a margin
 DETAIL_ROWS = 500  # per-observation detail kept in the weekly artifact
 
@@ -56,36 +66,87 @@ def burst_eligible(observation: dict) -> bool:
     )
 
 
+def retry_after_seconds(value: str | None, default: float) -> float:
+    """A Retry-After header in seconds; the default when absent or not a number."""
+    try:
+        return max(0.0, float(value)) if value is not None else default
+    except ValueError:
+        return default
+
+
+class VenuePacer:
+    """Minimum spacing between reads of one venue, so a sweep over many legs
+    never trips the gateway's limit and loses the depth it came for."""
+
+    def __init__(
+        self, spacing: float, clock: Callable[[], float] = time.monotonic,
+        sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
+    ) -> None:
+        self.spacing = spacing
+        self._clock = clock
+        self._sleep = sleep
+        self._last: float | None = None
+
+    async def wait(self) -> None:
+        if self._last is not None:
+            await self._sleep(max(0.0, self.spacing - (self._clock() - self._last)))
+        self._last = self._clock()
+
+
+async def _sample_leg(
+    venue: str, fetch, market_id: str, interval: float, deadline: float, store, counts: dict,
+    clock: Callable[[], float], sleep: Callable[[float], Awaitable[None]],
+) -> None:
+    while clock() < deadline:
+        started = clock()
+        wait = interval
+        try:
+            book = await fetch(market_id)
+        except httpx.HTTPStatusError as exc:
+            status = exc.response.status_code
+            key = f"{venue}:http_{status}"
+            counts["error_types"][key] = counts["error_types"].get(key, 0) + 1
+            counts["errors"] += 1
+            if status == 429:
+                wait = max(
+                    interval, retry_after_seconds(exc.response.headers.get("retry-after"), interval)
+                )
+        except Exception as exc:  # noqa: BLE001 - one leg failing must not stop the other
+            key = f"{venue}:{type(exc).__name__}"
+            counts["error_types"][key] = counts["error_types"].get(key, 0) + 1
+            counts["errors"] += 1
+        else:
+            await store.save_orderbook(book)
+            counts[venue] += 1
+        remaining = deadline - clock()
+        await sleep(max(0.0, min(wait - (clock() - started), remaining)))
+
+
 async def burst_books(
     kalshi, pmus, store, observation: dict,
     seconds: float = BURST_SECONDS,
-    interval: float = BURST_INTERVAL_SECONDS,
+    intervals: dict[str, float] | None = None,
     clock: Callable[[], float] = time.monotonic,
     sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
-) -> dict[str, int]:
-    """Sample both legs' books on a fixed cadence for a bounded time.
+) -> dict:
+    """Sample both legs' books, each on its own cadence, for a bounded time.
 
     Each book is saved as it arrives, timestamped by the adapter at fetch time,
     so a replay can find "the latest quote at or before t + delay". One leg
-    failing never stops the other; failures are counted, not raised.
+    failing never stops the other; failures are counted by type, not raised,
+    and a 429 is obeyed for exactly its Retry-After.
     """
+    intervals = intervals or BURST_INTERVALS
     kalshi_id = str(observation["kalshi_market_id"]).removeprefix("kalshi:")
     pmus_id = str(observation["polymarket_market_id"]).removeprefix("polymarket_us:")
-    counts = {"kalshi": 0, "polymarket_us": 0, "errors": 0, "rounds": 0}
+    counts: dict = {"kalshi": 0, "polymarket_us": 0, "errors": 0, "error_types": {}}
     deadline = clock() + seconds
-    while clock() < deadline:
-        started = clock()
-        books = await asyncio.gather(
-            kalshi.get_orderbook(kalshi_id), pmus.get_orderbook(pmus_id), return_exceptions=True
-        )
-        for venue, book in zip(("kalshi", "polymarket_us"), books, strict=True):
-            if isinstance(book, BaseException):
-                counts["errors"] += 1
-                continue
-            await store.save_orderbook(book)
-            counts[venue] += 1
-        counts["rounds"] += 1
-        await sleep(max(0.0, interval - (clock() - started)))
+    await asyncio.gather(
+        _sample_leg("kalshi", kalshi.get_orderbook, kalshi_id, intervals["kalshi"], deadline,
+                    store, counts, clock, sleep),
+        _sample_leg("polymarket_us", pmus.get_orderbook, pmus_id, intervals["polymarket_us"],
+                    deadline, store, counts, clock, sleep),
+    )
     return counts
 
 
@@ -246,7 +307,7 @@ async def latency_report(store, delays: tuple[Decimal, ...] = DELAYS) -> dict:
         "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "delays_seconds": [str(d) for d in delays],
         "burst_seconds": BURST_SECONDS,
-        "burst_interval_seconds": BURST_INTERVAL_SECONDS,
+        "burst_intervals_seconds": BURST_INTERVALS,
         "eligible_observations": len(eligible),
         "observations_with_bursts": len(rows),
         "summary": latency_summary(rows, delays),
