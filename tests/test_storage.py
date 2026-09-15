@@ -819,3 +819,26 @@ async def test_prune_never_touches_the_evidence_or_label_chain(tmp_path):
     async with aiosqlite.connect(store.path) as db:
         row = await (await db.execute("SELECT COUNT(*) FROM paper_trade_outcomes")).fetchone()
     assert row[0] == 1
+
+
+async def test_prune_keeps_fed_decision_books_for_the_open_charter(tmp_path):
+    from datetime import UTC, datetime, timedelta
+
+    from atlas.models import OrderBook, OrderBookLevel, VenueName
+
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    now = datetime(2026, 9, 20, tzinfo=UTC)
+    old = now - timedelta(days=31)
+    level = [OrderBookLevel(price="0.5", quantity="10")]
+    for market_id, stamp in (
+        ("kalshi:KXFEDDECISION-26SEP-H0", old),  # Arm A input: kept although old
+        ("kalshi:KXATPGSPREAD-26SEP06PAUALC-ALC4", old),  # ordinary: pruned
+        ("kalshi:KXFEDDECISION-26OCT-H0", now),  # fresh: kept
+    ):
+        await store.save_orderbook(OrderBook(venue=VenueName("kalshi"), market_id=market_id,
+                                             timestamp=stamp, yes_bids=level))
+    deleted = await store.prune(now=now)
+    assert deleted["orderbook_snapshots"] == 1
+    remaining = sorted(book.market_id for book in await store.latest_orderbooks(10))
+    assert remaining == ["kalshi:KXFEDDECISION-26OCT-H0", "kalshi:KXFEDDECISION-26SEP-H0"]
+
