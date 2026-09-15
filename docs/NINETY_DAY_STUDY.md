@@ -294,9 +294,9 @@ are the honest test of whether a tradeable gap ever opens at all.
     over recorded data would have reported "unmeasurable" for every row.
   - **Instrument added (`atlas/latency.py`):** the moment a live radar pass
     records its first tradeable executable Polymarket-US gap, both legs' books
-    are fetched every 250 ms for 20 s and saved as ordinary snapshots through
-    the ordinary path (one pair per pass; two legs at four requests a second
-    stays inside both venues' public read limits). The observation itself is
+    are sampled for 20 s and saved as ordinary snapshots through the ordinary
+    path — the Kalshi book every 250 ms, the Polymarket US book every 2.5 s
+    (see the next note for why) — one pair per pass. The observation itself is
     not modified.
   - **Field added to every observation:** `polymarket_fee_terms`, the three
     venue fields the radar's own fee function reads (`feesEnabled`,
@@ -319,3 +319,20 @@ are the honest test of whether a tradeable gap ever opens at all.
     latency adjustment", "low frequency of one-leg-only fills"). Numbers
     accumulate only from deployment on 2026-09-15; the first Monday report with
     data is 2026-09-21.
+
+- **2026-09-15 (day 28, b) — Polymarket US depth reads were being lost to the
+  gateway's rate limit.** Found by the first live burst (9 Polymarket books
+  and 16 errors in 20 s) and confirmed directly: the US gateway allows about
+  five book reads per ten seconds and answers 429 with a Retry-After beyond
+  that; a back-to-back sweep over the 36 tradeable legs, which is what the
+  radar did on every pass, got 10 books and 26 refusals. That is why roughly
+  half of all Polymarket-US observations since 2026-09-07 carry no basket size
+  (`best_basket_size` null → `meets_size_floor` false → `BELOW_FLOOR`), on
+  top of the legs whose book is genuinely empty. Not a rule change: the radar
+  now spaces its Polymarket US book reads 2.5 s apart (`VenuePacer`), and the
+  burst reads that leg at the same spacing and obeys Retry-After.
+  - **Which metrics it can move:** `best_basket_size` and `meets_size_floor` on
+    Polymarket-US observations from 2026-09-15 on will be *known* more often;
+    their definitions, `executable_gap`, and every go/no-go input are
+    unchanged. Any before/after comparison of the size floor across this date
+    must allow for the depth simply being visible now.

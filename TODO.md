@@ -44,6 +44,12 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   observations at 0.25/0.5/1/2 s with the radar's own basket arithmetic and
   reports survival, one-leg-only, partial fills, and latency-adjusted return on
   locked capital. Charter amendment recorded. First report with data: 9/21.
+- [x] **2026-09-15 — the first live burst exposed a radar defect:** Polymarket
+  US allows ~5 book reads per 10 s, and the radar read the 36 tradeable legs
+  back to back (10 books, 26 × 429) — about half of PM-US observations since
+  9/7 have no basket size for that reason alone. Radar reads now spaced 2.5 s
+  (`VenuePacer`); the burst samples Kalshi at 250 ms and PM-US at 2.5 s and
+  obeys Retry-After. Charter amendment (b) recorded.
 - [ ] After 9/21: read `data/study/latency-report-*.json`; if `observations_with_bursts`
   stays 0 for a week, the radar is not seeing tradeable executable PM-US gaps at
   all — record that as the phase-2 result rather than widening the sampler.

@@ -1384,7 +1384,12 @@ async def gaps_scan(live: bool) -> None:
         paper_bankroll_summary,
         polymarket_leg_is_tradeable,
     )
-    from atlas.latency import burst_books, burst_eligible
+    from atlas.latency import (
+        POLYMARKET_US_MIN_SPACING,
+        VenuePacer,
+        burst_books,
+        burst_eligible,
+    )
 
     kalshi = KalshiVenue(fixture=not live)
     globalpm = PolymarketGlobalHistoricalVenue(tag_ids=GAP_RADAR_GLOBAL_TAG_IDS)
@@ -1408,11 +1413,15 @@ async def gaps_scan(live: bool) -> None:
     tradeable_pairs = 0
     tradeable_executable = 0
     burst_ran = False
+    # The US gateway allows about five book reads per ten seconds; read back to
+    # back, 26 of 36 legs answered 429 on 2026-09-15 and their depth was lost.
+    pacer = VenuePacer(POLYMARKET_US_MIN_SPACING if live else 0.0)
     for pair in pairs:
         polymarket_market = pair["polymarket_market"]
         sizes = None
         if polymarket_leg_is_tradeable(polymarket_market):
             tradeable_pairs += 1
+            await pacer.wait()
             sizes = await _polymarket_us_top_of_book(pmus, polymarket_market)
         observation = observe_pair(pair, polymarket_sizes=sizes)
         if observation is None:
@@ -1429,9 +1438,11 @@ async def gaps_scan(live: bool) -> None:
             burst_ran = True
             try:
                 counts = await burst_books(kalshi, pmus, store, observation)
+                types = counts["error_types"]
                 print(
                     f"  quote_burst {observation['event_subject']} kalshi={counts['kalshi']} "
                     f"polymarket_us={counts['polymarket_us']} errors={counts['errors']}"
+                    + (f" error_types={types}" if types else "")
                 )
             except Exception as exc:  # noqa: BLE001 - instrumentation must not fail the scan
                 print(f"  quote_burst_failed={type(exc).__name__}")
