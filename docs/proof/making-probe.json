@@ -1,0 +1,1983 @@
+{
+ "charter": "docs/decisions/2026-09-08-market-making-charter.md",
+ "arm": "B",
+ "probe": true,
+ "settle_by": null,
+ "generated_at": "2026-09-15T21:56:09+00:00",
+ "instrument_commit": "8e8e526f2a73cae057b42af38942ab5799dd3143",
+ "paper_only": true,
+ "primary_params": "s=2c q=10 L=1s delta=30s fee=maker",
+ "slow_params": "s=2c q=10 L=5s delta=30s fee=maker",
+ "fee_examples": [
+  {
+   "contracts": "10",
+   "price_cents": 50,
+   "fee": "0.05"
+  },
+  {
+   "contracts": "10",
+   "price_cents": 90,
+   "fee": "0.02"
+  },
+  {
+   "contracts": "1",
+   "price_cents": 50,
+   "fee": "0.01"
+  }
+ ],
+ "markets": [
+  {
+   "market_id": "kalshi:KXMLBGAME-26SEP032210STLLAD-LAD",
+   "arm": "B",
+   "params": "s=2c q=10 L=1s delta=30s fee=maker",
+   "window_start": "2026-09-04T02:10:00+00:00",
+   "window_end": "2026-09-04T05:14:27+00:00",
+   "duration_seconds": 11067.0,
+   "prints_in_window": 29681,
+   "settled": true,
+   "result": "yes",
+   "quotes_placed": 657,
+   "fills": [
+    {
+     "at": "2026-09-04T02:12:20.965070+00:00",
+     "side": "bid",
+     "price_cents": 71,
+     "quantity": "10.0000",
+     "print_id": "0721c2f0-e921-bbf9-959e-16493ec254fd",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T02:15:07.352409+00:00",
+     "side": "bid",
+     "price_cents": 67,
+     "quantity": "10.0000",
+     "print_id": "0721c2f9-38b9-b322-f127-365cb13bc94b",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T02:16:09.958916+00:00",
+     "side": "bid",
+     "price_cents": 60,
+     "quantity": "10.0000",
+     "print_id": "0721c2fd-57b9-9aba-8625-c7aaad4de94c",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T02:17:31.975882+00:00",
+     "side": "ask",
+     "price_cents": 63,
+     "quantity": "5.0000",
+     "print_id": "0721c2e7-a099-93f8-5cdf-49a4194c59a9",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T02:17:31.975882+00:00",
+     "side": "ask",
+     "price_cents": 63,
+     "quantity": "5.0000",
+     "print_id": "0721c2e7-9761-9edd-5e66-224400cda609",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T02:18:46.902396+00:00",
+     "side": "bid",
+     "price_cents": 62,
+     "quantity": "10.0000",
+     "print_id": "0721c2ee-6279-b0e4-b6e2-8ced66797d97",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T02:19:19.158440+00:00",
+     "side": "ask",
+     "price_cents": 53,
+     "quantity": "0.0100",
+     "print_id": "0721c2ec-5a71-aacb-b93c-8c82386c81fa",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T02:19:19.158440+00:00",
+     "side": "ask",
+     "price_cents": 53,
+     "quantity": "6.0000",
+     "print_id": "0721c2ec-5649-a61a-89cd-0b4ffdc2ccff",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T02:19:19.158440+00:00",
+     "side": "ask",
+     "price_cents": 53,
+     "quantity": "3.9900",
+     "print_id": "0721c2ec-3f59-a33b-ba0c-16556b2f7073",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T02:19:34.968201+00:00",
+     "side": "ask",
+     "price_cents": 56,
+     "quantity": "2.0000",
+     "print_id": "0721c2ed-94e1-8fe8-b3ac-bb5490589cd8",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T02:19:34.968201+00:00",
+     "side": "ask",
+     "price_cents": 56,
+     "quantity": "8.0000",
+     "print_id": "0721c2ed-94e1-83e1-9d86-e2e1c2efcdb0",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T02:19:42.060172+00:00",
+     "side": "bid",
+     "price_cents": 52,
+     "quantity": "10.0000",
+     "print_id": "0721c2ed-bd69-969b-5c09-feecea1db066",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T02:23:14.073458+00:00",
+     "side": "ask",
+     "price_cents": 64,
+     "quantity": "10.0000",
+     "print_id": "0721c2d2-e729-9687-22fb-049b5f75a673",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T02:24:49.170282+00:00",
+     "side": "bid",
+     "price_cents": 64,
+     "quantity": "0.0100",
+     "print_id": "0721c2d4-bbc9-b66d-499b-7723ee58a6cf",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T02:25:21.460985+00:00",
+     "side": "ask",
+     "price_cents": 65,
+     "quantity": "10.0000",
+     "print_id": "0721c2cb-4961-8a78-99d1-2c5e2723c56d",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T02:28:17.352405+00:00",
+     "side": "bid",
+     "price_cents": 65,
+     "quantity": "1.0000",
+     "print_id": "0721c2c7-ec81-bb6e-2381-bf2d82975212",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T02:28:17.352405+00:00",
+     "side": "bid",
+     "price_cents": 65,
+     "quantity": "8.0000",
+     "print_id": "0721c2c7-ba89-b1a2-2029-fda154a0b48d",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T02:28:17.352405+00:00",
+     "side": "bid",
+     "price_cents": 65,
+     "quantity": "1.0000",
+     "print_id": "0721c2c5-9649-bb08-19da-c242b028ccef",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T02:29:59.859272+00:00",
+     "side": "bid",
+     "price_cents": 60,
+     "quantity": "10.0000",
+     "print_id": "0721c341-e139-bbbd-b947-d2514ab8bf00",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T02:30:02.674492+00:00",
+     "side": "bid",
+     "price_cents": 59,
+     "quantity": "5.0000",
+     "print_id": "0721c341-d869-bf1c-0946-ac7b8d7934d9",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T02:30:02.674492+00:00",
+     "side": "bid",
+     "price_cents": 59,
+     "quantity": "5.0000",
+     "print_id": "0721c341-d869-bdf2-2d1e-3b3d187b3567",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T02:34:12.236449+00:00",
+     "side": "bid",
+     "price_cents": 57,
+     "quantity": "10.0000",
+     "print_id": "0721c354-ca39-8b4e-8225-0100d661d7a0",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T02:39:46.228246+00:00",
+     "side": "ask",
+     "price_cents": 61,
+     "quantity": "0.0100",
+     "print_id": "0721c365-3519-b4f7-d991-82c3aec80bde",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T02:39:46.228246+00:00",
+     "side": "ask",
+     "price_cents": 61,
+     "quantity": "2.0000",
+     "print_id": "0721c361-36f1-b36f-d0bf-a7bc7423aa2e",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T02:39:46.228246+00:00",
+     "side": "ask",
+     "price_cents": 61,
+     "quantity": "1.1300",
+     "print_id": "0721c360-3c29-be2f-de9f-06fb2f5aa00f",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T02:39:46.397735+00:00",
+     "side": "ask",
+     "price_cents": 61,
+     "quantity": "6.8600",
+     "print_id": "0721c36c-6cb9-91c0-9982-425f5de1a07b",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T02:43:20.946455+00:00",
+     "side": "bid",
+     "price_cents": 60,
+     "quantity": "10.0000",
+     "print_id": "0721c37e-18e9-8ac9-8ca9-0374bb80b17c",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T02:44:20.038273+00:00",
+     "side": "bid",
+     "price_cents": 57,
+     "quantity": "0.0100",
+     "print_id": "0721c37f-3ca9-8790-4836-9c44922f2f25",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T02:44:20.038273+00:00",
+     "side": "bid",
+     "price_cents": 57,
+     "quantity": "2.2300",
+     "print_id": "0721c37a-97c1-8f85-6fd4-7a5a16c1687f",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T02:44:28.469926+00:00",
+     "side": "bid",
+     "price_cents": 57,
+     "quantity": "7.7600",
+     "print_id": "0721c37a-12c1-8d0d-201d-c0cf9c9c4097",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T02:51:08.817287+00:00",
+     "side": "bid",
+     "price_cents": 54,
+     "quantity": "1.0000",
+     "print_id": "0721c31d-5789-a496-a08d-1467f779a6f7",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T02:51:08.817287+00:00",
+     "side": "bid",
+     "price_cents": 54,
+     "quantity": "9.0000",
+     "print_id": "0721c31d-4cf9-adc4-af02-19048be8fd74",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T02:52:43.187137+00:00",
+     "side": "ask",
+     "price_cents": 55,
+     "quantity": "1.0000",
+     "print_id": "0721c36e-b559-879f-140e-7b7bb7d1b7c4",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T02:52:43.187137+00:00",
+     "side": "ask",
+     "price_cents": 55,
+     "quantity": "9.0000",
+     "print_id": "0721c31d-5659-83e5-0995-1a8074c16510",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T02:53:20.019790+00:00",
+     "side": "ask",
+     "price_cents": 55,
+     "quantity": "7.3000",
+     "print_id": "0721c302-3479-a652-4610-5e46960f716f",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T02:53:20.837678+00:00",
+     "side": "ask",
+     "price_cents": 55,
+     "quantity": "2.7000",
+     "print_id": "0721c302-9209-9b72-84d1-0122306d1862",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T02:55:50.840510+00:00",
+     "side": "bid",
+     "price_cents": 56,
+     "quantity": "1.0000",
+     "print_id": "0721c337-3769-928f-c761-0f7a4bcaa8f9",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T02:55:50.840510+00:00",
+     "side": "bid",
+     "price_cents": 56,
+     "quantity": "2.0000",
+     "print_id": "0721c337-26c9-9602-d27a-17bf7b52f30e",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T02:55:50.840510+00:00",
+     "side": "bid",
+     "price_cents": 56,
+     "quantity": "7.0000",
+     "print_id": "0721c336-fd99-9194-d100-a94ad0d795bc",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T02:56:31.424289+00:00",
+     "side": "bid",
+     "price_cents": 55,
+     "quantity": "10.0000",
+     "print_id": "0721c33a-9e61-9598-852f-85f0fedafb26",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T02:58:18.839724+00:00",
+     "side": "ask",
+     "price_cents": 44,
+     "quantity": "10.0000",
+     "print_id": "0721c33c-8109-8802-a3be-2887e70a1971",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T03:01:21.080292+00:00",
+     "side": "ask",
+     "price_cents": 49,
+     "quantity": "10.0000",
+     "print_id": "0721c32e-ccc1-a3c6-394b-2dcf7baf40cc",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T03:01:40.541963+00:00",
+     "side": "bid",
+     "price_cents": 53,
+     "quantity": "10.0000",
+     "print_id": "0721c328-bfa9-9d0e-92aa-ac45d6defa30",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T03:02:18.993153+00:00",
+     "side": "bid",
+     "price_cents": 51,
+     "quantity": "0.0100",
+     "print_id": "0721c32a-cda9-b21b-8be2-4881af41383c",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:02:18.993153+00:00",
+     "side": "bid",
+     "price_cents": 51,
+     "quantity": "5.0000",
+     "print_id": "0721c32a-61b9-b72b-b3ff-1e4907157783",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T03:02:18.993153+00:00",
+     "side": "bid",
+     "price_cents": 51,
+     "quantity": "1.9500",
+     "print_id": "0721c32a-0179-b0bf-a921-19fea552471a",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:02:19.911074+00:00",
+     "side": "bid",
+     "price_cents": 51,
+     "quantity": "0.0100",
+     "print_id": "0721c32a-f231-9998-8119-84712155d948",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:02:19.911074+00:00",
+     "side": "bid",
+     "price_cents": 51,
+     "quantity": "0.0100",
+     "print_id": "0721c32a-45b9-91e2-95b5-25ca839b7722",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:02:19.911074+00:00",
+     "side": "bid",
+     "price_cents": 51,
+     "quantity": "0.9800",
+     "print_id": "0721c32a-1f71-966b-9f97-464d49acd394",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:02:20.185720+00:00",
+     "side": "bid",
+     "price_cents": 51,
+     "quantity": "2.0400",
+     "print_id": "0721c32a-0f11-aa1f-9c0e-4db577d7c738",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:03:26.633635+00:00",
+     "side": "bid",
+     "price_cents": 48,
+     "quantity": "0.5600",
+     "print_id": "0721c322-d5f9-9fac-1ce5-d09537aaed19",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:03:26.633635+00:00",
+     "side": "bid",
+     "price_cents": 48,
+     "quantity": "0.4300",
+     "print_id": "0721c321-10d9-9227-27c5-0e64d87f3c92",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:04:21.365802+00:00",
+     "side": "bid",
+     "price_cents": 46,
+     "quantity": "10.0000",
+     "print_id": "0721c324-c121-b464-1a72-1fd1ad31b67a",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T03:05:42.391158+00:00",
+     "side": "ask",
+     "price_cents": 48,
+     "quantity": "7.9000",
+     "print_id": "0721c3e5-5eb1-889f-72f1-ad10d229b0b5",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T03:05:42.391158+00:00",
+     "side": "ask",
+     "price_cents": 48,
+     "quantity": "0.0100",
+     "print_id": "0721c3da-b189-852d-5fdf-723fff963939",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:05:42.391158+00:00",
+     "side": "ask",
+     "price_cents": 48,
+     "quantity": "0.0100",
+     "print_id": "0721c3da-b189-849d-68fc-dc7e28cb7180",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:05:43.888851+00:00",
+     "side": "ask",
+     "price_cents": 48,
+     "quantity": "2.0800",
+     "print_id": "0721c3e5-4e11-af2c-0841-6d065de5439f",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:06:59.013636+00:00",
+     "side": "ask",
+     "price_cents": 54,
+     "quantity": "10.0000",
+     "print_id": "0721c3eb-0159-ba02-e304-16041c1a6f5f",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T03:07:23.357533+00:00",
+     "side": "bid",
+     "price_cents": 52,
+     "quantity": "0.0100",
+     "print_id": "0721c3eb-4179-a07d-3ca4-ca9f02ccb8bc",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:07:23.357533+00:00",
+     "side": "bid",
+     "price_cents": 52,
+     "quantity": "9.9900",
+     "print_id": "0721c3e8-edf1-aeca-13b9-a201d53e4bdc",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T03:07:47.085373+00:00",
+     "side": "bid",
+     "price_cents": 49,
+     "quantity": "0.0100",
+     "print_id": "0721c3ea-e169-9418-5cc3-aaafb4bdd188",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:07:47.085373+00:00",
+     "side": "bid",
+     "price_cents": 49,
+     "quantity": "2.0000",
+     "print_id": "0721c3ea-4151-9464-73f5-1b0bd1438b9b",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:07:47.085373+00:00",
+     "side": "bid",
+     "price_cents": 49,
+     "quantity": "7.9900",
+     "print_id": "0721c3e9-3299-910d-55ec-10fdd67d8771",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T03:10:07.030810+00:00",
+     "side": "ask",
+     "price_cents": 50,
+     "quantity": "2.8500",
+     "print_id": "0721c3f7-79e9-bce7-a8bb-43d19e682e11",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T03:10:07.030810+00:00",
+     "side": "ask",
+     "price_cents": 50,
+     "quantity": "1.0000",
+     "print_id": "0721c3f6-85c1-be84-b7af-c1cd833fcd5b",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:10:07.030810+00:00",
+     "side": "ask",
+     "price_cents": 50,
+     "quantity": "1.0000",
+     "print_id": "0721c3f6-85c1-b29c-a20c-50f9590251c9",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:10:07.030810+00:00",
+     "side": "ask",
+     "price_cents": 50,
+     "quantity": "2.0000",
+     "print_id": "0721c3f6-81d9-b6ad-92b5-9f90dd213225",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:11:36.210271+00:00",
+     "side": "bid",
+     "price_cents": 48,
+     "quantity": "5.0000",
+     "print_id": "0721c3ff-9341-bb06-cb90-145185cb6d8f",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T03:11:36.210271+00:00",
+     "side": "bid",
+     "price_cents": 48,
+     "quantity": "5.0000",
+     "print_id": "0721c3ff-9341-b2bb-d25c-f3e9d76b4cdc",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T03:12:37.752061+00:00",
+     "side": "ask",
+     "price_cents": 49,
+     "quantity": "1.0000",
+     "print_id": "0721c3ff-5d81-9f0b-77af-c11d93d7273e",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:12:37.752061+00:00",
+     "side": "ask",
+     "price_cents": 49,
+     "quantity": "2.0000",
+     "print_id": "0721c3ff-5999-9786-7741-6406f1eedfd4",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:12:37.752061+00:00",
+     "side": "ask",
+     "price_cents": 49,
+     "quantity": "0.0100",
+     "print_id": "0721c3ff-5999-9765-696a-6c45b06cf2c8",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:12:37.752061+00:00",
+     "side": "ask",
+     "price_cents": 49,
+     "quantity": "2.0000",
+     "print_id": "0721c3ff-5999-968c-7a5c-7bb4d16974a1",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:12:37.752061+00:00",
+     "side": "ask",
+     "price_cents": 49,
+     "quantity": "2.0000",
+     "print_id": "0721c3ff-5999-9587-6126-0297e0aa94e2",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:12:37.752061+00:00",
+     "side": "ask",
+     "price_cents": 49,
+     "quantity": "1.0000",
+     "print_id": "0721c3ff-3fd9-9339-73c5-e32c782507f6",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:12:37.752061+00:00",
+     "side": "ask",
+     "price_cents": 49,
+     "quantity": "1.9900",
+     "print_id": "0721c3ff-03c1-934c-6c9e-d835bb7fd44a",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:12:39.271440+00:00",
+     "side": "bid",
+     "price_cents": 45,
+     "quantity": "10.0000",
+     "print_id": "0721c3c1-c3f1-bc41-87d9-78df091f4d3b",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T03:22:37.564591+00:00",
+     "side": "bid",
+     "price_cents": 40,
+     "quantity": "10.0000",
+     "print_id": "0721c3b2-7f61-b825-b32b-dedcce48ed1b",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T03:27:40.264699+00:00",
+     "side": "bid",
+     "price_cents": 33,
+     "quantity": "1.0000",
+     "print_id": "0721cf22-7171-8897-d32a-2388fd33f2a7",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:27:40.264699+00:00",
+     "side": "bid",
+     "price_cents": 33,
+     "quantity": "9.0000",
+     "print_id": "0721c3f9-fe51-82a7-eb4d-9dd279723574",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T03:30:37.898119+00:00",
+     "side": "ask",
+     "price_cents": 37,
+     "quantity": "1.0000",
+     "print_id": "0721c3b8-27d1-bc42-e12c-c573e96e2151",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:30:37.898119+00:00",
+     "side": "ask",
+     "price_cents": 37,
+     "quantity": "1.0000",
+     "print_id": "0721c3aa-b2a1-b68b-d55c-04d8c0d9c18a",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:30:37.898119+00:00",
+     "side": "ask",
+     "price_cents": 37,
+     "quantity": "0.0100",
+     "print_id": "0721c3aa-2831-bc14-ce6f-76ad24e697d9",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:30:37.898119+00:00",
+     "side": "ask",
+     "price_cents": 37,
+     "quantity": "0.0100",
+     "print_id": "0721c3aa-25d9-be19-cf84-cb8b704a5f8a",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:30:37.898119+00:00",
+     "side": "ask",
+     "price_cents": 37,
+     "quantity": "0.0100",
+     "print_id": "0721c3aa-0cc9-b548-c61c-fa4f5c7deb09",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:30:37.898119+00:00",
+     "side": "ask",
+     "price_cents": 37,
+     "quantity": "2.0000",
+     "print_id": "0721c3a9-b4a1-b89d-ed0b-5095fbfb6c49",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:30:37.898119+00:00",
+     "side": "ask",
+     "price_cents": 37,
+     "quantity": "1.0000",
+     "print_id": "0721c3a9-b4a1-b2ab-d29e-f4b5a287ad5c",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:30:37.898119+00:00",
+     "side": "ask",
+     "price_cents": 37,
+     "quantity": "4.9700",
+     "print_id": "0721c3a8-dfe1-bfaf-c393-7eff44ac9436",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T03:33:59.583273+00:00",
+     "side": "ask",
+     "price_cents": 42,
+     "quantity": "1.0000",
+     "print_id": "0721c39e-70e9-9d24-db9d-2a18dff5154a",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:33:59.583273+00:00",
+     "side": "ask",
+     "price_cents": 42,
+     "quantity": "0.0100",
+     "print_id": "0721c391-9a39-946d-dbbd-730623d214bb",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:33:59.583273+00:00",
+     "side": "ask",
+     "price_cents": 42,
+     "quantity": "8.9900",
+     "print_id": "0721c391-5ca1-9fb1-fccf-58fa9cbb5499",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T03:34:01.201577+00:00",
+     "side": "ask",
+     "price_cents": 44,
+     "quantity": "1.0000",
+     "print_id": "0721c39b-4e79-a7f6-34b4-5f2c449c889f",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:34:01.201577+00:00",
+     "side": "ask",
+     "price_cents": 44,
+     "quantity": "0.0100",
+     "print_id": "0721c396-f8f9-a1f6-1907-af4cba3382e3",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:34:01.201577+00:00",
+     "side": "ask",
+     "price_cents": 44,
+     "quantity": "0.0100",
+     "print_id": "0721c396-c109-ae87-3f67-6af9efeca865",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:34:01.201577+00:00",
+     "side": "ask",
+     "price_cents": 44,
+     "quantity": "1.0000",
+     "print_id": "0721c394-1289-a1b0-367a-0d94c0a07622",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:34:01.724835+00:00",
+     "side": "ask",
+     "price_cents": 44,
+     "quantity": "0.7400",
+     "print_id": "0721c397-0089-86a6-f550-2914f91d95a3",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:34:01.724835+00:00",
+     "side": "ask",
+     "price_cents": 44,
+     "quantity": "1.0000",
+     "print_id": "0721c397-0089-8669-fa22-cae18f01a825",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:34:01.724835+00:00",
+     "side": "ask",
+     "price_cents": 44,
+     "quantity": "1.0000",
+     "print_id": "0721c397-0089-8102-c71a-2ab5f0c99715",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:34:01.724835+00:00",
+     "side": "ask",
+     "price_cents": 44,
+     "quantity": "5.2400",
+     "print_id": "0721c396-f8f9-8ddf-fe88-82c6fcf093f7",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T03:35:44.106570+00:00",
+     "side": "bid",
+     "price_cents": 48,
+     "quantity": "6.0000",
+     "print_id": "0721c38e-34f9-9ea9-4bba-ebdd02abd980",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T03:35:44.106570+00:00",
+     "side": "bid",
+     "price_cents": 48,
+     "quantity": "4.0000",
+     "print_id": "0721c38e-2559-9e62-63bf-28409875e13b",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T03:36:22.442573+00:00",
+     "side": "ask",
+     "price_cents": 51,
+     "quantity": "5.0000",
+     "print_id": "0721c39e-3b01-a0e5-4986-e48ca83ed6c0",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T03:36:22.442573+00:00",
+     "side": "ask",
+     "price_cents": 51,
+     "quantity": "5.0000",
+     "print_id": "0721c393-4e29-a683-74d4-0a374f113a3b",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T03:36:48.757525+00:00",
+     "side": "bid",
+     "price_cents": 50,
+     "quantity": "5.0000",
+     "print_id": "0721c38b-be81-8aff-70f5-c505a864ba3e",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T03:36:48.757525+00:00",
+     "side": "bid",
+     "price_cents": 50,
+     "quantity": "3.0000",
+     "print_id": "0721c38b-be81-80c2-78ef-23edea6c36a0",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T03:36:48.757525+00:00",
+     "side": "bid",
+     "price_cents": 50,
+     "quantity": "2.0000",
+     "print_id": "0721c38b-b6b1-8baa-7220-6f8f7cfb8a4f",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:36:49.676892+00:00",
+     "side": "ask",
+     "price_cents": 54,
+     "quantity": "9.9800",
+     "print_id": "0721c38b-d1c9-bebf-6c14-e2783082bdf8",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T03:36:49.676892+00:00",
+     "side": "ask",
+     "price_cents": 54,
+     "quantity": "0.0200",
+     "print_id": "0721c38b-cd21-b3a8-4962-b00c17174097",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:38:13.645824+00:00",
+     "side": "bid",
+     "price_cents": 54,
+     "quantity": "4.3800",
+     "print_id": "0721c386-fe01-b71a-2211-4b0a6fea6ad5",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T03:38:13.645824+00:00",
+     "side": "bid",
+     "price_cents": 54,
+     "quantity": "3.0000",
+     "print_id": "0721c386-f671-b890-2ebd-99030d66da87",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T03:38:57.823640+00:00",
+     "side": "bid",
+     "price_cents": 54,
+     "quantity": "1.2800",
+     "print_id": "0721c381-6141-b21f-131d-db45094a38e5",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:38:57.823640+00:00",
+     "side": "bid",
+     "price_cents": 54,
+     "quantity": "0.0100",
+     "print_id": "0721c380-cdd1-b565-0c95-ba2ba717359d",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:39:02.424675+00:00",
+     "side": "bid",
+     "price_cents": 54,
+     "quantity": "10.0000",
+     "print_id": "0721c381-dba9-8978-ee2d-71c5c30b4e65",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T03:39:37.930079+00:00",
+     "side": "bid",
+     "price_cents": 52,
+     "quantity": "10.0000",
+     "print_id": "0721c080-9e61-9bed-41d5-d23b0f138593",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T03:41:11.549041+00:00",
+     "side": "ask",
+     "price_cents": 54,
+     "quantity": "0.0100",
+     "print_id": "0721c087-7211-a8ed-a90b-8a5d43204fe9",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:41:11.549041+00:00",
+     "side": "ask",
+     "price_cents": 54,
+     "quantity": "9.0000",
+     "print_id": "0721c087-53d1-a2b0-90e8-f903826be86c",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T03:41:11.549041+00:00",
+     "side": "ask",
+     "price_cents": 54,
+     "quantity": "0.9900",
+     "print_id": "0721c07b-98b9-abf6-8c24-97ab82316783",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:41:52.866985+00:00",
+     "side": "bid",
+     "price_cents": 56,
+     "quantity": "4.0000",
+     "print_id": "0721c089-53c1-8d9d-d7d7-9af56150dae7",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T03:41:52.866985+00:00",
+     "side": "bid",
+     "price_cents": 56,
+     "quantity": "0.9900",
+     "print_id": "0721c089-53c1-8891-e6b2-ca331658ee20",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:41:52.866985+00:00",
+     "side": "bid",
+     "price_cents": 56,
+     "quantity": "0.0100",
+     "print_id": "0721c089-53c1-8021-cbc2-ca4c659107f0",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:41:53.246463+00:00",
+     "side": "bid",
+     "price_cents": 56,
+     "quantity": "5.0000",
+     "print_id": "0721c08a-ffa1-aad7-1cc0-506b1e3fbf5b",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T03:49:08.017816+00:00",
+     "side": "ask",
+     "price_cents": 43,
+     "quantity": "0.0100",
+     "print_id": "0721c0ab-d999-87fe-111a-859858f6aa64",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:49:08.017816+00:00",
+     "side": "ask",
+     "price_cents": 43,
+     "quantity": "2.0000",
+     "print_id": "0721c0ab-d581-8fa3-08b7-16cf32b72b8f",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:49:08.017816+00:00",
+     "side": "ask",
+     "price_cents": 43,
+     "quantity": "2.0000",
+     "print_id": "0721c0ab-d581-8f37-3d91-69346277b94f",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:49:08.017816+00:00",
+     "side": "ask",
+     "price_cents": 43,
+     "quantity": "3.0000",
+     "print_id": "0721c0ab-8fb9-8cce-21f7-07f5161af607",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T03:49:08.017816+00:00",
+     "side": "ask",
+     "price_cents": 43,
+     "quantity": "2.9900",
+     "print_id": "0721c0a4-71d9-89df-145d-7d90d792ec44",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T03:54:54.744021+00:00",
+     "side": "ask",
+     "price_cents": 43,
+     "quantity": "10.0000",
+     "print_id": "0721c0b5-ba31-b65a-967e-0a52143d2618",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T03:55:06.317978+00:00",
+     "side": "bid",
+     "price_cents": 42,
+     "quantity": "8.0000",
+     "print_id": "0721c0b7-7fe9-8bb8-2502-375c71ea6521",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T03:55:06.317978+00:00",
+     "side": "bid",
+     "price_cents": 42,
+     "quantity": "2.0000",
+     "print_id": "0721c0b7-7fe9-81ad-0eb9-005fcedc41bc",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T03:55:38.682770+00:00",
+     "side": "ask",
+     "price_cents": 44,
+     "quantity": "10.0000",
+     "print_id": "0721c0b5-89c1-99d6-be65-6da7a2af0830",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T04:01:34.690845+00:00",
+     "side": "bid",
+     "price_cents": 46,
+     "quantity": "10.0000",
+     "print_id": "0721c0c4-d5a1-afac-6d9f-77d6e3022115",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T04:02:05.775869+00:00",
+     "side": "ask",
+     "price_cents": 46,
+     "quantity": "2.0000",
+     "print_id": "0721c0c6-f439-bd9e-75bc-65322e67e69f",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:02:05.775869+00:00",
+     "side": "ask",
+     "price_cents": 46,
+     "quantity": "1.0000",
+     "print_id": "0721c0c6-f439-b18e-74b4-b57e34b9179a",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:02:05.775869+00:00",
+     "side": "ask",
+     "price_cents": 46,
+     "quantity": "1.0000",
+     "print_id": "0721c0c6-f011-b005-5148-b4445c19d147",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:02:05.775869+00:00",
+     "side": "ask",
+     "price_cents": 46,
+     "quantity": "6.0000",
+     "print_id": "0721c0c6-d0d1-b446-43e1-7fc9f5bac5b4",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T04:05:04.039595+00:00",
+     "side": "bid",
+     "price_cents": 48,
+     "quantity": "10.0000",
+     "print_id": "0721c0ca-eff9-b03b-3e16-dd6172801eb9",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T04:05:59.446319+00:00",
+     "side": "bid",
+     "price_cents": 44,
+     "quantity": "10.0000",
+     "print_id": "0721c0f9-25d9-a637-73ec-36aa6d5e7a0f",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T04:06:42.743681+00:00",
+     "side": "ask",
+     "price_cents": 48,
+     "quantity": "2.0000",
+     "print_id": "0721c0fb-bce9-8488-a333-c0956729ba70",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:06:42.743681+00:00",
+     "side": "ask",
+     "price_cents": 48,
+     "quantity": "1.0000",
+     "print_id": "0721c0fb-5d11-82a7-a6ed-782b42950439",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:06:42.743681+00:00",
+     "side": "ask",
+     "price_cents": 48,
+     "quantity": "1.0000",
+     "print_id": "0721c0f7-5451-80ec-93d2-df8f1d76a70e",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:06:42.743681+00:00",
+     "side": "ask",
+     "price_cents": 48,
+     "quantity": "0.0100",
+     "print_id": "0721c0f4-e8b9-8c24-866e-62dad4306532",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:06:42.743681+00:00",
+     "side": "ask",
+     "price_cents": 48,
+     "quantity": "0.0100",
+     "print_id": "0721c0f4-c879-8166-a46d-324907e4cc5f",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:06:42.743681+00:00",
+     "side": "ask",
+     "price_cents": 48,
+     "quantity": "0.0100",
+     "print_id": "0721c0f4-4779-8d28-adde-605f9767a88f",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:06:42.743681+00:00",
+     "side": "ask",
+     "price_cents": 48,
+     "quantity": "1.0000",
+     "print_id": "0721c0f4-4779-8a3c-a04a-d8b19c616670",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:06:42.743681+00:00",
+     "side": "ask",
+     "price_cents": 48,
+     "quantity": "0.0100",
+     "print_id": "0721c0f4-3999-85db-b975-1c44bfcce2a1",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:06:42.743681+00:00",
+     "side": "ask",
+     "price_cents": 48,
+     "quantity": "4.9600",
+     "print_id": "0721c0f4-21e9-8fc1-abe9-9f32b61c82ee",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T04:09:24.912892+00:00",
+     "side": "bid",
+     "price_cents": 40,
+     "quantity": "10.0000",
+     "print_id": "0721c0f4-9f11-a47b-c43e-025bd5ba7df8",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T04:14:45.396027+00:00",
+     "side": "ask",
+     "price_cents": 40,
+     "quantity": "10.0000",
+     "print_id": "0721c021-2cf1-92d2-c26f-6b11c067893b",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T04:17:45.528230+00:00",
+     "side": "bid",
+     "price_cents": 41,
+     "quantity": "1.9200",
+     "print_id": "0721c02d-0539-bd36-8d89-c0496a33142e",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:17:45.528230+00:00",
+     "side": "bid",
+     "price_cents": 41,
+     "quantity": "0.0100",
+     "print_id": "0721c02c-8859-b646-b3cf-68abbeba1b4b",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:17:46.309037+00:00",
+     "side": "bid",
+     "price_cents": 41,
+     "quantity": "8.0700",
+     "print_id": "0721c02d-15d9-a98e-b70a-17f5ffe06a3e",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T04:20:56.858718+00:00",
+     "side": "ask",
+     "price_cents": 44,
+     "quantity": "2.0000",
+     "print_id": "0721c00e-7ea1-9268-6c3a-968ab2919562",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:20:56.858718+00:00",
+     "side": "ask",
+     "price_cents": 44,
+     "quantity": "1.0000",
+     "print_id": "0721c00d-fda1-9322-5bb6-b5d69b79850c",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:20:56.858718+00:00",
+     "side": "ask",
+     "price_cents": 44,
+     "quantity": "7.0000",
+     "print_id": "0721c008-6b81-974f-6706-3f4427ec2780",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T04:23:37.472421+00:00",
+     "side": "bid",
+     "price_cents": 43,
+     "quantity": "1.0000",
+     "print_id": "0721c027-b0b9-898c-6018-5cd76abe95c1",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:23:37.472421+00:00",
+     "side": "bid",
+     "price_cents": 43,
+     "quantity": "9.0000",
+     "print_id": "0721c005-f291-8e8a-405e-7dc1b771a680",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T04:40:28.634322+00:00",
+     "side": "ask",
+     "price_cents": 37,
+     "quantity": "7.0000",
+     "print_id": "0721c076-5801-94c0-45a9-38381c716fd9",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T04:40:28.634322+00:00",
+     "side": "ask",
+     "price_cents": 37,
+     "quantity": "0.0100",
+     "print_id": "0721c076-2701-9289-75f1-8c0a23c9049a",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:40:28.634322+00:00",
+     "side": "ask",
+     "price_cents": 37,
+     "quantity": "2.9900",
+     "print_id": "0721c069-65b9-95b3-5255-68c3d3d59b3c",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T04:40:32.839627+00:00",
+     "side": "ask",
+     "price_cents": 43,
+     "quantity": "0.0100",
+     "print_id": "0721c077-fd41-9f3a-0a9c-d740e56cb02b",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:40:32.839627+00:00",
+     "side": "ask",
+     "price_cents": 43,
+     "quantity": "9.0000",
+     "print_id": "0721c077-d1e9-9145-3683-48faa8ad5000",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T04:40:32.839627+00:00",
+     "side": "ask",
+     "price_cents": 43,
+     "quantity": "0.9900",
+     "print_id": "0721c070-6691-99cd-2cd3-35c6ab95647b",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:41:27.580543+00:00",
+     "side": "bid",
+     "price_cents": 43,
+     "quantity": "3.0000",
+     "print_id": "0721c05a-fa49-b2c5-04be-45d50dea4775",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T04:41:27.580543+00:00",
+     "side": "bid",
+     "price_cents": 43,
+     "quantity": "7.0000",
+     "print_id": "0721c05a-6ad1-bb0b-2e90-b3afcf393876",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T04:43:10.143750+00:00",
+     "side": "bid",
+     "price_cents": 43,
+     "quantity": "10.0000",
+     "print_id": "0721c05e-eaa1-91b5-5a0b-4fb517166069",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T04:44:54.810447+00:00",
+     "side": "ask",
+     "price_cents": 27,
+     "quantity": "10.0000",
+     "print_id": "0721c054-d4a1-bded-0691-b08000d49c5e",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T04:45:48.621641+00:00",
+     "side": "ask",
+     "price_cents": 26,
+     "quantity": "10.0000",
+     "print_id": "0721c04e-55f9-8e1f-ad2f-b71d40875c74",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T04:46:13.443534+00:00",
+     "side": "ask",
+     "price_cents": 30,
+     "quantity": "1.0000",
+     "print_id": "0721c04f-90d9-8d63-e7f4-dfed65bd4802",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:46:13.443534+00:00",
+     "side": "ask",
+     "price_cents": 30,
+     "quantity": "1.0000",
+     "print_id": "0721c04f-8179-8a2d-c8f6-cd943c0d2b18",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:46:13.443534+00:00",
+     "side": "ask",
+     "price_cents": 30,
+     "quantity": "0.0100",
+     "print_id": "0721c04f-7619-815c-ef61-9e8645c6f614",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:46:13.443534+00:00",
+     "side": "ask",
+     "price_cents": 30,
+     "quantity": "0.0100",
+     "print_id": "0721c04f-4a01-8060-cc5e-eda1a9822a37",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:46:13.443534+00:00",
+     "side": "ask",
+     "price_cents": 30,
+     "quantity": "7.9800",
+     "print_id": "0721c049-7a19-8815-e617-8cfc4995e2aa",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T04:48:07.051694+00:00",
+     "side": "ask",
+     "price_cents": 36,
+     "quantity": "10.0000",
+     "print_id": "0721c046-70f1-8090-7e02-e1db9020a47f",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T04:48:42.170011+00:00",
+     "side": "ask",
+     "price_cents": 39,
+     "quantity": "0.0100",
+     "print_id": "0721c047-daa9-85fa-f0eb-d5a56b6b0a45",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:48:42.170011+00:00",
+     "side": "ask",
+     "price_cents": 39,
+     "quantity": "0.0100",
+     "print_id": "0721c043-4391-8d86-c4ec-506ae26508ba",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:48:42.170011+00:00",
+     "side": "ask",
+     "price_cents": 39,
+     "quantity": "1.2700",
+     "print_id": "0721c042-ccc9-8b7b-ecab-60cea72bc024",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:48:42.263319+00:00",
+     "side": "ask",
+     "price_cents": 39,
+     "quantity": "8.7100",
+     "print_id": "0721c042-d801-914c-4d7c-bea9b259c7d6",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T04:50:25.750786+00:00",
+     "side": "bid",
+     "price_cents": 38,
+     "quantity": "2.0000",
+     "print_id": "0721c1c3-a439-87af-b1aa-87e2fae5e7df",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:50:25.750786+00:00",
+     "side": "bid",
+     "price_cents": 38,
+     "quantity": "7.0000",
+     "print_id": "0721c1c3-7a49-8d66-9535-45ceadc99111",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T04:50:25.750786+00:00",
+     "side": "bid",
+     "price_cents": 38,
+     "quantity": "1.0000",
+     "print_id": "0721c1c3-7a49-80f3-b219-709f9d2d0703",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:50:47.600165+00:00",
+     "side": "ask",
+     "price_cents": 39,
+     "quantity": "0.0100",
+     "print_id": "0721c1c5-df41-a579-69b3-8d4e5c360f39",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:50:47.600165+00:00",
+     "side": "ask",
+     "price_cents": 39,
+     "quantity": "0.0100",
+     "print_id": "0721c1c5-d731-aa25-5a4a-a36ffad7b776",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:50:47.600165+00:00",
+     "side": "ask",
+     "price_cents": 39,
+     "quantity": "9.9800",
+     "print_id": "0721c1c4-6511-abe9-78ef-1023b562179f",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T04:51:08.638780+00:00",
+     "side": "bid",
+     "price_cents": 34,
+     "quantity": "8.0000",
+     "print_id": "0721c1b8-ae39-83cb-e038-b957b900e5cc",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T04:51:08.638780+00:00",
+     "side": "bid",
+     "price_cents": 34,
+     "quantity": "2.0000",
+     "print_id": "0721c1b8-8a91-8b86-f73a-6b54c535c5b8",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T04:51:35.020978+00:00",
+     "side": "bid",
+     "price_cents": 31,
+     "quantity": "10.0000",
+     "print_id": "0721c1c9-fb59-899f-eac7-076372614dc6",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T04:54:57.588080+00:00",
+     "side": "ask",
+     "price_cents": 19,
+     "quantity": "9.4200",
+     "print_id": "0721c1d6-6809-b535-c234-5efb4939a019",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T04:54:57.630447+00:00",
+     "side": "ask",
+     "price_cents": 19,
+     "quantity": "0.5800",
+     "print_id": "0721c1d6-6809-8031-c877-f49f86eae921",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:03:37.486544+00:00",
+     "side": "bid",
+     "price_cents": 18,
+     "quantity": "2.0000",
+     "print_id": "0721ce98-d529-b47d-155b-8b627ba61cac",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:03:37.486544+00:00",
+     "side": "bid",
+     "price_cents": 18,
+     "quantity": "1.0000",
+     "print_id": "0721cdc2-ee51-bc17-1fe6-2b2ff610a2db",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:03:37.486544+00:00",
+     "side": "bid",
+     "price_cents": 18,
+     "quantity": "2.0000",
+     "print_id": "0721cce2-b4b9-b377-2786-0be652003b80",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:03:37.486544+00:00",
+     "side": "bid",
+     "price_cents": 18,
+     "quantity": "5.0000",
+     "print_id": "0721c1fc-1141-ba9c-02a6-8ace6dea2d47",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T05:04:50.309485+00:00",
+     "side": "ask",
+     "price_cents": 15,
+     "quantity": "2.0000",
+     "print_id": "0721c1f5-9d69-88a1-9f93-b2d04f9e4a8a",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:04:50.309485+00:00",
+     "side": "ask",
+     "price_cents": 15,
+     "quantity": "8.0000",
+     "print_id": "0721c1f5-9ab9-8b32-a488-f62a05526bd8",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T05:05:27.595951+00:00",
+     "side": "ask",
+     "price_cents": 24,
+     "quantity": "0.0100",
+     "print_id": "0721c1f8-c001-acf6-dba6-5e0cf0a6a86f",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:05:27.595951+00:00",
+     "side": "ask",
+     "price_cents": 24,
+     "quantity": "2.0000",
+     "print_id": "0721c1f4-f231-ae42-ffa4-cd5e9d719167",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:05:27.595951+00:00",
+     "side": "ask",
+     "price_cents": 24,
+     "quantity": "0.0100",
+     "print_id": "0721c1f4-eba1-ac95-ce35-38197cafa1bd",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:05:27.595951+00:00",
+     "side": "ask",
+     "price_cents": 24,
+     "quantity": "7.9800",
+     "print_id": "0721c1f4-5199-a398-df73-9ce5e74eb225",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T05:05:48.754066+00:00",
+     "side": "ask",
+     "price_cents": 27,
+     "quantity": "0.0100",
+     "print_id": "0721c1fe-08e1-932a-8197-0729b74c4279",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:05:48.754066+00:00",
+     "side": "ask",
+     "price_cents": 27,
+     "quantity": "9.9900",
+     "print_id": "0721c1f2-36b9-935e-ab94-15db57b2f1d9",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T05:06:06.479754+00:00",
+     "side": "ask",
+     "price_cents": 30,
+     "quantity": "0.0100",
+     "print_id": "0721c1f3-1d91-95d6-5efa-3f70f56ab0ab",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:06:06.479754+00:00",
+     "side": "ask",
+     "price_cents": 30,
+     "quantity": "0.0100",
+     "print_id": "0721c1f3-1d91-9284-4ded-d7dceefae381",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:06:06.479754+00:00",
+     "side": "ask",
+     "price_cents": 30,
+     "quantity": "2.0000",
+     "print_id": "0721c1f2-7ab9-9097-4189-8946192e4f0a",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:06:06.479754+00:00",
+     "side": "ask",
+     "price_cents": 30,
+     "quantity": "0.0100",
+     "print_id": "0721c1f2-3b39-9dc5-7044-74aafa11c632",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:06:06.479754+00:00",
+     "side": "ask",
+     "price_cents": 30,
+     "quantity": "0.0100",
+     "print_id": "0721c1f2-3b39-9195-5ada-d70a47d48c39",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:06:06.479754+00:00",
+     "side": "ask",
+     "price_cents": 30,
+     "quantity": "7.9600",
+     "print_id": "0721c1f2-2b59-9d75-5fcf-846fdca503f7",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T05:06:32.773477+00:00",
+     "side": "bid",
+     "price_cents": 36,
+     "quantity": "10.0000",
+     "print_id": "0721c1f1-b629-a927-9b8f-740dfdb27982",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T05:07:04.894441+00:00",
+     "side": "ask",
+     "price_cents": 39,
+     "quantity": "3.0000",
+     "print_id": "0721c190-efd9-bb5e-7fa6-bc293c3e3383",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T05:07:04.894441+00:00",
+     "side": "ask",
+     "price_cents": 39,
+     "quantity": "7.0000",
+     "print_id": "0721c190-efd9-b2bc-6adf-21dafdfee7e4",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T05:07:35.525164+00:00",
+     "side": "ask",
+     "price_cents": 45,
+     "quantity": "0.0100",
+     "print_id": "0721c18d-e951-98b9-fdb3-3c3e55c682d3",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:07:35.750196+00:00",
+     "side": "ask",
+     "price_cents": 45,
+     "quantity": "0.0100",
+     "print_id": "0721c192-c011-bcc1-e747-9a6412c337a9",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:07:35.750196+00:00",
+     "side": "ask",
+     "price_cents": 45,
+     "quantity": "9.9800",
+     "print_id": "0721c192-3941-b640-e322-2ff4cc0e01fa",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T05:07:39.399142+00:00",
+     "side": "bid",
+     "price_cents": 41,
+     "quantity": "7.0000",
+     "print_id": "0721c192-c0e9-93eb-18b3-558116ab7073",
+     "fee": "0.0300"
+    },
+    {
+     "at": "2026-09-04T05:07:39.399142+00:00",
+     "side": "bid",
+     "price_cents": 41,
+     "quantity": "3.0000",
+     "print_id": "0721c192-8eb9-9fd4-2c16-560241cf888e",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T05:08:02.688276+00:00",
+     "side": "bid",
+     "price_cents": 41,
+     "quantity": "4.0000",
+     "print_id": "0721c195-4ad9-866c-2f93-15672e84ab4a",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T05:08:02.688276+00:00",
+     "side": "bid",
+     "price_cents": 41,
+     "quantity": "4.4500",
+     "print_id": "0721c195-46c1-8ced-089e-12c32fff4ab0",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T05:08:02.688276+00:00",
+     "side": "bid",
+     "price_cents": 41,
+     "quantity": "0.0100",
+     "print_id": "0721c194-bd69-8563-162e-ed956f0d8640",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:08:02.688276+00:00",
+     "side": "bid",
+     "price_cents": 41,
+     "quantity": "1.5400",
+     "print_id": "0721c194-bd69-831d-1559-20376416d209",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:08:39.079766+00:00",
+     "side": "ask",
+     "price_cents": 37,
+     "quantity": "10.0000",
+     "print_id": "0721c197-b919-96a0-d592-1d11bcbcf353",
+     "fee": "0.0500"
+    },
+    {
+     "at": "2026-09-04T05:09:01.586026+00:00",
+     "side": "bid",
+     "price_cents": 35,
+     "quantity": "4.7200",
+     "print_id": "0721c196-5c69-8b9a-f5f9-0367ab7ce5df",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T05:09:02.121811+00:00",
+     "side": "ask",
+     "price_cents": 39,
+     "quantity": "0.0100",
+     "print_id": "0721c196-d869-811c-06a0-9dc4350e7c21",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:09:02.121811+00:00",
+     "side": "ask",
+     "price_cents": 39,
+     "quantity": "0.0100",
+     "print_id": "0721c196-cca1-8fcd-1141-3157f967d693",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:09:02.121811+00:00",
+     "side": "ask",
+     "price_cents": 39,
+     "quantity": "1.0000",
+     "print_id": "0721c196-a711-8e59-0ffb-2336383b996b",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:09:02.121811+00:00",
+     "side": "ask",
+     "price_cents": 39,
+     "quantity": "8.9800",
+     "print_id": "0721c196-0f09-8c86-0ba0-37f93d1addcf",
+     "fee": "0.0400"
+    },
+    {
+     "at": "2026-09-04T05:09:18.584357+00:00",
+     "side": "bid",
+     "price_cents": 35,
+     "quantity": "4.0000",
+     "print_id": "0721c19a-f541-bfc8-c753-60660c21c65b",
+     "fee": "0.0200"
+    },
+    {
+     "at": "2026-09-04T05:09:18.584357+00:00",
+     "side": "bid",
+     "price_cents": 35,
+     "quantity": "1.2800",
+     "print_id": "0721c19a-ccf1-b66b-f583-0db1293013ca",
+     "fee": "0.0100"
+    },
+    {
+     "at": "2026-09-04T05:09:31.014888+00:00",
+     "side": "ask",
+     "price_cents": 96,
+     "quantity": "10.0000",
+     "print_id": "0721c1e9-f0e9-b6b8-046d-201f5b4f6543",
+     "fee": "0.0100"
+    }
+   ],
+   "contracts_filled": "906.5200",
+   "fees": "5.1100",
+   "trading_cash": "-23.9384",
+   "settlement_cash": "12.8200",
+   "net_pnl": "-16.2284",
+   "peak_collateral": "56.5921",
+   "slow_net_pnl": "-19.6884",
+   "slow_contracts_filled": "886.52",
+   "books_loaded": null,
+   "prints_fetched": 29681
+  }
+ ],
+ "left_out": [
+  {
+   "ticker": "KXMLBGAME-26SEP041915DETCLEG2-DET",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26SEP041915DETCLEG2-CLE",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26SEP041410DETCLEG1-DET",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26SEP041410DETCLEG1-CLE",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26AUG292205AZSFG2-SF",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26AUG292205AZSFG2-AZ",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26AUG291915BOSNYYG2-NYY",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26AUG291915BOSNYYG2-BOS",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26AUG291605AZSFG1-SF",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26AUG291605AZSFG1-AZ",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26AUG291305BOSNYYG1-NYY",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26AUG291305BOSNYYG1-BOS",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26AUG171840STLCING2-STL",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26AUG171840STLCING2-CIN",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26AUG171340STLCING1-STL",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26AUG171340STLCING1-CIN",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26JUL171910TBBOSG2-TB",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26JUL171910TBBOSG2-BOS",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26JUL171335TBBOSG1-TB",
+   "status": "UNPARSEABLE_TICKER"
+  },
+  {
+   "ticker": "KXMLBGAME-26JUL171335TBBOSG1-BOS",
+   "status": "UNPARSEABLE_TICKER"
+  }
+ ],
+ "verdict": {
+  "arm": "B",
+  "adequate_sample": false,
+  "sample": "1 settled games (need 100)",
+  "primary": {
+   "markets": 1,
+   "net_pnl": "-16.2284",
+   "contracts_filled": "906.5200",
+   "positive_markets": 0,
+   "positive_share": "0.000",
+   "net_per_contract": "-0.0179",
+   "c1_earns": false,
+   "c2_not_one_market": false,
+   "c3_clears_noise": false
+  },
+  "slow_latency": {
+   "markets": 1,
+   "net_pnl": "-19.6884",
+   "contracts_filled": "886.5200",
+   "positive_markets": 0,
+   "positive_share": "0.000",
+   "net_per_contract": "-0.0222",
+   "c1_earns": false,
+   "c2_not_one_market": false,
+   "c3_clears_noise": false
+  },
+  "c4_survives_slow": false,
+  "verdict": "INCONCLUSIVE"
+ },
+ "sensitivity_grid": [],
+ "runtime_seconds": 4.4
+}
