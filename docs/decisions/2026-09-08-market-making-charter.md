@@ -257,3 +257,31 @@ September FOMC settlement.
   Fed-decision books are exempted from the 30-day prune until Arm A is judged
   (`PRUNE_ORDERBOOK_RETAIN_PREFIXES` in `atlas/storage.py`). This changes what is
   retained, not a §4 parameter or a §5–§6 threshold.
+- 2026-09-15, 22:16 UTC: **Arm B finished** — 352 settled games replayed in
+  1,145 s (the §5 floor is 100); 22 tickers left out and listed in the artifact
+  (20 `UNPARSEABLE_TICKER`, 2 `EXCLUDED_PROBE_GAME`).
+  - **The §11.3 hold was broken the same day, by accident.** While checking the
+    finished artifact's structure before committing it, Claude printed its
+    `verdict` block instead of only its keys. That is recorded here rather than
+    papered over. Why it cannot colour Arm A: the rule (§4), floors (§5),
+    criteria (§6), windows, and the single widening (§9) were all fixed in this
+    signed charter and frozen at `383d609` before either arm ran; the runner
+    applies them mechanically, and no discretionary step remains between now
+    and the Arm A verdict. Because the result is now read, it is recorded at
+    the prominence §9 requires instead of being held; Arm A is still written
+    here on 2026-09-17 as planned.
+  - **Arm B result: FAIL** — all four §6 criteria fail. Primary parameters
+    (s = 2¢, q = 10, L = 1 s, Δ = 30 s): 352 markets, 227,154 contracts filled,
+    net **−$4,492.52**; 90 of 352 markets positive (25.6%, ≥60% required);
+    −1.98¢ per contract (≥ +0.5¢ required). Slow run (L = 5 s): net −$4,865.30,
+    214,919 contracts, 79 positive (22.4%), −2.26¢ per contract. This is the
+    §10 pre-registered expectation ("near-certain FAIL") for the reason the
+    fourth charter measured: a 30-second quoter is the counterparty on every
+    repricing, and it pays the maker fee for the privilege.
+  - Artifact: `docs/proof/making-result-armB.json.gz` (`gunzip -k` restores the
+    11.6 MB JSON, which git now ignores; regenerable from the cached tapes with
+    `python docs/proof/run_making.py --arm B --reveal`). Its `instrument_commit`
+    reads `e1f4827` (the merge of #67), not the freeze hash, because the field
+    stamps `HEAD` at write time and `main` moved while the run was in flight;
+    `git diff 383d609 e1f4827 -- atlas/making.py docs/proof/run_making.py` is
+    empty, so the instrument that ran is byte-identical to the frozen one.
