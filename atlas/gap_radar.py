@@ -350,6 +350,13 @@ def _baskets(
     return baskets
 
 
+def polymarket_fee_terms(raw_market: dict) -> dict:
+    """The venue fields ``polymarket_taker_fee_per_share`` reads, verbatim, so a
+    replay can price the same leg at a later quote exactly as the radar did."""
+    return {key: raw_market[key] for key in ("feesEnabled", "feeSchedule", "feeCoefficient")
+            if key in raw_market}
+
+
 def observe_pair(
     pair: dict,
     observed_at: str | None = None,
@@ -410,6 +417,7 @@ def observe_pair(
         "best_basket_size": str(best_size) if best_size is not None else None,
         "polymarket_venue": polymarket_market.venue.value,
         "tradeable_venue_pair": polymarket_leg_is_tradeable(polymarket_market),
+        "polymarket_fee_terms": polymarket_fee_terms(polymarket_market.raw_market_json),
         "polymarket_fill_assumed_at_quote": not sized_at_book,
         # Descriptive caution tag + lock-up horizon. Gates nothing.
         "settlement_timing": settlement_timing_annotation(
