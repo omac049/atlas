@@ -1384,6 +1384,7 @@ async def gaps_scan(live: bool) -> None:
         paper_bankroll_summary,
         polymarket_leg_is_tradeable,
     )
+    from atlas.latency import burst_books, burst_eligible
 
     kalshi = KalshiVenue(fixture=not live)
     globalpm = PolymarketGlobalHistoricalVenue(tag_ids=GAP_RADAR_GLOBAL_TAG_IDS)
@@ -1406,6 +1407,7 @@ async def gaps_scan(live: bool) -> None:
     executable = 0
     tradeable_pairs = 0
     tradeable_executable = 0
+    burst_ran = False
     for pair in pairs:
         polymarket_market = pair["polymarket_market"]
         sizes = None
@@ -1419,6 +1421,20 @@ async def gaps_scan(live: bool) -> None:
             tradeable_executable += 1
         await store.save_gap_observation(observation)
         recorded += 1
+        # Study phase 2 instrumentation: right after the first tradeable
+        # executable gap is recorded, sample both legs' books on a sub-second
+        # cadence so the latency replay has the "next recorded quotes" the
+        # 5-minute sweep never records. One pair per pass; read-only.
+        if live and not burst_ran and burst_eligible(observation):
+            burst_ran = True
+            try:
+                counts = await burst_books(kalshi, pmus, store, observation)
+                print(
+                    f"  quote_burst {observation['event_subject']} kalshi={counts['kalshi']} "
+                    f"polymarket_us={counts['polymarket_us']} errors={counts['errors']}"
+                )
+            except Exception as exc:  # noqa: BLE001 - instrumentation must not fail the scan
+                print(f"  quote_burst_failed={type(exc).__name__}")
         if observation["executable_gap"]:
             executable += 1
             # A gap without its depth is not a finding. Live GDP pairs on
@@ -1487,6 +1503,29 @@ async def gaps_study(write: bool = True) -> None:
         target = directory / f"study-report-{stamp}.json"
         target.write_text(json.dumps(report, indent=2) + "\n")
         print(f"study_report_written={target}")
+    await gaps_latency(write=write)
+
+
+async def gaps_latency(write: bool = True) -> None:
+    """Study phase 2: the latency replay over burst-sampled quotes (atlas/latency.py)."""
+    from atlas.latency import latency_report
+
+    report = await latency_report(AtlasStore())
+    per_delay = " ".join(
+        f"{key}:survived={row['survived']}/{row['measurable']}"
+        for key, row in report["summary"].items()
+    )
+    print(
+        f"latency_report: eligible={report['eligible_observations']} "
+        f"with_bursts={report['observations_with_bursts']} {per_delay}"
+    )
+    if write:
+        directory = Path("data/study")
+        directory.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now(UTC).strftime("%Y%m%d")
+        target = directory / f"latency-report-{stamp}.json"
+        target.write_text(json.dumps(report, indent=2) + "\n")
+        print(f"latency_report_written={target}")
 
 
 async def intel_report(write: bool = True) -> None:
@@ -1967,6 +2006,12 @@ def main() -> None:
     gaps_study_parser.add_argument(
         "--no-write", action="store_true", help="print only; skip the dated JSON artifact"
     )
+    gaps_latency_parser = gaps_sub.add_parser(
+        "latency", help="study phase 2: latency replay over burst-sampled quotes"
+    )
+    gaps_latency_parser.add_argument(
+        "--no-write", action="store_true", help="print only; skip the dated JSON artifact"
+    )
     gaps_sub.add_parser("status")
     intel = sub.add_parser(
         "intel", help="contract-intelligence reports over persisted evidence"
@@ -2157,6 +2202,8 @@ def main() -> None:
         asyncio.run(gaps_scan(args.live))
     elif args.command == "gaps" and args.action == "study":
         asyncio.run(gaps_study(write=not args.no_write))
+    elif args.command == "gaps" and args.action == "latency":
+        asyncio.run(gaps_latency(write=not args.no_write))
     elif args.command == "intel" and args.action == "report":
         asyncio.run(intel_report(write=not args.no_write))
     elif args.command == "clarity" and args.action == "grade":

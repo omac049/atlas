@@ -281,3 +281,41 @@ are the honest test of whether a tradeable gap ever opens at all.
     Polymarket twin's official sources resolve, so a "locked" basket is not
     actually locked — that risk is what the curve is measuring, not a gap to act
     on.
+
+- **2026-09-15 (day 28) — phase 2 instrumentation: burst sampling and the
+  latency replay.** Not a rule change: no normalizer, verifier, or settlement
+  code moved, and no existing metric changed shape. What changed and why:
+  - **Finding that forced it:** the phase-2 text asks for a replay against "the
+    next recorded quotes" at 250 ms–2 s. Those quotes did not exist. The radar
+    sweeps every 5 minutes and records nothing in between; the book stream
+    watches only the twelve Fed-decision markets. Measured on 2026-09-15: of the
+    200 most recent executable Polymarket-US observations, **0** had a Kalshi
+    book within 2 s, and Polymarket-US books arrive about every 379 s. A replay
+    over recorded data would have reported "unmeasurable" for every row.
+  - **Instrument added (`atlas/latency.py`):** the moment a live radar pass
+    records its first tradeable executable Polymarket-US gap, both legs' books
+    are fetched every 250 ms for 20 s and saved as ordinary snapshots through
+    the ordinary path (one pair per pass; two legs at four requests a second
+    stays inside both venues' public read limits). The observation itself is
+    not modified.
+  - **Field added to every observation:** `polymarket_fee_terms`, the three
+    venue fields the radar's own fee function reads (`feesEnabled`,
+    `feeSchedule`, `feeCoefficient`), so a delayed quote is priced exactly as the
+    original was. Additive; earlier observations lack it and are reported as
+    not measurable rather than guessed.
+  - **Measurement (`atlas gaps latency`, also written by the Monday study run
+    as `data/study/latency-report-<date>.json`):** for each burst-covered
+    observation and each delay, the latest book strictly after the observation
+    and at or before observation + delay is taken for each leg; the
+    fee-adjusted basket is rebuilt with the radar's basket arithmetic; the row
+    survives only if both legs are still quoted with size and the gap is still
+    positive. Reported per delay: measurable count, survivors and share,
+    one-leg-only count (legging exposure), partial-fill count (size shrank),
+    median gap after delay, and median latency-adjusted annualized return on
+    locked capital. A 250 ms row can legitimately read "no quote within delay"
+    when the first sample lands later than that; it is reported, not filled in.
+  - **Which metrics it can move:** none of the existing ones. It adds the
+    phase-2 inputs the decision rule names ("positive edge surviving … phase-2
+    latency adjustment", "low frequency of one-leg-only fills"). Numbers
+    accumulate only from deployment on 2026-09-15; the first Monday report with
+    data is 2026-09-21.

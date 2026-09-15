@@ -313,6 +313,20 @@ class AtlasStore:
             )
             await db.commit()
 
+    async def orderbooks_between(
+        self, market_id: str, start: datetime, end: datetime
+    ) -> list[OrderBook]:
+        """Snapshots for one market with start < timestamp <= end, oldest first."""
+        await self.initialize()
+        async with aiosqlite.connect(self.path) as db:
+            cursor = await db.execute(
+                "SELECT payload_json FROM orderbook_snapshots "
+                "WHERE market_id = ? AND timestamp > ? AND timestamp <= ? ORDER BY timestamp",
+                (market_id, start.isoformat(), end.isoformat()),
+            )
+            rows = await cursor.fetchall()
+        return [OrderBook.model_validate_json(row[0]) for row in rows]
+
     async def latest_orderbooks(self, limit: int = 20) -> list[OrderBook]:
         await self.initialize()
         async with aiosqlite.connect(self.path) as db:

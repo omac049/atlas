@@ -34,6 +34,19 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
 
 - [ ] Remaining scheduled instrumentation runs itself: Sep 11 CPI window, Sep
   16 FOMC + C6 (label-loop test), Nov 17 study decision (already NO-GO).
+- [x] **2026-09-15 — study phase 2 instrumentation shipped (due day 31, 9/18).**
+  The charter's latency replay needs "the next recorded quotes" at 250 ms–2 s,
+  and none existed (0 of the 200 latest executable PM-US observations had a
+  Kalshi book within 2 s). `atlas/latency.py`: the live radar now bursts both
+  legs' books every 250 ms for 20 s the moment it records its first tradeable
+  executable PM-US gap; every observation now carries `polymarket_fee_terms`;
+  `atlas gaps latency` (and the Monday study run) replays burst-covered
+  observations at 0.25/0.5/1/2 s with the radar's own basket arithmetic and
+  reports survival, one-leg-only, partial fills, and latency-adjusted return on
+  locked capital. Charter amendment recorded. First report with data: 9/21.
+- [ ] After 9/21: read `data/study/latency-report-*.json`; if `observations_with_bursts`
+  stays 0 for a week, the radar is not seeing tradeable executable PM-US gaps at
+  all — record that as the phase-2 result rather than widening the sampler.
 - [ ] OWNER DECISION, not urgent: drop Atlas to cheap-monitor mode and point
   the method at a demand-first question in a different domain — or keep it as
   a research instrument. No fifth market hypothesis.
