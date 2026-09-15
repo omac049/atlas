@@ -28,3 +28,6 @@ dist/
 
 # wrangler's local cache (account id, project name) — not source
 .wrangler/
+
+# Raw market-making replay artifacts run to 10+ MB; the committed copies are gzipped.
+docs/proof/making-result-*.json
