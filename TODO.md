@@ -46,10 +46,19 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   locked capital. Charter amendment recorded. First report with data: 9/21.
 - [x] **2026-09-15 — the first live burst exposed a radar defect:** Polymarket
   US allows ~5 book reads per 10 s, and the radar read the 36 tradeable legs
-  back to back (10 books, 26 × 429) — about half of PM-US observations since
-  9/7 have no basket size for that reason alone. Radar reads now spaced 2.5 s
-  (`VenuePacer`); the burst samples Kalshi at 250 ms and PM-US at 2.5 s and
-  obeys Retry-After. Charter amendment (b) recorded.
+  back to back (10 books, 26 × 429). Refusals began 9/13 (PM-US size known:
+  93–100% before, 31% on 9/13–9/15); they zero `polymarket_size`, `basket_size`
+  and set `polymarket_fill_assumed_at_quote`, not `best_basket_size` (an
+  earlier version of this line said otherwise — corrected in the charter).
+  Radar reads now spaced 2.5 s (`VenuePacer`, 36 of 36 succeed); the burst
+  samples Kalshi at 250 ms and PM-US at 2.5 s and obeys Retry-After. Charter
+  amendment (b) recorded and corrected.
+- [x] **2026-09-15 — the Kalshi NO side was never sized.** Kalshi publishes
+  `yes_ask_size_fp` / `yes_bid_size_fp` only; the radar read a non-existent
+  `no_ask_size_fp`, so every `kalshi_no` basket has read `BELOW_FLOOR` with no
+  size since the floor was added on 8/20 (20 of 36 tradeable observations on
+  the first paced pass). NO-side size now comes from the mirrored YES bid.
+  Charter amendment (c) recorded.
 - [x] **2026-09-15 — the daily backfill was starving the radar.** It has timed
   out on 197 of 221 runs (shared catalog fetch > 300 s, every tag > 120 s); a
   timed-out batch saves no report, so it was retried on *every* monitor pass —

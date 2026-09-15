@@ -320,19 +320,54 @@ are the honest test of whether a tradeable gap ever opens at all.
     accumulate only from deployment on 2026-09-15; the first Monday report with
     data is 2026-09-21.
 
-- **2026-09-15 (day 28, b) — Polymarket US depth reads were being lost to the
-  gateway's rate limit.** Found by the first live burst (9 Polymarket books
-  and 16 errors in 20 s) and confirmed directly: the US gateway allows about
-  five book reads per ten seconds and answers 429 with a Retry-After beyond
-  that; a back-to-back sweep over the 36 tradeable legs, which is what the
-  radar did on every pass, got 10 books and 26 refusals. That is why roughly
-  half of all Polymarket-US observations since 2026-09-07 carry no basket size
-  (`best_basket_size` null → `meets_size_floor` false → `BELOW_FLOOR`), on
-  top of the legs whose book is genuinely empty. Not a rule change: the radar
-  now spaces its Polymarket US book reads 2.5 s apart (`VenuePacer`), and the
-  burst reads that leg at the same spacing and obeys Retry-After.
-  - **Which metrics it can move:** `best_basket_size` and `meets_size_floor` on
-    Polymarket-US observations from 2026-09-15 on will be *known* more often;
-    their definitions, `executable_gap`, and every go/no-go input are
-    unchanged. Any before/after comparison of the size floor across this date
-    must allow for the depth simply being visible now.
+- **2026-09-15 (day 28, b) — Polymarket US depth reads were refused by the
+  gateway's rate limit from 2026-09-13.** Found by the first live burst (9
+  Polymarket books and 16 errors in 20 s) and confirmed directly: the US
+  gateway allows about five book reads per ten seconds and answers 429 with a
+  Retry-After beyond that; a back-to-back sweep over the 36 tradeable legs,
+  which is what the radar did on every pass, got 10 books and 26 refusals.
+  Not a rule change: the radar now spaces its Polymarket US book reads 2.5 s
+  apart (`VenuePacer`), and the burst reads that leg at the same spacing and
+  obeys Retry-After. A paced replay of the same 36 legs read 36 of 36.
+  - **Corrected the same evening.** This note first said "roughly half of all
+    Polymarket-US observations since 2026-09-07 carry no basket size for that
+    reason alone". That was wrong. Measured from the recorded observations:
+    the Polymarket size was known on 93–100% of Polymarket-US observations
+    from 9/8 to 9/12 and on **31%** from 9/13 to 9/15 — the refusals began on
+    9/13, the day the timed-out daily backfill started re-running on every
+    monitor pass (its shared-catalog fetch hits the same gateway from the same
+    address; see `TODO.md`). What a refused read zeroes is `polymarket_size`,
+    and with it `basket_size` (both legs sized) and
+    `polymarket_fill_assumed_at_quote` (true on 69% of today's pre-fix
+    observations, 0% on the first paced pass). It does **not** zero
+    `best_basket_size`, which falls back to the Kalshi-only size; the ~50% of
+    observations with no `best_basket_size` are the Kalshi side, see (c).
+  - **Which metrics it can move:** `polymarket_fill_assumed_at_quote` (true →
+    false), `basket_size` (unknown → the thinner leg), and through it
+    `best_basket_size` and `meets_size_floor`: a basket that passed the floor
+    on Kalshi depth alone may now fail it on the usually far thinner
+    Polymarket depth (first paced pass: 455.59 Polymarket contracts against
+    145,332 Kalshi on the same basket). The paper meter skips assumed-fill
+    rows, so its eligible population grows. Definitions, `executable_gap`, and
+    every go/no-go input are unchanged; comparisons across 9/13–9/15 must
+    allow for the refusals, and across 9/15 for the fix.
+
+- **2026-09-15 (day 28, c) — the Kalshi NO side was never sized.** Kalshi
+  publishes one book, as `yes_ask_size_fp` and `yes_bid_size_fp`; the NO ask
+  is the YES bid mirrored (`no_ask = 1 − yes_bid`) and its displayed size is
+  `yes_bid_size_fp`. `kalshi_quotes` read a `no_ask_size_fp` field that does
+  not exist in the live payload (checked 2026-09-15), so every `kalshi_no+…`
+  basket has carried no Kalshi size since the size floor was added on
+  2026-08-20 — 20 of the 36 tradeable observations on the first paced pass,
+  every one of them a `kalshi_no` basket — and read `BELOW_FLOOR` with
+  `best_basket_size` null whatever the real depth. Fixed: the NO-side size
+  falls back to `yes_bid_size_fp` (and the YES side to `no_bid_size_fp`);
+  pinned by test. Not a rule change.
+  - **Which metrics it can move:** `kalshi_size`, `basket_size`,
+    `best_basket_size`, `meets_size_floor` on `kalshi_no` baskets from now on
+    (unknown → known; some will now pass the floor). One second-order effect:
+    the parser's existing rule "a zero-size ask is no quote" can now see that
+    a placeholder `$1.00` NO ask sits over a zero-size YES bid, so that NO
+    quote is dropped, and a market quoted only that way is no longer recorded
+    as an observation at all. Prices, `best_gap`, `executable_gap`, and the
+    frozen rules are unchanged.
