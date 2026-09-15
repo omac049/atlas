@@ -12,6 +12,11 @@ from atlas.models import ContractPair, Opportunity, OrderBook, PaperTradeRecord
 # How long raw order-book snapshots stay useful, and how many of the
 # newest-row-only report tables `prune()` keeps around for debugging.
 PRUNE_ORDERBOOK_MAX_AGE_DAYS = 30
+# Kept past the 30-day window while the fifth charter's Arm A is open: its queue
+# model reads these books back to 2026-08-21, and the charter widens Arm A to
+# markets settling by 2026-10-28. Remove once that arm's result is written
+# (docs/decisions/2026-09-08-market-making-charter.md).
+PRUNE_ORDERBOOK_RETAIN_PREFIXES = ("kalshi:KXFEDDECISION-",)
 PRUNE_KEEP_NEWEST = 20
 
 SCHEMA = """
@@ -238,7 +243,9 @@ class AtlasStore:
         """Delete stale operational rows; returns rows deleted per table.
 
         Removes only reproducible operational exhaust:
-        - ``orderbook_snapshots`` older than ``PRUNE_ORDERBOOK_MAX_AGE_DAYS``
+        - ``orderbook_snapshots`` older than ``PRUNE_ORDERBOOK_MAX_AGE_DAYS``,
+          except markets whose id starts with a ``PRUNE_ORDERBOOK_RETAIN_PREFIXES``
+          entry (the fifth charter's Arm A input, retained until it is judged)
         - ``catalog_reports``, ``discovery_scans``, and ``agent_runs`` beyond
           the newest ``PRUNE_KEEP_NEWEST`` rows (only their newest row is ever
           read; the rest is kept purely as a short debugging tail)
@@ -257,8 +264,11 @@ class AtlasStore:
         ).isoformat()
         deleted: dict[str, int] = {}
         async with aiosqlite.connect(self.path) as db:
+            keep = " AND ".join("market_id NOT LIKE ?" for _ in PRUNE_ORDERBOOK_RETAIN_PREFIXES)
             cursor = await db.execute(
-                "DELETE FROM orderbook_snapshots WHERE timestamp < ?", (cutoff,)
+                "DELETE FROM orderbook_snapshots WHERE timestamp < ?"
+                + (f" AND {keep}" if keep else ""),
+                (cutoff, *[f"{prefix}%" for prefix in PRUNE_ORDERBOOK_RETAIN_PREFIXES]),
             )
             deleted["orderbook_snapshots"] = cursor.rowcount
             for table, id_column in (

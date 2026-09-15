@@ -1,7 +1,7 @@
 # The market-making charter (fifth hypothesis)
 
-**Status: PROPOSED — awaiting owner sign-off.** Merging this file to `main`
-constitutes sign-off on the theory, the instrument definition, and every
+**Status: SIGNED — merged to `main` by the owner on 2026-09-08 (#32).** Merging
+this file constituted sign-off on the theory, the instrument definition, and every
 threshold below. Nothing may change after the freeze commit named in §7.
 
 **Lineage.** Hypotheses one through four tested whether an outsider with public
@@ -239,4 +239,12 @@ September FOMC settlement.
 - Proposed: 2026-09-08 (Claude, having verified the tape and book endpoints
   and computed no P&L).
 - Freeze commit: _pending — recorded after sign-off._
-- Owner signature: _pending — merging this file constitutes sign-off._
+- Owner signature: merged 2026-09-08 (#32).
+- 2026-09-15, before the freeze: the September markets cannot satisfy §5. Five
+  `KXFEDDECISION-26SEP-*` markets settle on 2026-09-16, but Atlas holds book
+  snapshots for only three (H0, H26, C26), so Arm A's primary run on
+  2026-09-17 is expected to read INCONCLUSIVE and widen once, per §9, to
+  markets settling by 2026-10-28. To keep that widened run possible, the
+  Fed-decision books are exempted from the 30-day prune until Arm A is judged
+  (`PRUNE_ORDERBOOK_RETAIN_PREFIXES` in `atlas/storage.py`). This changes what is
+  retained, not a §4 parameter or a §5–§6 threshold.
