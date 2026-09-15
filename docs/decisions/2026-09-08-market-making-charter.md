@@ -238,7 +238,16 @@ September FOMC settlement.
 
 - Proposed: 2026-09-08 (Claude, having verified the tape and book endpoints
   and computed no P&L).
-- Freeze commit: _pending — recorded after sign-off._
+- Freeze commit: `383d609f739166d07df8e0ff2923ef74291bba50` (merge of #65,
+  2026-09-15). The instrument was validated before this commit only on the
+  excluded probe game, STL at LAD on 2026-09-03 (`docs/proof/making-probe.json`:
+  29,681 prints, 657 quotes, 227 fills, net −$16.23), and on synthetic tapes in
+  `tests/test_making.py`. No fill, fee or P&L was computed on any sampled
+  market before the freeze.
+- 2026-09-15: Arm B started from the freeze commit on `main`; its artifact is
+  `docs/proof/making-result-armB.json` and its verdict stays unread until Arm A
+  has run (§11.3). Arm A runs on 2026-09-17 against the markets that settle on
+  2026-09-16.
 - Owner signature: merged 2026-09-08 (#32).
 - 2026-09-15, before the freeze: the September markets cannot satisfy §5. Five
   `KXFEDDECISION-26SEP-*` markets settle on 2026-09-16, but Atlas holds book
