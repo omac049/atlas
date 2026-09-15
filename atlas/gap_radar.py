@@ -238,8 +238,16 @@ def kalshi_quotes(market: Market) -> dict[str, Decimal | None] | None:
     raw = market.raw_market_json
     yes_ask = _decimal(raw.get("yes_ask_dollars"))
     no_ask = _decimal(raw.get("no_ask_dollars"))
+    # Kalshi publishes one book: the NO ask is the YES bid mirrored (1 - yes_bid)
+    # and its displayed size is yes_bid_size_fp. The live payload carries no
+    # no_ask_size_fp (checked 2026-09-15); reading only that field left every
+    # kalshi_no basket unsized from the day the size floor was added.
     yes_size = _decimal(raw.get("yes_ask_size_fp"))
+    if yes_size is None:
+        yes_size = _decimal(raw.get("no_bid_size_fp"))
     no_size = _decimal(raw.get("no_ask_size_fp"))
+    if no_size is None:
+        no_size = _decimal(raw.get("yes_bid_size_fp"))
     if yes_ask is not None and (yes_ask <= 0 or (yes_size is not None and yes_size <= 0)):
         yes_ask = None
     if no_ask is not None and (no_ask <= 0 or (no_size is not None and no_size <= 0)):

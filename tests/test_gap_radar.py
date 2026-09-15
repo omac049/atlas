@@ -58,6 +58,22 @@ def _polymarket_tail(raw: dict):
     return _market("polymarket_us", POLYMARKET_TAIL_TITLE, POLYMARKET_CPI_RULES, raw)
 
 
+def test_kalshi_no_side_depth_is_the_mirrored_yes_bid():
+    """Kalshi publishes one book: there is no no_ask_size_fp; the NO ask's
+    displayed size is the YES bid's."""
+    quotes = kalshi_quotes(_kalshi_t31({
+        "yes_ask_dollars": "0.41", "yes_ask_size_fp": "900",
+        "no_ask_dollars": "0.60", "yes_bid_dollars": "0.40", "yes_bid_size_fp": "420",
+    }))
+    assert quotes["no_size"] == Decimal(420) and quotes["yes_size"] == Decimal(900)
+    # A placeholder $1.00 NO ask over a zero-size YES bid is no quote at all.
+    quotes = kalshi_quotes(_kalshi_t31({
+        "yes_ask_dollars": "0.01", "yes_ask_size_fp": "6583.00",
+        "no_ask_dollars": "1.0000", "yes_bid_dollars": "0.0000", "yes_bid_size_fp": "0.00",
+    }))
+    assert quotes["no_ask"] is None and quotes["yes_ask"] == Decimal("0.01")
+
+
 def test_matches_real_cpi_tail_pair_as_inverse_shape():
     pairs = match_twin_shapes([_kalshi_t31({})], [_polymarket_tail({})])
     assert len(pairs) == 1
