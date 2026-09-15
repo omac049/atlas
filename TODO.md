@@ -1093,7 +1093,7 @@ evidence. The point of the 90 days is to let this accumulate.
   families are already on `main` with tests; the branches are dead duplicates.
 - [x] Demand-test site generator (`atlas site build`, `docs/SITE.md`) — owner: domain, hosting, Search Console, affiliate applications
 - [ ] samebetornot.com affiliates: Polymarket US application emailed 2026-09-08 (owner), awaiting reply → if approved, wire the link into the referral/fee pages as sponsored with the on-page disclosure; the Dub Polymarket program (approved 2026-09-08) lands on polymarket.com and is not used
-- [ ] Fifth charter (market making, paper-only replay): owner signs by merging `docs/decisions/2026-09-08-market-making-charter.md`; then build `atlas/making.py`, freeze, run Arm B, run Arm A on 2026-09-17, write results
+- [ ] Fifth charter (market making, paper-only replay): signed 2026-09-08 (#32); instrument frozen 2026-09-15 at `383d609` (#65); Arm B running sealed; Arm A on 2026-09-17, expected INCONCLUSIVE on 3 of 4 markets, then widened once to settlements by 2026-10-28 (Fed books retained, #64); write both results into the charter
 - [x] Fee Verified build (charter merged 2026-09-08): 17 platform schedules with quotes + published examples; shared JS engine; nightly verification; live on Cloudflare Pages 2026-09-08 (`docs/FEES.md`)
 - [x] Fee Verified go-live: `verifiedfees.com` live 2026-09-08; sitemap submitted 2026-09-08 → **clock started, verdict 2026-10-20** (`docs/decisions/2026-09-08-fee-calculator-demand-test.md`); nightly proven end to end
 - [x] Fee Verified hosting, owner: `www.verifiedfees.com` attached 2026-09-09; Security issues cleared 2026-09-09
