@@ -231,3 +231,24 @@ def test_fee_terms_are_the_venue_fields_the_fee_function_reads():
     raw = {"feeCoefficient": 0.06, "feesEnabled": True, "title": "x", "feeSchedule": None}
     assert polymarket_fee_terms(raw) == {"feeCoefficient": 0.06, "feesEnabled": True, "feeSchedule": None}
     assert polymarket_fee_terms({}) == {}
+
+
+async def test_the_report_reads_rest_books_only_and_every_executable_observation(tmp_path):
+    """Until 2026-09-17 the websocket recorder stored Kalshi "books" that were not
+    the venue's book. They carry a stream sequence; REST reads do not."""
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    kalshi_id, pmus_id = "kalshi:KXFEDDECISION-26OCT-H0", "polymarket_us:fed-oct-hold"
+    await store.save_gap_observation(observation(kalshi_market_id=kalshi_id,
+                                                 polymarket_market_id=pmus_id))
+    await store.save_gap_observation(observation(observation_id="not-executable",
+                                                 executable_gap=False))
+    stream_row = book("kalshi", kalshi_id, 0.2, no_asks=[(0.10, 500)])
+    stream_row.sequence = 700
+    await store.save_orderbook(stream_row)
+    await store.save_orderbook(book("kalshi", kalshi_id, 0.3, no_asks=[(0.40, 10)]))
+    await store.save_orderbook(book("polymarket_us", pmus_id, 0.3, yes_asks=[(0.55, 4)]))
+    report = await latency.latency_report(store)
+    assert report["eligible_observations"] == 1 and report["observations_with_bursts"] == 1
+    row = report["observations"][0]["delays"]["0.5s"]
+    assert row["kalshi_quote_at"] == (T0 + timedelta(seconds=0.3)).isoformat()
+    assert row["survived"] is True and row["basket_size_after"] == "4"
