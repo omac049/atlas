@@ -50,8 +50,13 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   (#64). They are evidence of a defect already documented in the charter and
   useful for nothing else. Say the word and they are deleted and the file
   vacuumed (a verified backup first).
-- [ ] OWNER: sign or close the charter amendment that lets the 2026-10-29 Arm A
-  run use the recorder's books (separate PR).
+- [ ] OWNER: sign the charter's Amendment 1 by merging its pull request (or
+  close it to decline): it lets the 2026-10-29 Arm A run read the recorder's
+  books. Nothing else changes — same rule, floors, criteria, consequences.
+  Unsigned by the 2026-10-28 close, Arm A is a second INCONCLUSIVE = FAIL.
+- [ ] 2026-10-13: archive the October tapes (`fetch_tape`) — Kalshi serves
+  prints for ~6 weeks and the window is 41 days.
+- [ ] 2026-10-29: coverage audit, then the one command in Amendment 1 §4.
 
 ## 2026-09-04 (b) — fourth hypothesis: DISPROVEN. The search is complete.
 
