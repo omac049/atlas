@@ -14,8 +14,18 @@ What a row means: the book as Kalshi published it at ``timestamp``, cut to the
 best ``DEPTH`` levels a side. A row is written when the book differs from the
 last one written, and at least every ``HEARTBEAT_SECONDS`` while it does not. A
 gap between rows longer than the heartbeat therefore always means the recorder
-was not polling — never "nothing changed" — which is what lets a later audit
-state the coverage of a replay window instead of assuming it.
+was not reading — never "nothing changed".
+
+And the gap is written down, not left to be inferred. Whenever more than
+``HEARTBEAT_SECONDS + interval`` pass between two successful reads of a market
+(the laptop slept, the network or the venue was down, the process was
+restarted), an *unknown-book marker* is inserted at the moment the last known
+book went stale: an empty book with ``sequence = UNKNOWN_SEQUENCE``. The frozen
+instrument reads the latest row at or before ``t`` with no staleness limit; an
+empty book has no mid, so it places no quotes (charter section 4: "If no
+reference exists, no quotes are placed") until the next real row. An outage
+therefore costs the replay its quotes for that stretch — it can never make the
+rule trade against a book that was hours old.
 
 Nothing here places an order or reads a credential.
 """
@@ -40,6 +50,7 @@ HEARTBEAT_SECONDS = 60.0
 STATUS_SECONDS = 300.0
 PENDING_LIMIT = 2000  # books held in memory while the database cannot be written
 CLOSE_GRACE = timedelta(minutes=5)
+UNKNOWN_SEQUENCE = -1  # marks a row that says "the book was not known from here on"
 
 
 def _best(levels: list[OrderBookLevel], highest: bool, depth: int) -> list[OrderBookLevel]:
@@ -78,6 +89,8 @@ class MarketState:
     unchanged: int = 0
     empty: int = 0
     errors: int = 0
+    unknown_markers: int = 0
+    last_read_at: datetime | None = None  # wall clock of the last successful read
     error_types: dict[str, int] = field(default_factory=dict)
     pending: list[OrderBook] = field(default_factory=list)
 
@@ -100,9 +113,17 @@ async def flush(store, state: MarketState) -> None:
         state.written += 1
 
 
+def unknown_marker(book: OrderBook, at: datetime) -> OrderBook:
+    """An empty book for the same market: "not known from ``at``"."""
+    return book.model_copy(
+        update={"timestamp": at, "yes_bids": [], "yes_asks": [], "no_bids": [], "no_asks": [],
+                "sequence": UNKNOWN_SEQUENCE}
+    )
+
+
 async def poll_once(
     venue, store, state: MarketState, *, depth: int, heartbeat: float,
-    clock: Callable[[], float],
+    clock: Callable[[], float], stale_after: float | None = None,
 ) -> float:
     """One read of one market. Returns how long the venue asked us to stay away
     (0.0 unless it answered 429)."""
@@ -117,6 +138,13 @@ async def poll_once(
     except Exception as exc:  # noqa: BLE001 - one bad read must never stop the recorder
         state.count(type(exc).__name__)
     else:
+        # Wall-clock on purpose: a sleeping laptop stops the monotonic clock.
+        limit = timedelta(seconds=stale_after if stale_after is not None else heartbeat)
+        if state.last_read_at is not None and book.timestamp - state.last_read_at > limit:
+            state.pending.append(unknown_marker(book, state.last_read_at + limit))
+            state.unknown_markers += 1
+            state.last_signature = None  # the next real book is always written
+        state.last_read_at = book.timestamp
         now = clock()
         mark = signature(book)
         due = state.last_written_at is None or now - state.last_written_at >= heartbeat
@@ -139,7 +167,8 @@ async def record_market(
     while wall() < until:
         started = clock()
         backoff = await poll_once(
-            venue, store, state, depth=depth, heartbeat=heartbeat, clock=clock
+            venue, store, state, depth=depth, heartbeat=heartbeat, clock=clock,
+            stale_after=heartbeat + interval,
         )
         await sleep(max(0.0, max(interval, backoff) - (clock() - started)))
 
@@ -151,6 +180,8 @@ def status_line(states: list[MarketState], wall: Callable[[], datetime]) -> str:
         part = f"{short} polls={state.polls} written={state.written} errors={state.errors}"
         if state.empty:
             part += f" empty={state.empty}"
+        if state.unknown_markers:
+            part += f" unknown_markers={state.unknown_markers}"
         if state.pending:
             part += f" waiting={len(state.pending)}"
         if state.error_types:
@@ -170,6 +201,10 @@ async def record(
 ) -> list[MarketState]:
     """Record every ticker until ``until``, reads spread evenly across the interval."""
     states = [MarketState(ticker) for ticker in tickers]
+    # A restart must see the gap it caused: the last successful read is the
+    # newest row already in the database.
+    for state in states:
+        state.last_read_at = await last_recorded_at(store, f"kalshi:{state.ticker}")
 
     async def one(position: int, state: MarketState) -> None:
         await sleep(position * interval / max(len(states), 1))
@@ -192,6 +227,14 @@ async def record(
         reporter.cancel()
     emit(status_line(states, wall))
     return states
+
+
+async def last_recorded_at(store, market_id: str) -> datetime | None:
+    """When this market was last read, according to the database."""
+    try:
+        return await store.latest_orderbook_timestamp(market_id)
+    except (sqlite3.Error, OSError):
+        return None
 
 
 def _when(value: object) -> datetime | None:

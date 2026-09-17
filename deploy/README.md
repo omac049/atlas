@@ -82,7 +82,10 @@ reads the installed copy in `~/Library/LaunchAgents`, not the one in this repo.
   database of its own, so nothing else contends with it and the frozen runner can be
   pointed at exactly those markets (`run_making.py --arm A --db data/making/books.sqlite3`).
   A row is written when the book changes and at least every 60 s when it does not, so a
-  gap longer than that always means "not polling". Restarts on a crash; exits 0 and stays
+  gap longer than that always means "not polling". Any gap over 65 s between successful reads (sleep,
+  outage, restart) is written down as an *unknown-book marker* — an empty book the frozen
+  instrument will not quote against — so an outage can never make the replay trade on a
+  stale book. Restarts on a crash; exits 0 and stays
   down once the markets close. Status line every 5 minutes in `~/Library/Logs/atlas-books.log`.
   It exists because the websocket recorder never stored a real book (charter note of
   2026-09-17). Remove it after the 2026-10-29 run:
