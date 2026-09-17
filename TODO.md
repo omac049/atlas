@@ -42,18 +42,20 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   observation since 2026-09-15 rather than the newest 50,000 rows of
   everything (about a week; the 9/28 report would have quietly become
   "last week only").
-- [ ] After deploying: confirm `kalshi_stream_check … match=true` for the
-  watched Fed markets in `~/Library/Logs/atlas-monitor.log`, and read one
-  `kalshi_stream_snapshot` line against the REST book.
-- [ ] OWNER, disk: 943,298 invalid stream rows ≈ **1.55 GB — half of
-  `data/atlas.sqlite3`** — are still kept by the Fed-decision prune exemption
-  (#64). They are evidence of a defect already documented in the charter and
-  useful for nothing else. Say the word and they are deleted and the file
-  vacuumed (a verified backup first).
-- [ ] OWNER: sign the charter's Amendment 1 by merging its pull request (or
-  close it to decline): it lets the 2026-10-29 Arm A run read the recorder's
-  books. Nothing else changes — same rule, floors, criteria, consequences.
-  Unsigned by the 2026-10-28 close, Arm A is a second INCONCLUSIVE = FAIL.
+- [x] Deployed and confirmed 18:53 UTC: `kalshi_stream_check … match=true` on 9
+  of 9 watched Fed markets after fifteen minutes of live deltas; every opening
+  snapshot's level counts equal the REST book's (H0: 24 YES / 40 NO levels).
+- [x] **Disk: the invalid stream rows are gone** (owner said yes, 2026-09-17):
+  944,102 rows deleted after a verified backup; `data/atlas.sqlite3` went from
+  3.06 GB to 1.05 GB, `integrity_check` ok, every other table unchanged. 2,000
+  rows kept as evidence in `docs/proof/stream-books-sample-2026-09-17.jsonl.gz`.
+- [ ] After 2026-09-24, once a week of nightly backups of the smaller file
+  exists: delete `data/backups/atlas-pre-cleanup-20260917.sqlite3.gz` (202 MB).
+- [x] **Amendment 1 signed 2026-09-17** (#78, merged at the owner's instruction
+  in session): the 2026-10-29 Arm A run reads the recorder's books. Same rule,
+  floors, criteria, consequences. The recorder was off 18:59–19:03 UTC (a Run
+  click on a removal command in a report); the gap is in the data as
+  unknown-book markers.
 - [ ] 2026-10-13: archive the October tapes (`fetch_tape`) — Kalshi serves
   prints for ~6 weeks and the window is 41 days.
 - [ ] 2026-10-29: coverage audit, then the one command in Amendment 1 §4.

@@ -4,8 +4,10 @@
 this file constituted sign-off on the theory, the instrument definition, and every
 threshold below. Nothing may change after the freeze commit named in §7.
 
-**Amendment 1 (§12), 2026-09-17 — signed by the owner's merge of the pull request
-that added it.** It changes where Arm A's single widened run reads its order
+**Amendment 1 (§12) — signed by the owner on 2026-09-17.** Asked in session
+what to do about Arm A, the owner chose to keep it alive and directed Claude to
+merge the amendment's pull request (#78) on their behalf; the instruction is
+recorded on that pull request. It changes where Arm A's single widened run reads its order
 books from, because the books the charter assumed turned out not to exist. It
 changes no rule, parameter, floor, criterion or consequence.
 
@@ -356,6 +358,34 @@ September FOMC settlement.
     may read them is a change to §3's data source after the freeze, so it is
     an amendment for the owner to sign, proposed separately. Until it is
     signed the recorder only collects; it decides nothing.
+- 2026-09-17, 19:04 UTC: **Amendment 1 (§12) signed.** Asked in session "What do
+  you want to do about Arm A?", the owner chose *Keep it alive*: turn the
+  recorder back on and merge #78 on their behalf. Merged by Claude at that
+  instruction, which is recorded on the pull request. (The wording at the top
+  of this file, written before the merge, said "the owner's merge"; it now says
+  what happened.)
+  - **The recorder's first outage, and how the data shows it.** Claude's
+    report to the owner ended with the command that removes the recorder,
+    offered "in case you ever want to"; the desktop app renders such a block
+    with a Run button, and it was clicked. The recorder was off from
+    2026-09-17T18:59:27Z to 19:03:37Z. On restart it wrote an unknown-book
+    marker for each of the five markets at 65 s after that market's last row
+    (18:59:53Z–19:00:32Z) — the first real use of the rule in §12.1. Nothing
+    was lost that the replay would have used: it places no quotes across a
+    marker.
+  - **The invalid stream rows were deleted** the same hour, at the owner's
+    instruction (they were half the database): 944,102 rows, after a verified
+    backup (`data/backups/atlas-pre-cleanup-20260917.sqlite3.gz`); the file
+    went from 3.06 GB to 1.05 GB, `integrity_check` ok, every other table
+    unchanged. 2,000 consecutive rows are kept as evidence for the note above
+    in `docs/proof/stream-books-sample-2026-09-17.jsonl.gz`: 1,500 of
+    `KXFEDDECISION-26OCT-H0` from a reconnect (the first row is sequence 1
+    with zero levels on both sides) and 500 of `KXFEDDECISION-26SEP-H0` from
+    inside the Arm A window.
+  - The repaired websocket recorder (#76) was checked against Kalshi's REST
+    book after fifteen minutes of live deltas: 9 of 9 watched markets matched
+    on best bid and ask (`KXFEDDECISION-26OCT-H0`: 51/52¢ both ways). It is not
+    Arm A's data source — §12.1 is — and nothing reads it for this charter.
 
 ## 12. Amendment 1 — the widened Arm A run reads the venue's own books
 
