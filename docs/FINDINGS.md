@@ -19,11 +19,15 @@ Failing that, can what it learns be sold?
 | 2 | Settlement-machinery gaps (missing fallbacks, absent sources) predict disputed resolutions | **FAIL** | 15 famous disputes vs 45 rule-selected controls: median clarity score **65 vs 65**. No separation. | [proof charter](decisions/2026-08-31-fine-print-proof-charter.md) · [corpus](proof/test-a-corpus.json) · [result](proof/test-a-result.json) |
 | 3 | Predicate ambiguity ("what counts as a suit?") predicts disputes | **Abandoned at gate** | Instrument flagged **4 of 15** disputes against 60% required. Reading the misses showed disputes are three different things, and the theory covered one. | [charter](decisions/2026-09-02-predicate-ambiguity-charter.md) · [gate](proof/ambiguity-gate-result.json) |
 | 4 | The in-game price lags the game — a human with the public feed could take stale prices after a lead change | **DISPROVEN** | 676 lead changes across 262 games: the market repriced a median **10.6 seconds *before*** MLB's official play timestamp, in 91% of plays. The move is real (+11.2¢ net) and already gone. | [charter](decisions/2026-09-04-repricing-lag-charter.md) · [result](proof/repricing-result.json) |
+| 5 | Being the counterparty: a naive, rule-following market maker nets positive after fees | **Arm B (fast markets): FAIL.** Arm A (slow markets): not yet measured | 352 MLB games: net **−$4,492.52** on 227,154 contracts, 25.6% of games positive (60% required), −1.98¢ per contract (+0.5¢ required), worse at 5 s latency. Arm A's recorded order books were found invalid the day it was due, before any replay; real books are now being recorded for the charter's single widened run on 2026-10-29. | [charter](decisions/2026-09-08-market-making-charter.md) · [Arm B result](proof/making-result-armB.json.gz) |
 
-These four cover the space an outsider with public data can reach: whether the
-price is right across venues, whether the contract text predicts trouble (two
-different ways), and whether the price is slow. The fourth charter said in
-advance it would be the last prediction-market hypothesis. It was.
+The first four cover the space an outsider with public data can reach by
+*predicting*: whether the price is right across venues, whether the contract
+text predicts trouble (two different ways), and whether the price is slow. The
+fourth charter said in advance it would be the last prediction hypothesis. It
+was. The fifth asks the one question left that predicts nothing: whether simply
+*being the counterparty* pays. Where professionals reprice in seconds, it does
+not; where nothing happens for days, it has not been measured yet.
 
 ## What each failure taught
 
@@ -62,6 +66,13 @@ The method mattered more than any single result:
   sleep, because a freshly started monitor could not write a log line within
   the watchdog's 60-second patience. Silence measured from
   max(log, last-restart) ended it.
+- **Arm A's order books were never order books.** The day Arm A was due, its
+  input was checked against Kalshi's own REST book before anything was
+  replayed. The websocket recorder had stored, since the first commit, a pile
+  of recent size increases: opening snapshots loaded zero levels, signed size
+  changes were kept as whole sizes, 90–99% of stored books were crossed. Its
+  tests had passed for six weeks against a message shape the venue never
+  sends. Arm A was not run; nothing else had ever read those books.
 - A known instrument bug (literal `"involved"` missing `"involves"`) was
   **deliberately left unfixed** in hypothesis 3, because every fix available
   after seeing a failing development-set result moved the numbers toward the
@@ -87,6 +98,9 @@ The method mattered more than any single result:
 - Atlas runs itself: monitor, watchdog, keep-awake, weekly study and intel
   reports, nightly backup with VACUUM. Paper-only, permanently.
 - The 90-day study decides 2026-11-17 and already reads NO-GO.
+- The fifth charter is half answered: Arm B FAIL (2026-09-15); Arm A waits on
+  real order books, recorded since 2026-09-17 for its one widened run on
+  2026-10-29. A second inconclusive counts as FAIL.
 - The remaining scheduled events (Sep 11 CPI, Sep 16 FOMC — including the
   first end-to-end test of the revived label loop) run without intervention.
 - No product funnel was built, by the owner's rule: no theory survived to

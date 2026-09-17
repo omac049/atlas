@@ -285,3 +285,69 @@ September FOMC settlement.
     stamps `HEAD` at write time and `main` moved while the run was in flight;
     `git diff 383d609 e1f4827 -- atlas/making.py docs/proof/run_making.py` is
     empty, so the instrument that ran is byte-identical to the frozen one.
+- 2026-09-17: **Arm A was not run. Its order-book data is invalid.** Found
+  while checking the run's input, before any replay: no fill, fee or P&L has
+  been computed for any Arm A market, under any parameters.
+  - **What is wrong.** The websocket recorder (`atlas/streams/kalshi.py`,
+    `atlas/orderbooks/state.py`, unchanged since the first public commit)
+    reads the feed's opening snapshot under `yes`/`yes_dollars`; the feed sends
+    `yes_dollars_fp`/`no_dollars_fp`, so every book starts empty. It then
+    stores each `delta_fp` — a signed *change* in size — as the level's whole
+    size, and deletes the level on any reduction. What it kept is a pile of
+    recent size increases, not a book. Its NO side also arrives in YES prices
+    (the subscription sets `use_yes_price`) and is mirrored a second time,
+    which is why the stored books read as crossed.
+  - **Evidence.**
+    1. *Against the venue.* `KXFEDDECISION-26OCT-H0`, 2026-09-17 about 18:05
+       UTC. Kalshi's REST book: 25 YES-bid levels, best 51¢ × 3,108.74; 40
+       NO-bid levels, best 48¢ × 8,630 (a 52¢ YES ask); quoted 51/52¢. The
+       recorder's latest state, 46 s old: 9 YES-bid levels, best 48¢ × 116; 8
+       NO-side levels at 52–81¢, which it mirrors into YES asks of 19–48¢.
+    2. *Opening snapshots.* All 15 examined (two markets, five weeks) hold
+       zero levels on both sides.
+    3. *State transitions.* Of 3,999 consecutive stored states of that market,
+       2,698 differ from the one before by exactly one level and 1,301 by
+       none; a level of 931 contracts vanishes on one message, another goes
+       100 → 225.
+    4. *As this instrument parses them* (§4: the mid of best YES bid and best
+       YES ask), inside the Arm A window. September H0: 420,780 snapshots,
+       97.8% crossed or locked, median "spread" −35¢, a valid two-sided book
+       for 1.9% of the window, and 47,303 of 50,157 non-block prints more than
+       1¢ outside the recorded spread. H26: two-sided in 19.6% of 23,071
+       snapshots, valid for 6.3% of the window. C26: never two-sided in 12,893
+       snapshots. Every week since 2026-08-21 reads the same (90–99% crossed).
+  - **What the frozen runner would have replayed.** Its literal reading of §3
+    ("any other market with both a full tape and Atlas book snapshots")
+    selects 52 markets today, not three: the three September Fed markets plus
+    49 tennis game-spread leftovers from an August shadow test, whose books
+    are REST samples taken about every 400 s of markets that reprice in
+    seconds (20 of the 49 closed before the window opens). On 2026-10-29 it
+    would also have swept in the markets study phase 2's bursts have touched
+    since 2026-09-15 — 15 so far, 20 seconds of books at a time. Neither is
+    the continuous record §4's "latest book snapshot at or before `t`"
+    presumes. The 2026-09-15 note above, which counted "book snapshots for
+    only three" markets, had not looked at what the database held.
+  - **Primary run: INCONCLUSIVE (§5), recorded without a replay.** The floor
+    is four settled markets; the number with a valid book is zero. Not padded
+    — and not run "for the record" either: a replay that quotes around the mid
+    of a book crossed by 35¢ is not measuring a market maker, and a number
+    like that, once written down, gets quoted.
+  - **Blast radius: Arm A only.** The live pair monitor that writes these
+    books has never produced a paper opportunity from them (0 rows in
+    `paper_trades`, 0 "PAPER OPPORTUNITY" lines in its log: its Polymarket leg
+    is the offshore venue, which publishes no book). The radar, the 90-day
+    study, the four earlier charters and Arm B read REST quotes and trade
+    tapes, never these snapshots.
+  - **The error, stated.** "Having verified the tape and book endpoints"
+    (Proposed, above) was true of Kalshi's endpoints and was never true of
+    Atlas's stored snapshots. §3 and §4 were built on recorded books nobody
+    had compared with the venue's, and the recorder's own tests had passed
+    since the first commit against a message shape the venue does not send.
+  - **What follows.** §9 already prescribes it: one widening, to markets
+    settling by 2026-10-28, rerun on 2026-10-29. That rerun needs real books.
+    `atlas/book_recorder.py` (#73) has been recording Kalshi's public REST
+    book for all five `KXFEDDECISION-26OCT-*` markets every 5 s since
+    2026-09-17T18:21:47Z, into `data/making/books.sqlite3`. Whether the rerun
+    may read them is a change to §3's data source after the freeze, so it is
+    an amendment for the owner to sign, proposed separately. Until it is
+    signed the recorder only collects; it decides nothing.
