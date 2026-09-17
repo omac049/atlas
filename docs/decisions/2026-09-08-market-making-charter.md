@@ -4,6 +4,11 @@
 this file constituted sign-off on the theory, the instrument definition, and every
 threshold below. Nothing may change after the freeze commit named in §7.
 
+**Amendment 1 (§12), 2026-09-17 — signed by the owner's merge of the pull request
+that added it.** It changes where Arm A's single widened run reads its order
+books from, because the books the charter assumed turned out not to exist. It
+changes no rule, parameter, floor, criterion or consequence.
+
 **Lineage.** Hypotheses one through four tested whether an outsider with public
 data can be *right* about a price (cross-venue gaps, fine-print machinery,
 predicate ambiguity) or *early* to it (in-game repricing). All four returned
@@ -351,3 +356,79 @@ September FOMC settlement.
     may read them is a change to §3's data source after the freeze, so it is
     an amendment for the owner to sign, proposed separately. Until it is
     signed the recorder only collects; it decides nothing.
+
+## 12. Amendment 1 — the widened Arm A run reads the venue's own books
+
+*Proposed 2026-09-17 by Claude, who knows Arm B's result (FAIL) and has computed
+no fill, fee or P&L for any Arm A market. In force only by the owner's merge.*
+
+**Why an amendment is needed at all.** §9 already says what follows an
+INCONCLUSIVE Arm A: one widening, to markets settling by 2026-10-28, rerun on
+2026-10-29. But the books §3 and §4 assumed were never books (the 2026-09-17
+note in §11), and the same recorder would have gone on producing them through
+October. Run as written, the widened replay would be as meaningless as the
+primary one. Reading different books is a change to §3's data source after
+the freeze, so it needs the signature this file says it needs.
+
+**What changes — the data source, and what that forces.**
+
+1. **Books.** `data/making/books.sqlite3`, written by `atlas/book_recorder.py`
+   (#73, #75) from 2026-09-17T18:21:47Z: Kalshi's public REST order book — the
+   venue's own statement of it — read every 5 s, the best ten levels a side, a
+   row on every change and at least every 60 s. Any stretch of more than 65 s
+   without a successful read is written down as an unknown-book marker (an
+   empty book), so an outage costs the replay its quotes for that stretch and
+   can never make the rule trade against a stale book (§4: "If no reference
+   exists, no quotes are placed").
+2. **Sample.** Every `KXFEDDECISION-26OCT-*` market — five: C25, C26, H0, H25,
+   H26 — which is what §3 meant by "every Kalshi Fed-decision market" of a
+   meeting. The September markets drop out: no valid book exists for them and
+   none can be made. The tennis leftovers and the phase-2 bursts are not in
+   that database and are not Arm A.
+3. **Window.** Each market from its first recorded book to its close on
+   2026-10-28 — the runner's existing rule, `max(first snapshot, 2026-08-21)`,
+   unchanged. About 41 days, which is still "multi-week" (§3).
+4. **The command, fixed now:**
+   `python docs/proof/run_making.py --arm A --settle-by 2026-10-28 --db data/making/books.sqlite3`
+   with `atlas/making.py` and `docs/proof/run_making.py` byte-identical to the
+   freeze commit (`git diff 383d609 HEAD -- atlas/making.py
+   docs/proof/run_making.py` must print nothing; the artifact's
+   `instrument_commit` stamps `HEAD`, as Arm B's did).
+5. **Tapes.** Kalshi serves prints for about six weeks and this window is 41
+   days long, so the October prints are also archived on 2026-10-13 with the
+   runner's own `fetch_tape`. If the final fetch starts later than the archive
+   does, the missing front is restored from the archive into the runner's
+   cache file before the run, and the result says so. Prints are immutable
+   facts; this restores data and selects nothing.
+
+**What does not change.** The rule and every parameter in §4. The floors in
+§5. The four criteria in §6. The consequences in §9 — including that this is
+the one widening Arm A gets: INCONCLUSIVE on 2026-10-29 counts as FAIL for
+product purposes. If this amendment is not signed before the markets close,
+the widened run has no valid input and that is the outcome recorded.
+
+**Limits of the repaired measurement, named before it is taken.**
+
+- *A five-second poll is a coarser clock than a change-driven feed.* The book
+  the rule sees at `t` can be about five seconds old. At Δ = 30 s that is
+  small, and criterion 4 (L = 5 s) already asks whether the result survives a
+  clock that slow. The Δ = 5 s column of the sensitivity grid is the one place
+  it bites; the grid is never decisive (§4).
+- *Ten levels a side.* The rule quotes within 5¢ of the mid; ten levels always
+  cover it. Depth beyond that is not recorded.
+- *Coverage is audited before the replay and reported beside the verdict,
+  never used as a filter:* per market, the share of the window not under an
+  unknown-book marker.
+
+**Known today about the sample's composition (not about any result).** Two of
+the five markets quote mid-book (H0 51/52¢, H25 47/48¢); three sit at the floor
+(C25 0/1¢, C26 0/1¢, H26 1/2¢). A market with no YES bid has no mid, so the
+rule places no quotes there and its net is exactly $0.00 — which criterion 2
+counts as "not positive". If C25 and C26 stay that way, a PASS needs every
+other market positive (3 of 5 = 60%). That is the arithmetic this charter
+froze, stated here so that nobody discovers it on 2026-10-29. It is not
+adjusted.
+
+**After the run.** Both Arm A records (2026-09-17: INCONCLUSIVE, not replayed;
+2026-10-29: the result) go into §11 and `docs/FINDINGS.md`; `com.atlas.books`
+is removed; the Fed-decision prune exemption (#64) is removed.
