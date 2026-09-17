@@ -174,6 +174,73 @@ async def test_recorded_books_are_readable_by_the_frozen_arm_a_runner(tmp_path):
     assert books[0].displayed("bid", 51) in (Decimal(3108), Decimal(2900))
 
 
+class SleepyLaptop(FakeTime):
+    """A clock whose third sleep lasts an hour of wall time but no monotonic
+    time at all — what a closed lid does to a running process."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.lost = 0.0
+
+    def wall(self) -> datetime:
+        return T0 + timedelta(seconds=self.now + self.lost)
+
+    async def sleep(self, seconds: float) -> None:
+        await super().sleep(seconds)
+        if len(self.sleeps) == 3:
+            self.lost += 3600.0
+
+
+async def test_an_outage_is_written_down_as_an_unknown_book_the_instrument_will_not_quote(tmp_path):
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "docs" / "proof"))
+    import run_making
+
+    from atlas import making
+
+    fake = SleepyLaptop()
+    db = tmp_path / "books.sqlite3"
+    state = book_recorder.MarketState("KXFEDDECISION-26OCT-H0")
+    await book_recorder.record_market(
+        ScriptedVenue(fake, [BOOK_A]), AtlasStore(str(db)), state, interval=5.0, depth=10,
+        heartbeat=60.0, until=T0 + timedelta(seconds=3630), clock=fake.clock, sleep=fake.sleep,
+        wall=fake.wall,
+    )
+    assert state.unknown_markers == 1
+    books = run_making.load_books(db, "kalshi:KXFEDDECISION-26OCT-H0", T0, T0 + timedelta(hours=2))
+    index = making.BookIndex(books)
+    # Reads at 0, 5, 10 s; the lid closes for an hour; the next read is at 3,615 s.
+    assert making.reference_from_book(index, T0 + timedelta(seconds=30)) == Decimal("0.515")
+    # 65 s after the last read the book is unknown: no mid, so no quotes ...
+    assert index.at_or_before(T0 + timedelta(seconds=74)).best_bid == 51
+    assert making.reference_from_book(index, T0 + timedelta(seconds=76)) is None
+    assert making.reference_from_book(index, T0 + timedelta(minutes=45)) is None
+    assert making.reference_from_book(index, T0 + timedelta(seconds=3614)) is None
+    # ... until the first real book after the gap.
+    assert making.reference_from_book(index, T0 + timedelta(seconds=3616)) == Decimal("0.515")
+
+
+async def test_a_restart_sees_the_gap_it_caused(tmp_path):
+    store = AtlasStore(str(tmp_path / "books.sqlite3"))
+    await store.save_orderbook(kalshi_book("KXFEDDECISION-26OCT-H0", T0 - timedelta(minutes=10), *BOOK_A))
+    fake = FakeTime()
+    states = await book_recorder.record(
+        ScriptedVenue(fake, [BOOK_A]), store, ["KXFEDDECISION-26OCT-H0"],
+        until=T0 + timedelta(seconds=10), interval=5.0, status_every=3600.0,
+        clock=fake.clock, sleep=fake.sleep, wall=fake.wall, emit=lambda line: None,
+    )
+    assert states[0].unknown_markers == 1
+    saved = sorted(await store.latest_orderbooks(10), key=lambda b: b.timestamp)
+    marker = saved[1]
+    assert marker.sequence == book_recorder.UNKNOWN_SEQUENCE and not marker.yes_bids
+    assert marker.timestamp == T0 - timedelta(minutes=10) + timedelta(seconds=65)
+    assert saved[2].yes_bids and saved[2].sequence is None
+
+
+async def test_a_short_pause_writes_no_marker(tmp_path):
+    _, _, state = await run_market(tmp_path, [too_many_requests("30"), BOOK_A, BOOK_A], seconds=60)
+    assert state.unknown_markers == 0
+
+
 def test_recording_stops_a_little_after_the_last_market_closes():
     tickers, until = book_recorder.recording_window([
         {"ticker": "KXFEDDECISION-26OCT-H25", "close_time": "2026-10-28T17:59:00Z"},

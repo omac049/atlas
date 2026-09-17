@@ -327,6 +327,16 @@ class AtlasStore:
             rows = await cursor.fetchall()
         return [OrderBook.model_validate_json(row[0]) for row in rows]
 
+    async def latest_orderbook_timestamp(self, market_id: str) -> datetime | None:
+        """When the newest snapshot of one market was taken; None if there is none."""
+        await self.initialize()
+        async with aiosqlite.connect(self.path) as db:
+            cursor = await db.execute(
+                "SELECT MAX(timestamp) FROM orderbook_snapshots WHERE market_id = ?", (market_id,)
+            )
+            row = await cursor.fetchone()
+        return datetime.fromisoformat(row[0]) if row and row[0] else None
+
     async def latest_orderbooks(self, limit: int = 20) -> list[OrderBook]:
         await self.initialize()
         async with aiosqlite.connect(self.path) as db:
