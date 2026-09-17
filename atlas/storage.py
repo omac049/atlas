@@ -1155,6 +1155,20 @@ class AtlasStore:
             ).fetchall()
         return [json.loads(row[0]) for row in rows]
 
+    async def executable_gap_observations(self, since: datetime) -> list[dict[str, object]]:
+        """Every executable observation from `since` on, oldest first. Selected in
+        SQL so a cumulative report is not silently cut to the newest 50,000 rows
+        of everything (about a week at the radar's rate)."""
+        await self.initialize()
+        async with aiosqlite.connect(self.path) as db:
+            cursor = await db.execute(
+                "SELECT payload_json FROM gap_observations "
+                "WHERE executable = 1 AND created_at >= ? ORDER BY created_at",
+                (since.isoformat(),),
+            )
+            rows = await cursor.fetchall()
+        return [json.loads(row[0]) for row in rows]
+
     async def all_gap_observations(self, limit: int = 50000) -> list[dict[str, object]]:
         """Gap observations oldest-first, keeping the NEWEST `limit` rows.
 

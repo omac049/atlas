@@ -12,6 +12,14 @@ from atlas.storage import AtlasStore
 from atlas.streams.coordinator import StreamCoordinator
 from atlas.streams.kalshi import KalshiOrderBookStream
 from atlas.streams.polymarket_us import PolymarketUSMarketStream
+from atlas.venues.kalshi import KalshiVenue
+
+# The streamed Kalshi book is compared with the venue's own REST book on this
+# cadence. It exists because for six weeks nothing did: the stream stored books
+# that matched the venue in nothing but the ticker, and no test could see it.
+BOOK_CHECK_SECONDS = 900.0
+BOOK_CHECK_MISMATCHES_BEFORE_RESYNC = 3
+RESYNC_FORGIVEN_AFTER_BOOKS = 500
 
 
 class LiveStreamCredentialsMissing(RuntimeError):
@@ -77,6 +85,11 @@ async def run_pair(pair: ContractPair, store: AtlasStore | None = None) -> None:
             return
         last_signature = signature
         await store.save_opportunity(opportunity)
+        # The two books behind a recorded opportunity are its audit trail. Books
+        # are no longer stored on every stream message: that wrote ~50-140 MB a
+        # day which nothing read.
+        await store.save_orderbook(books["a"])
+        await store.save_orderbook(books["b"])
         await store.save_paper_trade(
             PaperTradeRecord(
                 trade_id=str(uuid4()),
@@ -89,11 +102,15 @@ async def run_pair(pair: ContractPair, store: AtlasStore | None = None) -> None:
             f"PAPER OPPORTUNITY {opportunity.opportunity_id} edge={opportunity.expected_roi:.2%} size={opportunity.contracts}"
         )
 
+    resync_requested = asyncio.Event()
+
     async def consume_kalshi():
-        delay = 1.0
+        delay, resyncs = 1.0, 0
         while True:
             try:
                 stream = KalshiOrderBookStream(key_id, key_path, [kalshi_ticker])
+                emitted = 0
+                resync_requested.clear()
                 async for message in stream.messages():
                     delay = 1.0
                     try:
@@ -103,17 +120,54 @@ async def run_pair(pair: ContractPair, store: AtlasStore | None = None) -> None:
                         # snapshot on (re)subscribe: drop the stale book and
                         # reconnect so a fresh snapshot resyncs it.
                         books.pop("a", None)
+                        resyncs += 1
                         break
+                    if message.get("type") == "orderbook_snapshot":
+                        state = coordinator.states[f"kalshi:{kalshi_ticker}"]
+                        print(KalshiOrderBookStream.snapshot_summary(kalshi_ticker, message, state))
                     if book:
+                        emitted += 1
+                        if emitted == RESYNC_FORGIVEN_AFTER_BOOKS:
+                            resyncs = 0
                         books["a"] = book
-                        await store.save_orderbook(book)
                         await evaluate()
+                    if resync_requested.is_set():
+                        books.pop("a", None)
+                        resyncs += 1
+                        break
+                # A resubscribe is a new connection: never in a tight loop.
+                await asyncio.sleep(min(2.0**resyncs, 300.0))
             except asyncio.CancelledError:
                 raise
             except (KeyError, TypeError, ArithmeticError, OSError, RuntimeError, ValueError,
                     WebSocketException):
                 await asyncio.sleep(delay)
                 delay = min(delay * 2, 30.0)
+
+    async def check_kalshi_book():
+        """Compare the streamed top of book with the venue's REST book."""
+        venue, mismatches = KalshiVenue(fixture=False), 0
+        while True:
+            await asyncio.sleep(BOOK_CHECK_SECONDS)
+            streamed = books.get("a")
+            if streamed is None:
+                continue
+            try:
+                rest = await venue.get_orderbook(kalshi_ticker)
+            except Exception as exc:  # noqa: BLE001 - a failed check is not a finding
+                print(f"kalshi_stream_check {kalshi_ticker} skipped={type(exc).__name__}")
+                continue
+            streamed = books.get("a") or streamed  # the freshest state, read after the fetch
+            verdict = compare_top_of_book(streamed, rest)
+            mismatches = 0 if verdict["match"] else mismatches + 1
+            print(
+                f"kalshi_stream_check {kalshi_ticker} match={str(verdict['match']).lower()} "
+                f"stream={verdict['stream']} rest={verdict['rest']}"
+            )
+            if mismatches >= BOOK_CHECK_MISMATCHES_BEFORE_RESYNC:
+                print(f"kalshi_stream_check {kalshi_ticker} resync=requested after {mismatches} misses")
+                mismatches = 0
+                resync_requested.set()
 
     async def consume_polymarket():
         delay = 1.0
@@ -126,7 +180,6 @@ async def run_pair(pair: ContractPair, store: AtlasStore | None = None) -> None:
                     book = coordinator.polymarket_event(message)
                     if book:
                         books["b"] = book
-                        await store.save_orderbook(book)
                         await evaluate()
             except asyncio.CancelledError:
                 raise
@@ -138,3 +191,33 @@ async def run_pair(pair: ContractPair, store: AtlasStore | None = None) -> None:
     async with asyncio.TaskGroup() as group:
         group.create_task(consume_kalshi())
         group.create_task(consume_polymarket())
+        group.create_task(check_kalshi_book())
+
+
+def _top(book) -> tuple:
+    best_bid = max((level.price for level in book.yes_bids), default=None)
+    best_ask = min((level.price for level in book.yes_asks), default=None)
+    return best_bid, best_ask
+
+
+def compare_top_of_book(streamed, rest, tolerance="0.01") -> dict:
+    """Do the two books agree on the best YES bid and ask, within a cent?
+
+    A cent of slack because the two reads are a few hundred milliseconds apart
+    on a live market; a broken state machine misses by tens of cents.
+    """
+    from decimal import Decimal
+
+    slack = Decimal(tolerance)
+
+    def close(a, b) -> bool:
+        return (a is None and b is None) or (
+            a is not None and b is not None and abs(a - b) <= slack
+        )
+
+    (s_bid, s_ask), (r_bid, r_ask) = _top(streamed), _top(rest)
+    return {
+        "match": close(s_bid, r_bid) and close(s_ask, r_ask),
+        "stream": f"{s_bid}/{s_ask}",
+        "rest": f"{r_bid}/{r_ask}",
+    }

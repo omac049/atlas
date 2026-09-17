@@ -46,6 +46,7 @@ BURST_INTERVALS: dict[str, float] = {"kalshi": 0.25, "polymarket_us": 2.5}
 POLYMARKET_US_MIN_SPACING = BURST_INTERVALS["polymarket_us"]
 LOOKAHEAD = timedelta(seconds=3)  # the widest delay plus a margin
 DETAIL_ROWS = 500  # per-observation detail kept in the weekly artifact
+PHASE_2_BEGAN = datetime(2026, 9, 15, tzinfo=UTC)  # the first burst; the report is cumulative
 
 
 def _decimal(value: object) -> Decimal | None:
@@ -283,7 +284,7 @@ def latency_summary(rows: list[dict], delays: tuple[Decimal, ...] = DELAYS) -> d
 
 async def latency_report(store, delays: tuple[Decimal, ...] = DELAYS) -> dict:
     """The weekly phase-2 artifact, regenerable from the database."""
-    observations = await store.all_gap_observations()
+    observations = await store.executable_gap_observations(PHASE_2_BEGAN)
     eligible = [
         o for o in observations
         if o.get("polymarket_fee_terms") is not None and burst_eligible(o)
@@ -291,9 +292,14 @@ async def latency_report(store, delays: tuple[Decimal, ...] = DELAYS) -> dict:
     rows = []
     for observation in eligible:
         t0 = datetime.fromisoformat(str(observation["observed_at"]))
-        kalshi_books = await store.orderbooks_between(
-            str(observation["kalshi_market_id"]), t0, t0 + LOOKAHEAD
-        )
+        # REST reads only (no stream sequence): until 2026-09-17 the websocket
+        # recorder stored Kalshi "books" that were not the venue's book.
+        kalshi_books = [
+            b for b in await store.orderbooks_between(
+                str(observation["kalshi_market_id"]), t0, t0 + LOOKAHEAD
+            )
+            if b.sequence is None
+        ]
         pmus_books = await store.orderbooks_between(
             str(observation["polymarket_market_id"]), t0, t0 + LOOKAHEAD
         )

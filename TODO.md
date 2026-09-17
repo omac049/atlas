@@ -30,10 +30,26 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   change and at least every 60 s, so a longer gap always means "not polling".
   Live check: the frozen instrument reads it as 51¢/52¢, uncrossed, 10 levels a
   side. Exits by itself when the markets close on 2026-10-28.
-- [ ] Fix the websocket book state itself (opening snapshot keys, signed
-  deltas, the NO side's price convention) and verify it against REST; until
-  then it writes ~60 MB/day of wrong rows that the Fed-decision prune exemption
-  keeps.
+- [x] **Websocket book state fixed** (same day): the opening snapshot is read
+  under the keys the feed sends, `delta_fp` is applied as a signed change, the
+  NO side's price convention is measured from every two-sided snapshot instead
+  of assumed, a crossed state is never emitted (and forces a resubscribe if it
+  persists), and the streamed top of book is compared with Kalshi's REST book
+  every 15 minutes (`kalshi_stream_check … match=`). Stream books are no longer
+  written on every message — only the two books behind a recorded opportunity
+  — which ends 50–140 MB/day of rows nothing read.
+- [x] The latency report reads REST books only, and every executable
+  observation since 2026-09-15 rather than the newest 50,000 rows of
+  everything (about a week; the 9/28 report would have quietly become
+  "last week only").
+- [ ] After deploying: confirm `kalshi_stream_check … match=true` for the
+  watched Fed markets in `~/Library/Logs/atlas-monitor.log`, and read one
+  `kalshi_stream_snapshot` line against the REST book.
+- [ ] OWNER, disk: 943,298 invalid stream rows ≈ **1.55 GB — half of
+  `data/atlas.sqlite3`** — are still kept by the Fed-decision prune exemption
+  (#64). They are evidence of a defect already documented in the charter and
+  useful for nothing else. Say the word and they are deleted and the file
+  vacuumed (a verified backup first).
 - [ ] OWNER: sign or close the charter amendment that lets the 2026-10-29 Arm A
   run use the recorder's books (separate PR).
 

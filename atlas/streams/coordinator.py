@@ -1,12 +1,17 @@
 from decimal import Decimal
 
 from atlas.models import OrderBook, OrderBookLevel, VenueName
-from atlas.orderbooks.state import OrderBookState, SequenceGapError
+from atlas.orderbooks.state import CrossedBookError, OrderBookState, SequenceGapError
+
+# A cross can be real for a message or two while a sweep's deltas arrive one
+# level at a time. One that outlives this many messages is a broken state.
+MAX_CROSSED_STATES = 200
 
 
 class StreamCoordinator:
     def __init__(self):
         self.states: dict[str, OrderBookState] = {}
+        self.crossed: dict[str, int] = {}
 
     def kalshi_event(self, market_ticker: str, message: dict) -> OrderBook | None:
         market_id = f"kalshi:{market_ticker}"
@@ -24,7 +29,20 @@ class StreamCoordinator:
                 raise
             # Delta before the subscribe-time snapshot: the snapshot is coming.
             return None
-        return state.as_orderbook() if changed and state.synced else None
+        if not (changed and state.synced):
+            return None
+        try:
+            book = state.as_orderbook()
+        except CrossedBookError:
+            # Never hand a book that cannot exist to the evaluator or the store.
+            self.crossed[market_id] = self.crossed.get(market_id, 0) + 1
+            if self.crossed[market_id] > MAX_CROSSED_STATES:
+                self.crossed[market_id] = 0
+                state.reset()
+                raise SequenceGapError("book stayed crossed; resubscribe for a snapshot") from None
+            return None
+        self.crossed[market_id] = 0
+        return book
 
     def polymarket_event(self, message: dict) -> OrderBook | None:
         data = message.get("marketData")
