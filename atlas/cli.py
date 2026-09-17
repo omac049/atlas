@@ -1388,6 +1388,47 @@ async def _polymarket_us_top_of_book(
     }
 
 
+async def books_record(
+    event: str, db_path: str, interval: float | None, depth: int | None
+) -> int:
+    """Record one Kalshi event's public order books until its markets close.
+
+    Exit 0 when the event has closed (launchd leaves the agent down); exit 1 when
+    the event cannot be discovered, so launchd tries again.
+    """
+    from atlas import book_recorder
+
+    venue = KalshiVenue(fixture=False)
+    markets: list[dict] = []
+    for attempt in range(5):
+        try:
+            markets = await venue.list_event_markets(event)
+            break
+        except (httpx.HTTPError, OSError, ValueError) as exc:
+            print(f"book_recorder: discovery failed ({type(exc).__name__}), attempt {attempt + 1}/5")
+            await asyncio.sleep(2.0 * (attempt + 1))
+    tickers, until = book_recorder.recording_window(markets)
+    if not tickers or until is None:
+        print(f"book_recorder: no markets found for {event}")
+        return 1
+    if datetime.now(UTC) >= until:
+        print(f"book_recorder: {event} closed at {until.isoformat()}; nothing to record")
+        return 0
+    Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+    interval = interval or book_recorder.INTERVAL_SECONDS
+    depth = depth or book_recorder.DEPTH
+    print(
+        f"book_recorder: paper_only=true event={event} markets={','.join(tickers)} "
+        f"db={db_path} interval={interval}s depth={depth} "
+        f"heartbeat={book_recorder.HEARTBEAT_SECONDS}s until={until.isoformat()}"
+    )
+    await book_recorder.record(
+        venue, AtlasStore(db_path), tickers, until=until, interval=interval, depth=depth
+    )
+    print(f"book_recorder: {event} closed; recording finished")
+    return 0
+
+
 async def gaps_scan(live: bool) -> None:
     """One bounded, read-only radar pass over open twin-shaped candidate pairs.
 
@@ -1981,9 +2022,17 @@ def main() -> None:
     sync = markets.add_subparsers(dest="action", required=True).add_parser("sync")
     sync.add_argument("--live", action="store_true")
     books = sub.add_parser("books")
-    inspect = books.add_subparsers(dest="action", required=True).add_parser("inspect")
+    books_sub = books.add_subparsers(dest="action", required=True)
+    inspect = books_sub.add_parser("inspect")
     inspect.add_argument("venue")
     inspect.add_argument("market_id")
+    books_record_parser = books_sub.add_parser(
+        "record", help="record one Kalshi event's public order books (atlas/book_recorder.py)"
+    )
+    books_record_parser.add_argument("--event", required=True, help="e.g. KXFEDDECISION-26OCT")
+    books_record_parser.add_argument("--db", default="data/making/books.sqlite3")
+    books_record_parser.add_argument("--interval", type=float, default=None)
+    books_record_parser.add_argument("--depth", type=int, default=None)
     opps = sub.add_parser("opportunities")
     opps.add_subparsers(dest="action", required=True).add_parser("demo")
     agent = sub.add_parser("agent")
@@ -2197,6 +2246,10 @@ def main() -> None:
     args = parser.parse_args()
     if args.command == "markets":
         asyncio.run(markets_sync(fixture=not args.live))
+    elif args.command == "books" and args.action == "record":
+        raise SystemExit(
+            asyncio.run(books_record(args.event, args.db, args.interval, args.depth))
+        )
     elif args.command == "books":
         asyncio.run(books_inspect(args.venue, args.market_id))
     elif args.command == "opportunities":

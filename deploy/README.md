@@ -7,7 +7,7 @@ failure. Verified working from `/Users/ocorral/Atlas` on 2026-08-18.
 
 ```bash
 cp deploy/com.atlas.*.plist ~/Library/LaunchAgents/
-for l in com.atlas.api com.atlas.monitor com.atlas.healthcheck com.atlas.backup com.atlas.study com.atlas.intel com.atlas.awake com.atlas.site com.atlas.fees com.atlas.gsc; do
+for l in com.atlas.api com.atlas.monitor com.atlas.healthcheck com.atlas.backup com.atlas.study com.atlas.intel com.atlas.awake com.atlas.site com.atlas.fees com.atlas.gsc com.atlas.books; do
   launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/$l.plist
 done
 launchctl list | grep com.atlas   # third column 0 = healthy
@@ -76,6 +76,17 @@ reads the installed copy in `~/Library/LaunchAgents`, not the one in this repo.
   Pulls Search Console data for both sites through the owner's personal-account
   service account, then writes `data/gsc/report.md`. Until the key file exists it
   logs a skip and exits cleanly. Log: `~/Library/Logs/atlas-gsc.log`.
+- **`com.atlas.books.plist`**: always on until 2026-10-28, the fifth charter's Arm A book
+  recorder (`atlas/book_recorder.py`). Polls Kalshi's public REST order book for every
+  `KXFEDDECISION-26OCT-*` market every 5 s and writes to `data/making/books.sqlite3`, a
+  database of its own, so nothing else contends with it and the frozen runner can be
+  pointed at exactly those markets (`run_making.py --arm A --db data/making/books.sqlite3`).
+  A row is written when the book changes and at least every 60 s when it does not, so a
+  gap longer than that always means "not polling". Restarts on a crash; exits 0 and stays
+  down once the markets close. Status line every 5 minutes in `~/Library/Logs/atlas-books.log`.
+  It exists because the websocket recorder never stored a real book (charter note of
+  2026-09-17). Remove it after the 2026-10-29 run:
+  `launchctl bootout gui/$(id -u)/com.atlas.books && rm ~/Library/LaunchAgents/com.atlas.books.plist`.
 - **`com.atlas.healthcheck.plist` + `atlas_healthcheck.py`** — a 60s liveness probe
   covering what `KeepAlive` cannot see: a process that is alive but wedged.
   Restarts the API when `/health` stops answering (after 2 consecutive misses, so a

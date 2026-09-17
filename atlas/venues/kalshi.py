@@ -284,6 +284,14 @@ class KalshiVenue(PredictionVenue):
             if source.get("name")
         ]
 
+    async def list_event_markets(self, event_ticker: str) -> list[dict]:
+        """Every market of one event as the venue publishes it (ticker, status,
+        close_time, ...). Read-only; one bounded request."""
+        if self.fixture:
+            return []
+        payload = await self._get("/markets", {"event_ticker": event_ticker, "limit": 100})
+        return [m for m in payload.get("markets", []) or [] if isinstance(m, dict)]
+
     async def get_orderbook(self, market_id: str) -> OrderBook:
         if self.fixture:
             key = market_id if market_id.startswith("kalshi:") else f"kalshi:{market_id}"

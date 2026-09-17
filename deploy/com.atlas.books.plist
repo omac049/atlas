@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.atlas.books</string>
+    <!-- The fifth charter's Arm A book recorder (atlas/book_recorder.py): Kalshi's
+         public REST order book for every October Fed-decision market, every 5 s,
+         into its own database. Read-only, no credentials, paper-only. -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/ocorral/Atlas/.venv/bin/python</string>
+        <string>-m</string>
+        <string>atlas.cli</string>
+        <string>books</string>
+        <string>record</string>
+        <string>--event</string>
+        <string>KXFEDDECISION-26OCT</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+    <key>WorkingDirectory</key>
+    <string>/Users/ocorral/Atlas</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <!-- Restart on a crash, stay down after a clean exit: the recorder exits 0
+         once the event's markets have closed (2026-10-28), and must not be
+         respawned every ten seconds for the rest of time. -->
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+    </dict>
+    <key>ThrottleInterval</key>
+    <integer>30</integer>
+    <key>StandardOutPath</key>
+    <string>/Users/ocorral/Library/Logs/atlas-books.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/ocorral/Library/Logs/atlas-books.log</string>
+</dict>
+</plist>
