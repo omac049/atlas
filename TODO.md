@@ -8,6 +8,13 @@ Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness or
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
 
+## 2026-09-24 — monitor crash-looped for ~24h on a sentence-ending period
+
+- [x] **Cause:** Kalshi listed NFL receiving-yards *escalators* (scalar payouts) whose rules end "Yes pays out at most $1.00." The threshold capture `[0-9][0-9,.]*` took `1.00.`, `Decimal()` raised `InvalidOperation`, and every `monitor watch` cycle died in `_enrich_candidate_sources` from the last good cycle (2026-09-23 21:38 UTC) until the fix. 24 markets.
+- [x] **Fix:** `_number` parses the leading number only. Frozen-rules exemption (bug fix that cannot change a verdict), shown on the live catalogs 2026-09-24: 66,643 markets fingerprinted with old vs new `_number` — **0 changed** among those that parsed before; crashes 24 → 0. Pinned by `tests/test_threshold_number_parsing.py`.
+- [ ] Follow-up: one unparseable market still takes down the whole cycle. Consider isolating per-market normalization failures (skip + count) — a frozen-path change, needs sign-off.
+- [ ] Study impact: the monitor produced no observations for ~24h (2026-09-23 21:38 → restart). Note the gap in the next study report.
+
 ## 2026-09-17 — Arm A's book data is invalid; a ground-truth recorder is running
 
 - [x] **Found before Arm A was run, with no fill, fee or P&L computed:** the
