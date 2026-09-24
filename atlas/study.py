@@ -89,6 +89,8 @@ GO_MIN_MEDIAN_BASKET_NOTIONAL_USD = Decimal(500)
 POST_START_SCOPE_FAMILIES: dict[str, str] = {
     "us_house_control": "2026-08-20",
     "us_senate_control": "2026-08-20",
+    # Recognized, never approvable (docs/decisions/2026-09-24-nfl-player-prop-family.md).
+    "nfl_player_stat": "2026-09-24",
 }
 
 # Days-to-settlement buckets for the gap-vs-horizon curve; the last bucket is

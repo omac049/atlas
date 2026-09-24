@@ -19,8 +19,9 @@ def build_fingerprint(market: Market) -> ContractFingerprint:
     event_date = _event_date(market) or (
         market.resolution_time.isoformat() if market.resolution_time else None
     )
-    participants = sorted(_participants(market))
     specialized = specialized_terms(market)
+    # Only the NFL player-prop reader supplies participants today; others keep the fallback.
+    participants = sorted(specialized.get("participants") or _participants(market))
     event_date = str(specialized.get("event_date") or event_date) if event_date else specialized.get("event_date")
     event_subject = str(
         specialized.get("event_subject")

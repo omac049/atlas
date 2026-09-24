@@ -8,6 +8,16 @@ Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness or
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
 
+## 2026-09-24 — NFL player props recognized (explain-only)
+
+- [x] New family reader, policy tokens, safety lock, study quarantine, learning family. Live
+  proof: 0 fingerprints changed outside the family; 676 twin pairs now show the
+  three true reasons. Records: decision + charter amendment.
+- [ ] Watch for venue rewordings: any branch turning `unstated` degrades the explanation (safe).
+- [ ] If Kalshi ever states overtime/corrections/postponement, re-run the proof; approval still
+  needs identical non-fair-price branches on both venues AND new reader phrases for them (a
+  frozen-path change needing sign-off).
+
 ## 2026-09-24 — optional Jev (TypeSafe) proposer for the agent's review step
 
 - [x] `JevSemanticProposer` in `atlas/semantic.py`: re-ranks the lexical shortlist (4x the limit) with one Jev request per pair — a 3-level "same question?" Score plus same-subject / same-resolution-source / inverse Nouls. Output stays `REVIEW_REQUIRED` / `MODEL_PROPOSAL`; `verify_equivalence` still decides. Model pinned to `jev-1.13.0`; bounded retries on 429/5xx; total failure falls back to the lexical proposer.

@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from decimal import Decimal
 from zoneinfo import ZoneInfo
 
-from atlas.models import Market
+from atlas.models import Market, VenueName
 
 MONTHS = {
     name.lower(): index
@@ -94,6 +94,7 @@ STATION_ALIASES = {
 
 def specialized_terms(market: Market) -> dict[str, object]:
     for normalizer in (
+        _nfl_player_prop_terms,
         _economic_terms,
         _weather_terms,
         _crypto_terms,
@@ -1119,6 +1120,201 @@ def _number(value: str) -> Decimal:
     cleaned = value.replace(",", "")
     match = re.match(r"-?[0-9]+(?:\.[0-9]+)?", cleaned)
     return Decimal(match.group(0) if match else cleaned)
+
+
+# NFL single-game player stat ladders — recognized and explained, never approvable.
+# Design: docs/plans/2026-09-24-nfl-player-prop-family-design.md. Every venue today settles
+# at least one branch at a "fair price" or leaves it unstated, which settlement.py treats as
+# non-guaranteed; this reader only makes a twin *read* as a twin.
+NFL_PLAYER_PROP_SCOPE = "nfl_player_game"
+NFL_PROP_POLICY_BRANCHES = ("inactive", "no_snap", "overtime", "postponement", "stat_corrections")
+_NFL_KALSHI_SERIES = {
+    "KXNFLRECYDS": "receiving_yards",
+    "KXNFLREC": "receptions",
+    "KXNFLRSHYDS": "rushing_yards",
+    "KXNFLRSHATT": "rushing_attempts",
+    "KXNFLPASSYDS": "passing_yards",
+    "KXNFLPASSATT": "passing_attempts",
+    "KXNFLPASSCOMP": "passing_completions",
+    "KXNFLPASSTDS": "passing_touchdowns",
+    "KXNFLPASSINT": "interceptions_thrown",
+    # "rushing and receiving yards combined" == Polymarket "scrimmage yards (rushing + receiving)".
+    "KXNFLRRYDS": "scrimmage_yards",
+}
+_NFL_POLYMARKET_TYPES = {f"football_player_{stat}": stat for stat in _NFL_KALSHI_SERIES.values()}
+_NFL_TEAMS = frozenset({
+    "ari", "atl", "bal", "buf", "car", "chi", "cin", "cle", "dal", "den", "det", "gb", "hou",
+    "ind", "jax", "kc", "lac", "lar", "lv", "mia", "min", "ne", "no", "nyg", "nyj", "phi", "pit",
+    "sea", "sf", "tb", "ten", "was",
+})
+_NFL_TEAM_ALIASES = {"jac": "jax", "wsh": "was", "la": "lar"}
+_NFL_KALSHI_TITLE = re.compile(r"^(?P<player>[^:]+):\s*(?P<line>\d+)\+\s+(?P<stat>.+?)\s*$")
+_NFL_POLYMARKET_TITLE = re.compile(r"^(?P<player>.+?)\s+(?P<line>\d+)\+\s+(?P<stat>.+?)\s*$")
+# The title's stat words must name exactly the series' stat: no "1st half", no other stat.
+_NFL_KALSHI_TITLE_STATS = {
+    "receiving_yards": "receiving yards",
+    "receptions": "receptions",
+    "rushing_yards": "rushing yards",
+    "rushing_attempts": "rushing attempts",
+    "passing_yards": "passing yards",
+    "passing_attempts": "passing attempts",
+    "passing_completions": "passing completions",
+    "passing_touchdowns": "passing touchdowns",
+    "interceptions_thrown": "passing interceptions",
+    "scrimmage_yards": "rushing and receiving yards combined",
+}
+_NFL_POLYMARKET_TITLE_STATS = {
+    **_NFL_KALSHI_TITLE_STATS,
+    "interceptions_thrown": "interceptions thrown",
+    "scrimmage_yards": "scrimmage yards",
+}
+_NFL_POLYMARKET_SLUG = re.compile(
+    r"^astatc-nfl-(?P<a>[a-z]+)-(?P<b>[a-z]+)-(?P<date>\d{4}-\d{2}-\d{2})-"
+)
+
+
+def _nfl_team(code: str) -> str | None:
+    code = _NFL_TEAM_ALIASES.get(code.lower(), code.lower())
+    return code if code in _NFL_TEAMS else None
+
+
+def _nfl_split_teams(codes: str) -> tuple[str, str] | None:
+    """Split Kalshi's concatenated team codes; ambiguous or unknown -> None."""
+    splits = {
+        tuple(sorted((a, b)))
+        for i in range(2, len(codes) - 1)
+        if (a := _nfl_team(codes[:i])) and (b := _nfl_team(codes[i:]))
+    }
+    return splits.pop() if len(splits) == 1 else None
+
+
+def _nfl_player_key(name: str) -> str:
+    cleaned = re.sub(r"[.'’]", "", name.lower())
+    return re.sub(r"[^a-z0-9]+", " ", cleaned).strip()
+
+
+def _nfl_kalshi_prop(market: Market) -> tuple[str, tuple[str, str], str, str, int] | None:
+    raw = market.raw_market_json
+    series, _, suffix = str(raw.get("event_ticker") or "").partition("-")
+    stat = _NFL_KALSHI_SERIES.get(series)
+    title = _NFL_KALSHI_TITLE.match(market.title)
+    if not stat or not title or len(suffix) < 11:
+        return None
+    if title["stat"].lower() != _NFL_KALSHI_TITLE_STATS[stat]:
+        return None
+    try:
+        game_date = datetime.strptime(suffix[:7], "%y%b%d").replace(tzinfo=UTC).date().isoformat()
+    except ValueError:
+        return None
+    teams = _nfl_split_teams(suffix[7:])
+    line = int(title["line"])
+    floor = _nfl_decimal(raw.get("floor_strike"))
+    if floor is False or (
+        floor is not None
+        and (raw.get("strike_type") != "greater" or floor != line - Decimal("0.5"))
+    ):
+        return None
+    if teams is None:
+        return None
+    return game_date, teams, _nfl_player_key(title["player"]), stat, line
+
+
+def _nfl_polymarket_prop(market: Market) -> tuple[str, tuple[str, str], str, str, int] | None:
+    raw = market.raw_market_json
+    stat = _NFL_POLYMARKET_TYPES.get(str(raw.get("sportsMarketType") or ""))
+    slug = _NFL_POLYMARKET_SLUG.match(str(raw.get("slug") or ""))
+    title = _NFL_POLYMARKET_TITLE.match(market.title)
+    if not stat or not slug or not title:
+        return None
+    if title["stat"].lower() != _NFL_POLYMARKET_TITLE_STATS[stat]:
+        return None
+    a, b = _nfl_team(slug["a"]), _nfl_team(slug["b"])
+    line = int(title["line"])
+    raw_line = _nfl_decimal(raw.get("line"))
+    if not a or not b or raw_line is False or (raw_line is not None and raw_line != line):
+        return None
+    player = _nfl_player_key(title["player"])
+    metadata = raw.get("metadata")
+    name = metadata.get("playerName") if isinstance(metadata, dict) else None
+    if name and _nfl_player_key(str(name)) != player:
+        return None  # the title and the venue's own player field disagree: don't guess
+    return slug["date"], (min(a, b), max(a, b)), player, stat, line
+
+
+def _nfl_decimal(value: object) -> Decimal | None | bool:
+    """None when absent, False when present but not a number (never raises)."""
+    if value is None:
+        return None
+    try:
+        return Decimal(str(value))
+    except ArithmeticError:
+        return False
+
+
+def _nfl_player_prop_terms(market: Market) -> dict[str, object]:
+    if market.venue == VenueName.KALSHI:
+        parsed = _nfl_kalshi_prop(market)
+    elif market.venue == VenueName.POLYMARKET_US:
+        parsed = _nfl_polymarket_prop(market)
+    else:
+        return {}
+    if parsed is None:
+        return {}
+    game_date, (team_a, team_b), player, stat, line = parsed
+    text = " ".join(f"{market.raw_rules_text} {market.description or ''}".lower().split())
+    terms: dict[str, object] = {
+        "event_subject": f"nfl_player_stat|{game_date}|{team_a}-{team_b}|{player}|{stat}",
+        "event_date": game_date,
+        "event_action": "records",
+        "market_type": "player_prop",
+        "contract_scope": NFL_PLAYER_PROP_SCOPE,
+        "affirmative_outcome": player,
+        "participants": [player],
+        "threshold": Decimal(line),
+        "threshold_upper": None,
+        "threshold_operator": ">=",
+        "threshold_unit": stat,
+        "measurement_period": game_date,
+        "settlement_policy": nfl_prop_settlement_policy(text),
+    }
+    if "official box score" in text:
+        terms["resolution_source"] = "official_box_score"
+    return terms
+
+
+_NFL_WORD_NUMBERS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "seven": 7}
+
+
+def nfl_prop_settlement_policy(text: str) -> str:
+    """Five edge-case branches from one venue's fine print. Unrecognized -> `unstated`.
+
+    `text` is lowercased with whitespace collapsed. Phrases are pinned to the venues'
+    live wording on 2026-09-24; a rewording degrades to `unstated` (more mismatch, never less).
+    """
+    policy = dict.fromkeys(NFL_PROP_POLICY_BRANCHES, "unstated")
+    if "active but never takes a snap" in text and "fair market price before game start" in text:
+        policy["no_snap"] = "fair_price_pregame"
+    if re.search(
+        r"must participate in the game by taking at least one snap[^.]*otherwise, "
+        r"the market will settle to the last fair market price",
+        text,
+    ):
+        policy["no_snap"] = policy["inactive"] = "fair_price_last"
+    if "overtime is included" in text:
+        policy["overtime"] = "included"
+    elif re.search(r"overtime (?:is not|will not be) (?:included|counted)", text):
+        policy["overtime"] = "excluded"
+    if "stat corrections enforced after the game has been completed will not count" in text:
+        policy["stat_corrections"] = "excluded"
+    if match := re.search(
+        r"not rescheduled to a date within (\w+) days? of the originally scheduled date, "
+        r"the market will settle to the last fair market price",
+        text,
+    ):
+        days = _NFL_WORD_NUMBERS.get(match[1]) or (int(match[1]) if match[1].isdigit() else None)
+        if days:
+            policy["postponement"] = f"fair_price_last_after_{days}d"
+    return ";".join(f"{branch}={policy[branch]}" for branch in NFL_PROP_POLICY_BRANCHES)
 
 
 # Non-US jurisdictions whose CPI/inflation contracts must not be filed under a

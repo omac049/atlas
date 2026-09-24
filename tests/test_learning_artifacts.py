@@ -153,3 +153,13 @@ async def test_training_bundle_excludes_untrusted_and_inconclusive_rows(tmp_path
         "REVIEW_REQUIRED": 1,
         "UNLABELED": 1,
     }
+
+
+def test_player_props_and_team_totals_are_sports():
+    def example(market_type):
+        return {"label": "REJECTED", "payload": {"decision": {
+            "fingerprint_a": {"market_type": market_type, "event_subject": "x|2026-09-27"}
+        }}}
+
+    assert example_family(example("player_prop")) == "sports"
+    assert example_family(example("team_total")) == "sports"

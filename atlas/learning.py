@@ -207,7 +207,7 @@ async def _trusted_export_examples(store: AtlasStore) -> list[dict[str, object]]
 # abundant, evidence-backed HARD negatives (the candidate matcher selected them
 # as lexically similar), but they must stay a controllable slice of the training
 # mix so they cannot drown the sparse macro lessons.
-_SPORTS_MARKET_TYPES = {"spread", "moneyline", "total", "sports"}
+_SPORTS_MARKET_TYPES = {"spread", "moneyline", "total", "sports", "player_prop", "team_total"}
 
 
 def example_family(example: dict[str, object]) -> str:

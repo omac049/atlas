@@ -371,3 +371,23 @@ are the honest test of whether a tradeable gap ever opens at all.
     quote is dropped, and a market quoted only that way is no longer recorded
     as an observation at all. Prices, `best_gap`, `executable_gap`, and the
     frozen rules are unchanged.
+
+- **2026-09-24 — NFL player-prop family recognized (frozen-path change; quarantined from
+  go/no-go; no approval path).** Owner sign-off:
+  `docs/decisions/2026-09-24-nfl-player-prop-family.md`.
+  - **What changed:** a new reader (`_nfl_player_prop_terms`, first in `specialized_terms`)
+    for single-game NFL player "N+" ladders in 10 stats; `build_fingerprint` takes
+    participants from a reader when supplied (only this one does); `settlement.py` locks the
+    `nfl_player_game` scope to UNKNOWN unless all five edge-case branches are stated.
+    `verify_equivalence` is byte-unchanged.
+  - **Proof on the live catalogs, same day:** 66,665 markets fingerprinted with and without
+    the reader — **0 changed outside the family**; the reader claims 4,455;
+    676 cross-venue twin pairs, all 676 of them with exactly
+    SETTLEMENT_POLICY / RESOLUTION_SOURCE / NON_GUARANTEED (the sampled Nabers twin showed 8 codes before; the proof measured only the after state).
+  - **Which metrics it can move:** none of the go/no-go inputs (quarantined in
+    `POST_START_SCOPE_FAMILIES`; the radar is macro-only). It moves review-candidate counts in
+    `scan:` and may add evidence-backed REJECTED sports labels under the 2026-08-13 decision
+    when both venues' settled outcomes diverge; learning exports now file `player_prop` and
+    `team_total` as `sports` instead of `other`.
+  - **Deliberately not done:** no approval rule; no other sports; `touchdowns` excluded (the
+    venues define it differently: Polymarket excludes passing TDs, Kalshi is silent).
