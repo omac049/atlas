@@ -8,6 +8,13 @@ Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness or
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
 
+## 2026-09-24 — optional Jev (TypeSafe) proposer for the agent's review step
+
+- [x] `JevSemanticProposer` in `atlas/semantic.py`: re-ranks the lexical shortlist (4x the limit) with one Jev request per pair — a 3-level "same question?" Score plus same-subject / same-resolution-source / inverse Nouls. Output stays `REVIEW_REQUIRED` / `MODEL_PROPOSAL`; `verify_equivalence` still decides. Model pinned to `jev-1.13.0`; bounded retries on 429/5xx; total failure falls back to the lexical proposer.
+- [x] Opt-in only: `ATLAS_SEMANTIC_ENABLED=1` + `ATLAS_SEMANTIC_PROVIDER=jev`, key in `TYPESAFE_API_KEY` (or `typesafe_ai`). The OpenAI default is unchanged. Scope is `atlas agent` only; the monitor's candidate pipeline is untouched.
+- [x] Live smoke 2026-09-24 (fixture twin + edited variants): twin 1.00, ECB-for-Fed 0.06, raise→cut 0.13 with inverse 0.80, **25→50 bps still 0.57** — Jev is weak on numbers exactly as its docs say, so it must never feed a verdict.
+- [ ] Before relying on it: score a real live shortlist against the 81 trusted labels (does P(same) separate APPROVED from REJECTED better than the lexical Jaccard?). Research only — the verifier is frozen for the 90-day study.
+
 ## 2026-09-24 — monitor crash-looped for ~24h on a sentence-ending period
 
 - [x] **Cause:** Kalshi listed NFL receiving-yards *escalators* (scalar payouts) whose rules end "Yes pays out at most $1.00." The threshold capture `[0-9][0-9,.]*` took `1.00.`, `Decimal()` raised `InvalidOperation`, and every `monitor watch` cycle died in `_enrich_candidate_sources` from the last good cycle (2026-09-23 21:38 UTC) until the fix. 24 markets.
