@@ -162,7 +162,12 @@ class AtlasAgent:
             return "discover_catalogs", "observe both venue catalogs before choosing a search path"
         if not state.get("approved_pairs") and not state.get("candidate_reviews"):
             return "review_candidates", "no deterministic pair found; broaden to same-event review"
-        if not state.get("approved_pairs") and state.get("candidate_reviews"):
+        if (
+            not state.get("approved_pairs")
+            and state.get("candidate_reviews")
+            and "verified_pairs" not in state
+        ):
+            # Once only: re-verifying the same candidates cannot change a deterministic result.
             return "verify_candidates", "review candidates exist; run deterministic rule verification"
         if state.get("approved_pairs") and not state.get("evaluated"):
             return "evaluate_opportunities", "approved pairs exist; inspect executable paper edge"
