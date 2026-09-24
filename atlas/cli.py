@@ -408,6 +408,30 @@ async def agent_research(mode: str = "fixture", replay_path: str | None = None) 
         print(f"  PAPER EDGE {opportunity.pair_id} roi={opportunity.expected_roi:.1%}")
 
 
+async def agent_evaluate_proposer() -> None:
+    from atlas.proposer_eval import evaluate_proposer
+    from atlas.semantic import JevSemanticProposer
+
+    proposer = JevSemanticProposer.from_environment()
+    if proposer is None:
+        raise SystemExit("set TYPESAFE_API_KEY (or typesafe_ai) in .env to evaluate Jev")
+    examples = await AtlasStore().labeled_learning_examples()
+    report = await evaluate_proposer(examples, proposer)
+    print(
+        f"proposer_eval: model={report['model']} scored={report['scored']}/{report['pairs']} "
+        f"approved={report['approved']} rejected={report['rejected']}"
+    )
+    for method in ("lexical", "jev", "jev_numbers"):
+        row = report[method]
+        auc = "n/a" if row["auc"] is None else f"{row['auc']:.3f}"
+        print(
+            f"  {method:12} auc={auc} mean_approved={row['mean_approved']:.2f} "
+            f"mean_rejected={row['mean_rejected']:.2f} "
+            f"kept_at_floor approved={row['approved_kept_at_floor']} "
+            f"rejected={row['rejected_kept_at_floor']}"
+        )
+
+
 async def monitor_once() -> None:
     opportunity = await run_once()
     print(
@@ -2040,6 +2064,10 @@ def main() -> None:
     research_agent = agent_sub.add_parser("research")
     research_agent.add_argument("--live", action="store_true")
     research_agent.add_argument("--replay")
+    agent_sub.add_parser(
+        "evaluate-proposer",
+        help="score trusted labels with Jev vs title overlap (research only; needs a TypeSafe key)",
+    )
     monitor = sub.add_parser("monitor")
     monitor_sub = monitor.add_subparsers(dest="action", required=True)
     monitor_sub.add_parser("once")
@@ -2255,8 +2283,11 @@ def main() -> None:
     elif args.command == "opportunities":
         asyncio.run(opportunities_demo())
     elif args.command == "agent":
-        mode = "live" if args.live else "replay" if args.replay else "fixture"
-        asyncio.run(agent_research(mode, args.replay))
+        if args.action == "evaluate-proposer":
+            asyncio.run(agent_evaluate_proposer())
+        else:
+            mode = "live" if args.live else "replay" if args.replay else "fixture"
+            asyncio.run(agent_research(mode, args.replay))
     elif args.command == "monitor":
         if args.action == "once":
             asyncio.run(monitor_once())
