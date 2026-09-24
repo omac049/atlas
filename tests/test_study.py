@@ -429,3 +429,14 @@ def test_an_empty_code_set_alone_cannot_promote_a_row_to_approved():
     assert report["distinct_opportunities"] == 1
     assert report["approved_opportunities_total"] == 0
     assert report["verified_opportunities_total"] == 0
+
+
+def test_nfl_player_props_are_quarantined_from_the_go_threshold():
+    macro = _observation("2026-09-24T10:00:00+00:00", pair="m1", gap="0.03")
+    prop = _observation(
+        "2026-09-24T10:00:00+00:00", pair="p1", gap="0.05",
+        subject="nfl_player_stat|2026-09-27|nyg-ten|malik nabers|receiving_yards",
+    )
+    report = study_report([macro, prop], today=date(2026, 9, 24))
+    assert report["distinct_opportunities"] == 1
+    assert report["post_start_scope"]["family_executable_observations"] == {"nfl_player_stat": 1}
