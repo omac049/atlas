@@ -1,6 +1,6 @@
 # NFL player-prop family — design
 
-Date: 2026-09-24 · Status: implemented (plan: `2026-09-24-nfl-player-prop-family-plan.md`). Live proof: 66,665 markets, 0 fingerprints changed outside the family, 4,460 claimed, 680 twin pairs all showing exactly the three true codes.
+Date: 2026-09-24 · Status: implemented (plan: `2026-09-24-nfl-player-prop-family-plan.md`). Live proof: 66,665 markets, 0 fingerprints changed outside the family, 4,455 claimed, 676 twin pairs all showing exactly the three true codes.
 Owner sign-off for the frozen-path change: given in chat 2026-09-24 ("yes, teach the rules player props", option A "recognize and explain", approach 1, NFL only).
 
 ## In plain words

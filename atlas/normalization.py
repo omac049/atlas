@@ -1148,8 +1148,26 @@ _NFL_TEAMS = frozenset({
     "sea", "sf", "tb", "ten", "was",
 })
 _NFL_TEAM_ALIASES = {"jac": "jax", "wsh": "was", "la": "lar"}
-_NFL_KALSHI_TITLE = re.compile(r"^(?P<player>[^:]+):\s*(?P<line>\d+)\+\s")
-_NFL_POLYMARKET_TITLE = re.compile(r"^(?P<player>.+?)\s+(?P<line>\d+)\+\s")
+_NFL_KALSHI_TITLE = re.compile(r"^(?P<player>[^:]+):\s*(?P<line>\d+)\+\s+(?P<stat>.+?)\s*$")
+_NFL_POLYMARKET_TITLE = re.compile(r"^(?P<player>.+?)\s+(?P<line>\d+)\+\s+(?P<stat>.+?)\s*$")
+# The title's stat words must name exactly the series' stat: no "1st half", no other stat.
+_NFL_KALSHI_TITLE_STATS = {
+    "receiving_yards": "receiving yards",
+    "receptions": "receptions",
+    "rushing_yards": "rushing yards",
+    "rushing_attempts": "rushing attempts",
+    "passing_yards": "passing yards",
+    "passing_attempts": "passing attempts",
+    "passing_completions": "passing completions",
+    "passing_touchdowns": "passing touchdowns",
+    "interceptions_thrown": "passing interceptions",
+    "scrimmage_yards": "rushing and receiving yards combined",
+}
+_NFL_POLYMARKET_TITLE_STATS = {
+    **_NFL_KALSHI_TITLE_STATS,
+    "interceptions_thrown": "interceptions thrown",
+    "scrimmage_yards": "scrimmage yards",
+}
 _NFL_POLYMARKET_SLUG = re.compile(
     r"^astatc-nfl-(?P<a>[a-z]+)-(?P<b>[a-z]+)-(?P<date>\d{4}-\d{2}-\d{2})-"
 )
@@ -1182,15 +1200,18 @@ def _nfl_kalshi_prop(market: Market) -> tuple[str, tuple[str, str], str, str, in
     title = _NFL_KALSHI_TITLE.match(market.title)
     if not stat or not title or len(suffix) < 11:
         return None
+    if title["stat"].lower() != _NFL_KALSHI_TITLE_STATS[stat]:
+        return None
     try:
         game_date = datetime.strptime(suffix[:7], "%y%b%d").replace(tzinfo=UTC).date().isoformat()
     except ValueError:
         return None
     teams = _nfl_split_teams(suffix[7:])
     line = int(title["line"])
-    floor = raw.get("floor_strike")
-    if floor is not None and (
-        raw.get("strike_type") != "greater" or Decimal(str(floor)) != line - Decimal("0.5")
+    floor = _nfl_decimal(raw.get("floor_strike"))
+    if floor is False or (
+        floor is not None
+        and (raw.get("strike_type") != "greater" or floor != line - Decimal("0.5"))
     ):
         return None
     if teams is None:
@@ -1205,14 +1226,29 @@ def _nfl_polymarket_prop(market: Market) -> tuple[str, tuple[str, str], str, str
     title = _NFL_POLYMARKET_TITLE.match(market.title)
     if not stat or not slug or not title:
         return None
+    if title["stat"].lower() != _NFL_POLYMARKET_TITLE_STATS[stat]:
+        return None
     a, b = _nfl_team(slug["a"]), _nfl_team(slug["b"])
     line = int(title["line"])
-    raw_line = raw.get("line")
-    if not a or not b or (raw_line is not None and Decimal(str(raw_line)) != line):
+    raw_line = _nfl_decimal(raw.get("line"))
+    if not a or not b or raw_line is False or (raw_line is not None and raw_line != line):
         return None
+    player = _nfl_player_key(title["player"])
     metadata = raw.get("metadata")
     name = metadata.get("playerName") if isinstance(metadata, dict) else None
-    return slug["date"], tuple(sorted((a, b))), _nfl_player_key(str(name or title["player"])), stat, line
+    if name and _nfl_player_key(str(name)) != player:
+        return None  # the title and the venue's own player field disagree: don't guess
+    return slug["date"], (min(a, b), max(a, b)), player, stat, line
+
+
+def _nfl_decimal(value: object) -> Decimal | None | bool:
+    """None when absent, False when present but not a number (never raises)."""
+    if value is None:
+        return None
+    try:
+        return Decimal(str(value))
+    except ArithmeticError:
+        return False
 
 
 def _nfl_player_prop_terms(market: Market) -> dict[str, object]:

@@ -381,9 +381,9 @@ are the honest test of whether a tradeable gap ever opens at all.
     `nfl_player_game` scope to UNKNOWN unless all five edge-case branches are stated.
     `verify_equivalence` is byte-unchanged.
   - **Proof on the live catalogs, same day:** 66,665 markets fingerprinted with and without
-    the reader — **0 changed outside the family**; the reader claims 4,460;
-    680 cross-venue twin pairs, all 680 of them with exactly
-    SETTLEMENT_POLICY / RESOLUTION_SOURCE / NON_GUARANTEED (previously 8 codes each).
+    the reader — **0 changed outside the family**; the reader claims 4,455;
+    676 cross-venue twin pairs, all 676 of them with exactly
+    SETTLEMENT_POLICY / RESOLUTION_SOURCE / NON_GUARANTEED (the sampled Nabers twin showed 8 codes before; the proof measured only the after state).
   - **Which metrics it can move:** none of the go/no-go inputs (quarantined in
     `POST_START_SCOPE_FAMILIES`; the radar is macro-only). It moves review-candidate counts in
     `scan:` and may add evidence-backed REJECTED sports labels under the 2026-08-13 decision

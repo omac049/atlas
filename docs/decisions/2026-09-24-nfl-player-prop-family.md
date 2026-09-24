@@ -12,4 +12,6 @@ docs/plans/2026-09-24-nfl-player-prop-family-design.md.
 **What it does:** twins share a canonical fingerprint; the verifier reports the three true
 differences (settlement policy, resolution source, non-guaranteed settlement). A pair could
 only become approvable if both venues state all five branches identically with a named source
-and no fair-price outcome.
+and no fair-price outcome — and even then the reader would first need new phrases for those
+wordings (today it has no non-fair-price value for inactive, no-snap, or postponement), which is
+a normalizer change needing its own sign-off.

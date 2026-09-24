@@ -11,11 +11,12 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
 ## 2026-09-24 — NFL player props recognized (explain-only)
 
 - [x] New family reader, policy tokens, safety lock, study quarantine, learning family. Live
-  proof: 0 fingerprints changed outside the family; 680 twin pairs now show the
+  proof: 0 fingerprints changed outside the family; 676 twin pairs now show the
   three true reasons. Records: decision + charter amendment.
 - [ ] Watch for venue rewordings: any branch turning `unstated` degrades the explanation (safe).
 - [ ] If Kalshi ever states overtime/corrections/postponement, re-run the proof; approval still
-  needs identical non-fair-price branches on both venues.
+  needs identical non-fair-price branches on both venues AND new reader phrases for them (a
+  frozen-path change needing sign-off).
 
 ## 2026-09-24 — optional Jev (TypeSafe) proposer for the agent's review step
 

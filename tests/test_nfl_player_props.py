@@ -251,3 +251,59 @@ def test_all_branches_stated_without_fair_price_can_be_guaranteed():
     })
     result = assess_settlement_guarantee(market, fingerprint=complete)
     assert result == {"status": "GUARANTEED", "reason_codes": ["COMPLETE_NFL_PLAYER_PROP_POLICY"]}
+
+
+# --- final-review fixes ---
+
+
+@pytest.mark.parametrize(
+    "record",
+    [
+        lambda: KalshiVenue._normalize_market(kalshi_record(floor_strike="")),
+        lambda: PolymarketUSVenue._normalize_market({**polymarket_record(), "line": "abc"}),
+        lambda: PolymarketUSVenue._normalize_market({**polymarket_record(), "line": ""}),
+    ],
+)
+def test_garbage_numbers_return_empty_instead_of_raising(record):
+    # A raise inside build_fingerprint aborts a whole monitor cycle (the 2026-09-24 outage).
+    assert _nfl_player_prop_terms(record()) == {}
+
+
+def test_title_stat_must_match_the_series():
+    wrong_stat = kalshi_record(title="Malik Nabers: 100+ receptions")
+    assert _nfl_player_prop_terms(KalshiVenue._normalize_market(wrong_stat)) == {}
+    first_half = {**polymarket_record(), "title": "Malik Nabers 100+ receiving yards 1st half"}
+    assert _nfl_player_prop_terms(PolymarketUSVenue._normalize_market(first_half)) == {}
+
+
+def test_polymarket_title_player_must_match_metadata_player():
+    record = polymarket_record()
+    record["metadata"] = {**record["metadata"], "playerName": "Isaiah Likely"}
+    assert _nfl_player_prop_terms(PolymarketUSVenue._normalize_market(record)) == {}
+
+
+def test_every_mapped_stat_title_is_recognized_on_both_venues():
+    from atlas.normalization import _NFL_KALSHI_SERIES
+
+    kalshi_titles = {
+        "KXNFLRECYDS": "receiving yards", "KXNFLREC": "receptions",
+        "KXNFLRSHYDS": "rushing yards", "KXNFLRSHATT": "rushing attempts",
+        "KXNFLPASSYDS": "passing yards", "KXNFLPASSATT": "passing attempts",
+        "KXNFLPASSCOMP": "passing completions", "KXNFLPASSTDS": "passing touchdowns",
+        "KXNFLPASSINT": "passing interceptions",
+        "KXNFLRRYDS": "rushing and receiving yards combined",
+    }
+    polymarket_titles = {
+        "receiving_yards": "receiving yards", "receptions": "receptions",
+        "rushing_yards": "rushing yards", "rushing_attempts": "rushing attempts",
+        "passing_yards": "passing yards", "passing_attempts": "passing attempts",
+        "passing_completions": "passing completions", "passing_touchdowns": "passing touchdowns",
+        "interceptions_thrown": "interceptions thrown", "scrimmage_yards": "scrimmage yards",
+    }
+    for series, stat in _NFL_KALSHI_SERIES.items():
+        k = kalshi_record(event=f"{series}-26SEP27TENNYG",
+                          title=f"Malik Nabers: 100+ {kalshi_titles[series]}")
+        assert _nfl_player_prop_terms(KalshiVenue._normalize_market(k))["threshold_unit"] == stat
+        p = {**polymarket_record(), "sportsMarketType": f"football_player_{stat}",
+             "title": f"Malik Nabers 100+ {polymarket_titles[stat]}"}
+        assert _nfl_player_prop_terms(PolymarketUSVenue._normalize_market(p))["threshold_unit"] == stat
