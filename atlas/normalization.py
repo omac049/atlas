@@ -1246,9 +1246,39 @@ def _nfl_player_prop_terms(market: Market) -> dict[str, object]:
     return terms
 
 
+_NFL_WORD_NUMBERS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "seven": 7}
+
+
 def nfl_prop_settlement_policy(text: str) -> str:
-    """Stub until Task 2: every branch unstated."""
-    return ";".join(f"{branch}=unstated" for branch in NFL_PROP_POLICY_BRANCHES)
+    """Five edge-case branches from one venue's fine print. Unrecognized -> `unstated`.
+
+    `text` is lowercased with whitespace collapsed. Phrases are pinned to the venues'
+    live wording on 2026-09-24; a rewording degrades to `unstated` (more mismatch, never less).
+    """
+    policy = dict.fromkeys(NFL_PROP_POLICY_BRANCHES, "unstated")
+    if "active but never takes a snap" in text and "fair market price before game start" in text:
+        policy["no_snap"] = "fair_price_pregame"
+    if re.search(
+        r"must participate in the game by taking at least one snap[^.]*otherwise, "
+        r"the market will settle to the last fair market price",
+        text,
+    ):
+        policy["no_snap"] = policy["inactive"] = "fair_price_last"
+    if "overtime is included" in text:
+        policy["overtime"] = "included"
+    elif re.search(r"overtime (?:is not|will not be) (?:included|counted)", text):
+        policy["overtime"] = "excluded"
+    if "stat corrections enforced after the game has been completed will not count" in text:
+        policy["stat_corrections"] = "excluded"
+    if match := re.search(
+        r"not rescheduled to a date within (\w+) days? of the originally scheduled date, "
+        r"the market will settle to the last fair market price",
+        text,
+    ):
+        days = _NFL_WORD_NUMBERS.get(match[1]) or (int(match[1]) if match[1].isdigit() else None)
+        if days:
+            policy["postponement"] = f"fair_price_last_after_{days}d"
+    return ";".join(f"{branch}={policy[branch]}" for branch in NFL_PROP_POLICY_BRANCHES)
 
 
 # Non-US jurisdictions whose CPI/inflation contracts must not be filed under a

@@ -165,3 +165,49 @@ def test_kalshi_strike_cross_check():
 )
 def test_out_of_scope_markets_are_ignored(market):
     assert _nfl_player_prop_terms(market()) == {}
+
+
+from atlas.normalization import nfl_prop_settlement_policy
+from atlas.verification import verify_equivalence
+
+KALSHI_POLICY = (
+    "inactive=unstated;no_snap=fair_price_pregame;overtime=unstated;"
+    "postponement=unstated;stat_corrections=unstated"
+)
+POLYMARKET_POLICY = (
+    "inactive=fair_price_last;no_snap=fair_price_last;overtime=included;"
+    "postponement=fair_price_last_after_2d;stat_corrections=excluded"
+)
+
+
+def test_policy_tokens_from_real_text():
+    assert build_fingerprint(kalshi()).settlement_policy == KALSHI_POLICY
+    assert build_fingerprint(polymarket()).settlement_policy == POLYMARKET_POLICY
+
+
+def test_unrecognized_fine_print_is_unstated_never_guessed():
+    assert nfl_prop_settlement_policy("some new wording about overtime rules") == (
+        "inactive=unstated;no_snap=unstated;overtime=unstated;"
+        "postponement=unstated;stat_corrections=unstated"
+    )
+
+
+def test_real_twin_gets_exactly_the_three_true_reasons():
+    decision = verify_equivalence(kalshi(), polymarket(), "twin").decision
+    assert decision.status.value == "REVIEW_REQUIRED"
+    assert sorted(decision.mismatch_codes) == [
+        "NON_GUARANTEED_SETTLEMENT",
+        "RESOLUTION_SOURCE_MISMATCH",
+        "SETTLEMENT_POLICY_MISMATCH",
+    ]
+
+
+def test_different_line_adds_threshold_mismatch():
+    codes = verify_equivalence(kalshi(line=90), polymarket(line=100), "x").decision.mismatch_codes
+    assert "THRESHOLD_MISMATCH" in codes
+
+
+def test_different_player_is_a_different_subject():
+    other = polymarket(player="Isaiah Likely", line=100)
+    codes = verify_equivalence(kalshi(), other, "x").decision.mismatch_codes
+    assert "EVENT_SUBJECT_MISMATCH" in codes
