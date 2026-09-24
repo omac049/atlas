@@ -23,7 +23,12 @@ from atlas.discovery import (
 )
 from atlas.models import ContractPair, Market, Opportunity
 from atlas.paper import PaperExecutor
-from atlas.semantic import LocalSemanticProposer, OpenAISemanticProposer, SemanticProposer
+from atlas.semantic import (
+    JevSemanticProposer,
+    LocalSemanticProposer,
+    OpenAISemanticProposer,
+    SemanticProposer,
+)
 from atlas.verification import verify_equivalence
 
 Tool = Callable[[dict[str, Any]], Awaitable[dict[str, Any]]]
@@ -84,6 +89,15 @@ class AgentRun:
         }
 
 
+def _environment_proposer() -> SemanticProposer | None:
+    """Model proposers are opt-in: ATLAS_SEMANTIC_ENABLED=1, provider openai (default) or jev."""
+    if os.getenv("ATLAS_SEMANTIC_ENABLED") != "1":
+        return None
+    if os.getenv("ATLAS_SEMANTIC_PROVIDER", "openai") == "jev":
+        return JevSemanticProposer.from_environment()
+    return OpenAISemanticProposer.from_environment()
+
+
 def _jsonable(value: Any) -> Any:
     if hasattr(value, "model_dump"):
         return value.model_dump(mode="json")
@@ -113,11 +127,7 @@ class AtlasAgent:
         self.books = books or {}
         self.policy = policy or AgentPolicy()
         self.policy.validate()
-        self.semantic_proposer = semantic_proposer or (
-            OpenAISemanticProposer.from_environment()
-            if os.getenv("ATLAS_SEMANTIC_ENABLED") == "1"
-            else None
-        ) or LocalSemanticProposer()
+        self.semantic_proposer = semantic_proposer or _environment_proposer() or LocalSemanticProposer()
         self.tools: dict[str, Tool] = {
             "discover_catalogs": self._discover_catalogs,
             "review_candidates": self._review_candidates,

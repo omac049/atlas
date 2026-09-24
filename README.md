@@ -209,7 +209,7 @@ atlas/
   paper.py           Simulated execution only
   reconcile.py       Paper/settlement outcome reconciliation
   registry.py        Approved-pair registry operations
-  semantic.py        Optional proposal layer; never a verifier
+  semantic.py        Optional proposal layer (lexical, OpenAI, or Jev); never a verifier
   settlement.py      Settlement status and outcome helpers
   shadow.py          Continuous live observation; never executed
   storage.py         SQLite persistence and milestone alerts
