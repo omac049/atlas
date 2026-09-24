@@ -1113,7 +1113,12 @@ def _text(market: Market) -> str:
 
 
 def _number(value: str) -> Decimal:
-    return Decimal(value.replace(",", ""))
+    # Callers capture `[0-9][0-9,.]*`, which swallows a sentence-ending period
+    # ("at most $1.00." -> "1.00."). Parse the leading number only; every capture
+    # that parsed before parses to the same value.
+    cleaned = value.replace(",", "")
+    match = re.match(r"-?[0-9]+(?:\.[0-9]+)?", cleaned)
+    return Decimal(match.group(0) if match else cleaned)
 
 
 # Non-US jurisdictions whose CPI/inflation contracts must not be filed under a
