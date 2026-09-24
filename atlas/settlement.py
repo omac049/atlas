@@ -2,6 +2,7 @@ from enum import StrEnum
 
 from atlas.fingerprints import build_fingerprint, has_explicit_binary_fallback
 from atlas.models import ContractFingerprint, Market
+from atlas.normalization import NFL_PLAYER_PROP_SCOPE, NFL_PROP_POLICY_BRANCHES
 from atlas.policy_evidence import parse_market_policy_evidence
 
 
@@ -86,6 +87,12 @@ def assess_settlement_guarantee(
             "reason_codes": ["COMPLETE_GDP_RELEASE_AND_MISSING_DATA_POLICY"],
         }
 
+    if _complete_nfl_player_prop_policy(fingerprint):
+        return {
+            "status": GuaranteeStatus.GUARANTEED.value,
+            "reason_codes": ["COMPLETE_NFL_PLAYER_PROP_POLICY"],
+        }
+
     if fingerprint.market_type == "weather":
         evidence = parse_market_policy_evidence(market)
         if evidence.complete:
@@ -108,6 +115,7 @@ def assess_settlement_guarantee(
         "fed_funds_upper_bound_level",
         "ism_manufacturing_pmi",
         "ism_services_pmi",
+        NFL_PLAYER_PROP_SCOPE,
     }:
         # Specialized macro families may earn GUARANTEED only through their own
         # complete-policy path above. The generic yes/no-fallback grant below
@@ -375,3 +383,17 @@ def _complete_cpi_release_policy(fingerprint: ContractFingerprint) -> bool:
         "missing=previous_month_figures_at_next_release",
         "precision=bls_one_decimal",
     } <= policies
+
+
+def _complete_nfl_player_prop_policy(fingerprint: ContractFingerprint) -> bool:
+    """All five edge-case branches stated (none `unstated`) and a named source."""
+    if fingerprint.contract_scope != NFL_PLAYER_PROP_SCOPE or not fingerprint.settlement_policy:
+        return False
+    tokens = dict(
+        token.split("=", 1) for token in fingerprint.settlement_policy.split(";") if "=" in token
+    )
+    return (
+        set(tokens) == set(NFL_PROP_POLICY_BRANCHES)
+        and "unstated" not in tokens.values()
+        and fingerprint.resolution_source not in {"", "unknown"}
+    )

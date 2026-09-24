@@ -211,3 +211,43 @@ def test_different_player_is_a_different_subject():
     other = polymarket(player="Isaiah Likely", line=100)
     codes = verify_equivalence(kalshi(), other, "x").decision.mismatch_codes
     assert "EVENT_SUBJECT_MISMATCH" in codes
+
+
+from atlas.fingerprints import has_explicit_binary_fallback
+from atlas.settlement import assess_settlement_guarantee
+
+NO_FAIR_PRICE_RULES = (
+    "If Malik Nabers records 100+ receiving yards in the Tennessee vs New York G Pro Football "
+    "game originally scheduled for Sep 27, 2026, then the market resolves to Yes. "
+    "Otherwise, the market resolves to No."
+)
+
+
+def _no_fair_price_market():
+    return kalshi(rules_primary=NO_FAIR_PRICE_RULES, rules_secondary="")
+
+
+def test_real_legs_stay_non_guaranteed():
+    for market in (kalshi(), polymarket()):
+        assert assess_settlement_guarantee(market)["status"] == "NON_GUARANTEED"
+
+
+def test_lock_blocks_generic_yes_no_grant_when_branches_are_unstated():
+    market = _no_fair_price_market()
+    text = f"{market.raw_rules_text} {market.description or ''}"
+    assert has_explicit_binary_fallback(text)  # the generic grant WOULD fire without the lock
+    result = assess_settlement_guarantee(market)
+    assert result["status"] == "UNKNOWN"
+    assert "FAMILY_POLICY_INCOMPLETE" in result["reason_codes"]
+
+
+def test_all_branches_stated_without_fair_price_can_be_guaranteed():
+    market = _no_fair_price_market()
+    complete = build_fingerprint(market).model_copy(update={
+        "settlement_policy": (
+            "inactive=no;no_snap=no;overtime=included;postponement=no;stat_corrections=excluded"
+        ),
+        "resolution_source": "official_box_score",
+    })
+    result = assess_settlement_guarantee(market, fingerprint=complete)
+    assert result == {"status": "GUARANTEED", "reason_codes": ["COMPLETE_NFL_PLAYER_PROP_POLICY"]}
