@@ -108,15 +108,25 @@ def normalize(text: str) -> str:
     return re.sub(r"\s+", " ", out).strip().lower()
 
 
+def _compact(text: str) -> str:
+    """Normalized, with all spacing and table borders removed. Markup is turned
+    into spaces and line breaks wherever a tag sat, so the same sentence reads
+    "Portuga l" or "$ 0.10" when a page wraps part of a word in a link, and a
+    table row reads as one line or as one line per cell. None of that is a
+    change to a fee; every character that is not spacing still has to match."""
+    return re.sub(r"[\s|]+", "", normalize(text))
+
+
 def missing_quotes(page_text: str, quotes: list[str]) -> list[str]:
     """The quoted sentences a schedule relies on that no longer appear in the
     page text. A quote written with '...' is a list of fragments that must
     each appear. This is the verification that decides 'changed': the fee
     fingerprint is recorded alongside as supporting evidence only."""
-    haystack = normalize(page_text)
+    haystack = _compact(page_text)
     missing = []
     for quote in quotes:
-        fragments = [f.strip() for f in normalize(quote).split("...") if f.strip()]
+        fragments = [_compact(f) for f in normalize(quote).split("...")]
+        fragments = [f for f in fragments if f]
         if any(fragment not in haystack for fragment in fragments):
             missing.append(quote)
     return missing
@@ -332,6 +342,10 @@ def mark_reviewed(platform: str, note: str) -> dict:
     now = datetime.now(UTC).isoformat(timespec="seconds")
     statuses = []
     texts = []
+    # A page the schedule no longer cites is no longer part of the baseline.
+    cited = {source["url"] for source in schedule["sources"]}
+    for url in [url for url in entry["sources"] if url not in cited]:
+        del entry["sources"][url]
     for source in schedule["sources"]:
         if source.get("verify") is False:
             entry["sources"].pop(source["url"], None)

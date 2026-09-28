@@ -303,6 +303,21 @@ before it ships.
   `/quickbooks`, `/stripe` and `/etsy`, flagged for re-request on 2026-09-15,
   are indexed.
 
+- 2026-09-28: **the five changed platforms were re-read; one had changed its
+  fees.** QuickBooks (a date), Etsy (a policy date; every fee-bearing sentence
+  identical), Venmo (a repeated heading) and Vinted (one fee renamed on one
+  help page) changed wording, not numbers. **Whatnot replaced its commission
+  table on 2026-09-21**: six category groups by seven tiers of four-week
+  sales, from 8% at the Standard tier down to 4% to 6.5% (coins 4% down to
+  3.5%), with payment processing unchanged at 2.9% + $0.30 on the buyer's
+  total. The calculator now asks for the group and the tier and reads the rate
+  from the table as the page prints it; at the Standard tier it charges what it
+  charged before. Two things the pages do not say are stated on the page
+  rather than guessed: which product categories fall in which group, and how
+  the 0%-above-$1,500 promotion combines with a lower tier rate. This is the
+  first real fee change the verifier has caught, seven days after it happened,
+  five of them lost to the missing browser.
+
 ## 9. Scoreboard
 
 Weekly, from the owner's personal Search Console, trailing 7 days unless

@@ -1,7 +1,7 @@
 {
   "platform": "etsy",
   "name": "Etsy (US sellers)",
-  "as_of": "2026-09-08",
+  "as_of": "2026-09-28",
   "sources": [
     {
       "url": "https://www.etsy.com/legal/etsy-payments/",
@@ -19,7 +19,7 @@
       "url": "https://www.etsy.com/legal/fees/",
       "title": "Fees & Payments Policy - Our House Rules | Etsy",
       "loaded": "2026-09-08",
-      "last_updated_on_page": "Last updated on Feb 13, 2026"
+      "last_updated_on_page": "Last updated on Oct 5, 2026"
     },
     {
       "url": "https://help.etsy.com/hc/en-us/articles/360035902374-Etsy-Fee-Basics",
@@ -58,7 +58,8 @@
     "C. Listing Currency Conversion Considerations for Sellers. When a seller lists and subsequently sells an item in a currency other than the currency of the seller's payment account, Etsy will settle the associated transaction proceeds in the currency of the seller's payment account. When such a service is required, Etsy applies an additional 2.5% currency conversion fee.",
     "E. Instant Transfer (US seller only). Eligible U.S sellers may use instant transfer to make transfers from their Etsy Payment account directly to their bank account, subject to a fee. Please note that if applicable, an instant transfer fee will be charged and displayed as part of the transfer process.",
     "Last updated on Jul 31, 2026",
-    "Last updated on Feb 13, 2026",
+    "Last updated on Jul 31, 2026",
+    "Last updated on Oct 5, 2026",
     "The standard fee you will pay is 15% on Attributed Orders, unless the 12% fee applies as described below."
   ],
   "excluded": [
@@ -81,7 +82,8 @@
     "Etsy Payments policy table shows 'effective July 8, 2024' rate changes for Mexico and T\u00fcrkiye only; no dated change for the US row.",
     "Etsy.com pages blocked the crawl4ai and plain fetchers; they loaded with the stealth Playwright fetcher. Help-center (Zendesk) pages loaded with a plain Playwright fetch.",
     "No platform-provided worked example of the processing fee or transaction fee exists on the loaded pages; only the multi-quantity listing-fee example.",
-    "Etsy Plus includes '15 listing credits, which are visible as $3 in listings credit' (consistent with $0.20 x 15)."
+    "Etsy Plus includes '15 listing credits, which are visible as $3 in listings credit' (consistent with $0.20 x 15).",
+    "Re-read 2026-09-28: the Fees & Payments Policy page now carries 'Last updated on Oct 5, 2026' (it read Feb 13, 2026 when first reviewed on 2026-09-08); every fee-bearing sentence on it is identical to the reviewed text, so no number here changed."
   ],
   "rates": {
     "listing_fee": 0.2,

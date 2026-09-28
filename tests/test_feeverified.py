@@ -148,3 +148,67 @@ def test_quote_check_ignores_typography_but_catches_a_reworded_fee():
     # Curly quotes, dashes and spacing are not changes; '...' splits a quote into fragments.
     assert missing_quotes("It\u2019s 13.6% \u2013 up to $7,500", ["It's 13.6% - up to $7,500"]) == []
     assert missing_quotes(page, ["13.6% on the total amount … per order fee is $0.30."]) == []
+
+
+def test_quote_check_ignores_spacing_that_markup_leaves_behind():
+    """A tag becomes a space or a line break where it stood, so one sentence can
+    read three ways on three nights. None of them is a change to a fee."""
+    from feeverified.verify import missing_quotes, visible_text
+
+    page = visible_text(
+        "<p>The minimum amount you can withdraw is $<b>0.10</b>. Withdrawals below this amount will fail.</p>"
+        "<p>Available in Poland, Portuga<a href='#'>l</a>, Romania.</p>"
+        "<table><tr><td>United States</td><td>3% + 0.25 USD</td></tr></table>"
+    )
+    assert "$ 0.10" in page and "Portuga l" in page  # what the extraction really produces
+    assert missing_quotes(page, [
+        "The minimum amount you can withdraw is $0.10. Withdrawals below this amount will fail.",
+        "Available in Poland, Portugal, Romania.",
+        "United States | 3% + 0.25 USD",
+        "United States 3% + 0.25 USD",
+    ]) == []
+    # Every character that is not spacing still has to match.
+    assert missing_quotes(page, ["The minimum amount you can withdraw is $0.15."]) == [
+        "The minimum amount you can withdraw is $0.15."
+    ]
+    assert missing_quotes(page, ["United States | 3.5% + 0.25 USD"]) == ["United States | 3.5% + 0.25 USD"]
+
+
+WHATNOT = ROOT / "docs" / "fees" / "whatnot.json"
+
+
+@pytest.mark.parametrize(("inputs", "commission", "processing"), [
+    # Standard tier: what the rates were before the tiers, 8% and 4% on coins.
+    ({"price": 100, "vertical": "other", "tier": "standard"}, 8.00, 3.20),
+    ({"price": 100, "vertical": "coins", "tier": "standard"}, 4.00, 3.20),
+    # The table read across: Fashion at Tier 3 is 5.50%, Coins at Tier 6 is 3.50%.
+    ({"price": 100, "vertical": "fashion", "tier": "tier3"}, 5.50, 3.20),
+    ({"price": 100, "vertical": "coins", "tier": "tier6"}, 3.50, 3.20),
+    ({"price": 200, "vertical": "sports", "tier": "tier1"}, 15.50, 6.10),
+    # Processing is on the buyer's whole total; the tier never reduces it.
+    ({"price": 100, "shipping": 10, "sales_tax": 8, "vertical": "other", "tier": "tier6"}, 4.00, 3.72),
+    # Above $1,500 the promotion charges 0%, at the selected tier's rate below it.
+    ({"price": 2000, "vertical": "tcg", "tier": "tier2", "high_value": True}, 112.50, 58.30),
+    # An unknown group or tier falls back to Other at Standard, never to a lower rate.
+    ({"price": 100, "vertical": "pallets", "tier": "tier9"}, 8.00, 3.20),
+])
+def test_whatnot_reads_its_rate_from_the_tier_table(inputs, commission, processing):
+    result = compute(WHATNOT, inputs)
+    lines = {line["id"]: line["amount"] for line in result["lines"]}
+    assert lines["commission"] == pytest.approx(commission, abs=0.005)
+    assert lines["processing_fee"] == pytest.approx(processing, abs=0.005)
+
+
+def test_whatnot_table_is_the_one_on_the_page():
+    data = json.loads(WHATNOT.read_text())
+    rates = data["rates"]
+    assert rates["tier_order"] == ["standard", "tier1", "tier2", "tier3", "tier4", "tier5", "tier6"]
+    for group, row in rates["commission"].items():
+        assert len(row) == 7 and row == sorted(row, reverse=True), group  # a higher tier never costs more
+    table = next(q for q in data["quotes"] if q.startswith("Standard $0"))
+    for group, name in (("sports", "Sports"), ("tcg", "TCG"), ("fashion", "Fashion"),
+                        ("other_collectibles", "Other Collectibles"), ("coins", "Coins"), ("other", "Other")):
+        cells = table.split(f" {name} ")[-1].replace("LOWEST PUBLIC RATE", "").split()[:7]
+        assert [round(float(c.rstrip("%")) / 100, 6) for c in cells] == rates["commission"][group], group
+    options = {value for value, _ in next(i for i in data["inputs"] if i["id"] == "tier")["options"]}
+    assert options == set(rates["tier_order"])

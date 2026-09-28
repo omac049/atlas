@@ -1,7 +1,7 @@
 {
   "platform": "vinted",
   "name": "Vinted (US)",
-  "as_of": "2026-09-08",
+  "as_of": "2026-09-28",
   "sources": [
     {
       "url": "https://www.vinted.com/pricelist",
@@ -66,14 +66,14 @@
     "The Buyer Protection Fee is calculated as follows: A fixed amount of $0.70; plus 5% of the item price agreed to between the Buyer and the Seller, not including the shipping costs, any additional costs and applicable taxes.",
     "This fee is mandatory for every order made through Vinted and is added automatically at checkout.",
     "The Buyer Protection fee typically includes a percentage of the item's or bundle's price, as well as a fixed fee \u2014 usually 5% + $0.70.",
-    "The calculation of this fee varies based on several factors, such as: item characteristics, order value, order type (a single item versus a bundle)",
+    "The calculation of this fee varies based on several factors, such as: item characteristics order value order type (a single item versus a bundle)",
     "These shipping costs are borne by the Buyer, and they are displayed when the Seller provides that option to Buyers.",
     "Taxes on Integrated shipping labels are paid by the Buyer, and for custom shipping, the applicable taxes are borne by the Seller.",
     "The Fee for Bumping Listed Items is displayed before completion of the Bump order. Any applicable sales tax may also be added at checkout.",
     "They can take up to 5 business days to arrive in your bank account (Monday\u2013Friday, not including weekends and holidays).",
     "You can withdraw earnings in dollars (USD) to supported accounts in banks or other financial institutions using account and routing numbers.",
     "The minimum amount you can withdraw is $0.10. Withdrawals below this amount will fail.",
-    "When making international purchases on Vinted, the same Buyer Protection fee applies as for domestic transactions.",
+    "When making international purchases on Vinted, the same Vinted fee applies as for domestic transactions.",
     "Our payment provider applies a 1.2% currency conversion fee to USD\u2194GBP transactions, which is included in the conversion rate provided at the checkout.",
     "Item Verification is currently available in France, Italy, Belgium, Germany, Spain, The Netherlands, the United Kingdom, Poland, Portugal, Romania, Denmark, Sweden, Lithuania and Finland.",
     "The service fee is paid for by buyers and is visible on the item page and the checkout."
