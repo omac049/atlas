@@ -63,10 +63,27 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   that is a fee change. Every other character still has to match.
 - [x] The nightly job no longer dies without a log line when the check overruns; limit
   raised from 2,400 s to 5,400 s (a full check took 2,031 s on the 28th).
-- [ ] 99 quotes on 14 platforms were recorded as already absent when first reviewed
-  (Amazon 41, Shopify 22, Reverb 17, Poshmark 11, ...), most of them table rows copied
-  with borders. Many should match now; after the next nightly check, re-review those
-  platforms so nothing rides on a quote that was never on the page.
+- [x] **The repaired checker raised its first flag the same evening, and it was right:**
+  Reverb revised its Bump help article on 2026-09-28 (".5%" became "0.5%"; a 1.5% cap on
+  Direct Offers for brand new listings is new). Bounds unchanged, 0.5% to 30%. Re-read.
+- [x] **A bot challenge or a login wall is not the page.** Reverb's "Are you human?" page
+  is 515 characters and cleared the old 500-character test, so two Reverb pages were
+  counted as read and verified every night since launch. The test is now on what a reader
+  would see, for every way of fetching (`is_the_page`). Reverb's Billing Policy and Bump
+  page were read in a real browser on 2026-09-28 (every quoted sentence stands) and are
+  marked person-read, which the page states. Depop cited two pages that no longer exist
+  for a reader (a login wall, a redirect to a blog index); both removed, no quote came
+  from either.
+- [x] Every cited page was scanned on 2026-09-28: 105 pages, no other challenge pages;
+  8 are readable only by the browser-impersonating fetch (Etsy's two legal pages,
+  QuickBooks' two, a Poshmark and a StubHub post among them). Each check now records
+  how much text every page gave (`chars`), so a thin read shows afterwards.
+- [ ] 99 quotes on 14 platforms were recorded as absent when first reviewed. The page
+  says so where it applies ("the rest are in tables or on pages that block automated
+  reading and were verified by a person on ..."). Most were table rows and should match
+  now that spacing is ignored; the six platforms re-read on 2026-09-28 carry only quotes
+  from person-read pages (Reverb 10) or none. Re-review the other eight after a few
+  nightly checks, starting with Amazon (41) and Shopify (22).
 - [ ] The check spends most of its time on pages that never go network-idle (47 s each).
   A content-settled wait would cut a 34-minute run to a few minutes.
 

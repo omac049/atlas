@@ -1,7 +1,7 @@
 {
   "platform": "depop",
   "name": "Depop (US sellers)",
-  "as_of": "2026-09-08",
+  "as_of": "2026-09-28",
   "sources": [
     {
       "url": "https://depophelp.zendesk.com/hc/en-gb/articles/360001791127-Seller-fees-and-charges",
@@ -52,18 +52,6 @@
       "last_updated_on_page": null,
       "verify": false,
       "note": "Read by a person in a browser on the loaded date; this page blocks automated checks, so it is not part of the nightly verification."
-    },
-    {
-      "url": "https://blog.depop.com/articles/us-depop-fee-change",
-      "title": "The Depop Circular: US fee change (blog)",
-      "loaded": "2026-09-08",
-      "last_updated_on_page": null
-    },
-    {
-      "url": "https://depophelp.zendesk.com/hc/en-gb/articles/10782996439313-Depop-Payments-fee-change-US-",
-      "title": "Depop Payments fee change (US) \u2013 Depop Help Centre",
-      "loaded": "2026-09-08",
-      "last_updated_on_page": null
     }
   ],
   "scope": "US sellers selling in USD through Depop Payments. Buyer-paid Marketplace fee, non-US selling fees and PayPal checkout are out of scope.",
@@ -97,7 +85,8 @@
     "Currency/international terms: zero selling fees are tied to sellers located in the US selling in USD (newsroom, 15 Jul 2024); the fee page phrases the 10% fee as applying to sellers outside UK/US/AUS selling in a currency other than GBP/USD/AUD. Listing currency defaults to phone settings and can be changed in Payment Settings for new items only; relocating sellers must contact support. No Depop-side currency-conversion fee for US sellers was found on the loaded pages.",
     "Calculator ambiguity: the processing-fee base includes 'any applicable taxes' (buyer's sales tax) and shipping, so an exact fee requires the buyer's tax amount; the Marketplace fee is not listed as part of the base. The boosting-fee base excludes taxes and includes shipping only when the seller does not use a Depop Shipping label.",
     "Newsroom (15 Jul 2024) announced the Marketplace fee 'from July 18th 2024' at up to 5% + up to $1; the Marketplace fee article gives the same figures and dates.",
-    "Failed pages: blog.depop.com/articles/us-depop-fee-change now redirects to the blog index (article removed); the 'Depop Payments fee change (US)' help article redirects to a login page (restricted). The partner API 'Fees' doc contains no numbers and points to the help article."
+    "Failed pages: blog.depop.com/articles/us-depop-fee-change now redirects to the blog index (article removed); the 'Depop Payments fee change (US)' help article redirects to a login page (restricted). The partner API 'Fees' doc contains no numbers and points to the help article.",
+    "Re-read 2026-09-28. Two pages were removed from the sources because the pages cited no longer exist for a reader: the help article 'Depop Payments fee change (US)' answers with a login page, and the blog article on the US fee change redirects to the blog's index. No sentence quoted here came from either; every quoted sentence was found on the remaining pages."
   ],
   "rates": {
     "selling_fee": 0.0,
