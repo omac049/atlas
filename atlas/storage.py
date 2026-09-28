@@ -142,6 +142,44 @@ def _outcome_settled_same_day(payload: dict[str, object]) -> bool:
     return not left or not right or left == right
 
 
+AGENT_RUN_LIST_LIMIT = 10
+
+
+def compact_agent_run(payload: dict[str, object], limit: int = AGENT_RUN_LIST_LIMIT) -> dict:
+    """An agent run as a record of what happened, small enough to keep and serve.
+
+    A live run on 2026-09-24 verified 11,005 candidate pairs and stored every
+    one in full, twice (in the step's result and again in the final state):
+    337 MB for one run, 683 MB for five, and ``GET /api/overview`` returned 325
+    MB to the dashboard. Every list longer than ``limit`` in the state or in a
+    step's result now keeps its first ``limit`` items, with its real length
+    beside it as ``<key>_total``. Counts and short lists are untouched, and
+    compacting twice changes nothing.
+    """
+
+    def trim(section: object) -> object:
+        if not isinstance(section, dict):
+            return section
+        out: dict[str, object] = {}
+        for key, value in section.items():
+            if isinstance(value, list) and len(value) > limit:
+                out[key] = value[:limit]
+                out.setdefault(f"{key}_total", len(value))
+            else:
+                out[key] = value
+        return out
+
+    compact = dict(payload)
+    if "state" in compact:
+        compact["state"] = trim(compact["state"])
+    if isinstance(compact.get("steps"), list):
+        compact["steps"] = [
+            {**step, "result": trim(step.get("result"))} if isinstance(step, dict) else step
+            for step in compact["steps"]
+        ]
+    return compact
+
+
 class AtlasStore:
     # DB paths whose schema + migrations have already run in this process.
     # Every public method calls initialize(), and call sites construct fresh
@@ -577,11 +615,13 @@ class AtlasStore:
         return [json.loads(row[0]) for row in rows]
 
     async def save_agent_run(self, payload: dict[str, object]) -> None:
+        """Store the run as a record, not as a dump: long lists keep their first
+        ``AGENT_RUN_LIST_LIMIT`` items and their length (see compact_agent_run)."""
         await self.initialize()
         async with aiosqlite.connect(self.path) as db:
             await db.execute(
                 "INSERT INTO agent_runs (created_at, payload_json) VALUES (?, ?)",
-                (datetime.now(UTC).isoformat(), json.dumps(payload)),
+                (datetime.now(UTC).isoformat(), json.dumps(compact_agent_run(payload))),
             )
             await db.commit()
 
@@ -592,7 +632,9 @@ class AtlasStore:
                 "SELECT payload_json FROM agent_runs ORDER BY run_id DESC LIMIT 1"
             )
             row = await cursor.fetchone()
-        return json.loads(row[0]) if row else None
+        # Compacted on the way out as well: a row written before compaction
+        # existed must never reach the dashboard whole.
+        return compact_agent_run(json.loads(row[0])) if row else None
 
     async def save_learning_example(self, example_id: str, label: str, payload: dict) -> None:
         await self.initialize()

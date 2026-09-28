@@ -842,3 +842,62 @@ async def test_prune_keeps_fed_decision_books_for_the_open_charter(tmp_path):
     remaining = sorted(book.market_id for book in await store.latest_orderbooks(10))
     assert remaining == ["kalshi:KXFEDDECISION-26OCT-H0", "kalshi:KXFEDDECISION-26SEP-H0"]
 
+
+
+def _run_with(pairs: int) -> dict:
+    pair = {"pair_id": "kalshi:A::polymarket_us:b", "status": "REVIEW_REQUIRED",
+            "market_a": {"rules": "x" * 5000}, "market_b": {"rules": "y" * 4000}}
+    verified = [dict(pair, pair_id=f"pair-{n}") for n in range(pairs)]
+    return {
+        "status": "completed", "objective": "find twins", "opportunities": [],
+        "steps": [
+            {"action": "review_candidates", "reason": "r", "result": {"proposal_count": 25}},
+            {"action": "verify_candidates", "reason": "v",
+             "result": {"verified_pairs": verified, "approved_pairs": []}},
+        ],
+        "state": {"catalog": {"kalshi": 3}, "proposal_count": 25, "proposal_source": "lexical",
+                  "verified_pairs": verified, "approved_pairs": []},
+    }
+
+
+@pytest.mark.asyncio
+async def test_an_agent_run_is_stored_as_a_record_not_a_dump(tmp_path):
+    """2026-09-24: 11,005 verified pairs, stored whole and twice, made one run
+    337 MB and the dashboard's overview call 325 MB."""
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await store.save_agent_run(_run_with(11_005))
+    async with aiosqlite.connect(store.path) as db:
+        (size,) = await (await db.execute("SELECT LENGTH(payload_json) FROM agent_runs")).fetchone()
+    assert size < 250_000
+    run = await store.latest_agent_run()
+    assert len(run["state"]["verified_pairs"]) == 10
+    assert run["state"]["verified_pairs_total"] == 11_005
+    assert run["steps"][1]["result"]["verified_pairs_total"] == 11_005
+    assert run["state"]["verified_pairs"][0]["pair_id"] == "pair-0"
+    # What the dashboard reads is untouched.
+    assert run["status"] == "completed" and len(run["steps"]) == 2
+    assert run["state"]["proposal_count"] == 25 and run["state"]["catalog"] == {"kalshi": 3}
+    assert run["steps"][0] == {"action": "review_candidates", "reason": "r",
+                               "result": {"proposal_count": 25}}
+
+
+def test_compacting_is_idempotent_and_leaves_short_runs_alone():
+    from atlas.storage import compact_agent_run
+
+    short = _run_with(3)
+    assert compact_agent_run(short) == short
+    once = compact_agent_run(_run_with(40))
+    assert compact_agent_run(once) == once and once["state"]["verified_pairs_total"] == 40
+    assert compact_agent_run({"sequence": 7}) == {"sequence": 7}
+
+
+@pytest.mark.asyncio
+async def test_a_row_written_before_compaction_is_served_compact(tmp_path):
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await store.initialize()
+    async with aiosqlite.connect(store.path) as db:
+        await db.execute("INSERT INTO agent_runs (created_at, payload_json) VALUES (?, ?)",
+                         ("2026-09-24T23:41:15+00:00", json.dumps(_run_with(200))))
+        await db.commit()
+    run = await store.latest_agent_run()
+    assert len(run["state"]["verified_pairs"]) == 10 and run["state"]["verified_pairs_total"] == 200
