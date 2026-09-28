@@ -26,6 +26,10 @@ PYTHON = REPO_ROOT / ".venv" / "bin" / "python"
 OUT = REPO_ROOT / "dist" / "fees"
 LOG = Path.home() / "Library" / "Logs" / "atlas-fees.log"
 BROWSER_UNAVAILABLE = 3  # feeverified.verify.BROWSER_UNAVAILABLE_EXIT
+TIMED_OUT = 124
+# A full check read 162 pages in 2,031 s on 2026-09-28, most of it waiting out
+# pages that never go network-idle. The old limit of 2,400 s left six minutes.
+VERIFY_SECONDS = 5400
 
 
 def log(message: str) -> None:
@@ -51,18 +55,25 @@ def publish_env() -> dict[str, str]:
 
 
 def run(args: list[str], timeout: int) -> subprocess.CompletedProcess:
-    return subprocess.run(args, cwd=REPO_ROOT, capture_output=True, text=True, timeout=timeout, check=False)
+    """A command that overruns is a failed command, reported like any other:
+    an exception here would end the job without a line in the log."""
+    try:
+        return subprocess.run(
+            args, cwd=REPO_ROOT, capture_output=True, text=True, timeout=timeout, check=False
+        )
+    except subprocess.TimeoutExpired:
+        return subprocess.CompletedProcess(args, TIMED_OUT, stdout="", stderr=f"timed out after {timeout}s")
 
 
 def verify_sources() -> subprocess.CompletedProcess:
     """Tonight's check, with one repair attempt if the browser is missing."""
     command = [str(PYTHON), "-m", "feeverified", "verify"]
-    verify = run(command, 2400)
+    verify = run(command, VERIFY_SECONDS)
     if verify.returncode == BROWSER_UNAVAILABLE:
         log(f"verify could not start its browser ({verify.stdout.strip()[-200:]}); reinstalling it")
         install = run([str(PYTHON), "-m", "feeverified", "install-browser"], 1500)
         log(f"install-browser rc={install.returncode} {(install.stdout.strip() or install.stderr.strip())[-200:]}")
-        verify = run(command, 2400)
+        verify = run(command, VERIFY_SECONDS)
     return verify
 
 

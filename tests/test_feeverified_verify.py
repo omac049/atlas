@@ -258,3 +258,35 @@ def test_a_working_check_is_logged_exactly_as_before(fees_job, monkeypatch):
     assert fees_job.lines[0] == (
         'verify rc=0 {"verified": 21, "changed": 1, "unreachable": 0, "unreviewed": 0}'
     )
+
+
+def test_a_check_that_overruns_is_logged_and_the_pages_still_build(fees_job, monkeypatch):
+    """subprocess.run raises on a timeout; uncaught, the job ended with no line in its log."""
+    commands = []
+
+    def fake_run(args, **kwargs):
+        commands.append(args[3])
+        if args[3] == "verify":
+            raise subprocess.TimeoutExpired(args, kwargs["timeout"])
+        return subprocess.CompletedProcess(args, 0, stdout="fees_pages=54 platforms=22", stderr="")
+
+    monkeypatch.setattr(fees_job.subprocess, "run", fake_run)
+    fees_job.main()
+    assert commands == ["verify", "build"]
+    errors = [line for line in fees_job.lines if line.startswith("ERROR")]
+    assert len(errors) == 1 and "rc=124" in errors[0] and "timed out after 5400s" in errors[0]
+    assert any(line.startswith("built ") for line in fees_job.lines)
+
+
+def test_a_review_forgets_a_source_the_schedule_no_longer_cites(one_platform, monkeypatch, tmp_path):
+    answer, _ = one_platform
+    answer(PAGE, "rendered")
+    state_path = tmp_path / "fees" / "verification.json"
+    state = json.loads(state_path.read_text())
+    state["platforms"]["cashapp"]["sources"]["https://example.test/removed-article"] = {
+        "hash": "x", "status": "verified"}
+    state_path.write_text(json.dumps(state))
+    entry = verify.mark_reviewed("cashapp", "re-read")
+    assert list(entry["sources"]) == ["https://example.test/fees"]
+    assert entry["sources"]["https://example.test/fees"]["via"] == "rendered"
+    assert entry["quotes_missing_at_review"] == [] and entry["status"] == "verified"

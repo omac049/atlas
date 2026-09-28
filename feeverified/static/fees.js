@@ -324,16 +324,20 @@
   }
 
   // ------------------------------------------------------------- Whatnot
+  // Since 2026-09-21 the commission rate is read from a table: the category group of
+  // the sale, by the tier the seller's last four weeks of sales unlocked. Payment
+  // processing is on the buyer's whole checkout total and no tier reduces it.
   function whatnot(s, i) {
     const r = s.rates, price = num(i.price), shipping = num(i.shipping), tax = num(i.sales_tax);
-    const cat = i.category || "standard";
-    let rate = r.tiers[i.tier || "standard"] || r.commission_standard;
-    if (cat === "coins") rate = r.commission_coins; else if (cat === "pallets") rate = r.commission_pallets;
-    let commission;
-    if (cat === "high_value") commission = Math.min(price, r.high_value_threshold) * rate + Math.max(0, price - r.high_value_threshold) * r.high_value_rate_above;
-    else commission = price * rate;
+    const group = r.commission[i.vertical] ? i.vertical : "other";
+    const tier = Math.max(0, r.tier_order.indexOf(i.tier || "standard"));
+    const rate = r.commission[group][tier];
+    const capped = Boolean(i.high_value);
+    const commission = capped
+      ? Math.min(price, r.high_value_threshold) * rate + Math.max(0, price - r.high_value_threshold) * r.high_value_rate_above
+      : price * rate;
     const total = cents(price + shipping + tax);
-    const lines = [{ id: "commission", label: `Commission (${(rate * 100).toFixed(2).replace(/\.?0+$/, "")}%${cat === "high_value" ? ", 0% above $1,500" : ""})`, amount: cents(commission) }];
+    const lines = [{ id: "commission", label: `Commission (${label(rate, 0)}${capped ? ", 0% above $1,500" : ""})`, amount: cents(commission) }];
     const f = pctFixed(total, r.processing);
     lines.push({ id: "processing_fee", label: "Payment processing (2.9% + $0.30 on checkout total)", amount: f.fee });
     return finish(price, lines, { total_sale: total });

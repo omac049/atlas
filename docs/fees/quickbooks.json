@@ -1,7 +1,7 @@
 {
   "platform": "quickbooks",
   "name": "QuickBooks Payments",
-  "as_of": "2026-09-10",
+  "as_of": "2026-09-28",
   "sources": [
     {
       "url": "https://quickbooks.intuit.com/payments/legal/toc102017/standard-pricing-schedule-sep2023/",
@@ -174,7 +174,7 @@
     "Payments processed by manually entering a customer’s card information.\n3.5%",
     "For Instant Deposit: a 1.75% fee applies to each amount you select for deposit in up to 30 minutes in your designated bank account.",
     "No. The rates listed are exactly the rates you’ll pay for making a credit card transaction, regardless if it’s Visa, MasterCard, Discover, or American Express, or if your customer is using a corporate card.",
-    "Rates are accurate as of 04/30/2026. All listed rates are per transaction.",
+    "Rates are accurate as of 09/18/2026. All listed rates are per transaction.",
     "Final fees are calculated based on the then-current rate and rounded to the nearest cent.",
     "These pricing terms apply to customers (“Standard Customers”) that were approved or first used QuickBooks Payments (online or desktop), GoPayment, and/or Gmail plug-in processing services (collectively, “Services”) on September 12, 2023 or thereafter.",
     "A per transaction fee may apply for each ACH or electronic bank payment, where applicable.",

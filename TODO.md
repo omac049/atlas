@@ -25,8 +25,25 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   hung a run for twenty minutes on the 28th); a quote is declared gone only on evidence as
   good as the evidence it was reviewed on, otherwise the platform reads "check pending".
   `tests/test_feeverified_verify.py`.
-- [ ] Re-read Etsy, QuickBooks, Venmo, Vinted, Whatnot against their source pages and mark
-  each reviewed; reviews now record how each page was read.
+- [x] **Re-read, same day.** Four were wording, one was a real change:
+  - QuickBooks: "rates accurate as of" moved from 04/30/2026 to 09/18/2026; rates unchanged.
+  - Etsy: the Fees & Payments Policy now reads "Last updated on Oct 5, 2026" (was Feb 13);
+    all 25 fee-bearing sentences identical to the reviewed text.
+  - Venmo: a heading repeated inside the crypto table; tiers and percentages unchanged.
+  - Vinted: "Buyer Protection fee" became "Vinted fee" on one help page; $0.70 + 5% unchanged.
+  - **Whatnot changed its fees on 2026-09-21:** the flat table (8%, coins 4%) became a
+    table of six category groups by seven sales tiers, 8% falling to 4%-6.5% (coins 4% to
+    3.5%). Standard-tier rates are what they were. Schedule, calculator, quotes and
+    examples rebuilt from the new page; the removed "Sell More, Earn More" article dropped.
+- [x] Quote matching ignores spacing and table borders: markup leaves a space or a line
+  break wherever a tag stood ("Portuga l", "$ 0.10", one table cell per line), and none of
+  that is a fee change. Every other character still has to match.
+- [x] The nightly job no longer dies without a log line when the check overruns; limit
+  raised from 2,400 s to 5,400 s (a full check took 2,031 s on the 28th).
+- [ ] 99 quotes on 14 platforms were recorded as already absent when first reviewed
+  (Amazon 41, Shopify 22, Reverb 17, Poshmark 11, ...), most of them table rows copied
+  with borders. Many should match now; after the next nightly check, re-review those
+  platforms so nothing rides on a quote that was never on the page.
 - [ ] The check spends most of its time on pages that never go network-idle (47 s each).
   A content-settled wait would cut a 34-minute run to a few minutes.
 

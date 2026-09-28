@@ -1,117 +1,192 @@
 {
   "platform": "whatnot",
   "name": "Whatnot",
-  "as_of": "2026-09-08",
+  "as_of": "2026-09-28",
   "sources": [
     {
       "url": "https://help.whatnot.com/hc/en-us/articles/4847069165965-Whatnot-seller-fees",
-      "title": "Whatnot seller fees \u2013 Whatnot Help Center",
-      "loaded": "2026-09-08",
-      "last_updated_on_page": "August 11, 2026 15:54"
+      "title": "Whatnot seller fees – Whatnot Help Center",
+      "loaded": "2026-09-28",
+      "last_updated_on_page": "September 22, 2026 at 4:14 PM"
     },
     {
       "url": "https://help.whatnot.com/hc/en-us/articles/14477076380941-Reduced-commission-on-Coins-Money",
-      "title": "Reduced commission on Coins & Money \u2013 Whatnot Help Center",
-      "loaded": "2026-09-08",
-      "last_updated_on_page": "July 31, 2026 16:12"
+      "title": "Reduced commission on Coins & Money – Whatnot Help Center",
+      "loaded": "2026-09-28",
+      "last_updated_on_page": "July 31, 2026 at 9:12 AM"
     },
     {
       "url": "https://help.whatnot.com/hc/en-us/articles/27912945518733-Reduced-Commission-on-High-Value-Orders",
-      "title": "Reduced Commission on High-Value Orders \u2013 Whatnot Help Center",
-      "loaded": "2026-09-08",
-      "last_updated_on_page": "July 31, 2026 16:24"
-    },
-    {
-      "url": "https://help.whatnot.com/hc/en-us/articles/46618300974477-Sell-More-Earn-More",
-      "title": "Sell More, Earn More \u2013 Whatnot Help Center",
-      "loaded": "2026-09-08",
-      "last_updated_on_page": "July 16, 2026 15:05 (terms 'Last Updated: July 9, 2026')"
+      "title": "Reduced Commission on High-Value Orders – Whatnot Help Center",
+      "loaded": "2026-09-28",
+      "last_updated_on_page": "July 31, 2026 at 9:24 AM"
     },
     {
       "url": "https://help.whatnot.com/hc/en-us/articles/32083195713421-Taxes-on-Whatnot-commissions-and-fees",
-      "title": "Taxes on Whatnot commissions and fees \u2013 Whatnot Help Center",
-      "loaded": "2026-09-08",
-      "last_updated_on_page": "July 17, 2026 23:40"
-    },
-    {
-      "url": "https://help.whatnot.com/hc/en-us/sections/44398189207565-Fees-commissions",
-      "title": "Fees & commissions \u2013 Whatnot Help Center (section index)",
-      "loaded": "2026-09-08",
+      "title": "Taxes on Whatnot commissions and fees – Whatnot Help Center",
+      "loaded": "2026-09-28",
       "last_updated_on_page": null
     },
     {
-      "url": "https://help.whatnot.com/hc/en-us/articles/25550923919757-Reduced-Commission-on-Electronics",
-      "title": "Reduced Commission on Electronics \u2013 Whatnot Help Center",
-      "loaded": "2026-09-08",
-      "last_updated_on_page": null,
-      "verify": false,
-      "note": "Read by a person in a browser on the loaded date; this page blocks automated checks, so it is not part of the nightly verification."
+      "url": "https://help.whatnot.com/hc/en-us/sections/44398189207565-Fees-commissions",
+      "title": "Fees & commissions – Whatnot Help Center (section index)",
+      "loaded": "2026-09-28",
+      "last_updated_on_page": null
     }
   ],
-  "scope": "Seller commission and payment processing on US Whatnot sales. State sales tax on fees, giveaways and promotional tiers are noted but not computed beyond the tier you select.",
-  "structure": "Two fees are deducted per checkout transaction. Commission is a percentage of the item's final sale price (accepted offer/auction price after seller-generated coupons), excluding shipping and taxes: 8% in most US categories, 4% for Coins & Money (Coins & Bullion, Paper Money & Currency) and for the Pallets wholesale category (limited time). Payment processing is 2.9% of the total order value paid by the buyer at checkout (item + buyer-paid shipping + buyer-paid sales tax) plus a fixed $0.30 per transaction; it therefore varies with shipping and tax even for identical item prices. Since January 14, 2026, in select categories (Comics & Anime, Toys & Hobbies, Coins & Money, Trading Card Games, Entertainment Cards, Sports Singles subcategories, and from June 4, 2026 Bags & Accessories and Jewelry & Watches) the commission is 0% on the portion of an individual order's price above $1,500 while processing still applies to the full amount; sports breaks and surprise products are excluded. Net earnings = final sale price \u2212 commission \u2212 payment processing \u2212 any state tax on fees \u2212 any seller-covered shipping. Whatnot-issued coupons do not reduce the seller's price; giveaways carry no seller fees. The same schedule applies to live shows and marketplace (non-live) listings; for live sales the rate follows the show's category, for marketplace sales the product's category.",
+  "scope": "Seller commission and payment processing on US Whatnot sales under the tiered commission structure that took effect September 21, 2026. State sales tax on fees, the Premier Shop discount and promotional rates are described but not computed.",
+  "structure": "Two fees are deducted per checkout transaction. Commission is a percentage of the item's sale price; shipping and taxes paid by the buyer are not included. Since September 21, 2026 the rate depends on two things: the category group of the sale, and the tier the seller unlocked with total sales across all categories in the previous four-week period. US tiers: Standard $0 – $14,999, Tier 1 $15,000 – $34,999, Tier 2 $35,000 – $49,999, Tier 3 $50,000 – $99,999, Tier 4 $100,000 – $249,999, Tier 5 $250,000 – $499,999, Tier 6 $500,000+. US rates from Standard to Tier 6: Sports and TCG 8% falling to 6.5%; Fashion 8% falling to 4.5%; Other Collectibles 8% falling to 5%; Coins 4% falling to 3.5%; Other 8% falling to 4%. A rate is locked for the whole four-week period: crossing into a higher tier lowers the rate for the next period, not the current one, and tiers reset every 28 days. Payment processing is 2.9% of the total order value paid by the buyer (item price, buyer-paid shipping and taxes) plus a fixed $0.30 per transaction, and is not reduced by the tier. In select categories the commission is 0% on the portion of an individual order's price above $1,500, a limited-time promotion, while processing still applies to the full amount. For live sales the rate follows the category of the show; for marketplace sales, the category of the product.",
   "quotes": [
-    "Comics, TCG, Sports Singles, Toys & Hobbies (see other restrictions) 8% on final sale price up to $1,500; 0% on portion above $1,500 (limited time; learn more). 2.9% on total order value + $0.30 transaction fee",
-    "Coins & Money 4% on final sale price up to $1,500; 0% on portion above $1,500 (limited time)** 2.9% on total order value + $0.30 transaction fee",
-    "Pallets (Wholesale category) 4% on final sale price (limited time) 2.9% on total order value + $0.30 transaction fee",
-    "All other categories (some restrictions apply) 8% on final sale price 2.9% on total order value + $0.30 transaction fee",
-    "*Plus applicable taxes on fees.",
-    "The commission fee is Whatnot\u2019s share of the sale. It\u2019s calculated as a percentage of your item\u2019s final sale price, excluding shipping and taxes.",
-    "It\u2019s calculated as a percentage of the total order value (the amount paid by the buyer at checkout), plus a fixed transaction fee.",
-    "Fees are automatically applied each time a buyer checks out. Even if purchases are later bundled into one order or shipment, fees are calculated separately per transaction.",
-    "Whatnot doesn\u2019t charge fees to create, store, or manage listings.",
-    "Net earnings = Item's final sale price \u2013 commission fee \u2013 payment processing fee",
+    "Our new commission rate structure took effect September 21, 2026 for existing sellers.",
+    "If you gained selling access after September 21, the new structure takes effect the week of September 28, 2026.",
+    "Your sales in a four-week period determine the tier you unlock and the rate you pay for the next period.",
+    "Your rate is locked for the full period. Crossing into a higher tier during a period lowers your rate for the next period, not right away.",
+    "Reduced rates apply to your Whatnot selling commission only. Payment processing and other seller fees still apply.",
+    "“Total sales” means the combined sale price of your completed orders across all categories.",
+    "Standard $0 – $14,999 Tier 1 $15,000 – $34,999 Tier 2 $35,000 – $49,999 Tier 3 $50,000 – $99,999 Tier 4 $100,000 – $249,999 Tier 5 $250,000 – $499,999 Tier 6 $500,000+ Sports 8.00% 7.75% 7.50% 7.25% 7.00% 6.75% 6.50% TCG 8.00% 7.75% 7.50% 7.25% 7.00% 6.75% 6.50% Fashion 8.00% 7.00% 6.50% 5.50% 5.00% 4.50% 4.50% LOWEST PUBLIC RATE Other Collectibles 8.00% 7.25% 6.50% 6.00% 5.00% 5.00% LOWEST PUBLIC RATE 5.00% LOWEST PUBLIC RATE Coins 4.00% 3.90% 3.80% 3.70% 3.60% 3.55% 3.50% Other 8.00% 7.00% 6.50% 5.50% 4.00% 4.00% LOWEST PUBLIC RATE 4.00% LOWEST PUBLIC RATE",
+    "Whatnot calculates commission on Gross Merchandise Value (GMV), which is the sale price of the item. Shipping and taxes paid by the buyer are not included.",
+    "You sell a $10 item with $4.99 shipping and $0.85 in sales tax.",
+    "Whatnot: An 8% commission on the $10 item price = $0.80",
+    "Payment processing fees are calculated on the total order value paid by the buyer, including the item price, buyer-paid shipping, and taxes, plus a fixed transaction fee.",
+    "US, Canada, Australia: 2.9% + $0.30 per transaction",
+    "What doesn't. Private shows, local pickup orders, and cancelled orders are subtracted from your total.",
+    "your Premier Shop discount applies on top of your new commission rate. For example, if your rate is 5%, the 10% Premier Shop discount brings it to 4.5%.",
+    "Premier Shop no longer includes a commission discount.",
+    "Rates as low as 3% are custom rates available to our highest-volume sellers who work directly with a dedicated account manager on custom terms.",
+    "For live sales: the rate is based on the category of the show. For marketplace (non-live) sales: the rate is based on the category of the product.",
     "Products properly listed under the following categories qualify for a 4% commission fee: Coins & Bullion Paper Money & Currency",
+    "Standard payment processing fees and any applicable taxes on fees still apply.",
     "Starting January 14, 2026, Whatnot began charging a 0% commission on the portion of the sale price over 1,500 (USD/AUD/EUR/GBP 1,500 or JPY 225,000) on individual orders in select categories plus standard payment processing.",
     "Starting at 12:00am EST on June 4th, 2026, Whatnot extended this promotion to include individual orders in Bags & Accessories and Jewelry & Watches.",
     "Rate only applies to the Singles subcategories in Sports Cards. Sports breaks and Surprise Products are excluded from the promotion.",
-    "For live sales: the rate is based on the category of the show. For marketplace (non-live) sales: the rate is based on the category of the product.",
-    "No. You aren't charged seller fees for Giveaways because the buyer doesn\u2019t pay anything. You only pay for shipping.",
-    "Seller-generated coupons: Reduce the final sale price, so fees apply to the discounted amount.",
-    "If you cover part or all of the shipping cost, that amount is deducted from your earnings, along with applicable commission and payment processing fees.",
-    "State laws require Whatnot to collect sales tax on Whatnot Commissions and Fees in the following states: Commission: District of Columbia, Hawaii, New Mexico, West Virginia Payment Processing Fee: Connecticut (special 1% rate), Hawaii, New Mexico, Ohio, South Dakota, Texas (standard rate reduced by 20%), West Virginia Show Promotion and Boost: Hawaii, New Mexico, South Dakota",
-    "This program is currently available in US Fashion, Toys & Hobbies, and Food & Drink and will run through at least November 1, 2026.",
-    "So if you qualify for a 5% rate, you\u2019ll be charged 4.5% (5% plus the 10% Premier Shop discount)."
+    "You will be charged standard commission (for the US, 8%) on the first $1,500. Your total commission fee will be $120.",
+    "This is a limited-time promotion. Whatnot reserves the right to modify, suspend, or end this promotion, including the eligible categories, qualifying thresholds, and commission rates, at any time and for any reason, with or without prior notice.",
+    "State laws require Whatnot to collect sales tax on Whatnot Commissions and Fees in the following states: Commission: District of Columbia, Hawaii, New Mexico, West Virginia Payment Processing Fee: Connecticut (special 1% rate), Hawaii, New Mexico, Ohio, South Dakota, Texas (standard rate reduced by 20%), West Virginia Show Promotion and Boost: Hawaii, New Mexico, South Dakota"
   ],
   "excluded": [
-    "EU/UK (6.67% + VAT; 2.42% + \u20ac/\u00a30.25 + VAT), Japan (8% + JCT; 2.9% + \u00a550 + JCT), Australia/Canada-specific promotions and taxes",
-    "Regional limited-time promotions (FR/BE fashion 0%, AU coins/TCG/fashion 0% weeks, DE/AT 0% week, UK lower-cost-order fee reduction, '0% Commission for 24 Hours | August 7th')",
+    "Other markets: Whatnot publishes separate tier tables for Canada, the United Kingdom, France, Belgium, Germany, Austria, the Netherlands and Australia, and flat rates for Japan; EU and UK rates are subject to VAT and their processing fee is 2.42% + €/£0.25",
+    "Premier Shop discount (10% off the commission rate through October 31, 2026; none from November 1, 2026)",
+    "Promotional rates (new-seller 0% fees, launch and limited-time category promotions) and custom rates for the highest-volume sellers",
+    "The flat rates that applied through September 27, 2026 to sellers who gained selling access after September 21, including the 4% Pallets rate",
     "Show Promotion and Boost fees (amounts not on the loaded pages)",
     "Shipping label costs and Early Payout terms",
     "Buyer-side fees and buyer sales tax"
   ],
   "notes": [
-    "Live vs marketplace: the fee schedule does not differentiate live-show sales from marketplace (Buy It Now/offer) sales; the only stated difference is which category sets the rate (show category for live, product category for marketplace).",
-    "Trading cards: Trading Card Games, Entertainment Cards and Sports Singles have the standard 8% commission but qualify for the 0%-above-$1,500 promotion; sports breaks and Surprise Products do not. Coins & Money is the only permanently reduced category (4%); Pallets (wholesale) is 4% 'limited time'.",
-    "Electronics: the 'Reduced Commission on Electronics' article now returns 404 and Electronics is not a reduced row in the fee table; search-engine snippets citing a 5% electronics commission are stale/unverified. The snippet 'Seller fees are \u22648% (varies by category/country)' also comes from an older revision of the fee page.",
-    "The high-value 0% promotion has no stated end date ('limited time'; Whatnot may end it at any time). Sell More, Earn More is a US-only test for a subset of sellers through at least November 1, 2026; a calculator should treat tiered rates as optional/conditional.",
-    "Payment processing uses the buyer's total including sales tax, so an exact fee needs shipping and buyer tax as inputs; in Whatnot's own example 2.9% \u00d7 $58.70 + $0.30 = $2.0023 is shown as $2.00 (rounded to cents).",
-    "Taxes on fees: sellers in DC, HI, NM, WV pay state sales tax on the commission; sellers in CT (special 1% rate), HI, NM, OH, SD, TX (rate reduced by 20%), WV pay it on the payment-processing fee; these are deducted from earnings.",
-    "Premier Shop discount (10% off the commission) is mentioned only in the Sell More, Earn More FAQ; eligibility terms were not on the loaded pages."
+    "Re-read 2026-09-28. Whatnot replaced its flat commission table with tiered rates on September 21, 2026. At the Standard tier the rates are what they were: 8% in every group except Coins, 4%.",
+    "The fee page names six category groups (Sports, TCG, Fashion, Other Collectibles, Coins, Other) and does not list which product categories fall in each; a seller's own rate card is in Seller Hub.",
+    "Tier is set by total sales in all categories over the previous four-week period; private shows, local pickup orders and cancelled orders do not count.",
+    "High-value orders: the promotion's article is dated July 31, 2026, before the tiered structure, and its example uses the 8% standard rate on the first $1,500. How the promotion combines with a lower tier rate is not stated on the loaded pages; this calculator applies the selected tier's rate to the first $1,500. The promotion is limited-time and Whatnot may end it at any time. Eligible categories: Comics & Anime, Toys & Hobbies, Coins & Money, Trading Card Games, Entertainment Cards, Sports Singles subcategories, Bags & Accessories, Jewelry & Watches; sports breaks and Surprise Products are excluded.",
+    "Premier Shop: through October 31, 2026 the 10% Premier Shop discount applies on top of the tier rate (5% becomes 4.5%); from November 1, 2026 it no longer includes a commission discount. Not computed here.",
+    "Rates 'as low as 3%' are custom rates for the highest-volume sellers and are not on the public table.",
+    "The 'Sell More, Earn More' article, the earlier test of tiered rates, is no longer published (404 on 2026-09-28).",
+    "Payment processing uses the buyer's total including sales tax, so an exact fee needs shipping and buyer tax as inputs.",
+    "Taxes on fees: sellers in DC, HI, NM, WV pay state sales tax on the commission; sellers in CT (special 1% rate), HI, NM, OH, SD, TX (standard rate reduced by 20%) and WV pay it on the payment processing fee. Not computed."
   ],
   "rates": {
-    "commission_standard": 0.08,
-    "commission_coins": 0.04,
-    "commission_pallets": 0.04,
+    "tier_order": [
+      "standard",
+      "tier1",
+      "tier2",
+      "tier3",
+      "tier4",
+      "tier5",
+      "tier6"
+    ],
+    "tier_sales_usd": {
+      "standard": [
+        0,
+        14999
+      ],
+      "tier1": [
+        15000,
+        34999
+      ],
+      "tier2": [
+        35000,
+        49999
+      ],
+      "tier3": [
+        50000,
+        99999
+      ],
+      "tier4": [
+        100000,
+        249999
+      ],
+      "tier5": [
+        250000,
+        499999
+      ],
+      "tier6": [
+        500000,
+        null
+      ]
+    },
+    "commission": {
+      "sports": [
+        0.08,
+        0.0775,
+        0.075,
+        0.0725,
+        0.07,
+        0.0675,
+        0.065
+      ],
+      "tcg": [
+        0.08,
+        0.0775,
+        0.075,
+        0.0725,
+        0.07,
+        0.0675,
+        0.065
+      ],
+      "fashion": [
+        0.08,
+        0.07,
+        0.065,
+        0.055,
+        0.05,
+        0.045,
+        0.045
+      ],
+      "other_collectibles": [
+        0.08,
+        0.0725,
+        0.065,
+        0.06,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "coins": [
+        0.04,
+        0.039,
+        0.038,
+        0.037,
+        0.036,
+        0.0355,
+        0.035
+      ],
+      "other": [
+        0.08,
+        0.07,
+        0.065,
+        0.055,
+        0.04,
+        0.04,
+        0.04
+      ]
+    },
     "processing": [
       0.029,
       0.3
     ],
     "high_value_threshold": 1500.0,
-    "high_value_rate_above": 0.0,
-    "tiers": {
-      "standard": 0.08,
-      "tier1": 0.07,
-      "tier2": 0.06,
-      "tier3": 0.05,
-      "tier4": 0.04,
-      "tier5": 0.0375,
-      "tier6": 0.035,
-      "tier7": 0.0325,
-      "tier8": 0.03
-    }
+    "high_value_rate_above": 0.0
   },
-  "summary": "Whatnot takes an 8% commission on the item's final price (4% on coins and money) and 2.9% + 30\u00a2 payment processing on the buyer's total including shipping and tax. In trading cards, comics, toys and several collectible categories the commission is 0% on the portion above $1,500 since January 2026.",
+  "summary": "Whatnot takes a commission on the item's sale price, 8% in most categories and 4% on coins at the Standard tier, and less as a seller's four-week sales grow (down to 4% to 6.5%, or 3.5% on coins), plus 2.9% + 30¢ payment processing on the buyer's total including shipping and tax. The tiered rates took effect September 21, 2026.",
   "inputs": [
     {
       "id": "price",
@@ -133,97 +208,105 @@
       "help": "Processing is charged on the full checkout total."
     },
     {
-      "id": "category",
-      "label": "Category",
+      "id": "vertical",
+      "label": "Category group",
+      "type": "select",
+      "default": "other",
+      "options": [
+        [
+          "other",
+          "Other (8% at Standard)"
+        ],
+        [
+          "sports",
+          "Sports (8% at Standard)"
+        ],
+        [
+          "tcg",
+          "TCG (8% at Standard)"
+        ],
+        [
+          "fashion",
+          "Fashion (8% at Standard)"
+        ],
+        [
+          "other_collectibles",
+          "Other Collectibles (8% at Standard)"
+        ],
+        [
+          "coins",
+          "Coins (4% at Standard)"
+        ]
+      ],
+      "help": "Whatnot's own six groups. Your rate card in Seller Hub shows which one a sale falls in."
+    },
+    {
+      "id": "tier",
+      "label": "Your tier (total sales in the last four-week period)",
       "type": "select",
       "default": "standard",
       "options": [
         [
           "standard",
-          "Most categories (8%)"
+          "Standard ($0 – $14,999)"
         ],
         [
-          "high_value",
-          "Trading cards, comics, toys, coins, bags, jewelry (8%, 0% above $1,500)"
+          "tier1",
+          "Tier 1 ($15,000 – $34,999)"
         ],
         [
-          "coins",
-          "Coins & Money (4%)"
+          "tier2",
+          "Tier 2 ($35,000 – $49,999)"
         ],
         [
-          "pallets",
-          "Pallets / wholesale (4%, limited time)"
+          "tier3",
+          "Tier 3 ($50,000 – $99,999)"
+        ],
+        [
+          "tier4",
+          "Tier 4 ($100,000 – $249,999)"
+        ],
+        [
+          "tier5",
+          "Tier 5 ($250,000 – $499,999)"
+        ],
+        [
+          "tier6",
+          "Tier 6 ($500,000+)"
         ]
       ]
     },
     {
-      "id": "tier",
-      "label": "Sell More, Earn More tier (US test)",
-      "type": "select",
-      "default": "standard",
-      "options": [
-        [
-          "standard",
-          "Standard (8%)"
-        ],
-        [
-          "tier1",
-          "Tier 1 (7%)"
-        ],
-        [
-          "tier2",
-          "Tier 2 (6%)"
-        ],
-        [
-          "tier3",
-          "Tier 3 (5%)"
-        ],
-        [
-          "tier4",
-          "Tier 4 (4%)"
-        ],
-        [
-          "tier5",
-          "Tier 5 (3.75%)"
-        ],
-        [
-          "tier6",
-          "Tier 6 (3.5%)"
-        ],
-        [
-          "tier7",
-          "Tier 7 (3.25%)"
-        ],
-        [
-          "tier8",
-          "Tier 8 (3%)"
-        ]
-      ]
+      "id": "high_value",
+      "label": "Category with 0% commission above $1,500 (limited-time promotion)",
+      "type": "bool",
+      "default": false,
+      "help": "Comics, toys, coins, trading and entertainment cards, sports singles, bags, jewelry and watches."
     }
   ],
   "examples": [
     {
-      "description": "Whatnot's own example: a $50 item with a $58.70 checkout total pays $4.00 commission (8%) and $2.00 processing (2.9% + $0.30 on $58.70) \u2014 $6.00 in fees, leaving $44.00.",
+      "description": "Whatnot's own example: a $10 item with $4.99 shipping and $0.85 sales tax pays an 8% commission on the $10 item price, $0.80.",
       "inputs": {
-        "price": 50,
-        "shipping": 8.7,
-        "sales_tax": 0,
-        "category": "standard"
+        "price": 10,
+        "shipping": 4.99,
+        "sales_tax": 0.85,
+        "vertical": "other",
+        "tier": "standard"
       },
       "expected": {
-        "commission": 4.0,
-        "processing_fee": 2.0,
-        "total_fees": 6.0,
-        "net": 44.0
+        "commission": 0.8
       },
-      "quote": "Final sale price: $50 Commission (8%): $4 Total order value (including shipping and taxes): $58.70 Payment processing fee (2.9% of $58.70 + $0.30): $2.00 Your net earnings: $50 \u2212 $4 \u2212 $2 = $44.00",
+      "quote": "You sell a $10 item with $4.99 shipping and $0.85 in sales tax. Whatnot: An 8% commission on the $10 item price = $0.80",
       "source_url": "https://help.whatnot.com/hc/en-us/articles/4847069165965-Whatnot-seller-fees"
     },
     {
-      "description": "Whatnot's own high-value example: a $2,000 item in a qualifying category pays commission on the first $1,500 only \u2014 $120.",
+      "description": "Whatnot's own high-value example: a $2,000 item in a qualifying category pays commission on the first $1,500 only, $120.",
       "inputs": {
         "price": 2000,
-        "category": "high_value"
+        "vertical": "tcg",
+        "tier": "standard",
+        "high_value": true
       },
       "expected": {
         "commission": 120.0

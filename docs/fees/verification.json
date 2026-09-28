@@ -415,6 +415,11 @@
      "at": "2026-09-08T18:03:41+00:00",
      "event": "reviewed",
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
+    },
+    {
+     "at": "2026-09-28T21:29:10+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-09-28: the Fees & Payments Policy now reads 'Last updated on Oct 5, 2026' (was Feb 13, 2026); every fee-bearing sentence is identical to the reviewed text."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -425,49 +430,43 @@
     "You will be charged a listing fee whether or not the listed item sells, unless you create a private listing, in which case you will only be charged the listing fee when the private listing is sold. Etsy.com listings expire after four months.",
     "E. Instant Transfer (US seller only). Eligible U.S sellers may use instant transfer to make transfers from their Etsy Payment account directly to their bank account, subject to a fee. Please note that if applicable, an instant transfer fee will be charged and displayed as part of the transfer process."
    ],
-   "quotes_missing_at_review": [
-    "United States | 3% + 0.25 USD",
-    "Location of Bank Account | Etsy Payments Fees (% of total sale price + flat fee per order) exclusive of VAT, where applicable | Deposit fee where applicable (exclusive of VAT, where applicable)",
-    "Location of Bank Account | Fees for Etsy Payments(% of total sale price + flat fee per order)",
-    "You will be charged a listing fee whether or not the listed item sells, unless you create a private listing, in which case you will only be charged the listing fee when the private listing is sold. Etsy.com listings expire after four months.",
-    "E. Instant Transfer (US seller only). Eligible U.S sellers may use instant transfer to make transfers from their Etsy Payment account directly to their bank account, subject to a fee. Please note that if applicable, an instant transfer fee will be charged and displayed as part of the transfer process."
-   ],
-   "reviewed_at": "2026-09-08T18:03:41+00:00",
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-09-28T21:29:10+00:00",
    "sources": {
     "https://help.etsy.com/hc/en-us/articles/115014483627-What-are-the-Fees-and-Taxes-for-Selling-on-Etsy": {
-     "fingerprint_drift": false,
      "hash": "15bf764573d0c35fee2e5feeda67b8a955bfac6f5f87fb9261489e9eb3d1854c",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:03:41+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:10+00:00",
+     "reviewed_at": "2026-09-28T21:29:10+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.etsy.com/hc/en-us/articles/115015628847-What-are-Payment-Processing-Fees-for-Selling-on-Etsy": {
-     "fingerprint_drift": false,
      "hash": "748cf7adc4e76fcb681412d84887311799838a3fcd0b69c9bd340c3630ddf105",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:03:41+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:10+00:00",
+     "reviewed_at": "2026-09-28T21:29:10+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.etsy.com/hc/en-us/articles/360035902374-Etsy-Fee-Basics": {
-     "fingerprint_drift": false,
      "hash": "f2814d2aea82452096372708eb25e0f7dc66cd595ceab419a08a1cdb95c37b1c",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:03:41+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:10+00:00",
+     "reviewed_at": "2026-09-28T21:29:10+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.etsy.com/legal/etsy-payments/": {
-     "fingerprint_drift": false,
      "hash": "2ba4f0766d801c01fe33806c5e873620ae4f859978eef054fa4d30d39ca73924",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:03:41+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:10+00:00",
+     "reviewed_at": "2026-09-28T21:29:10+00:00",
+     "status": "verified",
+     "via": "impersonated"
     },
     "https://www.etsy.com/legal/fees/": {
-     "fingerprint_drift": false,
      "hash": "9276efd98058db95b04ce6903f6d55ac4701b3ef62d1b3f299346009a190125e",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:03:41+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:10+00:00",
+     "reviewed_at": "2026-09-28T21:29:10+00:00",
+     "status": "verified",
+     "via": "impersonated"
     }
    },
    "status": "verified"
@@ -802,22 +801,29 @@
      "at": "2026-09-10T23:03:14+00:00",
      "event": "reviewed",
      "note": "Platform 18 added 2026-09-10: Intuit Standard Pricing Schedule (Sep 12, 2023) and payment-rates page (accurate as of 04/30/2026); 12 quotes taken from the verifier's own rendered text."
+    },
+    {
+     "at": "2026-09-28T21:29:04+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-09-28: the rates page now reads 'accurate as of 09/18/2026' (was 04/30/2026); every rate quote is unchanged."
     }
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-09-10T23:03:14+00:00",
+   "reviewed_at": "2026-09-28T21:29:04+00:00",
    "sources": {
     "https://quickbooks.intuit.com/payments/legal/toc102017/standard-pricing-schedule-sep2023/": {
      "hash": "e7979ded4022a47124e3d25c76f9330627e7504c56b56c65ca8abe2708845b0b",
-     "last_checked_at": "2026-09-10T23:03:14+00:00",
-     "reviewed_at": "2026-09-10T23:03:14+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:04+00:00",
+     "reviewed_at": "2026-09-28T21:29:04+00:00",
+     "status": "verified",
+     "via": "impersonated"
     },
     "https://quickbooks.intuit.com/payments/payment-rates/": {
-     "hash": "8c28dc469ca2d7dd9121a08120e73edee0a62f45f9dc5f94aed2babda8fcb417",
-     "last_checked_at": "2026-09-10T23:03:14+00:00",
-     "reviewed_at": "2026-09-10T23:03:14+00:00",
-     "status": "verified"
+     "hash": "9c42aa04f7b8b61d41d6352ca19eb5333ad9432d0da507e308a31b7f374c38df",
+     "last_checked_at": "2026-09-28T21:29:04+00:00",
+     "reviewed_at": "2026-09-28T21:29:04+00:00",
+     "status": "verified",
+     "via": "impersonated"
     }
    },
    "status": "verified"
@@ -1441,110 +1447,115 @@
      "at": "2026-09-08T18:14:07+00:00",
      "event": "reviewed",
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
+    },
+    {
+     "at": "2026-09-28T21:29:50+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-09-28: the fee page repeats a heading inside the crypto section; tiers and percentages are unchanged."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-09-08T18:14:07+00:00",
+   "reviewed_at": "2026-09-28T21:29:50+00:00",
    "sources": {
     "https://help.venmo.com/cs/articles/business-profile-transaction-fees-vhel221": {
-     "fingerprint_drift": false,
      "hash": "9486a453a65c38d51ac302cddc497f607abe25779c136ebf7137dd47b3f4020d",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:14:07+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:50+00:00",
+     "reviewed_at": "2026-09-28T21:29:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.venmo.com/cs/articles/buying-and-selling-on-venmo-faq-vhel138": {
-     "fingerprint_drift": false,
      "hash": "e6eddf389a2e784bcc826b0ef4d438bb8eee0761d6a3b2605944d3f4ce0214a1",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:14:07+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:50+00:00",
+     "reviewed_at": "2026-09-28T21:29:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.venmo.com/cs/articles/buying-cryptocurrency-on-venmo-vhel164": {
-     "fingerprint_drift": false,
      "hash": "93d7e21b3e04dffc2bb8d1081cf83e017b685ba85edfb7297ffb07894e1f6ded",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:14:07+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:50+00:00",
+     "reviewed_at": "2026-09-28T21:29:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.venmo.com/cs/articles/charity-profile-donation-fees-vhel159": {
-     "fingerprint_drift": false,
      "hash": "44d6f4e054d738a9cea2a3ee9799a7b575ddaac2f4847e4dce6d233747039bfb",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:14:07+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:50+00:00",
+     "reviewed_at": "2026-09-28T21:29:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.venmo.com/cs/articles/credit-card-fees-on-venmo-payments-vhel257": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:14:07+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:50+00:00",
+     "reviewed_at": "2026-09-28T21:29:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.venmo.com/cs/articles/cryptocurrency-faq-vhel141": {
-     "fingerprint_drift": false,
      "hash": "730098283ce17ef2b536787ab2c6bdf52180aac1097b0f815252aff6067991a2",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:14:07+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:50+00:00",
+     "reviewed_at": "2026-09-28T21:29:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.venmo.com/cs/articles/instant-bank-transfer-faq-vhel302": {
-     "fingerprint_drift": false,
      "hash": "31276fa91f4c44b91340a480de2c0361cb6ca1d95ede916a7a5de9fce1748648",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:14:07+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:50+00:00",
+     "reviewed_at": "2026-09-28T21:29:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.venmo.com/cs/articles/selling-cryptocurrency-on-venmo-vhel204": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:14:07+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:50+00:00",
+     "reviewed_at": "2026-09-28T21:29:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.venmo.com/cs/articles/selling-with-personal-profiles-vhel183": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:14:07+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:50+00:00",
+     "reviewed_at": "2026-09-28T21:29:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.venmo.com/cs/articles/tap-to-pay-on-android-faq-vhel198": {
-     "fingerprint_drift": false,
      "hash": "36c48f261bfbf81fa636e8ed8aeaa55195b49a7e936c7c03599e5291f028c76d",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:14:07+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:50+00:00",
+     "reviewed_at": "2026-09-28T21:29:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.venmo.com/cs/articles/tap-to-pay-on-iphone-faq-vhel116": {
-     "fingerprint_drift": false,
      "hash": "24b1e79a44f52ea0d431b7451cd3fc92af26a47dd1555289e3a776e9a1ebae04",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:14:07+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:50+00:00",
+     "reviewed_at": "2026-09-28T21:29:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://venmo.com/legal/crypto-terms/": {
-     "fingerprint_drift": false,
      "hash": "f3d70eef11c9b721755f3b4592b08508d7c0188ca372faec5b9348b8a41564e5",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:14:07+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:50+00:00",
+     "reviewed_at": "2026-09-28T21:29:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://venmo.com/legal/us-user-agreement/": {
-     "fingerprint_drift": false,
      "hash": "2a44744dc283caad43392aaae3549292bd161e72063dbae686f03f4b580a4b11",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:14:07+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:50+00:00",
+     "reviewed_at": "2026-09-28T21:29:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://venmo.com/resources/our-fees/": {
-     "fingerprint_drift": false,
      "hash": "8e9267ce7b7199ec241985914fa1686efa7e6b65c976964bb6b1ba04d188926c",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:14:07+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:50+00:00",
+     "reviewed_at": "2026-09-28T21:29:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"
@@ -1565,6 +1576,11 @@
      "at": "2026-09-08T18:23:38+00:00",
      "event": "reviewed",
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
+    },
+    {
+     "at": "2026-09-28T21:29:18+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-09-28: the international-sales article now says 'Vinted fee' where it said 'Buyer Protection fee'; the price list ($0.70 + 5%, last updated 1 July 2024) is unchanged."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -1575,77 +1591,71 @@
     "The minimum amount you can withdraw is $0.10. Withdrawals below this amount will fail.",
     "Item Verification is currently available in France, Italy, Belgium, Germany, Spain, The Netherlands, the United Kingdom, Poland, Portugal, Romania, Denmark, Sweden, Lithuania and Finland."
    ],
-   "quotes_missing_at_review": [
-    "There are no fees for uploading your items or selling them on Vinted. This means once your sale is successfully closed, you'll receive the full selling price straight to your Vinted Wallet.",
-    "The calculation of this fee varies based on several factors, such as: item characteristics, order value, order type (a single item versus a bundle)",
-    "You can withdraw earnings in dollars (USD) to supported accounts in banks or other financial institutions using account and routing numbers.",
-    "The minimum amount you can withdraw is $0.10. Withdrawals below this amount will fail.",
-    "Item Verification is currently available in France, Italy, Belgium, Germany, Spain, The Netherlands, the United Kingdom, Poland, Portugal, Romania, Denmark, Sweden, Lithuania and Finland."
-   ],
-   "reviewed_at": "2026-09-08T18:23:38+00:00",
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-09-28T21:29:18+00:00",
    "sources": {
     "https://www.vinted.com/help/1147-item-verification-for-designer-items": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:23:38+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:18+00:00",
+     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.vinted.com/help/1555-us-uk-international-sales": {
-     "fingerprint_drift": false,
-     "hash": "600569e29afee6811b45afd16e7f5ad2a046bfccf62b9ef77b88c1b75381c2f2",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:23:38+00:00",
-     "status": "verified"
+     "hash": "d854e2a515d211ce17ec913a66cac93d30ea71e3056ded663e92c40e5feccc7c",
+     "last_checked_at": "2026-09-28T21:29:18+00:00",
+     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.vinted.com/help/342-buyer-protection-fee-on-vinted": {
-     "fingerprint_drift": false,
      "hash": "612accdd3714f4c89654e9917c12dd7f14d0043854990220f4ae7b37b2754228",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:23:38+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:18+00:00",
+     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.vinted.com/help/373-is-selling-on-vinted-free": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:23:38+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:18+00:00",
+     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.vinted.com/help/4/1577-payments-withdrawals": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:23:38+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:18+00:00",
+     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.vinted.com/help/432-withdrawals": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:23:38+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:18+00:00",
+     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.vinted.com/help/437-vinted-wallet-how-it-works": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:23:38+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:18+00:00",
+     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.vinted.com/help/68-how-to-withdraw-earnings": {
-     "fingerprint_drift": false,
      "hash": "8308d8c01c3b0ff045ee7724576a7e4c76f1ff3611f9726791e3ad0cae9549de",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:23:38+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:18+00:00",
+     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.vinted.com/pricelist": {
-     "fingerprint_drift": false,
      "hash": "f173d5eab7ca2cacc82b3ca675d7494eed21dd5d4a17dbbe640304a00dad4db6",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:23:38+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T21:29:18+00:00",
+     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"
@@ -1671,6 +1681,11 @@
      "at": "2026-09-08T18:24:04+00:00",
      "event": "reviewed",
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
+    },
+    {
+     "at": "2026-09-28T21:39:06+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-09-28: Whatnot replaced its flat commission table with tiered rates on 2026-09-21; schedule, calculator and quotes rebuilt from the new page. Standard-tier rates are unchanged (8%, coins 4%)."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -1681,56 +1696,43 @@
     "For live sales: the rate is based on the category of the show. For marketplace (non-live) sales: the rate is based on the category of the product.",
     "Seller-generated coupons: Reduce the final sale price, so fees apply to the discounted amount."
    ],
-   "quotes_missing_at_review": [
-    "Comics, TCG, Sports Singles, Toys & Hobbies (see other restrictions) 8% on final sale price up to $1,500; 0% on portion above $1,500 (limited time; learn more). 2.9% on total order value + $0.30 transaction fee",
-    "*Plus applicable taxes on fees.",
-    "The commission fee is Whatnot\u2019s share of the sale. It\u2019s calculated as a percentage of your item\u2019s final sale price, excluding shipping and taxes.",
-    "For live sales: the rate is based on the category of the show. For marketplace (non-live) sales: the rate is based on the category of the product.",
-    "Seller-generated coupons: Reduce the final sale price, so fees apply to the discounted amount."
-   ],
-   "reviewed_at": "2026-09-08T18:24:04+00:00",
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-09-28T21:39:06+00:00",
    "sources": {
     "https://help.whatnot.com/hc/en-us/articles/14477076380941-Reduced-commission-on-Coins-Money": {
-     "fingerprint_drift": false,
-     "hash": "690c9623e52df32a5867bacd37fb0de4db157b665e8de0910d73b884f9df3882",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:24:04+00:00",
-     "status": "verified"
+     "hash": "c90e9df4fd4dc743ae8799011485d9cdfa28b1442d323c2e2d0013e0e675a0bc",
+     "last_checked_at": "2026-09-28T21:39:06+00:00",
+     "reviewed_at": "2026-09-28T21:39:06+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/articles/27912945518733-Reduced-Commission-on-High-Value-Orders": {
-     "fingerprint_drift": false,
-     "hash": "50ceefde4c2b0b0ccf23d4730b8530f54268aeac5788b94bedb514c2ee3198d7",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:24:04+00:00",
-     "status": "verified"
+     "hash": "5d8b2e39742a5b1acf0db76ea6768ced9607e790701562ca01b1cba83b67f603",
+     "last_checked_at": "2026-09-28T21:39:06+00:00",
+     "reviewed_at": "2026-09-28T21:39:06+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/articles/32083195713421-Taxes-on-Whatnot-commissions-and-fees": {
-     "fingerprint_drift": false,
-     "hash": "c52dbf63445249d70cb99684eedb7883e654cd5942b17aaf4f4b3225bce057dd",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:24:04+00:00",
-     "status": "verified"
-    },
-    "https://help.whatnot.com/hc/en-us/articles/46618300974477-Sell-More-Earn-More": {
-     "fingerprint_drift": false,
-     "hash": "c3c853df013bec4c572849567152d23dcb27b10514596b59f112708705d7e778",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:24:04+00:00",
-     "status": "verified"
+     "hash": "b39e87f83517c2cdb75a457bd8b57a1e04a76c3c6b4df4b02efeb6c17197ce9a",
+     "last_checked_at": "2026-09-28T21:39:06+00:00",
+     "reviewed_at": "2026-09-28T21:39:06+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/articles/4847069165965-Whatnot-seller-fees": {
-     "fingerprint_drift": false,
-     "hash": "07294d1f7c68d97fec5a9d6ade71235ead595b1de016d07780599afb3db707c9",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:24:04+00:00",
-     "status": "verified"
+     "hash": "6815fa96b36cfdd2e4309f08f73864aecbb09864bdb49b41f1533fffa99e7e1d",
+     "last_checked_at": "2026-09-28T21:39:06+00:00",
+     "reviewed_at": "2026-09-28T21:39:06+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/sections/44398189207565-Fees-commissions": {
-     "fingerprint_drift": false,
-     "hash": "62d4e6355bb6c5326c2749ccbbe0b940a093d7df77fecac220c5889593bb2744",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:24:04+00:00",
-     "status": "verified"
+     "hash": "a1afd75456090664a586660b6e72599619c90867a3c466c59c388381d2a0cc25",
+     "last_checked_at": "2026-09-28T21:39:06+00:00",
+     "reviewed_at": "2026-09-28T21:39:06+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"
