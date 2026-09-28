@@ -8,6 +8,19 @@ Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness or
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
 
+## 2026-09-28 — the dashboard's data call had grown to 325 MB
+
+- [x] **Cause:** the live `atlas agent` runs of 2026-09-24 verified 11,005 candidate pairs
+  and stored every one in full, twice (step result and final state): 337 MB for the last
+  run, 683 MB for five, a third of the database. `GET /api/overview` embeds the latest run,
+  so the dashboard downloaded 325 MB (7.9 s on the Mac itself) on every refresh.
+- [x] **Fix:** `compact_agent_run` — lists longer than 10 keep their first 10 items and
+  their real length as `<key>_total`; applied when a run is saved and again when it is
+  read. The dashboard reads only status, steps' actions and reasons, and counts, all
+  untouched.
+- [x] The five oversized rows were archived whole to
+  `data/archive/agent-runs-2026-09-24.jsonl.gz` and rewritten compact in place.
+
 ## 2026-09-28 — the macOS 27 upgrade broke the samebetornot.com publish for a week
 
 - [x] **Cause:** macOS 27 runs no Intel-only binaries. The site agent's `PATH` listed
