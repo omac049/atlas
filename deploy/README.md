@@ -72,6 +72,16 @@ reads the installed copy in `~/Library/LaunchAgents`, not the one in this repo.
   `ATLAS_SITE_PUBLISH_CMD`), which pushes the built site to the `gh-pages`
   branch for GitHub Pages at samebetornot.com and commits only on change. Hosting
   credentials live in the host CLI's own config, never in this repo.
+- **The fee checker's browser** lives in `data/playwright-browsers` (about 200 MB), not in
+  Playwright's shared cache: every other Playwright install on the machine cleans that
+  cache, and on 2026-09-15 one of them deleted the build the checker needs. For twelve
+  nights the check then read JavaScript-only pages as empty shells and the site reported
+  up to nine platforms as "under review" whose pages had not changed. Now: no browser, no
+  check (`verify` exits 3 and writes nothing; the job reinstalls the browser once with
+  `python -m feeverified install-browser` and tries again); one page may hold the run for
+  90 seconds at most; and a quote is declared gone only on evidence as good as the evidence
+  it was reviewed on. A healthy check takes 25 to 35 minutes. **One that finishes in two
+  is broken**: `grep "verify rc" ~/Library/Logs/atlas-fees.log` shows the time of each.
 - **`com.atlas.fees.plist` + `atlas_fees.py`** — daily 04:20, the Fee Verified job
   (`docs/FEES.md`): re-reads every platform's fee page in a headless browser and
   records which quoted sentences still appear, rebuilds `dist/fees` for
