@@ -275,6 +275,34 @@ before it ships.
   link is absent from both. Square's application through Impact is awaiting
   approval.
 
+- 2026-09-28: **for twelve nights the site reported fee changes that had not
+  happened.** The nightly check reads pages in a headless browser; on
+  2026-09-15 another tool's cleanup removed that browser from a shared cache,
+  and from the 16th the check fell back to plain fetches, which return
+  JavaScript-only pages as empty shells. Their "missing" quotes were published
+  as "fee page changed, these numbers are under review": 5 platforms on the
+  16th, 9 by the 28th. With the browser restored, Amazon, Cash App, Stripe and
+  StubHub were found never to have changed; Etsy, QuickBooks, Venmo, Vinted and
+  Whatnot do differ from the reviewed text and are being re-read. No fee number
+  on the site was wrong because of this: the verifier never edits a schedule.
+  What was wrong was the site's own statement about five to nine of its pages,
+  which is the one thing this product sells. The check now refuses to run
+  without its browser, limits any page to 90 seconds, and declares a quote gone
+  only on evidence as good as the evidence it was reviewed on
+  (`deploy/README.md`, `tests/test_feeverified_verify.py`).
+- 2026-09-28: **affiliate replies.** Square declined (2026-09-18) and Coinbase
+  declined (2026-09-17), both through Impact, both with form letters; Square's
+  names traffic level among its possible reasons and invites a re-application.
+  Neither link was ever placed. Shopify and Intuit remain the two placements.
+  Impact reports a payment-details problem on the owner's account (2026-09-12)
+  that only the owner can fix.
+- 2026-09-28: **index coverage, from Google's URL inspection:** 23 of 51 pages
+  indexed, including 20 of the 22 calculator pages (`/reverb` and `/stubhub`
+  are discovered, not yet crawled); the 22 "how much does X take" pages and
+  the comparison pages are discovered or unknown. Sitemap re-submitted.
+  `/quickbooks`, `/stripe` and `/etsy`, flagged for re-request on 2026-09-15,
+  are indexed.
+
 ## 9. Scoreboard
 
 Weekly, from the owner's personal Search Console, trailing 7 days unless
@@ -285,3 +313,6 @@ clock start.
 |---|---|---|---|---|---|---|
 | 0 | 2026-09-08 | — | — | — | — | clock started; live on verifiedfees.com; Chrome Safe Browsing warning reported as a false positive |
 | 1 | 2026-09-11 | 0 | 0 | — | — | first automated pull; home page indexed, 7 of 7 sampled inner pages unknown to Google; sitemap accepted 2026-09-09, 41 URLs, 0 errors |
+| 2 | 2026-09-17 | 559 | 3 | 27.7 | /depop (4.0) | auto-pulled; 559 of 2,000 impressions in 30 days |
+| 2 | 2026-09-21 | 1,052 | 4 | 25.8 | /depop (4.0) | auto-pulled; 1,211 of 2,000 impressions in 30 days |
+| 3 | 2026-09-28 | 933 | 0 | 30.2 | /depop (4.0) | auto-pulled; 2,150 of 2,000 impressions in 30 days: the impression line is crossed three weeks before the 2026-10-20 verdict. Clicks: 4 in 30 days. Five to nine pages carried a false "under review" banner from 09-16 to 09-28 |

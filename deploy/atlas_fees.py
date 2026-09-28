@@ -10,6 +10,10 @@ Environment (plist EnvironmentVariables):
 
 The publish step prepends the newest nvm node to PATH: launchd's PATH has no
 node, and `npx wrangler` should run on the same node the shell uses.
+
+If the verifier's browser cannot start, verification exits 3 having written
+nothing. The job reinstalls the browser once and tries again; if that fails
+too, the pages are rebuilt from the last completed check and the log says so.
 """
 
 import os
@@ -21,6 +25,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 PYTHON = REPO_ROOT / ".venv" / "bin" / "python"
 OUT = REPO_ROOT / "dist" / "fees"
 LOG = Path.home() / "Library" / "Logs" / "atlas-fees.log"
+BROWSER_UNAVAILABLE = 3  # feeverified.verify.BROWSER_UNAVAILABLE_EXIT
 
 
 def log(message: str) -> None:
@@ -49,9 +54,26 @@ def run(args: list[str], timeout: int) -> subprocess.CompletedProcess:
     return subprocess.run(args, cwd=REPO_ROOT, capture_output=True, text=True, timeout=timeout, check=False)
 
 
+def verify_sources() -> subprocess.CompletedProcess:
+    """Tonight's check, with one repair attempt if the browser is missing."""
+    command = [str(PYTHON), "-m", "feeverified", "verify"]
+    verify = run(command, 2400)
+    if verify.returncode == BROWSER_UNAVAILABLE:
+        log(f"verify could not start its browser ({verify.stdout.strip()[-200:]}); reinstalling it")
+        install = run([str(PYTHON), "-m", "feeverified", "install-browser"], 1500)
+        log(f"install-browser rc={install.returncode} {(install.stdout.strip() or install.stderr.strip())[-200:]}")
+        verify = run(command, 2400)
+    return verify
+
+
 def main() -> None:
-    verify = run([str(PYTHON), "-m", "feeverified", "verify"], 2400)
-    log(f"verify rc={verify.returncode} {verify.stdout.strip()[-200:] or verify.stderr.strip()[-200:]}")
+    verify = verify_sources()
+    detail = verify.stdout.strip()[-200:] or verify.stderr.strip()[-200:]
+    if verify.returncode == 0:
+        log(f"verify rc=0 {detail}")
+    else:
+        log(f"ERROR verify did not run rc={verify.returncode} {detail}; "
+            "pages keep the last completed check")
     base_url = os.environ.get("FEES_SITE_BASE_URL", "https://example.invalid")
     build = run([str(PYTHON), "-m", "feeverified", "build", "--out", str(OUT), "--base-url", base_url], 300)
     if build.returncode != 0:

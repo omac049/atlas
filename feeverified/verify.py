@@ -12,13 +12,28 @@ docs/fees/verification.json. Three outcomes, each shown on the site:
               stands; nothing is silently assumed.
 
 The verifier never edits a schedule. Numbers change only by a human commit.
+
+A check needs a browser. Several platforms serve their fee schedules only
+through JavaScript, and a plain fetch of those pages returns a shell with none
+of the recorded quotes in it, which reads exactly like "the page changed". So
+if the headless browser cannot start, nothing is fetched and nothing is
+written: the check fails as BrowserUnavailable and the last completed check
+stands. From 2026-09-16 to 2026-09-28 it did not work that way, and the site
+told visitors that up to nine platforms' numbers were under review when their
+pages had not changed at all.
 """
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
+import os
 import re
+import signal
+import subprocess
+import sys
+import threading
 from datetime import UTC, datetime
 from html import unescape as html_unescape
 from pathlib import Path
@@ -27,6 +42,19 @@ ROOT = Path(__file__).resolve().parent.parent
 FEES_DIR = ROOT / "docs" / "fees"
 STATE_PATH = FEES_DIR / "verification.json"          # human-reviewed baseline, in git
 CHECK_PATH = ROOT / "data" / "fees" / "check.json"     # nightly results, not in git
+# The browser lives in the project's own directory. Playwright's shared cache
+# (~/Library/Caches/ms-playwright) is garbage-collected by every other
+# Playwright install on the machine, and on 2026-09-15 one of them removed the
+# build this verifier needs.
+BROWSERS_DIR = ROOT / "data" / "playwright-browsers"
+os.environ.setdefault("PLAYWRIGHT_BROWSERS_PATH", str(BROWSERS_DIR))
+BROWSER_UNAVAILABLE_EXIT = 3
+# One page may hold the run for this long and no longer. On 2026-09-28 a single
+# page never returned and the whole check sat on it for twenty minutes.
+PAGE_HARD_LIMIT_SECONDS = 90.0
+# How a page was read, best evidence first. A quote is declared gone only on
+# evidence at least as good as the evidence it was reviewed on.
+METHODS = ("rendered", "impersonated", "plain")
 USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) "
     "Chrome/128.0 Safari/537.36"
@@ -108,43 +136,122 @@ def text_hash(html: str) -> str:
 _BROWSER = {"playwright": None, "browser": None, "context": None}
 
 
-def _rendered(url: str) -> str:
+class BrowserUnavailable(RuntimeError):
+    """The headless browser cannot start, so no page can be verified."""
+
+
+def _context():
+    """The shared browser context, started on first use."""
+    if _BROWSER["context"] is None:
+        from playwright.sync_api import sync_playwright
+
+        driver = sync_playwright().start()
+        try:
+            browser = driver.chromium.launch(headless=True)
+        except Exception:
+            driver.stop()
+            raise
+        _BROWSER.update({
+            "playwright": driver, "browser": browser,
+            "context": browser.new_context(user_agent=USER_AGENT, locale="en-US"),
+        })
+    return _BROWSER["context"]
+
+
+def require_browser() -> None:
+    """Start the browser now, or stop the run before anything is fetched."""
+    try:
+        _context()
+    except Exception as exc:
+        reason = (str(exc).strip().splitlines() or [type(exc).__name__])[0]
+        raise BrowserUnavailable(reason[:300]) from exc
+
+
+def install_browser() -> subprocess.CompletedProcess:
+    """Download the headless Chromium this Playwright version expects into
+    BROWSERS_DIR (about 200 MB, from Playwright's own download servers)."""
+    Path(os.environ["PLAYWRIGHT_BROWSERS_PATH"]).mkdir(parents=True, exist_ok=True)
+    return subprocess.run(
+        [sys.executable, "-m", "playwright", "install", "--only-shell", "chromium"],
+        capture_output=True, text=True, timeout=1200, check=False,
+    )
+
+
+def _children(pid: int | str) -> list[int]:
+    found = subprocess.run(["pgrep", "-P", str(pid)], capture_output=True, text=True, check=False)
+    return [int(line) for line in found.stdout.split()]
+
+
+def _stop_browser_processes() -> None:
+    """Called from the watchdog thread, where the browser's own API cannot be
+    used: end the browser, so the call blocked on it fails and returns. Only
+    this process's own browser: the driver is our child and the browser is the
+    driver's, so another check running beside this one is never touched."""
+    for driver in _children(os.getpid()):
+        for browser in _children(driver):
+            with contextlib.suppress(OSError):
+                os.kill(browser, signal.SIGKILL)
+
+
+def _forget_browser() -> None:
+    """Drop a browser that is gone or cannot be trusted; the next page starts a new one."""
+    driver = _BROWSER["playwright"]
+    _BROWSER.update({"playwright": None, "browser": None, "context": None})
+    if driver is not None:
+        with contextlib.suppress(Exception):  # it is already dead; there is nothing to save
+            driver.stop()
+
+
+def _rendered(url: str, limit: float = PAGE_HARD_LIMIT_SECONDS) -> str:
     """Render the page in headless Chromium and return its HTML after the
     network goes quiet. Several platforms (Amazon Seller Central, StubHub's
     help center, Shopify help) serve their fee schedules only through
     JavaScript, so a plain fetch would verify an empty shell."""
-    from playwright.sync_api import sync_playwright
+    page = _context().new_page()
+    expired = threading.Event()
 
-    if _BROWSER["browser"] is None:
-        _BROWSER["playwright"] = sync_playwright().start()
-        _BROWSER["browser"] = _BROWSER["playwright"].chromium.launch(headless=True)
-        _BROWSER["context"] = _BROWSER["browser"].new_context(user_agent=USER_AGENT, locale="en-US")
-    page = _BROWSER["context"].new_page()
+    def give_up() -> None:
+        expired.set()
+        _stop_browser_processes()
+
+    watchdog = threading.Timer(limit, give_up)
+    watchdog.daemon = True
+    watchdog.start()
     try:
         try:
             page.goto(url, wait_until="networkidle", timeout=45000)
-        except Exception:  # noqa: BLE001 - a slow tracker must not fail the page; use what rendered
+        except Exception:
+            if expired.is_set():
+                raise
+            # A slow tracker must not fail the page; use what rendered.
             page.wait_for_timeout(2000)
         return page.content()
     finally:
-        page.close()
+        watchdog.cancel()
+        if expired.is_set():
+            _forget_browser()
+        else:
+            try:
+                page.close()
+            except Exception:  # noqa: BLE001 - a page that will not close takes its browser with it
+                _forget_browser()
 
 
 def close_browser() -> None:
     if _BROWSER["browser"] is not None:
-        _BROWSER["browser"].close()
-        _BROWSER["playwright"].stop()
-        _BROWSER.update({"playwright": None, "browser": None, "context": None})
+        with contextlib.suppress(Exception):  # closing is best effort
+            _BROWSER["browser"].close()
+        _forget_browser()
 
 
-def fetch(url: str) -> str:
-    """Rendered browser fetch first; browser-impersonating and plain fetches
-    as fallbacks. Raises on failure."""
+def fetch_with_method(url: str) -> tuple[str, str]:
+    """The page and how it was read: rendered in the browser first, then a
+    browser-impersonating fetch, then a plain one. Raises on failure."""
     rendered_error = None
     try:
         html = _rendered(url)
         if len(visible_text(html)) > 500:
-            return html
+            return html, "rendered"
     except Exception as exc:  # noqa: BLE001 - fall through to the lighter fetchers
         rendered_error = str(exc)[:120]
     try:
@@ -152,7 +259,7 @@ def fetch(url: str) -> str:
 
         response = cffi_requests.get(url, impersonate="chrome", timeout=30)
         if response.status_code == 200 and len(response.text) > 2000:
-            return response.text
+            return response.text, "impersonated"
         status = response.status_code
     except ImportError:
         status = None
@@ -164,7 +271,16 @@ def fetch(url: str) -> str:
     )
     if response.status_code != 200:
         raise RuntimeError(f"HTTP {response.status_code} (impersonated: {status}; rendered: {rendered_error})")
-    return response.text
+    return response.text, "plain"
+
+
+def fetch(url: str) -> str:
+    return fetch_with_method(url)[0]
+
+
+def weaker(method: str, than: str) -> bool:
+    """Was the page read by weaker means tonight than when it was reviewed?"""
+    return METHODS.index(method) > METHODS.index(than if than in METHODS else "rendered")
 
 
 def load_state() -> dict:
@@ -209,6 +325,7 @@ def mark_reviewed(platform: str, note: str) -> dict:
     """A human re-read the schedule and updated the JSON: record today's
     hashes as the new baseline. This is the only way 'changed' becomes
     'verified' again."""
+    require_browser()  # a baseline taken from empty shells would bless the wrong page
     state = load_state()
     entry = state["platforms"].setdefault(platform, {"sources": {}, "history": []})
     schedule = json.loads((FEES_DIR / f"{platform}.json").read_text())
@@ -220,12 +337,12 @@ def mark_reviewed(platform: str, note: str) -> dict:
             entry["sources"].pop(source["url"], None)
             continue
         try:
-            html = fetch(source["url"])
+            html, method = fetch_with_method(source["url"])
         except Exception as exc:  # noqa: BLE001 - a page that will not load is recorded, not hidden
             entry["sources"][source["url"]] = {"reviewed_at": now, "last_checked_at": now, "status": "unreachable", "error": str(exc)[:200]}
             statuses.append("unreachable")
             continue
-        entry["sources"][source["url"]] = {"hash": text_hash(html), "reviewed_at": now, "last_checked_at": now, "status": "verified"}
+        entry["sources"][source["url"]] = {"hash": text_hash(html), "reviewed_at": now, "last_checked_at": now, "status": "verified", "via": method}
         texts.append(visible_text(html))
         statuses.append("verified")
     entry["quotes_missing_at_review"] = missing_quotes("\n".join(texts), schedule.get("quotes", []))
@@ -239,7 +356,11 @@ def mark_reviewed(platform: str, note: str) -> dict:
 
 def check_all() -> dict:
     """Nightly: compare every source page with its reviewed baseline. Writes
-    only the results file; the baseline changes only through mark_reviewed."""
+    only the results file; the baseline changes only through mark_reviewed.
+
+    Raises BrowserUnavailable, having fetched and written nothing, when the
+    browser cannot start."""
+    require_browser()
     state = load_state()
     check = {"platforms": {}}
     now = datetime.now(UTC).isoformat(timespec="seconds")
@@ -253,17 +374,22 @@ def check_all() -> dict:
         check["platforms"][platform] = entry
         statuses = []
         texts = []
+        downgraded = []  # sources read by weaker means tonight than at review
         for source in schedule["sources"]:
             if source.get("verify") is False:
                 continue
             url = source["url"]
             rec = entry["sources"].setdefault(url, {})
+            reviewed_via = rec.get("via", "rendered")
             try:
-                html = fetch(url)
+                html, method = fetch_with_method(url)
             except Exception as exc:  # noqa: BLE001 - reported, never fatal
                 rec.update({"last_checked_at": now, "status": "unreachable", "error": str(exc)[:200]})
                 statuses.append("unreachable")
                 continue
+            rec["read_via"] = method
+            if weaker(method, reviewed_via):
+                downgraded.append(url)
             texts.append(visible_text(html))
             current = text_hash(html)
             rec["last_checked_at"] = now
@@ -288,16 +414,29 @@ def check_all() -> dict:
             for source in schedule["sources"]:
                 if source.get("verify") is False:
                     continue
+                rec = entry["sources"].setdefault(source["url"], {})
                 try:
-                    texts2.append(visible_text(fetch(source["url"])))
+                    html2, method2 = fetch_with_method(source["url"])
                 except Exception as exc:  # noqa: BLE001 - the first pass already recorded reachability
-                    entry["sources"].setdefault(source["url"], {})["recheck_error"] = str(exc)[:120]
+                    rec["recheck_error"] = str(exc)[:120]
+                    continue
+                texts2.append(visible_text(html2))
+                if weaker(method2, rec.get("via", "rendered")) and source["url"] not in downgraded:
+                    downgraded.append(source["url"])
             if texts2:
                 still_missing = set(missing_quotes("\n".join(texts2), newly_missing))
                 newly_missing = [q for q in newly_missing if q in still_missing]
                 missing = [q for q in missing if q in known or q in still_missing]
         entry["quotes_missing"] = missing
-        if newly_missing and texts:
+        if newly_missing and texts and downgraded:
+            # The quotes may sit on a page that could only be read as a shell
+            # tonight. That is "could not check", never "the page changed".
+            entry["not_evidence"] = {
+                "reason": "read by weaker means than at review; missing quotes are not evidence",
+                "sources": downgraded, "quotes": newly_missing[:5],
+            }
+            statuses.append("unreachable")
+        elif newly_missing and texts:
             if entry.get("status") != "changed":
                 entry["history"].append({"at": now, "event": "quotes_missing", "quotes": newly_missing[:5]})
             statuses.append("changed")

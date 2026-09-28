@@ -8,6 +8,28 @@ Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness or
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
 
+## 2026-09-28 — Fee Verified reported fee changes that had not happened, for twelve nights
+
+- [x] **Cause:** the checker reads pages in a headless browser kept in Playwright's shared
+  cache. On 2026-09-15 another Playwright install cleaned that cache and removed the build
+  this one needs. From 2026-09-16 the rendered fetch failed at once, the fallback fetched
+  JavaScript-only pages as empty shells, and their "missing" quotes were published as
+  "fee page changed, numbers under review": 5 platforms on the 16th, 9 by the 28th. The
+  tell was in the log all along: the check took 24 minutes until the 15th and under two
+  from the 16th.
+- [x] **With the browser restored (2026-09-28):** 17 verified. Amazon, Cash App, Stripe and
+  StubHub had never changed. Etsy, QuickBooks, Venmo, Vinted and Whatnot do differ from
+  the reviewed text and are being re-read.
+- [x] **Fix:** browser kept in `data/playwright-browsers`; no browser, no check (exit 3,
+  nothing written, one reinstall attempt by the job); a 90-second limit per page (one page
+  hung a run for twenty minutes on the 28th); a quote is declared gone only on evidence as
+  good as the evidence it was reviewed on, otherwise the platform reads "check pending".
+  `tests/test_feeverified_verify.py`.
+- [ ] Re-read Etsy, QuickBooks, Venmo, Vinted, Whatnot against their source pages and mark
+  each reviewed; reviews now record how each page was read.
+- [ ] The check spends most of its time on pages that never go network-idle (47 s each).
+  A content-settled wait would cut a 34-minute run to a few minutes.
+
 ## 2026-09-28 — the dashboard's data call had grown to 325 MB
 
 - [x] **Cause:** the live `atlas agent` runs of 2026-09-24 verified 11,005 candidate pairs
@@ -18,8 +40,10 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   their real length as `<key>_total`; applied when a run is saved and again when it is
   read. The dashboard reads only status, steps' actions and reasons, and counts, all
   untouched.
-- [x] The five oversized rows were archived whole to
-  `data/archive/agent-runs-2026-09-24.jsonl.gz` and rewritten compact in place.
+- [x] The three oversized rows (runs 11 to 13 of that day's five) were archived whole to
+  `data/archive/agent-runs-2026-09-24.jsonl.gz` (683 MB of JSON, 17 MB compressed, digests
+  checked before any row was touched) and rewritten compact in place. Overview call:
+  325 MB / 7.9 s -> 0.5 MB / 0.4 s. Database: 2.13 GB -> 1.44 GB.
 
 ## 2026-09-28 — the macOS 27 upgrade broke the samebetornot.com publish for a week
 
@@ -113,6 +137,8 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   unknown-book markers.
 - [ ] 2026-10-13: archive the October tapes (`fetch_tape`) — Kalshi serves
   prints for ~6 weeks and the window is 41 days.
+  (Measured 2026-09-28: prints from 2026-07-31 are still served for these markets, 59
+  days back, so the 41-day window has margin. The archive stays on the list.)
 - [ ] 2026-10-29: coverage audit, then the one command in Amendment 1 §4.
 
 ## 2026-09-04 (b) — fourth hypothesis: DISPROVEN. The search is complete.
