@@ -254,21 +254,49 @@ def close_browser() -> None:
         _forget_browser()
 
 
+_CHALLENGE = re.compile(
+    r"just a moment|are you human|enable javascript and cookies|checking your browser|"
+    r"verify(?:ing)? (?:that )?you are (?:a )?human|attention required|pardon our interruption|"
+    r"unusual traffic|access denied|request (?:was )?blocked",
+    re.IGNORECASE,
+)
+
+
+MIN_PAGE_CHARS = 500
+
+
+def looks_blocked(text: str) -> bool:
+    """A bot challenge where the page should be: short, and it says so. Reverb's
+    "Are you human?" page is 515 characters; for three weeks it cleared the old
+    500-character test and was counted, every night, as a page read and verified."""
+    return len(text) < 2500 and bool(_CHALLENGE.search(text))
+
+
+def is_the_page(html: str) -> bool:
+    """Enough visible text to be an article, and not a challenge. The test is on
+    what a reader would see, however the page was fetched: a Depop help article
+    behind a login is 3,000 bytes of markup and 47 characters of text."""
+    text = visible_text(html)
+    return len(text) > MIN_PAGE_CHARS and not looks_blocked(text)
+
+
 def fetch_with_method(url: str) -> tuple[str, str]:
     """The page and how it was read: rendered in the browser first, then a
-    browser-impersonating fetch, then a plain one. Raises on failure."""
+    browser-impersonating fetch, then a plain one. A bot challenge is not the
+    page, however it was fetched. Raises on failure."""
     rendered_error = None
     try:
         html = _rendered(url)
-        if len(visible_text(html)) > 500:
+        if is_the_page(html):
             return html, "rendered"
+        rendered_error = "bot challenge" if looks_blocked(visible_text(html)) else "no readable text"
     except Exception as exc:  # noqa: BLE001 - fall through to the lighter fetchers
         rendered_error = str(exc)[:120]
     try:
         from curl_cffi import requests as cffi_requests
 
         response = cffi_requests.get(url, impersonate="chrome", timeout=30)
-        if response.status_code == 200 and len(response.text) > 2000:
+        if response.status_code == 200 and is_the_page(response.text):
             return response.text, "impersonated"
         status = response.status_code
     except ImportError:
@@ -281,6 +309,9 @@ def fetch_with_method(url: str) -> tuple[str, str]:
     )
     if response.status_code != 200:
         raise RuntimeError(f"HTTP {response.status_code} (impersonated: {status}; rendered: {rendered_error})")
+    if not is_the_page(response.text):
+        reason = "bot challenge" if looks_blocked(visible_text(response.text)) else "no readable text"
+        raise RuntimeError(f"{reason} (impersonated: {status}; rendered: {rendered_error})")
     return response.text, "plain"
 
 
@@ -405,6 +436,7 @@ def check_all() -> dict:
             if weaker(method, reviewed_via):
                 downgraded.append(url)
             texts.append(visible_text(html))
+            rec["chars"] = len(texts[-1])
             current = text_hash(html)
             rec["last_checked_at"] = now
             rec.pop("error", None)

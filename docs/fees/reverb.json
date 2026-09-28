@@ -1,7 +1,7 @@
 {
   "platform": "reverb",
   "name": "Reverb (US sellers)",
-  "as_of": "2026-09-08",
+  "as_of": "2026-09-28",
   "sources": [
     {
       "url": "https://reverb.com/selling/selling-fees",
@@ -30,8 +30,10 @@
     {
       "url": "https://reverb.com/legal/reverbs-billing-policy",
       "title": "Reverb\u2019s Billing Policy | Reverb",
-      "loaded": "2026-09-08",
-      "last_updated_on_page": "Effective Date: June 5, 2023; Updated: September 9, 2025"
+      "loaded": "2026-09-28",
+      "last_updated_on_page": "Effective Date: June 5, 2023; Updated: September 9, 2025",
+      "verify": false,
+      "note": "Read by a person in a browser on 2026-09-28; this page answers automated readers with a bot challenge, so it is not part of the nightly verification."
     },
     {
       "url": "https://help.reverb.com/hc/en-us/articles/41988469262107-What-are-my-fees-as-a-Reverb-Preferred-Seller",
@@ -53,9 +55,11 @@
     },
     {
       "url": "https://reverb.com/selling/bump",
-      "title": "Bump | Reverb (More Views, Faster Sales.)",
-      "loaded": "2026-09-08",
-      "last_updated_on_page": null
+      "title": "Advertising with Reverb Bump | Reverb",
+      "loaded": "2026-09-28",
+      "last_updated_on_page": null,
+      "verify": false,
+      "note": "Read by a person in a browser on 2026-09-28; this page answers automated readers with a bot challenge, so it is not part of the nightly verification."
     },
     {
       "url": "https://help.reverb.com/hc/en-us/articles/40917616326171-How-long-does-it-take-to-get-paid",
@@ -101,10 +105,11 @@
     "If you choose to list your item in a different currency than you receive your Reverb Payments payout, a 2.5% currency conversion fee will be assessed on the subtotal of your payout, after your regular payment processing fees.",
     "When you purchase Reverb Bump, you bid a percentage of an item's total sale price. The rate you set and your listing\u2019s quality will determine its placement at the top of Reverb\u2019s best-performing pages, including the Comparative Shopping Page. If your listing does not sell, you will not be charged a fee.",
     "Please note, if your listing does sell, the Reverb Bump fee will be charged in addition to the fees under this Billing Policy.",
-    "The minimum Bump percentage is .5% and the maximum is 30%.",
+    "The minimum Bump percentage is 0.5% and the maximum is 30%.",
+    "Direct Offers on brand new listings are capped at 1.5%.",
     "You are only charged this fee if your Bumped listing sells on the site and the amount charged is based on the percentage which you selected on the listing.",
     "The Bump fee is automatically deducted from Reverb Payments earnings based on the product amount + shipping total (tax not included).",
-    "*Reverb Bump fees are charged in addition to Selling and Payment Processing fees.",
+    "Bump fees are charged at the rate you set, in addition to selling and payment processing fees.",
     "Reverb charges a 5% selling fee as well as a 3.19% + $0.49* payment processing fee for each sale made via Reverb Payments. The fees are deducted from your total earnings. Note that fees are calculated based on your order total (including shipping).",
     "The first time you make a sale, Reverb initiates your payout once we get confirmation that the item has been delivered. For every sale after that, Reverb initiates your payout as soon as a valid tracking number shows that the gear is in transit.",
     "For your first sale, funds will be available for deposit 1 - 2 business days after the item is delivered, according to the tracking information on your order. After your first sale, funds will be available for deposit 1 business day after you provide a valid tracking number showing package movement. Payment notifications will be sent via email. From there, it may take 1 - 4 business days for payment to appear in your bank account.",
@@ -132,7 +137,8 @@
     "Payout timing wording differs slightly across pages (marketing page: 'initiates your payout' at delivery/in-transit; help: 1-2 or 1 business day to 'available for deposit' then 1-4 business days to bank; quick answer '2 - 5 business days'). These are consistent ranges, not contradictions.",
     "'When do I pay the fees?' section notes rules for PayPal payouts apply to orders placed on or after May 13, 2026 (fees deducted from payout).",
     "Payment processing fees are refunded for up to five seller-initiated fully refunded cancellations per month (Billing Policy).",
-    "Billing Policy shows 'Updated: September 9, 2025'; help-center articles show no dates."
+    "Billing Policy shows 'Updated: September 9, 2025'; help-center articles show no dates.",
+    "Re-read 2026-09-28. Reverb revised its Bump help article that day: the bounds are unchanged (0.5% to 30%), and it now says the Bump fee on a Direct Offer for a brand new listing is capped at 1.5% whatever rate was set; this calculator charges the rate you enter and does not apply that cap. The Billing Policy (updated September 9, 2025) and the Bump marketing page answer automated readers with a bot challenge; both were read in a browser the same day and every sentence quoted from them stands, one of them reworded by Reverb."
   ],
   "rates": {
     "selling_rate": 0.05,

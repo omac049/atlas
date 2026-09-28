@@ -318,6 +318,21 @@ before it ships.
   first real fee change the verifier has caught, seven days after it happened,
   five of them lost to the missing browser.
 
+- 2026-09-28, evening: **the repaired check caught a change within hours, and
+  exposed two pages it had never really read.** Reverb revised its Bump help
+  article that day (bounds unchanged; a 1.5% cap on Direct Offers for brand
+  new listings is new), and the first full check after the repair flagged it.
+  Reading Reverb's sources one by one showed that its Billing Policy and its
+  Bump marketing page answer automated readers with an "Are you human?" page
+  of 515 characters, which cleared a 500-character test and had been counted
+  as read and verified every night since launch. Both were read in a real
+  browser the same evening; every sentence quoted from them stands, and they
+  are now marked as read by a person, which the page says. A scan of all 105
+  cited pages found no other challenge page and one login wall, on Depop,
+  which was removed along with a citation that now redirects to a blog index;
+  no quoted sentence came from either. A page now counts as read only if a
+  reader would see an article there.
+
 ## 9. Scoreboard
 
 Weekly, from the owner's personal Search Console, trailing 7 days unless

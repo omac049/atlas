@@ -265,79 +265,68 @@
      "at": "2026-09-08T18:02:35+00:00",
      "event": "reviewed",
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
+    },
+    {
+     "at": "2026-09-28T22:42:50+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-09-28: two cited pages that no longer exist for a reader (one behind a login, one redirected to a blog index) were removed from the sources; no quote came from either and every quoted sentence is on the remaining pages. Fee numbers unchanged."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "These fees are in addition to selling fees (payable outside of the United Kingdom and United States) and payment processing fees. They are effective from 23 March and form part of our Terms of Service."
    ],
-   "quotes_missing_at_review": [
-    "These fees are in addition to selling fees (payable outside of the United Kingdom and United States) and payment processing fees. They are effective from 23 March and form part of our Terms of Service."
-   ],
-   "reviewed_at": "2026-09-08T18:02:35+00:00",
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-09-28T22:42:50+00:00",
    "sources": {
-    "https://blog.depop.com/articles/us-depop-fee-change": {
-     "fingerprint_drift": false,
-     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:02:35+00:00",
-     "status": "verified"
-    },
     "https://depophelp.zendesk.com/hc/en-gb/articles/10110299060753-Boosted-Listings": {
-     "fingerprint_drift": false,
      "hash": "07385cf624554443095a74e33d2349fd86a0d7c656c42b7e21e4d33372ee78ec",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:02:35+00:00",
-     "status": "verified"
-    },
-    "https://depophelp.zendesk.com/hc/en-gb/articles/10782996439313-Depop-Payments-fee-change-US-": {
-     "fingerprint_drift": false,
-     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:02:35+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:42:50+00:00",
+     "reviewed_at": "2026-09-28T22:42:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://depophelp.zendesk.com/hc/en-gb/articles/21752555753361-What-is-the-Marketplace-fee": {
-     "fingerprint_drift": false,
      "hash": "d9209544185cbf1e14f6dbe86942b1f7e19636c1e347522b7f4e9056f5f3de67",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:02:35+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:42:50+00:00",
+     "reviewed_at": "2026-09-28T22:42:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://depophelp.zendesk.com/hc/en-gb/articles/360001791127-Seller-fees-and-charges": {
-     "fingerprint_drift": false,
      "hash": "a554dab21c8fcdf9198251943f93b07f48c4d5edd476ceeb8fecb7d2c81eaddc",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:02:35+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:42:50+00:00",
+     "reviewed_at": "2026-09-28T22:42:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://depophelp.zendesk.com/hc/en-gb/articles/360001791287-How-do-I-change-the-currency-of-my-items": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:02:35+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:42:50+00:00",
+     "reviewed_at": "2026-09-28T22:42:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://news.depop.com/company-news/depop-removes-selling-fees-in-the-united-states-evolves-fee-structure/": {
-     "fingerprint_drift": false,
      "hash": "7090344ec642861b00145232c5574641abbb4521952d7eef0f8e06f1837eb886",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:02:35+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:42:50+00:00",
+     "reviewed_at": "2026-09-28T22:42:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://partnerapi.depop.com/api-docs/concepts/fees/": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:02:35+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:42:50+00:00",
+     "reviewed_at": "2026-09-28T22:42:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.depop.com/sell/": {
-     "fingerprint_drift": false,
      "hash": "4a65d4ec6368304b85604e351f9af7f29756396f59adcc8cf099d5ba5b237187",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:02:35+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:42:50+00:00",
+     "reviewed_at": "2026-09-28T22:42:50+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"
@@ -849,6 +838,11 @@
      "at": "2026-09-08T18:05:20+00:00",
      "event": "reviewed",
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
+    },
+    {
+     "at": "2026-09-28T22:19:52+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-09-28: Reverb revised its Bump article (bounds unchanged, 0.5% to 30%; a 1.5% cap on Direct Offers for brand new listings is new). The Billing Policy and the Bump marketing page block automated readers and were read in a browser; every sentence quoted from them stands."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -872,102 +866,81 @@
     "Effective Date: June 5, 2023 Updated: September 9, 2025"
    ],
    "quotes_missing_at_review": [
-    "USD | $10,000 | $500 | $0.50",
     "Selling fees for Reverb are 5% of the total value of the transaction, including shipping.",
     "You pay only when your item sells. Your fee is based on the total selling price, inclusive of all costs except sales tax.",
     "You pay only 5% of the total price, with a $0.50 minimum and a $500 maximum fee.",
     "No listing fees, listing renewal fees, or monthly membership fees.",
-    "For sellers using Reverb Payments, the payment processing fee is 3.19% of the transaction amount +$0.49 per transaction.",
-    "USA | 3.19% + $0.49 USD per transaction",
-    "USA | USD | 3.19% + $0.49 USD | 2.99% + $0.49 USD",
     "Payment processing fees for Reverb Payments Fees - $0.49 plus 3.19% of the transaction total. For Reverb Preferred Sellers, the fee is $.49 plus 2.99% of the transaction total.",
     "When you purchase Reverb Bump, you bid a percentage of an item's total sale price. The rate you set and your listing\u2019s quality will determine its placement at the top of Reverb\u2019s best-performing pages, including the Comparative Shopping Page. If your listing does not sell, you will not be charged a fee.",
     "Please note, if your listing does sell, the Reverb Bump fee will be charged in addition to the fees under this Billing Policy.",
-    "*Reverb Bump fees are charged in addition to Selling and Payment Processing fees.",
-    "The first time you make a sale, Reverb initiates your payout once we get confirmation that the item has been delivered. For every sale after that, Reverb initiates your payout as soon as a valid tracking number shows that the gear is in transit.",
-    "For your first sale, funds will be available for deposit 1 - 2 business days after the item is delivered, according to the tracking information on your order. After your first sale, funds will be available for deposit 1 business day after you provide a valid tracking number showing package movement. Payment notifications will be sent via email. From there, it may take 1 - 4 business days for payment to appear in your bank account.",
-    "If you\u2019ve sold previously, you\u2019ll get paid within 2 - 5 business days of the carrier confirming that the item is in transit. If it\u2019s your first sale or you sold with local pickup, you\u2019ll be paid within 2 - 5 business days of the item being delivered",
+    "Bump fees are charged at the rate you set, in addition to selling and payment processing fees.",
     "Reverb Safe Shipping - 1.5%-3% depending on the value of the item and the final shipping destination.",
     "Effective Date: June 5, 2023 Updated: September 9, 2025"
    ],
-   "reviewed_at": "2026-09-08T18:05:20+00:00",
+   "reviewed_at": "2026-09-28T22:19:52+00:00",
    "sources": {
     "https://help.reverb.com/hc/en-us/articles/40917616326171-How-long-does-it-take-to-get-paid": {
-     "fingerprint_drift": false,
      "hash": "89f55565903bcabed9f7a46c47bd1ffc387277c4219349884794d50489d01668",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:05:20+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:19:52+00:00",
+     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/40917652290843-What-fees-will-I-pay-for-selling-on-Reverb": {
-     "fingerprint_drift": false,
      "hash": "3b2533d1bdbf572ca959927c49146fab53a8539570298ca7974b11a8f73afb1d",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:05:20+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:19:52+00:00",
+     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988457586715-Why-was-I-charged-a-Bump-fee": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:05:20+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:19:52+00:00",
+     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988469262107-What-are-my-fees-as-a-Reverb-Preferred-Seller": {
-     "fingerprint_drift": false,
      "hash": "7a1a00b2896ce6033f85a34ce06f16c736a8fe5459c6100c7fa5406e0bb8dbf2",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:05:20+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:19:52+00:00",
+     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988473838491-Availability-and-processing-fees-for-Reverb-Payments": {
-     "fingerprint_drift": false,
      "hash": "ea3407603121d27f80e6871d4ee2eb36dafb9a02eaba1563579c813e79f0e58a",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:05:20+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:19:52+00:00",
+     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988523307291-Why-are-my-total-earnings-lower-than-what-I-sold-my-gear-for": {
-     "fingerprint_drift": false,
      "hash": "e202314b1963cb20639973b86bf08877fcab2e4d7df663ed260f27cd68295c15",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:05:20+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:19:52+00:00",
+     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988532258587-What-is-Bump-and-how-does-it-work": {
-     "fingerprint_drift": false,
-     "hash": "347ad65b092b1d36f0367dc0bd6611d1a88aa7376e8fc04b343b25984afe94f9",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:05:20+00:00",
-     "status": "verified"
+     "hash": "b02cbb8c9b2cdfc53eb3bb766c7ed57a7b73b8fd49539bc0794990b362fba1e5",
+     "last_checked_at": "2026-09-28T22:19:52+00:00",
+     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988540155931-What-is-a-payment-processing-fee": {
-     "fingerprint_drift": false,
      "hash": "3d3eae58aa4252fd65ebd7377f24ec3d800bdfad5787a549e904a632334fcf4d",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:05:20+00:00",
-     "status": "verified"
-    },
-    "https://reverb.com/legal/reverbs-billing-policy": {
-     "fingerprint_drift": false,
-     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:05:20+00:00",
-     "status": "verified"
-    },
-    "https://reverb.com/selling/bump": {
-     "fingerprint_drift": false,
-     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:05:20+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:19:52+00:00",
+     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://reverb.com/selling/selling-fees": {
-     "fingerprint_drift": false,
      "hash": "bcd4f2efba2603ae9579448671026888ccd760624657f168d8585280c32d54d6",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:05:20+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-09-28T22:19:52+00:00",
+     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"

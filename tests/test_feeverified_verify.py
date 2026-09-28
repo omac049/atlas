@@ -290,3 +290,66 @@ def test_a_review_forgets_a_source_the_schedule_no_longer_cites(one_platform, mo
     assert list(entry["sources"]) == ["https://example.test/fees"]
     assert entry["sources"]["https://example.test/fees"]["via"] == "rendered"
     assert entry["quotes_missing_at_review"] == [] and entry["status"] == "verified"
+
+
+CHALLENGE = (
+    "<html><body><h1>Just a moment...</h1><p>Are you human?</p><p>Hi there. We had some trouble "
+    "showing you our page because we're trying to protect ourselves against spammers and "
+    "scammers, and you got caught in the mix!</p><p>Click below to continue</p>"
+    "<p>Enable JavaScript and cookies to continue</p>" + "<p>Please contact support.</p>" * 12 + "</body></html>"
+)
+
+
+def test_a_bot_challenge_is_not_the_page():
+    text = verify.visible_text(CHALLENGE)
+    assert len(text) > 500, "the point: it is long enough to have passed the old test"
+    assert verify.looks_blocked(text)
+    assert not verify.looks_blocked(verify.visible_text(PAGE))
+    # A real page may mention a blocked payment; length keeps it from matching.
+    long_page = "<p>If your request was blocked by your bank, fees are refunded.</p>" + "<p>Fee detail.</p>" * 400
+    assert not verify.looks_blocked(verify.visible_text(long_page))
+
+
+def test_a_challenged_render_falls_through_and_a_challenge_everywhere_is_a_failure(monkeypatch):
+    import sys
+    import types
+
+    import httpx
+
+    monkeypatch.setattr(verify, "_rendered", lambda url: CHALLENGE)
+    answers = {"impersonated": PAGE * 3, "plain": PAGE}
+    fake = types.SimpleNamespace(requests=types.SimpleNamespace(
+        get=lambda url, **kw: types.SimpleNamespace(status_code=200, text=answers["impersonated"])))
+    monkeypatch.setitem(sys.modules, "curl_cffi", fake)
+    monkeypatch.setattr(httpx, "get",
+                        lambda url, **kw: types.SimpleNamespace(status_code=200, text=answers["plain"]))
+    html, method = verify.fetch_with_method("https://example.test/fees")
+    assert method == "impersonated" and QUOTE in html
+
+    answers["impersonated"] = CHALLENGE * 3
+    html, method = verify.fetch_with_method("https://example.test/fees")
+    assert method == "plain" and QUOTE in html
+
+    answers["plain"] = CHALLENGE
+    with pytest.raises(RuntimeError, match="bot challenge"):
+        verify.fetch_with_method("https://example.test/fees")
+
+
+LOGIN_WALL = "<html><head>" + "<script>var x = 1;</script>" * 200 + "</head><body><h1>Log in</h1><p>Sign up or log in</p><p>Continue with email</p></body></html>"
+
+
+def test_a_login_wall_is_not_the_page_however_much_markup_it_carries(monkeypatch):
+    import sys
+    import types
+
+    import httpx
+
+    assert len(LOGIN_WALL) > 2000 and len(verify.visible_text(LOGIN_WALL)) < 100
+    assert not verify.is_the_page(LOGIN_WALL) and verify.is_the_page(PAGE)
+    monkeypatch.setattr(verify, "_rendered", lambda url: LOGIN_WALL)
+    fake = types.SimpleNamespace(requests=types.SimpleNamespace(
+        get=lambda url, **kw: types.SimpleNamespace(status_code=200, text=LOGIN_WALL)))
+    monkeypatch.setitem(sys.modules, "curl_cffi", fake)
+    monkeypatch.setattr(httpx, "get", lambda url, **kw: types.SimpleNamespace(status_code=200, text=LOGIN_WALL))
+    with pytest.raises(RuntimeError, match="no readable text"):
+        verify.fetch_with_method("https://example.test/behind-a-login")
