@@ -5,6 +5,10 @@
 # com.atlas.site after a successful build; safe to run by hand.
 set -eu
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# Whatever git the caller's PATH finds first may not run at all (an Intel-only
+# build on an OS without Rosetta); every git call below goes through one that does.
+GIT="$(sh "$REPO_ROOT/deploy/working_git.sh")"
+git() { "$GIT" "$@"; }
 SITE="$REPO_ROOT/dist/site"
 DOMAIN="${ATLAS_SITE_DOMAIN:-samebetornot.com}"
 WT="$(mktemp -d /tmp/atlas-gh-pages.XXXXXX)"
