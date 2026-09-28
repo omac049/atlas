@@ -59,6 +59,13 @@ reads the installed copy in `~/Library/LaunchAgents`, not the one in this repo.
   regardless; this agent is the no-sudo fallback and the two compose safely.
   Release times come from `atlas/release_calendar.py` — prune/extend that table
   and the holds follow.
+- **After a macOS upgrade, check the publish jobs first.** macOS 27 runs no Intel-only
+  binaries. `/usr/local/bin/git` and `/usr/local/bin/gh` on this Mac are Intel builds, the
+  agents' `PATH` found them first, and the nightly publish of samebetornot.com failed for
+  five nights (2026-09-24 to 09-28) with "Bad CPU type in executable". The publish script
+  now asks `deploy/working_git.sh` for a git that actually runs, and the agents' `PATH`
+  lists `/usr/bin` before `/usr/local/bin`. `grep -c "publish failed" ~/Library/Logs/atlas-site.log`
+  should stop growing.
 - **`com.atlas.site.plist` + `atlas_site.py`** — daily 04:00 (after the backup),
   rebuilds the demand-test site (`docs/SITE.md`) into `dist/site` with
   `atlas site build --live`. Publishing runs `deploy/publish_gh_pages.sh` (set as the plist's

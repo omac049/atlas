@@ -8,6 +8,19 @@ Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness or
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
 
+## 2026-09-28 — the macOS 27 upgrade broke the samebetornot.com publish for a week
+
+- [x] **Cause:** macOS 27 runs no Intel-only binaries. The site agent's `PATH` listed
+  `/usr/local/bin` before `/usr/bin`, and `/usr/local/bin/git` is an Intel build: "Bad CPU
+  type in executable" on every publish from 2026-09-24 to 09-28 (the laptop was offline on
+  the 22nd and 23rd). The site was built every night and never pushed; the last successful
+  publish was 2026-09-21.
+- [x] **Fix:** `deploy/working_git.sh` returns the first git whose `--version` succeeds;
+  `deploy/publish_gh_pages.sh` routes every git call through it; both publishing agents'
+  `PATH` now lists `/usr/bin` first. Pinned by `tests/test_publish_git.py`.
+- [ ] Nothing watches the nightly jobs' own logs: five failed nights went unnoticed until
+  someone asked. Add a daily "did every job succeed" line to the morning report.
+
 ## 2026-09-24 — NFL player props recognized (explain-only)
 
 - [x] New family reader, policy tokens, safety lock, study quarantine, learning family. Live
