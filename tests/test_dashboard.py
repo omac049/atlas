@@ -258,3 +258,13 @@ def test_dashboard_rows_drill_down_to_the_verdict_codes():
     assert 'aria-expanded' in script
     for selector in (".board-detail-row", ".detail-code", ".detail-episodes"):
         assert selector in styles
+
+
+def test_dashboard_shows_scheduled_job_health():
+    html = (ROOT / "apps" / "dashboard" / "index.html").read_text()
+    panes = (ROOT / "apps" / "dashboard" / "dashboard-panes.js").read_text()
+    assert 'id="jobs-rows"' in html
+    assert 'href="#jobs"' in html
+    assert "/api/jobs" in panes
+    for state in ("LATE", "FAILING", "NO_RECORD"):
+        assert state in panes

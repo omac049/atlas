@@ -159,6 +159,17 @@ def study() -> dict:
     }
 
 
+@app.get("/api/jobs")
+def jobs() -> dict:
+    """Health of each scheduled launchd job, read from its own log or report files.
+
+    Read-only: tails local logs and stats report files (atlas/job_health.py).
+    """
+    import atlas.job_health
+
+    return {"paper_only": True, "jobs": atlas.job_health.all_job_health()}
+
+
 def _recent_gap_row(observation: dict) -> dict:
     """Compact one gap observation for the overview feed, fees included."""
     row = {

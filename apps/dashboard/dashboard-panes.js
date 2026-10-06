@@ -1,8 +1,8 @@
 // Auxiliary panes: settlement polling queue, missing-credentials banner,
-// learning label counts, and the 90-day study report.
+// learning label counts, the 90-day study report, and scheduled-job health.
 //
 // This file deliberately renders ONLY into its own containers (#polling-queue-*,
-// #credentials-banner, #learning-counts, #study-*) — the main feed, watchboard,
+// #credentials-banner, #learning-counts, #study-*, #jobs-*) — the main feed, watchboard,
 // and alert renderers belong to dashboard.js. Overview data arrives via the
 // `atlas:overview` CustomEvent dispatched at the top of dashboard.js render();
 // the study pane fetches /api/study on its own slower cadence.
@@ -240,11 +240,65 @@
     }
   }
 
+  // Scheduled jobs (/api/jobs): one row per launchd job. A job is LATE when it
+  // has not succeeded within 3 h of its next run, FAILING when its newest record
+  // is an error, NO_RECORD when it has never left one.
+  const ago = (iso) => {
+    if (!iso) return 'never';
+    const ms = Date.now() - new Date(iso).getTime();
+    if (!Number.isFinite(ms)) return '—';
+    const hours = ms / 3600000;
+    if (hours < 1) return `${Math.max(1, Math.round(ms / 60000))}m ago`;
+    if (hours < 48) return `${Math.round(hours)}h ago`;
+    return `${Math.round(hours / 24)}d ago`;
+  };
+  const JOB_BADGES = {
+    OK: '<span class="badge badge--dot badge--ok">OK</span>',
+    LATE: '<span class="badge badge--dot badge--warn">LATE</span>',
+    FAILING: '<span class="badge badge--dot badge--warn">FAILING</span>',
+    NO_RECORD: '<span class="badge badge--dot badge--warn">NO RECORD</span>',
+  };
+
+  function renderJobs(jobs) {
+    const status = byId('jobs-status');
+    const rows = byId('jobs-rows');
+    const troubled = jobs.filter((job) => job.state !== 'OK');
+    if (status) {
+      status.textContent = troubled.length
+        ? `${troubled.length} of ${jobs.length} need attention: ${troubled.map((job) => job.name).join(', ')}`
+        : `All ${jobs.length} jobs ran on schedule`;
+    }
+    if (!rows) return;
+    rows.innerHTML = jobs.map((job) => `<tr>
+      <th scope="row"><code>${esc(job.name)}</code></th>
+      <td>${esc(job.schedule)}</td>
+      <td>${JOB_BADGES[job.state] || esc(job.state)}</td>
+      <td class="num" title="${esc(job.last_success_at || '')}">${esc(ago(job.last_success_at))}</td>
+      <td title="${esc(job.last_failure_at || '')}">${job.last_failure ? `${esc(ago(job.last_failure_at))} · ${esc(job.last_failure)}` : ''}</td>
+    </tr>`).join('');
+  }
+
+  async function refreshJobs() {
+    if (!byId('jobs-rows')) return;
+    try {
+      const response = await fetch('/api/jobs', {cache: 'no-store', signal: AbortSignal.timeout(10000)});
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      renderJobs((await response.json()).jobs || []);
+    } catch (err) {
+      const status = byId('jobs-status');
+      if (status) status.textContent = 'Job health unavailable — API unreachable.';
+      console.error('dashboard-panes jobs refresh failed', err);
+    }
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', refreshStudy);
+    document.addEventListener('DOMContentLoaded', refreshJobs);
   } else {
     refreshStudy();
+    refreshJobs();
   }
+  setInterval(refreshJobs, 300000);
   // The report is regenerated weekly; 10 minutes keeps the pane fresh without
   // joining the 15s overview poll.
   setInterval(refreshStudy, 600000);
