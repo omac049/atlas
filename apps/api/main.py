@@ -1,6 +1,9 @@
+import asyncio
 import functools
 import json
+import logging
 import os
+import sqlite3
 import time
 from datetime import UTC, datetime
 from decimal import Decimal
@@ -81,21 +84,48 @@ def _fixture_demo() -> tuple:
 
 # The dashboard polls every 15s, and the gap-observation trio JSON-parses tens of
 # thousands of stored rows per read — cache it briefly instead of per request.
+#
+# A stale snapshot is served at once and replaced in the background. Reloading in
+# the request made one call in every 30 s take 2 to 7 s (measured 2026-10-06: about
+# 1 s to parse 50,000 rows, 0.5 to 4.4 s for the full-table subject aggregate). The
+# reload runs on a worker thread with its own event loop, so the parse does not
+# hold up other requests either. Only the very first load waits.
 _GAP_SNAPSHOT_TTL_SECONDS = 30.0
 _gap_snapshot: tuple[float, tuple] | None = None
+_gap_refresh: asyncio.Task | None = None
+_log = logging.getLogger(__name__)
+
+
+async def _load_gap_snapshot(store) -> tuple:
+    async def load() -> tuple:
+        return (
+            await store.all_gap_observations(limit=50000),
+            await store.gap_observation_count(),
+            await store.gap_subject_aggregates(),
+        )
+
+    return await asyncio.to_thread(asyncio.run, load())
+
+
+async def _refresh_gap_snapshot(store) -> None:
+    global _gap_snapshot
+    try:
+        value = await _load_gap_snapshot(store)
+    except (sqlite3.Error, OSError, ValueError):  # serve the old one; next request retries
+        _log.exception("gap snapshot refresh failed; serving the previous one")
+        return
+    _gap_snapshot = (time.monotonic() + _GAP_SNAPSHOT_TTL_SECONDS, value)
 
 
 async def _gap_observation_snapshot(store) -> tuple:
-    global _gap_snapshot
-    now = time.monotonic()
-    if _gap_snapshot is not None and now < _gap_snapshot[0]:
-        return _gap_snapshot[1]
-    value = (
-        await store.all_gap_observations(limit=50000),
-        await store.gap_observation_count(),
-        await store.gap_subject_aggregates(),
-    )
-    _gap_snapshot = (now + _GAP_SNAPSHOT_TTL_SECONDS, value)
+    global _gap_snapshot, _gap_refresh
+    if _gap_snapshot is None:
+        value = await _load_gap_snapshot(store)
+        _gap_snapshot = (time.monotonic() + _GAP_SNAPSHOT_TTL_SECONDS, value)
+        return value
+    expires, value = _gap_snapshot
+    if time.monotonic() >= expires and (_gap_refresh is None or _gap_refresh.done()):
+        _gap_refresh = asyncio.create_task(_refresh_gap_snapshot(store))
     return value
 
 

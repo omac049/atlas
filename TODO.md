@@ -26,12 +26,19 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   `deploy/README.md` now delete any old `-wal` before copying and switch back to WAL.
   No discovery scan landed in the 15 minutes sampled afterwards, so the 3 to 30 s case
   is fixed by design, not yet by measurement.
-- [ ] **A second, separate dashboard stall: one call in every 30 s takes 2 to 7 s.**
+- [x] **A second, separate dashboard stall: one call in every 30 s takes 2 to 7 s.**
   Sampled 2026-10-06 after the WAL switch: slow calls came every 31 to 33 s with the
   monitor silent. That is `_GAP_SNAPSHOT_TTL_SECONDS` in `apps/api/main.py` expiring: the
   request that finds the cache stale re-reads and JSON-parses up to 50,000 gap
   observations while the dashboard waits. Refresh it off the request path, or aggregate
   in SQL.
+  **Fixed 2026-10-06:** a stale snapshot is served at once and reloaded on a worker
+  thread; one reload at a time; a failed reload keeps the old snapshot and retries
+  (`tests/test_api_gap_snapshot.py`). The reload cost was about 1 s to parse 50,000 rows
+  plus 0.5 to 4.4 s for `gap_subject_aggregates`. Against the live database, in-process:
+  27 calls over 75 s (two reloads) had a median of 0.49 s and a max of 0.85 s; before,
+  18 of 200 calls were over 1.5 s, max 7.5 s. Only the first load after an API restart
+  still waits (6 s).
 - [x] **Why no nightly job ran on 2026-10-06 (found the same day).** macOS installed
   27.0.1 by itself at 17:02 local on 2026-10-05 and restarted. The Mac then waited at the
   login window (`loginwindow`: `LoginwindowUIShown` 17:08:06) until the owner signed in at
