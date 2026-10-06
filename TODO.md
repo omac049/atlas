@@ -74,9 +74,25 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   `atlas gaps status`, the site build and the dashboard. Fine for "recent activity";
   wrong for anything described as a total since the start. Check each one's wording
   says "recent" before relying on it.
-- [ ] **Nothing tells anyone when a nightly job fails.** Three did, for 5 to 12 nights.
+- [x] **Nothing tells anyone when a nightly job fails.** Three did, for 5 to 12 nights.
   Cheapest useful fix: one line per job in the dashboard (last success, last error, how
   long it took against last week), fed by the jobs' own logs.
+  **Done 2026-10-06:** `atlas/job_health.py`, `/api/jobs`, and a "Scheduled jobs" panel
+  (top nav: Jobs). Per job: schedule, OK / LATE (no success within 3 h of the next run
+  after the last one) / FAILING (an error newer than the last success) / NO_RECORD, last
+  success, last failure. Schedules are pinned to the plists by test. First reading:
+  backup and site LATE, fees and gsc FAILING, study and intel OK.
+  Not done: duration against last week (the logs record when a job ended, not when it
+  started).
+- [ ] **The jobs panel only helps someone who opens the dashboard,** and on 2026-10-06
+  the dashboard was down too. Next: a macOS notification from `com.atlas.healthcheck`
+  when a job turns LATE or FAILING, once per change.
+- [ ] **Fee Verified has not completed since 2026-10-03.** The check overran 5,400 s on
+  10-04 and 10-05 (it took about 24 minutes before), then the build failed; 10-06 never
+  ran. The same two mornings the backup and VACUUM were slow, so this points at the
+  machine, not the fee pages. Watch tonight's run.
+- [ ] **gsc pull failed on 2026-10-05** (`RemoteProtocolError`, a dropped connection).
+  Watch whether it recurs.
 - [ ] **Arm A recorder coverage to date: 86.3%** (11.1 days, 36.7 hours unknown, nearly
   all of it 2026-09-22 00:03Z to 2026-09-23 16:07Z, when the laptop was asleep or off the
   network; 99.9% since 09-25). Every gap is in the data as an unknown-book marker. The

@@ -72,6 +72,7 @@
           <a href="#normalization">Normalization</a>
           <a href="#validation">Validation</a>
           <a href="#study">Study</a>
+          <a href="#jobs">Jobs</a>
         </nav>
         <div class="top-status">
           <span class="paper-chip badge badge--warn badge--dot" title="Atlas is a research instrument. No order-placement path exists.">PAPER · LIVE ORDERS DISABLED</span>
@@ -410,6 +411,27 @@
       <section class="candidate-section panel">
         <span class="section-label">Contract review · deterministic rejection reasons</span>
         <div id="candidates" class="candidates"><div class="empty">No candidate proposals recorded.</div></div>
+      </section>
+
+      <section id="jobs" class="grid">
+        <div class="panel study-panel">
+          <span class="section-label">Scheduled jobs · read from each job's own log</span>
+          <h2 id="jobs-status">Checking scheduled jobs</h2>
+          <div class="polling-queue-scroll">
+            <table class="study-weekly-table polling-queue-table">
+              <thead>
+                <tr>
+                  <th scope="col">Job</th>
+                  <th scope="col">Schedule</th>
+                  <th scope="col">State</th>
+                  <th scope="col" class="num">Last success</th>
+                  <th scope="col">Last failure</th>
+                </tr>
+              </thead>
+              <tbody id="jobs-rows"></tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <section class="syscheck grid">
