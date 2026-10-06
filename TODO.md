@@ -56,6 +56,17 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   then); the Monday study and intel runs failed `database is locked` inside that VACUUM.
   Not yet known: what else held the disk or the database. The 10-06 WAL switch changes
   the locking, so check whether it repeats before digging further.
+- [x] **The weekly study report had reviewed only the newest 50,000 observations since
+  2026-08-24** (four to six days, not the study to date). Found 2026-10-06 when the
+  re-run's weekly table lost two weeks. Same cap in the divergence report. Both now read
+  every row; owner-signed charter amendment of 2026-10-06 in `docs/NINETY_DAY_STUDY.md`
+  lists the metrics it can move. Capped files kept unedited; the first full-history
+  reports are `data/study/study-report-20261006-full-history.json` (440,338 rows, weeks
+  2026-08-10 to 2026-10-05) and `data/intel/divergence-report-20261006-full-history.*`.
+- [ ] The newest-50,000 cap still applies to the 5-minute `gaps_scan` bankroll summary,
+  `atlas gaps status`, the site build and the dashboard. Fine for "recent activity";
+  wrong for anything described as a total since the start. Check each one's wording
+  says "recent" before relying on it.
 - [ ] **Nothing tells anyone when a nightly job fails.** Three did, for 5 to 12 nights.
   Cheapest useful fix: one line per job in the dashboard (last success, last error, how
   long it took against last week), fed by the jobs' own logs.

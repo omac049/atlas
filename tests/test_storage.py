@@ -901,3 +901,23 @@ async def test_a_row_written_before_compaction_is_served_compact(tmp_path):
         await db.commit()
     run = await store.latest_agent_run()
     assert len(run["state"]["verified_pairs"]) == 10 and run["state"]["verified_pairs_total"] == 200
+
+
+@pytest.mark.asyncio
+async def test_all_gap_observations_without_a_limit_reads_every_row_oldest_first(tmp_path):
+    """The 90-day study and the divergence report are cumulative: a capped read
+    silently cut every weekly study report from 2026-08-24 to the newest 50,000
+    rows (four to six days)."""
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    for index in range(5):
+        await store.save_gap_observation(
+            {
+                "observation_id": f"obs-{index}",
+                "observed_at": f"2026-08-{10 + index:02d}T00:00:00+00:00",
+                "best_gap": f"-0.0{index}",
+            }
+        )
+
+    loaded = await store.all_gap_observations(limit=None)
+
+    assert [row["observation_id"] for row in loaded] == [f"obs-{index}" for index in range(5)]

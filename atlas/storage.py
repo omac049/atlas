@@ -1221,7 +1221,7 @@ class AtlasStore:
             rows = await cursor.fetchall()
         return [json.loads(row[0]) for row in rows]
 
-    async def all_gap_observations(self, limit: int = 50000) -> list[dict[str, object]]:
+    async def all_gap_observations(self, limit: int | None = 50000) -> list[dict[str, object]]:
         """Gap observations oldest-first, keeping the NEWEST `limit` rows.
 
         Callers need ascending order (the bankroll meter compounds chronologically),
@@ -1229,9 +1229,20 @@ class AtlasStore:
         everything after it. At the observed ~1.7k rows/day that would have silently
         frozen the watch board on month-old data while it still read as live. Select
         the newest rows first, then restore ascending order.
+
+        `limit=None` reads every row. Cumulative reports (the 90-day study, the
+        divergence report) must pass it: the default cut every weekly study report
+        from 2026-08-24 to 2026-10-06 to the newest 50,000 rows, four to six days.
         """
         await self.initialize()
         async with aiosqlite.connect(self.path) as db:
+            if limit is None:
+                rows = await (
+                    await db.execute(
+                        "SELECT payload_json FROM gap_observations ORDER BY created_at ASC"
+                    )
+                ).fetchall()
+                return [json.loads(row[0]) for row in rows]
             rows = await (
                 await db.execute(
                     """SELECT payload_json FROM (

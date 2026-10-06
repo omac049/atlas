@@ -440,3 +440,34 @@ def test_nfl_player_props_are_quarantined_from_the_go_threshold():
     report = study_report([macro, prop], today=date(2026, 9, 24))
     assert report["distinct_opportunities"] == 1
     assert report["post_start_scope"]["family_executable_observations"] == {"nfl_player_stat": 1}
+
+
+async def test_the_weekly_study_command_reads_every_observation(tmp_path, monkeypatch, capsys):
+    """Every dated report from 2026-08-24 to 2026-10-06 reviewed exactly the newest
+    50,000 rows. The command must hand study_report the whole table."""
+    import json
+
+    from atlas import cli
+    from atlas.storage import AtlasStore
+
+    class OneRowCapStore(AtlasStore):
+        async def all_gap_observations(self, limit: int | None = 50000) -> list[dict]:
+            return await super().all_gap_observations(limit=None if limit is None else 1)
+
+    path = str(tmp_path / "atlas.sqlite3")
+    store = OneRowCapStore(path)
+    for day in ("2026-08-20", "2026-08-27", "2026-09-03"):
+        await store.save_gap_observation(
+            {**_observation(f"{day}T12:00:00+00:00", gap="0.01"), "observation_id": day}
+        )
+    monkeypatch.setattr(cli, "AtlasStore", lambda: OneRowCapStore(path))
+
+    await cli.gaps_study(write=False)
+
+    report, _ = json.JSONDecoder().raw_decode(capsys.readouterr().out)
+    assert report["observations_reviewed"] == 3
+    assert [week["week_of"] for week in report["weekly"]] == [
+        "2026-08-17",
+        "2026-08-24",
+        "2026-08-31",
+    ]

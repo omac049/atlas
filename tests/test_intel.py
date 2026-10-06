@@ -203,3 +203,21 @@ async def test_clarity_section_is_absent_when_no_scan_exists(tmp_path):
     assert "## Settlement clarity" not in render_divergence_markdown(report)
     empty = await divergence_report(store, now=NOW, clarity_scan={"aggregates": {}})
     assert "settlement_clarity" not in empty
+
+
+class _OneRowCapStore(AtlasStore):
+    """The production default keeps the newest 50,000 rows; one row makes the cap bite."""
+
+    async def all_gap_observations(self, limit: int | None = 50000) -> list[dict]:
+        return await super().all_gap_observations(limit=None if limit is None else 1)
+
+
+async def test_the_report_reads_every_observation_not_the_newest_slice(tmp_path):
+    store = _OneRowCapStore(str(tmp_path / "atlas.sqlite3"))
+    for observation in (
+        _observation("p1", "0.02", observed_at="2026-08-19T10:00:00+00:00"),
+        _observation("p2", "0.03", observed_at="2026-08-20T10:00:00+00:00"),
+    ):
+        await store.save_gap_observation(observation)
+    report = await divergence_report(store, now=NOW)
+    assert report["headline"]["price_disagreement_pairs"] == 2

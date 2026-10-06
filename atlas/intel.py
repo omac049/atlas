@@ -256,7 +256,8 @@ async def divergence_report(
     now = now or datetime.now(UTC)
     candidates = await store.latest_settlement_candidates(limit=200)
     frontier = await approval_frontier(store, now=now)
-    observations = await store.all_gap_observations()
+    # Every row: a capped read drops the older pairs (charter amendment 2026-10-06).
+    observations = await store.all_gap_observations(limit=None)
     labels = await store.trusted_learning_counts()
 
     awaiting = [
