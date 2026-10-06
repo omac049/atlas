@@ -84,9 +84,13 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   backup and site LATE, fees and gsc FAILING, study and intel OK.
   Not done: duration against last week (the logs record when a job ended, not when it
   started).
-- [ ] **The jobs panel only helps someone who opens the dashboard,** and on 2026-10-06
+- [x] **The jobs panel only helps someone who opens the dashboard,** and on 2026-10-06
   the dashboard was down too. Next: a macOS notification from `com.atlas.healthcheck`
   when a job turns LATE or FAILING, once per change.
+  **Done 2026-10-06:** `check_jobs()` in `deploy/atlas_healthcheck.py`, run last each
+  minute (`tests/test_healthcheck_jobs.py`). Its first run names every job already in
+  trouble. Limit: a Mac stuck at the login window runs no agent at all, this one
+  included. Only something off the machine could report that.
 - [ ] **Fee Verified has not completed since 2026-10-03.** The check overran 5,400 s on
   10-04 and 10-05 (it took about 24 minutes before), then the build failed; 10-06 never
   ran. The same two mornings the backup and VACUUM were slow, so this points at the
