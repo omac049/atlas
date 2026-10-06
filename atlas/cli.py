@@ -1585,7 +1585,9 @@ async def gaps_study(write: bool = True) -> None:
     from atlas.study import study_report
 
     store = AtlasStore()
-    observations = await store.all_gap_observations()
+    # Cumulative: every row, never the dashboard's newest-50,000 slice (charter
+    # amendment 2026-10-06).
+    observations = await store.all_gap_observations(limit=None)
     report = study_report(observations)
     print(json.dumps(report, indent=2))
     if write:

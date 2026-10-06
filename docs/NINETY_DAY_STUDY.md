@@ -391,3 +391,33 @@ are the honest test of whether a tradeable gap ever opens at all.
     `team_total` as `sports` instead of `other`.
   - **Deliberately not done:** no approval rule; no other sports; `touchdowns` excluded (the
     venues define it differently: Polymarket excludes passing TDs, Kalshi is silent).
+
+- **2026-10-06 — the weekly report had been reading only the newest 50,000 observations
+  (measurement fix; verifier, normalizers and `atlas/study.py` byte-unchanged).** Owner
+  sign-off: 2026-10-06, in session. Plan: `docs/plans/2026-10-06-study-full-history.md`.
+  - **The defect:** `atlas gaps study` loaded observations with
+    `all_gap_observations()`, whose default keeps the newest 50,000 rows. That cap was
+    added on 2026-08-12 for the dashboard watch board. The table passed 50,000 rows on
+    about 2026-08-23, and from then on every dated report reviewed exactly 50,000 rows,
+    four to six days of radar sweeps, not the study to date. `observations_reviewed` in
+    each file shows it: 15,527 (08-19) and 18,987 (08-20) are whole; every file from
+    `study-report-20260824.json` to `study-report-20261006.json` reads 50,000. The weekly
+    table therefore only ever held the latest one to three weeks. The Contract Divergence
+    Report (`atlas intel report`) had the same cap. No row was deleted: 440,290 rows from
+    2026-08-12 on were in `gap_observations` on 2026-10-06.
+  - **What changed:** both commands read every row (`limit=None`). `study_report()` is
+    unchanged; it now receives the whole table. Tests pin both call sites against a
+    simulated cap.
+  - **Which metrics it can move:** every count and rate in the report, including the
+    go/no-go inputs: `observations_reviewed`, `rate_window_days`, the opportunity totals
+    and `*_per_30_days` rates, `meets_frequency_threshold`, `meets_go_threshold`,
+    `return_on_locked_capital`, `median_basket_notional_usd`, `tradeable`, `survival`,
+    `executable_size_contracts`, `fee_model_rows`, `post_start_scope`,
+    `settlement_timing_curve`, `early_exit_model`, and `weekly`, which now covers every
+    week from 2026-08-10 on. The rules that classify an observation are unchanged.
+  - **The trail:** the capped files stay on disk unedited, as what was written at the
+    time. The first full-history reports are `study-report-20261006-full-history.json`
+    and `divergence-report-20261006-full-history.{json,md}`; from 2026-10-12 the
+    scheduled Monday files are full-history. A capped file is not comparable with a
+    full-history file: read the earlier weeks from the full-history `weekly` table.
+  - **Cost:** 9 s and 2.6 GB of memory for 440,290 rows; about 5 GB by day 90.
