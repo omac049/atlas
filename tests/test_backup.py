@@ -98,3 +98,41 @@ def test_a_failed_compression_keeps_the_raw_snapshot_and_rotates_nothing(backup,
     assert len(list(folder.glob("atlas-auto-*.sqlite3.gz"))) == 4
     assert len(list(folder.glob("atlas-auto-*.sqlite3"))) == 1
     assert "compression failed" in (tmp_path / "backup.log").read_text()
+
+
+def _to_wal(database: Path) -> None:
+    with sqlite3.connect(database) as connection:
+        connection.execute("pragma journal_mode=wal")
+
+
+def test_a_snapshot_of_a_wal_database_is_one_self_contained_file(backup, tmp_path):
+    _to_wal(backup.DB)
+    backup.main()
+    folder = tmp_path / "backups"
+    assert sorted(p.suffix for p in folder.iterdir()) == [".gz"]
+    restored = tmp_path / "restored.sqlite3"
+    assert _restored_labels(next(folder.glob("*.gz")), restored) == 2
+    with sqlite3.connect(restored) as connection:
+        assert connection.execute("pragma journal_mode").fetchone()[0] == "delete"
+
+
+def test_vacuum_of_a_wal_database_hands_the_space_back(tmp_path, monkeypatch):
+    spec = importlib.util.spec_from_file_location("atlas_backup", ROOT / "deploy" / "atlas_backup.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    database = tmp_path / "atlas.sqlite3"
+    monkeypatch.setattr(module, "DB", database)
+    monkeypatch.setattr(module, "LOG", tmp_path / "backup.log")
+    _to_wal(database)
+    with sqlite3.connect(database) as connection:
+        connection.execute("create table quotes (body text)")
+        connection.executemany("insert into quotes values (?)", [("x" * 4000,)] * 500)
+        connection.execute("delete from quotes")
+    monitor = sqlite3.connect(database)  # an idle connection, like the monitor's
+    try:
+        module.vacuum_live_database()
+        wal = database.with_name(database.name + "-wal")
+        assert not wal.exists() or wal.stat().st_size == 0
+        assert database.stat().st_size < 100_000
+    finally:
+        monitor.close()

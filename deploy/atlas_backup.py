@@ -89,6 +89,10 @@ def main() -> None:
             target
         ) as destination:
             source.backup(destination)
+            # The live database runs in WAL mode and the copy inherits it; opening a
+            # WAL file leaves -wal/-shm files beside it that rotation never removes.
+            # A snapshot should be one self-contained file.
+            destination.execute("PRAGMA journal_mode=DELETE")
     except sqlite3.Error as exc:
         log(f"ERROR backup failed: {exc}")
         target.unlink(missing_ok=True)
@@ -154,6 +158,10 @@ def vacuum_live_database() -> None:
         before = DB.stat().st_size / 1_048_576
         connection.execute("PRAGMA busy_timeout = 60000")
         connection.execute("VACUUM")
+        # In WAL mode VACUUM writes the rebuilt database into the -wal file; until a
+        # truncating checkpoint copies it back, the space is not returned and the
+        # -wal file can stay as large as the database.
+        connection.execute("PRAGMA wal_checkpoint(TRUNCATE)")
         after = DB.stat().st_size / 1_048_576
         log(f"vacuum ok: {before:.0f} MB -> {after:.0f} MB")
     except sqlite3.Error as exc:

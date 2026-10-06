@@ -10,12 +10,36 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
 
 ## 2026-09-28 — open items after the status check
 
-- [ ] **The dashboard still stalls when the monitor is writing.** `GET /api/overview` takes
+- [x] **The dashboard still stalls when the monitor is writing.** `GET /api/overview` takes
   about 0.5 s, but 3 to 30 s when it lands during a discovery scan or a quote burst: the
   database is in rollback-journal mode, where a writer blocks every reader. Write-ahead
   logging (`PRAGMA journal_mode=WAL`) lets readers through; it is a one-time switch that
   every process shares, so do it deliberately: stop the agents, switch, confirm the backup
   and vacuum still work, start them.
+  **Done 2026-10-06:** monitor, API and watchdog stopped for under a minute (the Arm A
+  book recorder has its own database and kept running), switched, restarted; `/health`
+  reports `trading_enabled=false`. The nightly backup needed two fixes for WAL, both
+  tested in `tests/test_backup.py`: a snapshot is written back to a single
+  rollback-journal file (otherwise every verify left `-wal`/`-shm` files that rotation
+  never removes), and VACUUM is followed by a truncating checkpoint (otherwise the
+  reclaimed space sits in a `-wal` file as large as the database). The restore steps in
+  `deploy/README.md` now delete any old `-wal` before copying and switch back to WAL.
+  No discovery scan landed in the 15 minutes sampled afterwards, so the 3 to 30 s case
+  is fixed by design, not yet by measurement.
+- [ ] **A second, separate dashboard stall: one call in every 30 s takes 2 to 7 s.**
+  Sampled 2026-10-06 after the WAL switch: slow calls came every 31 to 33 s with the
+  monitor silent. That is `_GAP_SNAPSHOT_TTL_SECONDS` in `apps/api/main.py` expiring: the
+  request that finds the cache stale re-reads and JSON-parses up to 50,000 gap
+  observations while the dashboard waits. Refresh it off the request path, or aggregate
+  in SQL.
+- [ ] **No nightly job wrote a log line on 2026-10-06** (backup, site, fees, gsc). The
+  launchd run counters were reset when the agents were reloaded that day, so the logs are
+  the only record. The last site publish was 2026-10-03. On Monday 2026-10-05 the weekly
+  study and intel jobs both died with `database is locked`: the backup's VACUUM ran from
+  11:53Z to 15:16Z that day (10 s on every night through 10-03; 2.4 h on 10-04), covering
+  their 14:00Z and 14:15Z start times. Also on 10-05, fees hit a `node` timeout and gsc a
+  dropped connection. Find out why the 10-06 jobs did not start and why VACUUM ran for
+  hours (sleep in the middle of it is the first suspect) before re-running anything.
 - [ ] **Nothing tells anyone when a nightly job fails.** Three did, for 5 to 12 nights.
   Cheapest useful fix: one line per job in the dashboard (last success, last error, how
   long it took against last week), fed by the jobs' own logs.
