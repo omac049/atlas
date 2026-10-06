@@ -32,14 +32,30 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   request that finds the cache stale re-reads and JSON-parses up to 50,000 gap
   observations while the dashboard waits. Refresh it off the request path, or aggregate
   in SQL.
-- [ ] **No nightly job wrote a log line on 2026-10-06** (backup, site, fees, gsc). The
-  launchd run counters were reset when the agents were reloaded that day, so the logs are
-  the only record. The last site publish was 2026-10-03. On Monday 2026-10-05 the weekly
-  study and intel jobs both died with `database is locked`: the backup's VACUUM ran from
-  11:53Z to 15:16Z that day (10 s on every night through 10-03; 2.4 h on 10-04), covering
-  their 14:00Z and 14:15Z start times. Also on 10-05, fees hit a `node` timeout and gsc a
-  dropped connection. Find out why the 10-06 jobs did not start and why VACUUM ran for
-  hours (sleep in the middle of it is the first suspect) before re-running anything.
+- [x] **Why no nightly job ran on 2026-10-06 (found the same day).** macOS installed
+  27.0.1 by itself at 17:02 local on 2026-10-05 and restarted. The Mac then waited at the
+  login window (`loginwindow`: `LoginwindowUIShown` 17:08:06) until the owner signed in at
+  08:36 the next morning. Launch agents run only in a signed-in session, so **everything
+  stopped for 15.6 hours**: monitor, API, the Arm A book recorder (no books from
+  2026-10-06T00:03:52Z to 15:37:23Z; unknown-book markers cover it), and every nightly job.
+  launchd does not replay a calendar job that came due before it was loaded. `last`
+  shows the user on the console from 17:07, which is misleading; the login-window log is
+  the record. **The 2026-09-21 macOS 27 install did the same:** reboot at 17:07, the
+  recorder's gap starts at 2026-09-22T00:03Z (17:03 local), sign-in the next morning.
+- [ ] OWNER: **turn off automatic install of macOS updates** (System Settings > General >
+  Software Update > Automatic updates: keep "Download", turn off "Install macOS updates"),
+  so an update happens only when someone is there to sign in afterwards. Until then, any
+  update can silently stop Atlas until the next sign-in. Arm A's run is 2026-10-29.
+- [x] **The site job died without a log line on 2026-10-04 and 10-05:** `atlas site build`
+  ran past its 900 s limit and the uncaught `TimeoutExpired` ended the job. A build or
+  publish overrun now writes an ERROR line (`tests/test_site_job.py`). `deploy/atlas_gsc.py`
+  has the same uncaught timeout and is not yet fixed.
+- [ ] **Unexplained: the database jobs were very slow on 2026-10-04 and 10-05 mornings.**
+  Backup about 38 and 83 minutes (seconds on every other night), VACUUM 2.4 h and 3.4 h,
+  the site build over 15 minutes. The Mac was awake (the system log has no sleep events
+  then); the Monday study and intel runs failed `database is locked` inside that VACUUM.
+  Not yet known: what else held the disk or the database. The 10-06 WAL switch changes
+  the locking, so check whether it repeats before digging further.
 - [ ] **Nothing tells anyone when a nightly job fails.** Three did, for 5 to 12 nights.
   Cheapest useful fix: one line per job in the dashboard (last success, last error, how
   long it took against last week), fed by the jobs' own logs.
