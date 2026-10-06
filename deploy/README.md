@@ -163,9 +163,15 @@ is removed, and the newest three are kept. To restore one:
 launchctl bootout gui/$(id -u)/com.atlas.monitor
 launchctl bootout gui/$(id -u)/com.atlas.api
 gunzip -k data/backups/atlas-auto-<stamp>.sqlite3.gz
+rm -f data/atlas.sqlite3-wal data/atlas.sqlite3-shm
 cp data/backups/atlas-auto-<stamp>.sqlite3 data/atlas.sqlite3
+sqlite3 data/atlas.sqlite3 "PRAGMA journal_mode=WAL;"
 ```
 
+The live database runs in WAL mode (since 2026-10-06), so readers such as the dashboard
+are not blocked while the monitor writes. Snapshots are stored as single rollback-journal
+files: the `rm` keeps a leftover `-wal` from the old database from being replayed into
+the restored one, and the last line switches the restored file back to WAL.
 Then bootstrap the agents again as in Install. Hand-made checkpoints and
 `data/backups/audit/` are never rotated.
 
