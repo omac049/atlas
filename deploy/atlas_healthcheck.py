@@ -18,6 +18,7 @@ read a shell/console script — exit 126/78), and it costs nothing here at
 ``~/Atlas``. See ``deploy/README.md``.
 """
 
+import json
 import os
 import subprocess
 import time
@@ -36,6 +37,10 @@ STATE_FILE = (
     Path.home() / "Library" / "Application Support" / "atlas-healthcheck" / "api-failures"
 )
 MONITOR_KICKSTART_FILE = STATE_FILE.parent / "monitor-last-kickstart"
+JOB_STATES_FILE = STATE_FILE.parent / "job-states.json"
+BAD_JOB_STATES = ("LATE", "FAILING", "NO_RECORD")
+# The message travels as an argument, never spliced into the script text.
+NOTIFY_SCRIPT = 'display notification (item 1 of argv) with title "Atlas" subtitle "Scheduled jobs"'
 
 # The monitor sweeps every 300s. 1800s is six missed sweeps: long enough that a
 # slow venue catalog or a bounded retry budget can never trip it, short enough
@@ -146,6 +151,69 @@ def check_monitor() -> None:
         MONITOR_KICKSTART_FILE.write_text(str(time.time()))
 
 
+def notify(message: str) -> None:
+    """Post a macOS notification. Failing to show one is logged, never raised."""
+    try:
+        result = subprocess.run(
+            [
+                "osascript",
+                "-e", "on run argv",
+                "-e", NOTIFY_SCRIPT,
+                "-e", "end run",
+                message,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=15,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        log(f"ERROR notification failed: {exc}")
+        return
+    if result.returncode != 0:
+        log(f"ERROR notification failed: {result.stderr.strip()[:200]}")
+
+
+def read_job_states() -> dict:
+    try:
+        return json.loads(JOB_STATES_FILE.read_text())
+    except (OSError, ValueError):
+        return {}
+
+
+def check_jobs() -> None:
+    """Notify once when a scheduled job turns LATE, FAILING or NO_RECORD.
+
+    The dashboard's jobs panel only helps someone who opens it; on 2026-10-06
+    the dashboard was down with everything else. Every state change is logged
+    here; only a change INTO a bad state is notified, one notification per run
+    naming every job that changed. Runs last, so nothing here can stop the API
+    and monitor checks above.
+    """
+    try:
+        import atlas.job_health
+
+        jobs = atlas.job_health.all_job_health()
+    except (ImportError, OSError, ValueError) as exc:
+        log(f"ERROR job health unavailable: {exc}")
+        return
+    previous = read_job_states()
+    current = {job["name"]: job["state"] for job in jobs}
+    newly_bad = []
+    for name, state in current.items():
+        before = previous.get(name, "OK")
+        if state == before:
+            continue
+        log(f"job {name}: {before} -> {state}")
+        if state in BAD_JOB_STATES:
+            newly_bad.append(f"{name} {state.replace('_', ' ')}")
+    if newly_bad:
+        notify(f"{', '.join(newly_bad)}. Open the dashboard's Jobs panel.")
+    JOB_STATES_FILE.parent.mkdir(parents=True, exist_ok=True)
+    JOB_STATES_FILE.write_text(json.dumps(current, sort_keys=True))
+
+
 if __name__ == "__main__":
     check_api()
     check_monitor()
+    check_jobs()

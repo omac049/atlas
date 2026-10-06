@@ -116,6 +116,13 @@ reads the installed copy in `~/Library/LaunchAgents`, not the one in this repo.
   hand start would orphan the service from launchd. It refuses to restart into a
   health response that does not report `trading_enabled=false` — a broken
   paper-only invariant is a stop-and-report condition, not something to bounce.
+  It also reads the scheduled jobs' health (`atlas/job_health.py`, the dashboard's
+  Jobs panel) and posts one macOS notification when a job turns LATE, FAILING or
+  NO_RECORD, once per change. Every change, recoveries included, is logged; the
+  last states are kept in
+  `~/Library/Application Support/atlas-healthcheck/job-states.json`. Notifications
+  come from `osascript`, so macOS lists them under Script Editor; if none appear,
+  allow Script Editor in System Settings > Notifications.
 
 Verified 2026-08-18: `kill -9` on the API and on the monitor each produced a new
 PID within seconds, and a `SIGSTOP`-frozen API (alive, port dead, invisible to
