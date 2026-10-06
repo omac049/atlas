@@ -45,14 +45,20 @@ def main() -> None:
     ga4_id = os.environ.get("ATLAS_SITE_GA4_ID", "").strip()
     if ga4_id:
         args += ["--analytics-id", ga4_id]
-    build = subprocess.run(
-        args,
-        cwd=REPO_ROOT,
-        capture_output=True,
-        text=True,
-        timeout=BUILD_TIMEOUT_SECONDS,
-        check=False,
-    )
+    # An overrun must leave a log line: on 2026-10-04 and 10-05 the build hit this
+    # limit and the uncaught TimeoutExpired ended the job with nothing in this log.
+    try:
+        build = subprocess.run(
+            args,
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=BUILD_TIMEOUT_SECONDS,
+            check=False,
+        )
+    except subprocess.TimeoutExpired:
+        log(f"ERROR build timed out after {BUILD_TIMEOUT_SECONDS}s; nothing published")
+        return
     tail = (build.stdout.strip().splitlines() or [""])[-1]
     if build.returncode != 0:
         log(f"ERROR build failed rc={build.returncode} {build.stderr.strip()[-300:]}")
@@ -63,15 +69,19 @@ def main() -> None:
     if not publish_cmd:
         log("publish skipped: ATLAS_SITE_PUBLISH_CMD unset (build is local only)")
         return
-    published = subprocess.run(
-        publish_cmd,
-        shell=True,
-        cwd=REPO_ROOT,
-        capture_output=True,
-        text=True,
-        timeout=PUBLISH_TIMEOUT_SECONDS,
-        check=False,
-    )
+    try:
+        published = subprocess.run(
+            publish_cmd,
+            shell=True,
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=PUBLISH_TIMEOUT_SECONDS,
+            check=False,
+        )
+    except subprocess.TimeoutExpired:
+        log(f"ERROR publish timed out after {PUBLISH_TIMEOUT_SECONDS}s")
+        return
     if published.returncode != 0:
         log(f"ERROR publish failed rc={published.returncode} {published.stderr.strip()[-300:]}")
         return
