@@ -70,10 +70,20 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   lists the metrics it can move. Capped files kept unedited; the first full-history
   reports are `data/study/study-report-20261006-full-history.json` (440,338 rows, weeks
   2026-08-10 to 2026-10-05) and `data/intel/divergence-report-20261006-full-history.*`.
-- [ ] The newest-50,000 cap still applies to the 5-minute `gaps_scan` bankroll summary,
+- [x] The newest-50,000 cap still applies to the 5-minute `gaps_scan` bankroll summary,
   `atlas gaps status`, the site build and the dashboard. Fine for "recent activity";
   wrong for anything described as a total since the start. Check each one's wording
   says "recent" before relying on it.
+  **Checked 2026-10-06; two were wrong, both fixed** (`tests/test_capped_readers.py`):
+  - The public site's 21-day window had shrunk to about eight days: pairs seen from
+    09-15 to 09-28 and not since had dropped off. It now reads the window in SQL
+    (`gap_observations_since`): 61 pairs became 67 (146,292 rows, 2.4 s).
+  - The paper $2k meter (dashboard tape, gap meter line, `gaps_scan`, `gaps status`)
+    compounded only the newest slice: $2,095.94 from 55 opportunities. It now reads
+    every executable row since the start (`executable_gap_observations()`, about
+    33,000 rows, 0.6 s, in the dashboard's background reload): $2,373.65 from 426.
+  - The watch board keeps the cap on purpose and already says "HISTORY TRUNCATED".
+  No reader uses the capped default any more.
 - [x] **Nothing tells anyone when a nightly job fails.** Three did, for 5 to 12 nights.
   Cheapest useful fix: one line per job in the dashboard (last success, last error, how
   long it took against last week), fed by the jobs' own logs.

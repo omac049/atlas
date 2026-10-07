@@ -102,6 +102,9 @@ async def _load_gap_snapshot(store) -> tuple:
             await store.all_gap_observations(limit=50000),
             await store.gap_observation_count(),
             await store.gap_subject_aggregates(),
+            # The $2k meter compounds every executable gap since the start, not
+            # the newest-50,000 slice the watch board reads.
+            paper_bankroll_summary(await store.executable_gap_observations()),
         )
 
     return await asyncio.to_thread(asyncio.run, load())
@@ -247,7 +250,7 @@ async def overview() -> dict:
         for case in pending_validation_cases
     ]
     historical_backfill = await store.latest_historical_backfill()
-    gap_observations, gap_observation_total, gap_subject_aggregates = (
+    gap_observations, gap_observation_total, gap_subject_aggregates, gap_bankroll = (
         await _gap_observation_snapshot(store)
     )
     recent_gaps = await store.recent_gap_observations(6)
@@ -314,7 +317,7 @@ async def overview() -> dict:
             subject_aggregates=gap_subject_aggregates,
         ),
         "gap_radar": {
-            "summary": paper_bankroll_summary(gap_observations),
+            "summary": gap_bankroll,
             "recent": [_recent_gap_row(observation) for observation in recent_gaps],
         },
         "live_stream_credentials": {

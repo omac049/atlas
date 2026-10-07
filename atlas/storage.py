@@ -1207,15 +1207,36 @@ class AtlasStore:
             ).fetchall()
         return [json.loads(row[0]) for row in rows]
 
-    async def executable_gap_observations(self, since: datetime) -> list[dict[str, object]]:
-        """Every executable observation from `since` on, oldest first. Selected in
-        SQL so a cumulative report is not silently cut to the newest 50,000 rows
-        of everything (about a week at the radar's rate)."""
+    async def executable_gap_observations(
+        self, since: datetime | None = None
+    ) -> list[dict[str, object]]:
+        """Every executable observation from `since` on (or ever, with no `since`),
+        oldest first. Selected in SQL so a cumulative report is not silently cut to
+        the newest 50,000 rows of everything (about a week at the radar's rate).
+        The paper $2k meter reads it with no `since`: about 33,000 rows on
+        2026-10-06, against 440,000 in the table."""
         await self.initialize()
         async with aiosqlite.connect(self.path) as db:
             cursor = await db.execute(
                 "SELECT payload_json FROM gap_observations "
                 "WHERE executable = 1 AND created_at >= ? ORDER BY created_at",
+                (since.isoformat() if since else "",),
+            )
+            rows = await cursor.fetchall()
+        return [json.loads(row[0]) for row in rows]
+
+    async def gap_observations_since(self, since: datetime) -> list[dict[str, object]]:
+        """Every observation recorded from `since` on, oldest first, uncapped.
+
+        For readers with a date window, such as the site's 21 days: through the
+        newest-50,000 load that window had shrunk to about eight days by 2026-10-06.
+        `created_at` is the observation's own `observed_at`.
+        """
+        await self.initialize()
+        async with aiosqlite.connect(self.path) as db:
+            cursor = await db.execute(
+                "SELECT payload_json FROM gap_observations "
+                "WHERE created_at >= ? ORDER BY created_at",
                 (since.isoformat(),),
             )
             rows = await cursor.fetchall()
