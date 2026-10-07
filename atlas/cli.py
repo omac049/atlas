@@ -1542,7 +1542,8 @@ async def gaps_scan(live: bool) -> None:
                 f"venue={observation['polymarket_venue']} "
                 f"status={observation['verification_status']}{floors}"
             )
-    summary = paper_bankroll_summary(await store.all_gap_observations())
+    # Every executable gap since the start: the meter compounds from the first one.
+    summary = paper_bankroll_summary(await store.executable_gap_observations())
     print(
         f"gap_radar: paper_only=true kalshi_markets={len(kalshi_markets)} "
         f"polymarket_markets={len(polymarket_markets)} "
@@ -1565,8 +1566,7 @@ async def gaps_status() -> None:
     from atlas.gap_radar import paper_bankroll_summary
 
     store = AtlasStore()
-    observations = await store.all_gap_observations()
-    summary = paper_bankroll_summary(observations)
+    summary = paper_bankroll_summary(await store.executable_gap_observations())
     print(json.dumps(summary, indent=2))
     for observation in (await store.recent_gap_observations(5)) or []:
         print(
@@ -1868,7 +1868,7 @@ async def site_build(
     cutoff = datetime.now(UTC) - timedelta(days=SITE_MAX_AGE_DAYS)
     observations = [
         obs
-        for obs in await store.all_gap_observations()
+        for obs in await store.gap_observations_since(cutoff)
         if datetime.fromisoformat(str(obs.get("observed_at"))) >= cutoff
     ]
     ids = sorted(

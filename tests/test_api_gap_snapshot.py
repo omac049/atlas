@@ -13,6 +13,9 @@ import threading
 import pytest
 
 import apps.api.main as api
+from atlas.gap_radar import paper_bankroll_summary
+
+BANKROLL = paper_bankroll_summary([])
 
 
 class FakeStore:
@@ -36,6 +39,9 @@ class FakeStore:
     async def gap_subject_aggregates(self) -> dict:
         return {}
 
+    async def executable_gap_observations(self) -> list[dict]:
+        return []
+
 
 @pytest.fixture(autouse=True)
 def fresh_snapshot(monkeypatch):
@@ -56,7 +62,7 @@ async def test_the_first_load_waits_and_later_ones_reuse_it():
     store = FakeStore()
     first = await api._gap_observation_snapshot(store)
     again = await api._gap_observation_snapshot(store)
-    assert first == again == ([{"load": 1}], 1, {})
+    assert first == again == ([{"load": 1}], 1, {}, BANKROLL)
     assert store.loads == 1
 
 
@@ -68,10 +74,10 @@ async def test_a_stale_snapshot_is_served_at_once_and_replaced_in_the_background
 
     served = await asyncio.wait_for(api._gap_observation_snapshot(store), timeout=1)
 
-    assert served == ([{"load": 1}], 1, {})
+    assert served == ([{"load": 1}], 1, {}, BANKROLL)
     store.release.set()
     await _settle()
-    assert await api._gap_observation_snapshot(store) == ([{"load": 2}], 2, {})
+    assert await api._gap_observation_snapshot(store) == ([{"load": 2}], 2, {}, BANKROLL)
 
 
 async def test_only_one_background_refresh_runs_at_a_time():
@@ -95,6 +101,6 @@ async def test_a_failed_refresh_keeps_the_old_snapshot_and_retries():
     await _settle()
 
     store.fail = False
-    assert await api._gap_observation_snapshot(store) == ([{"load": 1}], 1, {})  # retry
+    assert await api._gap_observation_snapshot(store) == ([{"load": 1}], 1, {}, BANKROLL)  # retry
     await _settle()
-    assert await api._gap_observation_snapshot(store) == ([{"load": 3}], 3, {})
+    assert await api._gap_observation_snapshot(store) == ([{"load": 3}], 3, {}, BANKROLL)
