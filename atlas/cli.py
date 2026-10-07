@@ -2059,6 +2059,12 @@ def main() -> None:
     books_record_parser.add_argument("--db", default="data/making/books.sqlite3")
     books_record_parser.add_argument("--interval", type=float, default=None)
     books_record_parser.add_argument("--depth", type=int, default=None)
+    books_coverage_parser = books_sub.add_parser(
+        "coverage", help="share of each market's recorded window not under an unknown-book marker"
+    )
+    books_coverage_parser.add_argument("--event", default="KXFEDDECISION-26OCT")
+    books_coverage_parser.add_argument("--db", default="data/making/books.sqlite3")
+    books_coverage_parser.add_argument("--until", default=None, help="ISO time; default now")
     opps = sub.add_parser("opportunities")
     opps.add_subparsers(dest="action", required=True).add_parser("demo")
     agent = sub.add_parser("agent")
@@ -2280,6 +2286,11 @@ def main() -> None:
         raise SystemExit(
             asyncio.run(books_record(args.event, args.db, args.interval, args.depth))
         )
+    elif args.command == "books" and args.action == "coverage":
+        from atlas.book_recorder import coverage
+
+        until = datetime.fromisoformat(args.until) if args.until else datetime.now(UTC)
+        print(json.dumps(coverage(args.db, args.event, until=until), indent=2))
     elif args.command == "books":
         asyncio.run(books_inspect(args.venue, args.market_id))
     elif args.command == "opportunities":
