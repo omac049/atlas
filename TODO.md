@@ -56,7 +56,8 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
 - [x] **The site job died without a log line on 2026-10-04 and 10-05:** `atlas site build`
   ran past its 900 s limit and the uncaught `TimeoutExpired` ended the job. A build or
   publish overrun now writes an ERROR line (`tests/test_site_job.py`). `deploy/atlas_gsc.py`
-  has the same uncaught timeout and is not yet fixed.
+  had the same uncaught timeout; fixed the same day (`tests/test_gsc_job.py`): an overrun
+  logs `rc=124`, which the Jobs panel reads as FAILING.
 - [ ] **Unexplained: the database jobs were very slow on 2026-10-04 and 10-05 mornings.**
   Backup about 38 and 83 minutes (seconds on every other night), VACUUM 2.4 h and 3.4 h,
   the site build over 15 minutes. The Mac was awake (the system log has no sleep events
@@ -107,6 +108,13 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   machine, not the fee pages. Watch tonight's run.
 - [ ] **gsc pull failed on 2026-10-05** (`RemoteProtocolError`, a dropped connection).
   Watch whether it recurs.
+- [ ] OWNER: **the installed launch agents differ from `deploy/`** (found 2026-10-06).
+  Every installed plist except `com.atlas.api` carries `Nice 10`, which the repo copies
+  do not, and the installed `com.atlas.healthcheck` runs every 300 s, not 60 s. At
+  300 s the watchdog's "two misses before restarting the API" takes 10 minutes, not 2,
+  and `deploy/README.md` still says 60 s. Either copy the installed settings into
+  `deploy/` (and the README) or reinstall from `deploy/`; until then a reinstall
+  silently undoes whoever made the change.
 - [ ] **Arm A recorder coverage to date: 87.2%** (`atlas books coverage`, 2026-10-06:
   19.2 days, about 59 hours unknown per market, the same for all five). Three stretches
   are 51.5 of those hours: 2026-09-22 00:03Z to 15:58Z (15.9 h, the macOS 27 install

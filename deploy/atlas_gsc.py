@@ -24,9 +24,21 @@ def log(message: str) -> None:
         handle.write(f"{stamp} {message}\n")
 
 
+STEP_TIMEOUT_SECONDS = 600
+TIMED_OUT = 124  # what timeout(1) returns; the fees job uses the same code
+
+
 def step(*args: str) -> subprocess.CompletedProcess:
-    return subprocess.run([str(PYTHON), "-m", "atlas.gsc", *args], cwd=REPO_ROOT,
-                          capture_output=True, text=True, timeout=600, check=False)
+    # An overrun must leave a log line (the site job ended silently on 2026-10-04
+    # and 10-05 the same way): it becomes a failed step with rc=124.
+    command = [str(PYTHON), "-m", "atlas.gsc", *args]
+    try:
+        return subprocess.run(command, cwd=REPO_ROOT, capture_output=True, text=True,
+                              timeout=STEP_TIMEOUT_SECONDS, check=False)
+    except subprocess.TimeoutExpired:
+        return subprocess.CompletedProcess(
+            command, TIMED_OUT, stdout="", stderr=f"timed out after {STEP_TIMEOUT_SECONDS}s"
+        )
 
 
 def main() -> None:
