@@ -250,3 +250,53 @@ def test_recording_stops_a_little_after_the_last_market_closes():
     assert tickers == ["KXFEDDECISION-26OCT-C25", "KXFEDDECISION-26OCT-H25"]
     assert until == datetime(2026, 10, 28, 18, 4, tzinfo=UTC)
     assert book_recorder.recording_window([]) == ([], None)
+
+
+async def test_coverage_is_the_share_of_the_window_not_under_an_unknown_book(tmp_path):
+    """Charter amendment 1: "per market, the share of the window not under an
+    unknown-book marker", audited before the replay and never used as a filter."""
+    db = tmp_path / "books.sqlite3"
+    store = AtlasStore(str(db))
+    h0 = "KXFEDDECISION-26OCT-H0"
+    real = kalshi_book(h0, T0, *BOOK_A)
+    for book in (
+        real,
+        kalshi_book(h0, T0 + timedelta(seconds=60), *BOOK_A),
+        book_recorder.unknown_marker(real, T0 + timedelta(seconds=125)),
+        kalshi_book(h0, T0 + timedelta(seconds=3725), *BOOK_A),
+        # A second market whose last row is an open marker: unknown up to `until`.
+        kalshi_book("KXFEDDECISION-26OCT-C25", T0, *BOOK_A),
+        book_recorder.unknown_marker(
+            kalshi_book("KXFEDDECISION-26OCT-C25", T0, *BOOK_A), T0 + timedelta(seconds=1000)
+        ),
+        kalshi_book("KXOTHER-26OCT-X", T0, *BOOK_A),
+    ):
+        await store.save_orderbook(book)
+
+    report = book_recorder.coverage(db, "KXFEDDECISION-26OCT", until=T0 + timedelta(seconds=4000))
+
+    by_market = {row["market"]: row for row in report["markets"]}
+    assert set(by_market) == {"KXFEDDECISION-26OCT-C25", "KXFEDDECISION-26OCT-H0"}
+    assert by_market["KXFEDDECISION-26OCT-H0"]["unknown_seconds"] == 3600
+    assert by_market["KXFEDDECISION-26OCT-H0"]["coverage"] == "0.1000"
+    assert by_market["KXFEDDECISION-26OCT-C25"]["unknown_seconds"] == 3000
+    assert by_market["KXFEDDECISION-26OCT-C25"]["coverage"] == "0.2500"
+    assert report["coverage"] == "0.1750"
+    assert report["paper_only"] is True
+
+
+def test_the_coverage_command_prints_the_audit(tmp_path):
+    import asyncio
+    import json
+    import subprocess
+
+    db = tmp_path / "books.sqlite3"
+    asyncio.run(
+        AtlasStore(str(db)).save_orderbook(kalshi_book("KXFEDDECISION-26OCT-H0", T0, *BOOK_A))
+    )
+    result = subprocess.run(
+        [sys.executable, "-m", "atlas.cli", "books", "coverage", "--db", str(db),
+         "--until", (T0 + timedelta(hours=1)).isoformat()],
+        capture_output=True, text=True, check=True, cwd=Path(__file__).resolve().parent.parent,
+    )
+    assert json.loads(result.stdout)["coverage"] == "1.0000"

@@ -249,3 +249,54 @@ def recording_window(markets: list[dict]) -> tuple[list[str], datetime | None]:
     tickers = sorted(str(m["ticker"]) for m in markets if m.get("ticker"))
     closes = [c for c in (_when(m.get("close_time")) for m in markets) if c is not None]
     return tickers, (max(closes) + CLOSE_GRACE if closes else None)
+
+
+def coverage(db_path, event: str, *, until: datetime) -> dict:
+    """Per market, the share of its window not under an unknown-book marker.
+
+    Charter amendment 1 (docs/decisions/2026-09-08-market-making-charter.md):
+    coverage is audited before the replay and reported beside the verdict, never
+    used as a filter. A market's window runs from its first recorded book to
+    ``until``; time under a marker runs from the marker to the next real book
+    (or to ``until`` when no book follows). Read-only.
+    """
+    connection = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+    try:
+        rows = connection.execute(
+            "SELECT market_id, timestamp, json_extract(payload_json, '$.sequence') "
+            "FROM orderbook_snapshots WHERE market_id LIKE ? ORDER BY market_id, timestamp",
+            (f"kalshi:{event}-%",),
+        ).fetchall()
+    finally:
+        connection.close()
+    by_market: dict[str, list[tuple[datetime, bool]]] = {}
+    for market_id, stamp, sequence in rows:
+        by_market.setdefault(market_id.removeprefix("kalshi:"), []).append(
+            (datetime.fromisoformat(stamp), sequence == UNKNOWN_SEQUENCE)
+        )
+    markets = []
+    window_total = unknown_total = 0.0
+    for market, books in sorted(by_market.items()):
+        window = max(0.0, (until - books[0][0]).total_seconds())
+        unknown = 0.0
+        for index, (at, is_marker) in enumerate(books):
+            if is_marker:
+                end = books[index + 1][0] if index + 1 < len(books) else until
+                unknown += max(0.0, (min(end, until) - at).total_seconds())
+        window_total += window
+        unknown_total += unknown
+        markets.append({
+            "market": market,
+            "from": books[0][0].isoformat(),
+            "window_seconds": round(window),
+            "unknown_seconds": round(unknown),
+            "unknown_markers": sum(1 for _, is_marker in books if is_marker),
+            "coverage": f"{1 - unknown / window:.4f}" if window else None,
+        })
+    return {
+        "paper_only": True,
+        "event": event,
+        "until": until.isoformat(),
+        "markets": markets,
+        "coverage": f"{1 - unknown_total / window_total:.4f}" if window_total else None,
+    }

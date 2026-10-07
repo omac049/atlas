@@ -107,10 +107,16 @@ Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milesto
   machine, not the fee pages. Watch tonight's run.
 - [ ] **gsc pull failed on 2026-10-05** (`RemoteProtocolError`, a dropped connection).
   Watch whether it recurs.
-- [ ] **Arm A recorder coverage to date: 86.3%** (11.1 days, 36.7 hours unknown, nearly
-  all of it 2026-09-22 00:03Z to 2026-09-23 16:07Z, when the laptop was asleep or off the
-  network; 99.9% since 09-25). Every gap is in the data as an unknown-book marker. The
-  audit before the 2026-10-29 run reports the final figure; nothing is filtered by it.
+- [ ] **Arm A recorder coverage to date: 87.2%** (`atlas books coverage`, 2026-10-06:
+  19.2 days, about 59 hours unknown per market, the same for all five). Three stretches
+  are 51.5 of those hours: 2026-09-22 00:03Z to 15:58Z (15.9 h, the macOS 27 install
+  waiting at the login window), 09-22 20:07Z to 09-23 16:07Z (20.0 h, the user was
+  signed in; asleep or off the network, per the 09-28 note), and 2026-10-06 00:03Z to
+  15:37Z (15.6 h, the 27.0.1 install at the login window). The other 7.5 h is about 270
+  short gaps per market. Every gap is in the data as an unknown-book marker. The audit
+  before the 2026-10-29 run is `atlas books coverage --until 2026-10-28T18:04:00+00:00`
+  (charter amendment 1's definition, tested); nothing is filtered by it. The biggest
+  risk left to coverage is another unattended macOS install (OWNER item above).
 - [ ] OWNER: Impact reports a payment-details problem on the account (2026-09-12); until
   it is fixed Shopify commissions cannot be paid. Intuit payout bank still unconfirmed.
 - [ ] OWNER, optional: request indexing for `/reverb` and `/stubhub`, the two calculator
