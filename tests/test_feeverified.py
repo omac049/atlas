@@ -212,3 +212,16 @@ def test_whatnot_table_is_the_one_on_the_page():
         assert [round(float(c.rstrip("%")) / 100, 6) for c in cells] == rates["commission"][group], group
     options = {value for value, _ in next(i for i in data["inputs"] if i["id"] == "tier")["options"]}
     assert options == set(rates["tier_order"])
+
+
+@pytest.mark.parametrize(("entered", "charged", "label"), [
+    # Reverb's help article: "The minimum Bump percentage is 1% and the maximum is 30%."
+    (0.005, 1.00, "Bump (1.0% of sale)"),
+    (0.05, 5.00, "Bump (5.0% of sale)"),
+    (0.50, 30.00, "Bump (30.0% of sale)"),
+])
+def test_reverb_bump_is_charged_and_labelled_within_the_published_bounds(entered, charged, label):
+    result = compute(ROOT / "docs" / "fees" / "reverb.json", {"price": 100, "bump_rate": entered})
+    bump = next(line for line in result["lines"] if line["id"] == "bump_fee")
+    assert bump["amount"] == pytest.approx(charged, abs=0.005)
+    assert bump["label"] == label

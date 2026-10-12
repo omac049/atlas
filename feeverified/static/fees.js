@@ -152,8 +152,9 @@
     const pRate = i.preferred ? r.processing_rate_preferred : r.processing_rate;
     lines.push({ id: "processing_fee", label: `Payment processing (${(pRate * 100).toFixed(2)}% + $0.49 on order incl. tax)`, amount: cents(processingBase * pRate + r.processing_fixed) });
     if (i.international) lines.push({ id: "cross_border_fee", label: "Cross-border fee (1%)", amount: cents(sellingBase * r.cross_border_rate) });
-    const bump = num(i.bump_rate);
-    if (bump > 0) lines.push({ id: "bump_fee", label: `Bump (${(bump * 100).toFixed(1)}% of sale)`, amount: cents(sellingBase * Math.min(r.bump_max, Math.max(r.bump_min, bump))) });
+    // The label shows the rate charged, which is the rate entered held within Reverb's bounds.
+    const bump = num(i.bump_rate) > 0 ? Math.min(r.bump_max, Math.max(r.bump_min, num(i.bump_rate))) : 0;
+    if (bump > 0) lines.push({ id: "bump_fee", label: `Bump (${(bump * 100).toFixed(1)}% of sale)`, amount: cents(sellingBase * bump) });
     const totalFees = cents(lines.reduce((a, l) => a + l.amount, 0));
     return { total_sale: cents(processingBase), sales_tax: tax, lines, total_fees: totalFees, net: cents(sellingBase - totalFees),
       effective_rate: sellingBase > 0 ? cents(totalFees / sellingBase * 100) : 0 };
@@ -346,7 +347,7 @@
   // -------------------------------------------------------------- Vinted
   function vinted(s, i) {
     const r = s.rates, price = num(i.price);
-    return finish(price, [], { buyer_fees: [{ label: "Buyer Protection fee paid by the buyer ($0.70 + 5%)", amount: cents(price * r.buyer_protection[0] + r.buyer_protection[1]) }] });
+    return finish(price, [], { buyer_fees: [{ label: "Vinted fee paid by the buyer (usually 5% + $0.70)", amount: cents(price * r.buyer_protection[0] + r.buyer_protection[1]) }] });
   }
 
   // -------------------------------------------------------- QuickBooks Payments

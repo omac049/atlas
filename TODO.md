@@ -23,12 +23,33 @@ Read from every job log, not from the panel alone.
   logs keep every earlier run, so the 10-05 traceback was still in the tail, and a clean
   run touches its log a few seconds after its report file. A traceback now counts only
   when no `..._written=` line follows it. `tests/test_job_health.py`.
-- [ ] **Fee Verified shows five platforms as "changed" and one unreachable** (3 on 10-07,
-  5 on 10-12): Shopify (9 quotes gone, the plan and card-rate table rows), Vinted (7),
-  TikTok Shop (2, the October 2024 jewelry notice), Square (1, EBT), Whatnot (1, the
-  "week of September 28" sentence); Reverb unreachable (the bot challenge again). Their
-  public pages say the numbers are under review until each is re-read against the
-  rendered page.
+- [x] **Fee Verified shows five platforms as "changed" and one unreachable** (3 on 10-07,
+  5 on 10-12). **Re-read 2026-10-12**, every page fetched with the checker's own reader and
+  every quote matched against that text before `reviewed` was run. One fee changed:
+  - **Reverb: the minimum Bump percentage is 1%, was 0.5%** (help article; maximum still
+    30%). Reverb's Bump marketing page still says 0.5%, read in a browser the same day;
+    the schedule follows the help article and says so. The calculator's label now shows
+    the rate charged, not the rate typed (`tests/test_feeverified.py`).
+  - Shopify: the comparison table shows Plus card rates where it said "Most competitive
+    rates", and the page that exempted Plus stores from third-party transaction fees no
+    longer does. Basic, Grow and Advanced rates unchanged. Eight table rows re-pinned:
+    38 of 38 quotes are machine-checked, where 22 had been "known unmatched".
+  - Vinted rewrote its Price List on 10/08: the Buyer Protection fee is the Vinted fee,
+    "usually 5% + $0.70" instead of a fixed formula; the shipping sentences are gone.
+  - TikTok Shop: the chart is unchanged; the article now states the fee formula and that
+    the base includes shipping, as the calculator assumed. The "AI Summary" box is no
+    longer quoted.
+  - Square: the pricing pages dropped "EBT fees are waived through fall 2026"; a help
+    article still says waived. Not a number the calculator uses.
+  - Whatnot: one sentence about when a new seller's tiered rates start, reworded.
+  The public pages read "under review" until the 04:20 check on 10-13 re-reads them.
+- [ ] **A quote that was unmatched at review is never checked again, so a real change
+  there is invisible.** That is how Shopify's Plus column changed unnoticed. On 10-12,
+  before this re-read: **Amazon 12 quotes unmatched with no person-read source to explain
+  them** (41 were "known unmatched" at its 09-08 review), Poshmark 9 and GoFundMe 3 (both
+  have person-read sources that may account for them). Re-read those three the same way,
+  then make the nightly check report how many quotes it could not check on machine-read
+  pages, and treat that as "could not check", not "verified".
 - [ ] **The monitor crashes when a write meets the nightly VACUUM.** 2026-10-11 03:30:23
   local: `sqlite3.OperationalError: database is locked` in `save_gap_observation`, inside
   the 14 s the backup's VACUUM held the database; launchd restarted it at once. Five such
