@@ -154,3 +154,33 @@ def test_the_api_serves_every_job(monkeypatch, tmp_path):
     assert payload["paper_only"] is True
     assert [job["name"] for job in payload["jobs"]] == ["backup"]
     assert payload["jobs"][0]["state"] == "NO_RECORD"
+
+
+def test_an_old_traceback_followed_by_a_successful_run_is_not_a_failure(tmp_path):
+    """2026-10-12: study and intel both ran and were shown FAILING, and the watchdog
+    notified. The log still held the 10-05 traceback, and it is written a few
+    seconds after the report file, so "a traceback, in a log newer than the
+    report" was true of a clean run."""
+    reports = tmp_path / "study"
+    reports.mkdir()
+    report = reports / "study-report-20261012.json"
+    report.write_text("{}")
+    ran = datetime(2026, 10, 12, 14, 0, 19, tzinfo=UTC).timestamp()
+    os.utime(report, (ran, ran))
+    log = tmp_path / "study.log"
+    _write(
+        log,
+        "Traceback (most recent call last):",
+        "sqlite3.OperationalError: database is locked",
+        "{",
+        "}",
+        "study_report_written=data/study/study-report-20261012.json",
+        "latency_report_written=data/study/latency-report-20261012.json",
+    )
+    os.utime(log, (ran + 5, ran + 5))
+    job = Job(
+        name="study", log=log, hour=7, minute=0, weekday=0, reports=(reports, "study-report-*.json")
+    )
+    health = job_health(job, now=datetime(2026, 10, 12, 15, 0, tzinfo=UTC), tz=MST)
+    assert health["state"] == "OK"
+    assert health["last_failure_at"] is None

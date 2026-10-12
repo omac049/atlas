@@ -25,6 +25,8 @@ DAYS = ("Mondays", "Tuesdays", "Wednesdays", "Thursdays", "Fridays", "Saturdays"
 _STAMPED = re.compile(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z) (.*)$")
 # "ERROR ..." from every job's own log() helper, or a step's non-zero return code.
 _FAILURE = re.compile(r"^(ERROR\b|\S+ rc=[1-9])")
+# What the weekly report commands print when a file has been written.
+_WRITTEN = re.compile(r"^\w+_written=")
 _MESSAGE_CHARS = 200
 
 
@@ -85,12 +87,20 @@ def _from_reports(job: Job, lines: list[str]):
     stamps = [stamp for path in directory.glob(pattern) if (stamp := _mtime(path))]
     success = max(stamps, default=None)
     # The weekly jobs' logs are bare stdout with no timestamps: a traceback is
-    # dated by the log's own modification time.
+    # dated by the log's own modification time. It counts only when nothing was
+    # written after it. The log keeps every earlier run, and a clean run touches
+    # the log a few seconds after its report file, so "a traceback somewhere, in a
+    # log newer than the report" was true of every clean run that followed a crash
+    # (2026-10-12: study and intel shown FAILING, and notified, after both ran).
     failure = message = None
     written = _mtime(job.log)
-    if written and (success is None or written > success) and any(
-        line.startswith("Traceback") for line in lines
-    ):
+    last = {"crash": -1, "written": -1}
+    for index, line in enumerate(lines):
+        if line.startswith("Traceback"):
+            last["crash"] = index
+        elif _WRITTEN.search(line):
+            last["written"] = index
+    if written and (success is None or written > success) and last["crash"] > last["written"]:
         failure = written
         message = next((line.strip() for line in reversed(lines) if line.strip()), None)
     return success, failure, message
