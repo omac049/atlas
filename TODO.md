@@ -8,6 +8,38 @@ Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness or
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
 
+## 2026-10-12 — status check, six nights after the 10-06 fixes
+
+Read from every job log, not from the panel alone.
+
+- [x] **All four nightly jobs have run on time every night since 2026-10-07.** Backup at
+  10:30Z with VACUUM in 10 to 14 s (the slow mornings of 10-04 and 10-05 did not repeat,
+  and no `-wal` file is left behind); site published nightly, 67 pairs on 10-07 and 76 by
+  10-10; Fee Verified's check back to about 25 minutes; no Search Console failure.
+- [x] **First scheduled full-history study report:** `study-report-20261012.json` reviewed
+  495,530 observations across all ten weeks (2026-08-10 to 2026-10-12).
+- [x] **The Jobs panel called study and intel FAILING after both had run, and the watchdog
+  notified twice (14:03Z and 14:18Z).** A false alarm in `atlas/job_health.py`: the weekly
+  logs keep every earlier run, so the 10-05 traceback was still in the tail, and a clean
+  run touches its log a few seconds after its report file. A traceback now counts only
+  when no `..._written=` line follows it. `tests/test_job_health.py`.
+- [ ] **Fee Verified shows five platforms as "changed" and one unreachable** (3 on 10-07,
+  5 on 10-12): Shopify (9 quotes gone, the plan and card-rate table rows), Vinted (7),
+  TikTok Shop (2, the October 2024 jewelry notice), Square (1, EBT), Whatnot (1, the
+  "week of September 28" sentence); Reverb unreachable (the bot challenge again). Their
+  public pages say the numbers are under review until each is re-read against the
+  rendered page.
+- [ ] **The monitor crashes when a write meets the nightly VACUUM.** 2026-10-11 03:30:23
+  local: `sqlite3.OperationalError: database is locked` in `save_gap_observation`, inside
+  the 14 s the backup's VACUUM held the database; launchd restarted it at once. Five such
+  tracebacks are in the monitor log. Store connections use sqlite's default 5 s wait,
+  and VACUUM takes longer as the database grows (1.88 GB on 10-12). Give the store's
+  connections a wait longer than a VACUUM.
+- [ ] **Arm A recorder coverage: 90.0%** on 10-12 (`atlas books coverage`); 1.1 h unknown
+  in the six days since 10-06, one gap of an hour on 10-11 17:35Z.
+- [ ] OWNER: **automatic install of macOS updates is still on**
+  (`AutomaticallyInstallMacOSUpdates = 1` on 10-12). See the 10-06 item below.
+
 ## 2026-09-28 — open items after the status check
 
 - [x] **The dashboard still stalls when the monitor is writing.** `GET /api/overview` takes
