@@ -1,76 +1,76 @@
 {
   "platform": "reverb",
   "name": "Reverb (US sellers)",
-  "as_of": "2026-09-28",
+  "as_of": "2026-10-12",
   "sources": [
     {
       "url": "https://reverb.com/selling/selling-fees",
       "title": "Reverb Pricing & Payouts | Reverb",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://help.reverb.com/hc/en-us/articles/40917652290843-What-fees-will-I-pay-for-selling-on-Reverb",
       "title": "What fees will I pay for selling on Reverb?",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://help.reverb.com/hc/en-us/articles/41988540155931-What-is-a-payment-processing-fee",
       "title": "What is a payment processing fee?",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://help.reverb.com/hc/en-us/articles/41988473838491-Availability-and-processing-fees-for-Reverb-Payments",
       "title": "Availability and processing fees for Reverb Payments (redirected to 'How does Reverb Payments work?' article 52454911807259)",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://reverb.com/legal/reverbs-billing-policy",
       "title": "Reverb\u2019s Billing Policy | Reverb",
-      "loaded": "2026-09-28",
+      "loaded": "2026-10-12",
       "last_updated_on_page": "Effective Date: June 5, 2023; Updated: September 9, 2025",
       "verify": false,
-      "note": "Read by a person in a browser on 2026-09-28; this page answers automated readers with a bot challenge, so it is not part of the nightly verification."
+      "note": "Read on 2026-10-12 with the checker's browser-impersonating fetch, which got the page that day; every sentence quoted from it stands. It usually answers automated readers with a bot challenge, so it is not part of the nightly verification."
     },
     {
       "url": "https://help.reverb.com/hc/en-us/articles/41988469262107-What-are-my-fees-as-a-Reverb-Preferred-Seller",
       "title": "What are my fees as a Reverb Preferred Seller?",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://help.reverb.com/hc/en-us/articles/41988457586715-Why-was-I-charged-a-Bump-fee",
       "title": "Why was I charged a Bump fee?",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://help.reverb.com/hc/en-us/articles/41988532258587-What-is-Bump-and-how-does-it-work",
       "title": "What is \u201cBump\u201d and how does it work?",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://reverb.com/selling/bump",
       "title": "Advertising with Reverb Bump | Reverb",
-      "loaded": "2026-09-28",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null,
       "verify": false,
-      "note": "Read by a person in a browser on 2026-09-28; this page answers automated readers with a bot challenge, so it is not part of the nightly verification."
+      "note": "Read in a browser on 2026-10-12, and by the checker's browser-impersonating fetch the same day; every sentence quoted from it stands. It usually answers automated readers with a bot challenge, so it is not part of the nightly verification."
     },
     {
       "url": "https://help.reverb.com/hc/en-us/articles/40917616326171-How-long-does-it-take-to-get-paid",
       "title": "How long does it take to get paid?",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://help.reverb.com/hc/en-us/articles/41988523307291-Why-are-my-total-earnings-lower-than-what-I-sold-my-gear-for",
       "title": "Why are my total earnings lower than what I sold my gear for?",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
@@ -105,7 +105,7 @@
     "If you choose to list your item in a different currency than you receive your Reverb Payments payout, a 2.5% currency conversion fee will be assessed on the subtotal of your payout, after your regular payment processing fees.",
     "When you purchase Reverb Bump, you bid a percentage of an item's total sale price. The rate you set and your listing\u2019s quality will determine its placement at the top of Reverb\u2019s best-performing pages, including the Comparative Shopping Page. If your listing does not sell, you will not be charged a fee.",
     "Please note, if your listing does sell, the Reverb Bump fee will be charged in addition to the fees under this Billing Policy.",
-    "The minimum Bump percentage is 0.5% and the maximum is 30%.",
+    "The minimum Bump percentage is 1% and the maximum is 30%.",
     "Direct Offers on brand new listings are capped at 1.5%.",
     "You are only charged this fee if your Bumped listing sells on the site and the amount charged is based on the percentage which you selected on the listing.",
     "The Bump fee is automatically deducted from Reverb Payments earnings based on the product amount + shipping total (tax not included).",
@@ -133,12 +133,13 @@
     "Base-of-fee nuance: selling fee base 'includes shipping' and per the Billing Policy is 'inclusive of all costs except sales tax'; payment processing fee base explicitly INCLUDES tax. So the two fees use different bases on taxed orders.",
     "The advertised '8.19% + $0.49' and '91.8%' figures assume standard (non-Preferred) processing; Preferred Sellers pay 2.99% + $0.49 (7.99% + $0.49 combined).",
     "Selling fee minimum/maximum ($0.50 / $500) apply to the selling fee only; no min/max stated for the processing fee.",
-    "Bump percentage bounds (0.5% to 30%) come from the help article; the Billing Policy and Bump page give no bounds. Bump base excludes tax; selling fee also excludes sales tax; processing fee includes tax.",
+    "Bump percentage bounds (1% to 30%) come from the help article 'What is Bump and how does it work?'; the Billing Policy gives none. Reverb's Bump marketing page still says 'anywhere from 0.5% to 30%' (read 2026-10-12), so Reverb's own pages disagree on the minimum. This calculator follows the help article, which was revised more recently and gives the reason: 1% is 'the minimum to qualify for Bump placements'. Bump base excludes tax; selling fee also excludes sales tax; processing fee includes tax.",
     "Payout timing wording differs slightly across pages (marketing page: 'initiates your payout' at delivery/in-transit; help: 1-2 or 1 business day to 'available for deposit' then 1-4 business days to bank; quick answer '2 - 5 business days'). These are consistent ranges, not contradictions.",
     "'When do I pay the fees?' section notes rules for PayPal payouts apply to orders placed on or after May 13, 2026 (fees deducted from payout).",
     "Payment processing fees are refunded for up to five seller-initiated fully refunded cancellations per month (Billing Policy).",
     "Billing Policy shows 'Updated: September 9, 2025'; help-center articles show no dates.",
-    "Re-read 2026-09-28. Reverb revised its Bump help article that day: the bounds are unchanged (0.5% to 30%), and it now says the Bump fee on a Direct Offer for a brand new listing is capped at 1.5% whatever rate was set; this calculator charges the rate you enter and does not apply that cap. The Billing Policy (updated September 9, 2025) and the Bump marketing page answer automated readers with a bot challenge; both were read in a browser the same day and every sentence quoted from them stands, one of them reworded by Reverb."
+    "Re-read 2026-09-28. Reverb revised its Bump help article that day: the bounds are unchanged (0.5% to 30%), and it now says the Bump fee on a Direct Offer for a brand new listing is capped at 1.5% whatever rate was set; this calculator charges the rate you enter and does not apply that cap. The Billing Policy (updated September 9, 2025) and the Bump marketing page answer automated readers with a bot challenge; both were read in a browser the same day and every sentence quoted from them stands, one of them reworded by Reverb.",
+    "Re-read 2026-10-12. Reverb's Bump help article now gives the minimum Bump percentage as 1% (it was 0.5%); the maximum is still 30%. The calculator's minimum follows it, so a Bump rate entered below 1% is charged at 1%. The Bump marketing page still says 0.5%. The selling fee (5%, $0.50 to $500), payment processing (3.19% + $0.49; 2.99% for Preferred Sellers) and the cross-border 1% are unchanged, and every sentence quoted from the Billing Policy (still 'Updated: September 9, 2025') stands."
   ],
   "rates": {
     "selling_rate": 0.05,
@@ -148,10 +149,10 @@
     "processing_rate_preferred": 0.0299,
     "processing_fixed": 0.49,
     "cross_border_rate": 0.01,
-    "bump_min": 0.005,
+    "bump_min": 0.01,
     "bump_max": 0.3
   },
-  "structure": "Two mandatory fees on every sale, both deducted from the Reverb Payments payout (nothing charged at listing). (1) Selling fee = 5% of the total sale amount including shipping ('inclusive of all costs except sales tax' per the Billing Policy), with a $0.50 minimum and a $500 maximum (the cap is hit at a $10,000 sale; above that the fee stays $500). (2) Payment processing fee = 3.19% of the order total + $0.49 per transaction for standard sellers, or 2.99% + $0.49 for Reverb Preferred Sellers; the base is the full order amount including shipping AND any applicable tax. Reverb advertises this as '8.19% + $0.49 Total Fees' and '91.8%' kept (the 91.8% ignores the $0.49). Optional: Reverb Bump is a seller-set percentage (0.5% to 30%) of the item's final sale price, charged only if the Bumped listing sells, deducted from product amount + shipping (tax excluded), in addition to the two fees above. Add-ons: +1% cross-border fee when buyer and seller bank accounts are in different countries; 2.5% currency conversion on payout subtotal if listing currency differs from payout currency. If fees cannot be deducted from a payout they go on the month-end statement. Payout timing: first sale, funds available 1-2 business days after delivery; subsequent sales, 1 business day after a valid tracking number shows movement; then 1-4 business days to reach the bank (help-center quick answer: 2-5 business days). Items over $2,000 USD: payout 3-6 business days after delivery. Rounding not stated.",
+  "structure": "Two mandatory fees on every sale, both deducted from the Reverb Payments payout (nothing charged at listing). (1) Selling fee = 5% of the total sale amount including shipping ('inclusive of all costs except sales tax' per the Billing Policy), with a $0.50 minimum and a $500 maximum (the cap is hit at a $10,000 sale; above that the fee stays $500). (2) Payment processing fee = 3.19% of the order total + $0.49 per transaction for standard sellers, or 2.99% + $0.49 for Reverb Preferred Sellers; the base is the full order amount including shipping AND any applicable tax. Reverb advertises this as '8.19% + $0.49 Total Fees' and '91.8%' kept (the 91.8% ignores the $0.49). Optional: Reverb Bump is a seller-set percentage (1% to 30%) of the item's final sale price, charged only if the Bumped listing sells, deducted from product amount + shipping (tax excluded), in addition to the two fees above. Add-ons: +1% cross-border fee when buyer and seller bank accounts are in different countries; 2.5% currency conversion on payout subtotal if listing currency differs from payout currency. If fees cannot be deducted from a payout they go on the month-end statement. Payout timing: first sale, funds available 1-2 business days after delivery; subsequent sales, 1 business day after a valid tracking number shows movement; then 1-4 business days to reach the bank (help-center quick answer: 2-5 business days). Items over $2,000 USD: payout 3-6 business days after delivery. Rounding not stated.",
   "summary": "Reverb takes a 5% selling fee on the price plus shipping (minimum $0.50, capped at $500) and a 3.19% + $0.49 payment processing fee on the order including shipping and tax \u2014 2.99% for Preferred Sellers. An optional Bump adds the percentage you chose, only if the listing sells.",
   "inputs": [
     {

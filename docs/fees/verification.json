@@ -843,6 +843,11 @@
      "at": "2026-09-28T22:19:52+00:00",
      "event": "reviewed",
      "note": "Re-read 2026-09-28: Reverb revised its Bump article (bounds unchanged, 0.5% to 30%; a 1.5% cap on Direct Offers for brand new listings is new). The Billing Policy and the Bump marketing page block automated readers and were read in a browser; every sentence quoted from them stands."
+    },
+    {
+     "at": "2026-10-12T19:15:21+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-10-12: the Bump help article now gives the minimum Bump percentage as 1% (was 0.5%); maximum still 30%. The Bump marketing page still says 0.5%; the calculator follows the help article. Selling fee, processing and cross-border fee unchanged. The Billing Policy and Bump page were read that day and every sentence quoted from them stands."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -877,68 +882,68 @@
     "Reverb Safe Shipping - 1.5%-3% depending on the value of the item and the final shipping destination.",
     "Effective Date: June 5, 2023 Updated: September 9, 2025"
    ],
-   "reviewed_at": "2026-09-28T22:19:52+00:00",
+   "reviewed_at": "2026-10-12T19:15:21+00:00",
    "sources": {
     "https://help.reverb.com/hc/en-us/articles/40917616326171-How-long-does-it-take-to-get-paid": {
      "hash": "89f55565903bcabed9f7a46c47bd1ffc387277c4219349884794d50489d01668",
-     "last_checked_at": "2026-09-28T22:19:52+00:00",
-     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "last_checked_at": "2026-10-12T19:15:21+00:00",
+     "reviewed_at": "2026-10-12T19:15:21+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/40917652290843-What-fees-will-I-pay-for-selling-on-Reverb": {
      "hash": "3b2533d1bdbf572ca959927c49146fab53a8539570298ca7974b11a8f73afb1d",
-     "last_checked_at": "2026-09-28T22:19:52+00:00",
-     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "last_checked_at": "2026-10-12T19:15:21+00:00",
+     "reviewed_at": "2026-10-12T19:15:21+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988457586715-Why-was-I-charged-a-Bump-fee": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-28T22:19:52+00:00",
-     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "last_checked_at": "2026-10-12T19:15:21+00:00",
+     "reviewed_at": "2026-10-12T19:15:21+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988469262107-What-are-my-fees-as-a-Reverb-Preferred-Seller": {
      "hash": "7a1a00b2896ce6033f85a34ce06f16c736a8fe5459c6100c7fa5406e0bb8dbf2",
-     "last_checked_at": "2026-09-28T22:19:52+00:00",
-     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "last_checked_at": "2026-10-12T19:15:21+00:00",
+     "reviewed_at": "2026-10-12T19:15:21+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988473838491-Availability-and-processing-fees-for-Reverb-Payments": {
      "hash": "ea3407603121d27f80e6871d4ee2eb36dafb9a02eaba1563579c813e79f0e58a",
-     "last_checked_at": "2026-09-28T22:19:52+00:00",
-     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "last_checked_at": "2026-10-12T19:15:21+00:00",
+     "reviewed_at": "2026-10-12T19:15:21+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988523307291-Why-are-my-total-earnings-lower-than-what-I-sold-my-gear-for": {
      "hash": "e202314b1963cb20639973b86bf08877fcab2e4d7df663ed260f27cd68295c15",
-     "last_checked_at": "2026-09-28T22:19:52+00:00",
-     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "last_checked_at": "2026-10-12T19:15:21+00:00",
+     "reviewed_at": "2026-10-12T19:15:21+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988532258587-What-is-Bump-and-how-does-it-work": {
-     "hash": "b02cbb8c9b2cdfc53eb3bb766c7ed57a7b73b8fd49539bc0794990b362fba1e5",
-     "last_checked_at": "2026-09-28T22:19:52+00:00",
-     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "hash": "a25cfe072ddee2308d42a8413c6ad4a305f1152411c1cdc18a528332847f1a23",
+     "last_checked_at": "2026-10-12T19:15:21+00:00",
+     "reviewed_at": "2026-10-12T19:15:21+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988540155931-What-is-a-payment-processing-fee": {
      "hash": "3d3eae58aa4252fd65ebd7377f24ec3d800bdfad5787a549e904a632334fcf4d",
-     "last_checked_at": "2026-09-28T22:19:52+00:00",
-     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "last_checked_at": "2026-10-12T19:15:21+00:00",
+     "reviewed_at": "2026-10-12T19:15:21+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://reverb.com/selling/selling-fees": {
      "hash": "bcd4f2efba2603ae9579448671026888ccd760624657f168d8585280c32d54d6",
-     "last_checked_at": "2026-09-28T22:19:52+00:00",
-     "reviewed_at": "2026-09-28T22:19:52+00:00",
+     "last_checked_at": "2026-10-12T19:15:21+00:00",
+     "reviewed_at": "2026-10-12T19:15:21+00:00",
      "status": "verified",
      "via": "rendered"
     }
@@ -961,6 +966,11 @@
      "at": "2026-09-08T18:07:52+00:00",
      "event": "reviewed",
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
+    },
+    {
+     "at": "2026-10-12T19:15:06+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-10-12: the comparison table now shows Plus card rates where it said Most competitive rates; the eight table rows were re-pinned, so all 38 quotes are machine-checked. The third-party transaction fees page dropped its sentence exempting Plus stores. Basic, Grow and Advanced rates are unchanged."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -988,87 +998,64 @@
     "If you switch to an annual billing cycle, then you can receive a discount on your subscription charge. Annual billing charges the full year upfront and presents a lower effective monthly rate.",
     "| Currency conversion fee | 1.5% | 2% | 2% |"
    ],
-   "quotes_missing_at_review": [
-    "| Pay monthly | $39 USD/mo | $105 USD/mo | $399 USD/mo | Starts at $2,300 USD/mo |",
-    "| Pay yearly | $29 USD/mo | $79 USD/mo | $299 USD/mo | Not included |",
-    "Basic\n$29/mo\nFor solo entrepreneurs",
-    "Grow\n$79/mo\nFor small teams",
-    "Advanced\n$299/mo\nFor global reach",
-    "Plus\nfrom $2,300/mo\nFor complex businesses\nTry for $399",
-    "| Online standard card rates | 2.9% + 30\u00a2 | 2.7% + 30\u00a2 | 2.5% + 30\u00a2 | Most competitive rates |",
-    "| Online premium card rates | 3.5% + 30\u00a2 | 3.3% + 30\u00a2 | 3.1% + 30\u00a2 | Most competitive rates |",
-    "| Online international rates | + 1% | + 1% | + 1% | Most competitive rates |",
-    "| PayPal Wallet rates | Starting at 3.49% + 49\u00a2 | Starting at 3.49% + 49\u00a2 | Starting at 3.49% + 49\u00a2 | Most competitive rates |",
-    "| In-person card rates | 2.6% + 10\u00a2 | 2.5% + 10\u00a2 | 2.4% + 10\u00a2 | Most competitive rates |",
-    "| USDC rates | 2.9% + 30\u00a2 | 2.7% + 30\u00a2 | 2.5% + 30\u00a2 | Most competitive rates |",
-    "| In-person manual rates | 3.5% + 10\u00a2 | 3.5% + 10\u00a2 | 3.5% + 10\u00a2 | Most competitive rates |",
-    "| Third-party transaction fees | 2% | 1% | 0.6% | 0.2% |",
-    "| POS Pro: Advanced tools for brick\u2011and\u2011mortar retailers | $89/mo per location | $89/mo per location | $89/mo per location | Includes 20 locations. Up to 200 with Shopify Payments. |",
-    "| Over 50 synced marketplace orders | 1% up to $99/mo | 1% up to $99/mo | 1% up to $99/mo | 1% up to $99/mo |",
-    "Transactions processed by your third-party provider, such as credit and debit card payments, are subject to third-party transaction fees based on your Shopify plan.\nTransactions processed by Shopify Payments, such as Shop Pay and local payment methods, are charged at standard Shopify Payments rates plus a 1.25% premium. Shopify Payments rates vary by plan type and market.",
-    "Standard: Includes domestic consumer cards issued by Visa, Mastercard, Discover, and Diners Club.\nPremium: Includes domestic commercial, corporate, or business-tier cards, such as Visa Business, and all domestic American Express cards.",
-    "Shopify uses this formula to calculate third-party transaction fees for a 30-day period:\n[(cost of products - discounts) + tax + shipping charges] x rate\nThe rate for third-party transaction charges varies depending on your pricing plan.",
-    "Transaction fees don't apply for POS orders or for manual payment methods, which include cash on delivery (COD), bank deposits, checks, test orders, and draft orders marked as paid or pending. Third-party transaction fees aren't returned to you when you issue an order refund.",
-    "If you switch to an annual billing cycle, then you can receive a discount on your subscription charge. Annual billing charges the full year upfront and presents a lower effective monthly rate.",
-    "| Currency conversion fee | 1.5% | 2% | 2% |"
-   ],
-   "reviewed_at": "2026-09-08T18:07:52+00:00",
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-10-12T19:15:06+00:00",
    "sources": {
     "https://help.shopify.com/en/manual/international/pricing/fees": {
-     "fingerprint_drift": false,
      "hash": "952649a5398bb42cbadb9894e71a63e631fb16b13e39ae49b3ae3e4404c8a240",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:07:52+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-12T19:15:06+00:00",
+     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.shopify.com/en/manual/intro-to-shopify/pricing-plans/pricing-overview": {
-     "fingerprint_drift": false,
      "hash": "6ec98ae4e141ce66800dbfedd602b3f85bcefc4888d82a86e694fa09440704d1",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:07:52+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-12T19:15:06+00:00",
+     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/onboarding/cost-of-shopify-payments": {
-     "fingerprint_drift": false,
      "hash": "b773367e4028ccf79f4f65e64e5b8e48d6d585e795f8a872de4df06ae30ad4f1",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:07:52+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-12T19:15:06+00:00",
+     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/payouts/pay-periods-and-fees": {
-     "fingerprint_drift": false,
      "hash": "d5499d4ec0d70e12558890b72d0196f3e453a7319ed360df0c02efa59ffc9616",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:07:52+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-12T19:15:06+00:00",
+     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/credit-card-rates": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:07:52+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-12T19:15:06+00:00",
+     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/domestic-international-eu-credit-cards": {
-     "fingerprint_drift": false,
      "hash": "02167c04c6781e066fa4ad2c4d343cb6a29fc7d4eacab8dc567439d4bed9515a",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:07:52+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-12T19:15:06+00:00",
+     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://help.shopify.com/en/manual/your-account/manage-billing/billing-charges/types-of-charges/third-party-charges/third-party-transaction-fees": {
-     "fingerprint_drift": false,
      "hash": "6ec98ae4e141ce66800dbfedd602b3f85bcefc4888d82a86e694fa09440704d1",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:07:52+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-12T19:15:06+00:00",
+     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.shopify.com/pricing": {
-     "fingerprint_drift": true,
-     "hash": "160e9d93a1cb428a5853605b98c7ef646fc21c49848cbaed48899b92f855aad7",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:07:52+00:00",
-     "status": "verified"
+     "hash": "8c1873c392431ffd447942e1ab34ab2819eff15a37bbed8ff3debef215bb6f9f",
+     "last_checked_at": "2026-10-12T19:15:06+00:00",
+     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"
@@ -1089,6 +1076,11 @@
      "at": "2026-09-08T18:08:09+00:00",
      "event": "reviewed",
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
+    },
+    {
+     "at": "2026-10-12T19:10:36+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-10-12: the pricing pages no longer say EBT processing fees are waived through fall 2026; the EBT row reads 1.8% + 5 cents. The help article still says waived during open beta. No number the calculator uses changed."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -1096,46 +1088,43 @@
     "Here are the processing fees for legacy plan subscribers:\nSwiped Magstripe Cards: 2.6% + 15\u00a2 **\nSwiped or Inserted Chip Cards: 2.6% + 15\u00a2 **\nContactless (NFC) Payments: 2.6% + 15\u00a2 **\nTap to Pay on iPhone: 2.6% + 15\u00a2 **\nTap to Pay on Android: 2.6% + 15\u00a2 **\nPoint-of-Sale API Swiped or Inserted Payments: 2.6% + 15\u00a2 **\nSwiped Virtual Terminal Payments: 2.6% + 15\u00a2 **\nPayment Links Through Text in Virtual Terminal: 3.3% + 30\u00a2 **\nCard on File Transactions: 3.5% + 15\u00a2*\nManually Entered Card Payments: 3.5% + 15\u00a2*\nPoint-of-Sale API Keyed-In Payments: 3.5% + 15\u00a2*\nManually Entered Virtual Terminal Payments: 3.5% + 15\u00a2*\nSquare eCommerce API: 2.9% + 30\u00a2\nOnline payments: 3.3% + 30\u00a2 **\nSquare Invoices: 3.3% + 30\u00a2 **\nSquare Payment Links: 3.3% + 30\u00a2 **\nSubscription Payments: 3.3% + 30\u00a2 **\nCash App Pay (Card-Present Transactions): 2.6% + 15\u00a2 **\nCash App Pay (Card-Non-Present Transactions): 3.3% + 30\u00a2 **\nNeighborhoods on Cash App: 1% for participating Neighborhoods sellers on orders through Cash App.\nACH Transactions: 1%, minimum $1 **\n$0 fees for ACH transactions deposited into Square Checking\n$10 fee cap on all ACH bank transfer payments.\nInternational cards: 1.5% international transaction fee\nEBT processing fee: 1.8% + 5\u00a2 (waived during open beta)",
     "You won\u2019t pay any fees for Cash, Check, and Other Tender payment types."
    ],
-   "quotes_missing_at_review": [
-    "Here are the processing fees for legacy plan subscribers:\nSwiped Magstripe Cards: 2.6% + 15\u00a2 **\nSwiped or Inserted Chip Cards: 2.6% + 15\u00a2 **\nContactless (NFC) Payments: 2.6% + 15\u00a2 **\nTap to Pay on iPhone: 2.6% + 15\u00a2 **\nTap to Pay on Android: 2.6% + 15\u00a2 **\nPoint-of-Sale API Swiped or Inserted Payments: 2.6% + 15\u00a2 **\nSwiped Virtual Terminal Payments: 2.6% + 15\u00a2 **\nPayment Links Through Text in Virtual Terminal: 3.3% + 30\u00a2 **\nCard on File Transactions: 3.5% + 15\u00a2*\nManually Entered Card Payments: 3.5% + 15\u00a2*\nPoint-of-Sale API Keyed-In Payments: 3.5% + 15\u00a2*\nManually Entered Virtual Terminal Payments: 3.5% + 15\u00a2*\nSquare eCommerce API: 2.9% + 30\u00a2\nOnline payments: 3.3% + 30\u00a2 **\nSquare Invoices: 3.3% + 30\u00a2 **\nSquare Payment Links: 3.3% + 30\u00a2 **\nSubscription Payments: 3.3% + 30\u00a2 **\nCash App Pay (Card-Present Transactions): 2.6% + 15\u00a2 **\nCash App Pay (Card-Non-Present Transactions): 3.3% + 30\u00a2 **\nNeighborhoods on Cash App: 1% for participating Neighborhoods sellers on orders through Cash App.\nACH Transactions: 1%, minimum $1 **\n$0 fees for ACH transactions deposited into Square Checking\n$10 fee cap on all ACH bank transfer payments.\nInternational cards: 1.5% international transaction fee\nEBT processing fee: 1.8% + 5\u00a2 (waived during open beta)",
-    "You won\u2019t pay any fees for Cash, Check, and Other Tender payment types."
-   ],
-   "reviewed_at": "2026-09-08T18:08:09+00:00",
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-10-12T19:10:36+00:00",
    "sources": {
     "https://squareup.com/help/us/en/article/5068-what-are-square-s-fees": {
-     "fingerprint_drift": false,
      "hash": "16e776527f6056ebadb6bcde230e5701d1a0f001b5099d86344c746c968cd29d",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:08:09+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-12T19:10:36+00:00",
+     "reviewed_at": "2026-10-12T19:10:36+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://squareup.com/help/us/en/article/5092-rounding": {
-     "fingerprint_drift": false,
      "hash": "16e776527f6056ebadb6bcde230e5701d1a0f001b5099d86344c746c968cd29d",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:08:09+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-12T19:10:36+00:00",
+     "reviewed_at": "2026-10-12T19:10:36+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://squareup.com/us/en/payments/fee-calculator": {
-     "fingerprint_drift": false,
      "hash": "ff542386906879c679f49aff400ae5c8d2163731f1558222f9fe61927987308a",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:08:09+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-12T19:10:36+00:00",
+     "reviewed_at": "2026-10-12T19:10:36+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://squareup.com/us/en/payments/our-fees": {
-     "fingerprint_drift": false,
      "hash": "f0ee876d5040a361eb3751d94b95b416181662a2b004af09a6954d8c5d2f06a5",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:08:09+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-12T19:10:36+00:00",
+     "reviewed_at": "2026-10-12T19:10:36+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://squareup.com/us/en/pricing": {
-     "fingerprint_drift": false,
      "hash": "1d0a11b7d702b3e42f4d1788331bfb9d7814ef3349d8329c993ad0ec865b2ebf",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:08:09+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-12T19:10:36+00:00",
+     "reviewed_at": "2026-10-12T19:10:36+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"
@@ -1340,28 +1329,36 @@
      "at": "2026-09-11T00:21:34+00:00",
      "event": "reviewed",
      "note": "Platform added 2026-09-10 on the owner's instruction; quotes taken from the verifier's own rendered text."
+    },
+    {
+     "at": "2026-10-12T19:14:32+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-10-12: the category chart article (updated 10/08/2026) now states the referral fee formula and that the base includes shipping paid by the customer, as the calculator already assumed; every rate in the chart is unchanged. The AI Summary box is no longer quoted."
     }
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-09-11T00:21:34+00:00",
+   "reviewed_at": "2026-10-12T19:14:32+00:00",
    "sources": {
     "https://seller-us.tiktok.com/university/essay?knowledge_id=1017269682849550&lang=en": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-11T00:21:34+00:00",
-     "reviewed_at": "2026-09-11T00:21:34+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-12T19:14:32+00:00",
+     "reviewed_at": "2026-10-12T19:14:32+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://seller-us.tiktok.com/university/essay?knowledge_id=5982454398175018&lang=en": {
      "hash": "8ddce1cc3c4c9c2b8133ec7227ce2c47e51c93f2a0a65c25360e580806c5f0ea",
-     "last_checked_at": "2026-09-11T00:21:34+00:00",
-     "reviewed_at": "2026-09-11T00:21:34+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-12T19:14:32+00:00",
+     "reviewed_at": "2026-10-12T19:14:32+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://seller-us.tiktok.com/university/essay?knowledge_id=5988482086864682": {
-     "hash": "67d5cf70241ee85b36adcb3b5e53b61aecf6a60c1b1558c6bfab8707be67180c",
-     "last_checked_at": "2026-09-11T00:21:34+00:00",
-     "reviewed_at": "2026-09-11T00:21:34+00:00",
-     "status": "verified"
+     "hash": "93e8c500487f8cabf02deee4b9f374c4c4adb9234d90215473b078d1e24a8b24",
+     "last_checked_at": "2026-10-12T19:14:32+00:00",
+     "reviewed_at": "2026-10-12T19:14:32+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"
@@ -1554,6 +1551,11 @@
      "at": "2026-09-28T21:29:18+00:00",
      "event": "reviewed",
      "note": "Re-read 2026-09-28: the international-sales article now says 'Vinted fee' where it said 'Buyer Protection fee'; the price list ($0.70 + 5%, last updated 1 July 2024) is unchanged."
+    },
+    {
+     "at": "2026-10-12T19:14:37+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-10-12: Vinted rewrote the Price List on 10/08/2026. The Buyer Protection fee is now the Vinted fee and is described as usually 5% + $0.70 rather than by a fixed formula; the shipping and shipping-tax sentences are gone. Sellers still pay nothing; numbers unchanged."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -1565,68 +1567,68 @@
     "Item Verification is currently available in France, Italy, Belgium, Germany, Spain, The Netherlands, the United Kingdom, Poland, Portugal, Romania, Denmark, Sweden, Lithuania and Finland."
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-09-28T21:29:18+00:00",
+   "reviewed_at": "2026-10-12T19:14:37+00:00",
    "sources": {
     "https://www.vinted.com/help/1147-item-verification-for-designer-items": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-28T21:29:18+00:00",
-     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "last_checked_at": "2026-10-12T19:14:37+00:00",
+     "reviewed_at": "2026-10-12T19:14:37+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/help/1555-us-uk-international-sales": {
      "hash": "d854e2a515d211ce17ec913a66cac93d30ea71e3056ded663e92c40e5feccc7c",
-     "last_checked_at": "2026-09-28T21:29:18+00:00",
-     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "last_checked_at": "2026-10-12T19:14:37+00:00",
+     "reviewed_at": "2026-10-12T19:14:37+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/help/342-buyer-protection-fee-on-vinted": {
-     "hash": "612accdd3714f4c89654e9917c12dd7f14d0043854990220f4ae7b37b2754228",
-     "last_checked_at": "2026-09-28T21:29:18+00:00",
-     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "hash": "c373352c0caafd1ccbc612dfce3fe7136da5af7f57c27389de5a6a3108f51b65",
+     "last_checked_at": "2026-10-12T19:14:37+00:00",
+     "reviewed_at": "2026-10-12T19:14:37+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/help/373-is-selling-on-vinted-free": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-28T21:29:18+00:00",
-     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "last_checked_at": "2026-10-12T19:14:37+00:00",
+     "reviewed_at": "2026-10-12T19:14:37+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/help/4/1577-payments-withdrawals": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-28T21:29:18+00:00",
-     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "last_checked_at": "2026-10-12T19:14:37+00:00",
+     "reviewed_at": "2026-10-12T19:14:37+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/help/432-withdrawals": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-28T21:29:18+00:00",
-     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "last_checked_at": "2026-10-12T19:14:37+00:00",
+     "reviewed_at": "2026-10-12T19:14:37+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/help/437-vinted-wallet-how-it-works": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-28T21:29:18+00:00",
-     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "last_checked_at": "2026-10-12T19:14:37+00:00",
+     "reviewed_at": "2026-10-12T19:14:37+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/help/68-how-to-withdraw-earnings": {
      "hash": "8308d8c01c3b0ff045ee7724576a7e4c76f1ff3611f9726791e3ad0cae9549de",
-     "last_checked_at": "2026-09-28T21:29:18+00:00",
-     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "last_checked_at": "2026-10-12T19:14:37+00:00",
+     "reviewed_at": "2026-10-12T19:14:37+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/pricelist": {
-     "hash": "f173d5eab7ca2cacc82b3ca675d7494eed21dd5d4a17dbbe640304a00dad4db6",
-     "last_checked_at": "2026-09-28T21:29:18+00:00",
-     "reviewed_at": "2026-09-28T21:29:18+00:00",
+     "hash": "59333a95390015516a4270a98092c6eb77dd6a685a70b6bf91edbbd7a04cb741",
+     "last_checked_at": "2026-10-12T19:14:37+00:00",
+     "reviewed_at": "2026-10-12T19:14:37+00:00",
      "status": "verified",
      "via": "rendered"
     }
@@ -1659,6 +1661,11 @@
      "at": "2026-09-28T21:39:06+00:00",
      "event": "reviewed",
      "note": "Re-read 2026-09-28: Whatnot replaced its flat commission table with tiered rates on 2026-09-21; schedule, calculator and quotes rebuilt from the new page. Standard-tier rates are unchanged (8%, coins 4%)."
+    },
+    {
+     "at": "2026-10-12T19:10:29+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-10-12: Whatnot updated the fees article on October 1, 2026; the sentence on when a new seller moves to the tiered structure was reworded (the following Monday at 12:00 a.m.). The rate table is unchanged."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -1670,40 +1677,40 @@
     "Seller-generated coupons: Reduce the final sale price, so fees apply to the discounted amount."
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-09-28T21:39:06+00:00",
+   "reviewed_at": "2026-10-12T19:10:29+00:00",
    "sources": {
     "https://help.whatnot.com/hc/en-us/articles/14477076380941-Reduced-commission-on-Coins-Money": {
-     "hash": "c90e9df4fd4dc743ae8799011485d9cdfa28b1442d323c2e2d0013e0e675a0bc",
-     "last_checked_at": "2026-09-28T21:39:06+00:00",
-     "reviewed_at": "2026-09-28T21:39:06+00:00",
+     "hash": "053189397dd56175d9f9190191aed341c1e9829512ab6f75e78093b3388951ac",
+     "last_checked_at": "2026-10-12T19:10:29+00:00",
+     "reviewed_at": "2026-10-12T19:10:29+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/articles/27912945518733-Reduced-Commission-on-High-Value-Orders": {
-     "hash": "5d8b2e39742a5b1acf0db76ea6768ced9607e790701562ca01b1cba83b67f603",
-     "last_checked_at": "2026-09-28T21:39:06+00:00",
-     "reviewed_at": "2026-09-28T21:39:06+00:00",
+     "hash": "138a9f23169e48cced4ca4c4764938ff0a5e7d74b5bb81ef1e265da5248134d6",
+     "last_checked_at": "2026-10-12T19:10:29+00:00",
+     "reviewed_at": "2026-10-12T19:10:29+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/articles/32083195713421-Taxes-on-Whatnot-commissions-and-fees": {
-     "hash": "b39e87f83517c2cdb75a457bd8b57a1e04a76c3c6b4df4b02efeb6c17197ce9a",
-     "last_checked_at": "2026-09-28T21:39:06+00:00",
-     "reviewed_at": "2026-09-28T21:39:06+00:00",
+     "hash": "e61b41fdf0f03d8bca6a4566d85ec20519cddb84a22ba31e04cab76782a8d8eb",
+     "last_checked_at": "2026-10-12T19:10:29+00:00",
+     "reviewed_at": "2026-10-12T19:10:29+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/articles/4847069165965-Whatnot-seller-fees": {
-     "hash": "6815fa96b36cfdd2e4309f08f73864aecbb09864bdb49b41f1533fffa99e7e1d",
-     "last_checked_at": "2026-09-28T21:39:06+00:00",
-     "reviewed_at": "2026-09-28T21:39:06+00:00",
+     "hash": "872f1b8d4b134c255b7c655bad5006c465aae6066358f5a0fcc13e727ae502c7",
+     "last_checked_at": "2026-10-12T19:10:29+00:00",
+     "reviewed_at": "2026-10-12T19:10:29+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/sections/44398189207565-Fees-commissions": {
-     "hash": "a1afd75456090664a586660b6e72599619c90867a3c466c59c388381d2a0cc25",
-     "last_checked_at": "2026-09-28T21:39:06+00:00",
-     "reviewed_at": "2026-09-28T21:39:06+00:00",
+     "hash": "28b5e8730c678f002edcb896c1a692119fc979468091f354f77dd15771aba2bf",
+     "last_checked_at": "2026-10-12T19:10:29+00:00",
+     "reviewed_at": "2026-10-12T19:10:29+00:00",
      "status": "verified",
      "via": "rendered"
     }

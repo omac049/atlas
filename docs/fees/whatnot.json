@@ -1,36 +1,36 @@
 {
   "platform": "whatnot",
   "name": "Whatnot",
-  "as_of": "2026-09-28",
+  "as_of": "2026-10-12",
   "sources": [
     {
       "url": "https://help.whatnot.com/hc/en-us/articles/4847069165965-Whatnot-seller-fees",
       "title": "Whatnot seller fees – Whatnot Help Center",
-      "loaded": "2026-09-28",
-      "last_updated_on_page": "September 22, 2026 at 4:14 PM"
+      "loaded": "2026-10-12",
+      "last_updated_on_page": "October 1, 2026 at 10:59 AM"
     },
     {
       "url": "https://help.whatnot.com/hc/en-us/articles/14477076380941-Reduced-commission-on-Coins-Money",
       "title": "Reduced commission on Coins & Money – Whatnot Help Center",
-      "loaded": "2026-09-28",
+      "loaded": "2026-10-12",
       "last_updated_on_page": "July 31, 2026 at 9:12 AM"
     },
     {
       "url": "https://help.whatnot.com/hc/en-us/articles/27912945518733-Reduced-Commission-on-High-Value-Orders",
       "title": "Reduced Commission on High-Value Orders – Whatnot Help Center",
-      "loaded": "2026-09-28",
+      "loaded": "2026-10-12",
       "last_updated_on_page": "July 31, 2026 at 9:24 AM"
     },
     {
       "url": "https://help.whatnot.com/hc/en-us/articles/32083195713421-Taxes-on-Whatnot-commissions-and-fees",
       "title": "Taxes on Whatnot commissions and fees – Whatnot Help Center",
-      "loaded": "2026-09-28",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://help.whatnot.com/hc/en-us/sections/44398189207565-Fees-commissions",
       "title": "Fees & commissions – Whatnot Help Center (section index)",
-      "loaded": "2026-09-28",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     }
   ],
@@ -38,7 +38,7 @@
   "structure": "Two fees are deducted per checkout transaction. Commission is a percentage of the item's sale price; shipping and taxes paid by the buyer are not included. Since September 21, 2026 the rate depends on two things: the category group of the sale, and the tier the seller unlocked with total sales across all categories in the previous four-week period. US tiers: Standard $0 – $14,999, Tier 1 $15,000 – $34,999, Tier 2 $35,000 – $49,999, Tier 3 $50,000 – $99,999, Tier 4 $100,000 – $249,999, Tier 5 $250,000 – $499,999, Tier 6 $500,000+. US rates from Standard to Tier 6: Sports and TCG 8% falling to 6.5%; Fashion 8% falling to 4.5%; Other Collectibles 8% falling to 5%; Coins 4% falling to 3.5%; Other 8% falling to 4%. A rate is locked for the whole four-week period: crossing into a higher tier lowers the rate for the next period, not the current one, and tiers reset every 28 days. Payment processing is 2.9% of the total order value paid by the buyer (item price, buyer-paid shipping and taxes) plus a fixed $0.30 per transaction, and is not reduced by the tier. In select categories the commission is 0% on the portion of an individual order's price above $1,500, a limited-time promotion, while processing still applies to the full amount. For live sales the rate follows the category of the show; for marketplace sales, the category of the product.",
   "quotes": [
     "Our new commission rate structure took effect September 21, 2026 for existing sellers.",
-    "If you gained selling access after September 21, the new structure takes effect the week of September 28, 2026.",
+    "If you joined after September 21, 2026, the new structure took effect at 12:00 a.m. your local time on the following Monday.",
     "Your sales in a four-week period determine the tier you unlock and the rate you pay for the next period.",
     "Your rate is locked for the full period. Crossing into a higher tier during a period lowers your rate for the next period, not right away.",
     "Reduced rates apply to your Whatnot selling commission only. Payment processing and other seller fees still apply.",
@@ -81,7 +81,8 @@
     "Rates 'as low as 3%' are custom rates for the highest-volume sellers and are not on the public table.",
     "The 'Sell More, Earn More' article, the earlier test of tiered rates, is no longer published (404 on 2026-09-28).",
     "Payment processing uses the buyer's total including sales tax, so an exact fee needs shipping and buyer tax as inputs.",
-    "Taxes on fees: sellers in DC, HI, NM, WV pay state sales tax on the commission; sellers in CT (special 1% rate), HI, NM, OH, SD, TX (standard rate reduced by 20%) and WV pay it on the payment processing fee. Not computed."
+    "Taxes on fees: sellers in DC, HI, NM, WV pay state sales tax on the commission; sellers in CT (special 1% rate), HI, NM, OH, SD, TX (standard rate reduced by 20%) and WV pay it on the payment processing fee. Not computed.",
+    "Re-read 2026-10-12. Whatnot updated the fees article on October 1, 2026: it now says a seller who joined after September 21, 2026 moved to the new structure at 12:00 a.m. local time on the following Monday, and that this continues for new sellers (its example: access on Wednesday, October 7 activates the new rates on Monday, October 12). The page does not say what rate a new seller pays before that Monday. The rate table is unchanged."
   ],
   "rates": {
     "tier_order": [

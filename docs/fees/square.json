@@ -1,36 +1,36 @@
 {
   "platform": "square",
   "name": "Square",
-  "as_of": "2026-09-08",
+  "as_of": "2026-10-12",
   "sources": [
     {
       "url": "https://squareup.com/us/en/pricing",
       "title": "Pricing \u2014 Your complete business toolkit, starting at $0 (Square, US)",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://squareup.com/help/us/en/article/5068-what-are-square-s-fees",
       "title": "Learn about Square fees (Square Support Center, US)",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://squareup.com/us/en/payments/our-fees",
       "title": "Square Payments \u2014 Know what processing fees you\u2019ll pay",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://squareup.com/us/en/payments/fee-calculator",
       "title": "Square Payments \u2014 Calculate your Square processing fees",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://squareup.com/help/us/en/article/5092-rounding",
       "title": "(redirects to article 5068 'Learn about Square fees'; no separate rounding article exists)",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     }
   ],
@@ -48,7 +48,7 @@
     "Afterpay\nYou get paid immediately, but customers pay over time in four installments.\n6% + 30\u00a2\n6% + 30\u00a2\n6% + 30\u00a2",
     "Cash or check\nApplies to any payment made via cash or check.\nFree\nFree\nFree",
     "Bitcoin payments\nApplies to in-person payments where buyer scans a QR code to pay in bitcoin.\n0% until 2027\n0% until 2027\n0% until 2027",
-    "EBT\nApplies to in-person payments made with an EBT card for SNAP-eligible items. Processing fees are waived for EBT payments while the feature is in beta, through fall 2026.\n1.8% + 5\u00a2\n1.8% + 5\u00a2\n1.8% + 5\u00a2",
+    "EBT\nApplies to in-person payments made with an EBT card for SNAP-eligible items.\n1.8% + 5\u00a2\n1.8% + 5\u00a2\n1.8% + 5\u00a2",
     "Locations\nWith Square Plus and Square Premium, the monthly fee applies to each location you run.\n$0/mo. per location\n$49/mo. per location\n$149/mo. per location",
     "International card transaction fee\nAn additional fee applies to payments made on credit or debit cards issued outside of the United States.\n1.5%\n1.5%\n1.5%",
     "Gift card load\nWith Square Free and Square Plus, you pay a 2.5% load fee. There are no additional fees when a gift card is redeemed.\n2.5% load fee\n2.5% load fee\n0% load fee",
@@ -85,7 +85,8 @@
     "Square plans are monthly per location with no annual-billing price on the page; the free-trial length renders as an unfilled template placeholder ('{{sub2_api.num_free_trial_days}}') in the page text, while the FAQ states a 30-day trial.",
     "The pricing page's only 'as of' dates are for savings APY (Jan 23, 2026) and do not date the fee schedule.",
     "The in-person and online rates are the same for every card brand ('You can accept every major card \u2014 Visa, Mastercard, American Express, and Discover \u2014 all for the same processing fees').",
-    "Cash App Pay accepted through Square is priced on Square's legacy list at 2.6% + 15\u00a2 (card-present) / 3.3% + 30\u00a2 (card-not-present); the new-plan table does not list Cash App Pay separately."
+    "Cash App Pay accepted through Square is priced on Square's legacy list at 2.6% + 15\u00a2 (card-present) / 3.3% + 30\u00a2 (card-not-present); the new-plan table does not list Cash App Pay separately.",
+    "Re-read 2026-10-12. Square's pricing pages no longer carry the sentence that EBT processing fees are waived 'while the feature is in beta, through fall 2026': the EBT row now shows 1.8% + 5\u00a2 with no waiver. The help article 'What are Square's fees?' still says the EBT fee is 'waived during open beta'. This calculator does not cover EBT payments, so no number here changed."
   ],
   "rates": {
     "in_person": {
