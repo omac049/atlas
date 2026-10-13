@@ -144,6 +144,13 @@ def _outcome_settled_same_day(payload: dict[str, object]) -> bool:
 
 AGENT_RUN_LIST_LIMIT = 10
 
+# How long a connection waits for another's lock before raising "database is locked".
+# sqlite's default is 5 s. The nightly backup's VACUUM holds the database for 14 to
+# 17 s on a 1.8 GB file and grows with it; on 2026-10-11 a monitor write met it,
+# waited 5 s and the monitor died. Longer than any VACUUM, short enough that a truly
+# stuck database still surfaces within the monitor's 300 s sweep.
+BUSY_TIMEOUT_SECONDS = 60.0
+
 
 def compact_agent_run(payload: dict[str, object], limit: int = AGENT_RUN_LIST_LIMIT) -> dict:
     """An agent run as a record of what happened, small enough to keep and serve.
@@ -196,12 +203,16 @@ class AtlasStore:
     def __init__(self, path: str = "data/atlas.sqlite3"):
         self.path = Path(path)
 
+    def _connect(self) -> aiosqlite.Connection:
+        """Every connection the store opens, so they all wait the same time on a lock."""
+        return aiosqlite.connect(self.path, timeout=BUSY_TIMEOUT_SECONDS)
+
     async def initialize(self) -> None:
         key = str(self.path.resolve())
         if key in AtlasStore._initialized_paths:
             return
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.executescript(SCHEMA)
             columns = {
                 row[1]
@@ -301,7 +312,7 @@ class AtlasStore:
             (now or datetime.now(UTC)) - timedelta(days=PRUNE_ORDERBOOK_MAX_AGE_DAYS)
         ).isoformat()
         deleted: dict[str, int] = {}
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             keep = " AND ".join("market_id NOT LIKE ?" for _ in PRUNE_ORDERBOOK_RETAIN_PREFIXES)
             cursor = await db.execute(
                 "DELETE FROM orderbook_snapshots WHERE timestamp < ?"
@@ -325,7 +336,7 @@ class AtlasStore:
 
     async def save_orderbook(self, book: OrderBook) -> None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 "INSERT INTO orderbook_snapshots (market_id, venue, timestamp, payload_json) VALUES (?, ?, ?, ?)",
                 (
@@ -339,7 +350,7 @@ class AtlasStore:
 
     async def save_opportunity(self, opportunity: Opportunity) -> None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 "INSERT OR REPLACE INTO opportunities VALUES (?, ?, ?, ?)",
                 (
@@ -356,7 +367,7 @@ class AtlasStore:
     ) -> list[OrderBook]:
         """Snapshots for one market with start < timestamp <= end, oldest first."""
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 "SELECT payload_json FROM orderbook_snapshots "
                 "WHERE market_id = ? AND timestamp > ? AND timestamp <= ? ORDER BY timestamp",
@@ -368,7 +379,7 @@ class AtlasStore:
     async def latest_orderbook_timestamp(self, market_id: str) -> datetime | None:
         """When the newest snapshot of one market was taken; None if there is none."""
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 "SELECT MAX(timestamp) FROM orderbook_snapshots WHERE market_id = ?", (market_id,)
             )
@@ -377,7 +388,7 @@ class AtlasStore:
 
     async def latest_orderbooks(self, limit: int = 20) -> list[OrderBook]:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 "SELECT payload_json FROM orderbook_snapshots ORDER BY snapshot_id DESC LIMIT ?",
                 (limit,),
@@ -387,7 +398,7 @@ class AtlasStore:
 
     async def latest_opportunity(self) -> Opportunity | None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 "SELECT payload_json FROM opportunities ORDER BY detected_at DESC LIMIT 1"
             )
@@ -396,7 +407,7 @@ class AtlasStore:
 
     async def save_pair(self, pair: ContractPair) -> None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 "INSERT OR REPLACE INTO contract_pairs VALUES (?, ?, ?, datetime('now'))",
                 (pair.pair_id, pair.status.value, pair.model_dump_json()),
@@ -405,7 +416,7 @@ class AtlasStore:
 
     async def get_pair(self, pair_id: str) -> ContractPair | None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 "SELECT payload_json FROM contract_pairs WHERE pair_id = ?", (pair_id,)
             )
@@ -414,7 +425,7 @@ class AtlasStore:
 
     async def latest_pair(self) -> ContractPair | None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 "SELECT payload_json FROM contract_pairs ORDER BY approved_at DESC LIMIT 1"
             )
@@ -423,7 +434,7 @@ class AtlasStore:
 
     async def paper_trade_summary(self) -> dict[str, int | str | None]:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             count_cursor = await db.execute("SELECT COUNT(*) FROM paper_trades")
             count = (await count_cursor.fetchone())[0]
             latest_cursor = await db.execute(
@@ -438,7 +449,7 @@ class AtlasStore:
 
     async def save_paper_trade(self, trade: PaperTradeRecord) -> None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 "INSERT OR REPLACE INTO paper_trades VALUES (?, ?, ?, ?, ?, ?)",
                 (
@@ -454,7 +465,7 @@ class AtlasStore:
 
     async def save_candidate_proposals(self, proposals: list[dict[str, object]]) -> None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute("DELETE FROM candidate_proposals")
             now = datetime.now(UTC).isoformat()
             await db.executemany(
@@ -480,7 +491,7 @@ class AtlasStore:
 
     async def latest_candidate_proposals(self, limit: int = 25) -> list[dict[str, object]]:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 "SELECT payload_json FROM candidate_proposals ORDER BY created_at DESC LIMIT ?",
                 (limit,),
@@ -498,7 +509,7 @@ class AtlasStore:
             {**item, "ranking_position": index + 1}
             for index, item in enumerate(candidates)
         ]
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             previous_rows = await (
                 await db.execute(
                     "SELECT candidate_id, payload_json FROM settlement_candidates WHERE active = 1"
@@ -585,7 +596,7 @@ class AtlasStore:
         self, limit: int = 25
     ) -> list[dict[str, object]]:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             rows = await (
                 await db.execute(
                     """SELECT payload_json FROM settlement_candidates
@@ -604,7 +615,7 @@ class AtlasStore:
 
     async def latest_milestone_alerts(self, limit: int = 10) -> list[dict[str, object]]:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             rows = await (
                 await db.execute(
                     """SELECT payload_json FROM milestone_alerts
@@ -618,7 +629,7 @@ class AtlasStore:
         """Store the run as a record, not as a dump: long lists keep their first
         ``AGENT_RUN_LIST_LIMIT`` items and their length (see compact_agent_run)."""
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 "INSERT INTO agent_runs (created_at, payload_json) VALUES (?, ?)",
                 (datetime.now(UTC).isoformat(), json.dumps(compact_agent_run(payload))),
@@ -627,7 +638,7 @@ class AtlasStore:
 
     async def latest_agent_run(self) -> dict[str, object] | None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 "SELECT payload_json FROM agent_runs ORDER BY run_id DESC LIMIT 1"
             )
@@ -638,7 +649,7 @@ class AtlasStore:
 
     async def save_learning_example(self, example_id: str, label: str, payload: dict) -> None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 "INSERT OR REPLACE INTO learning_examples VALUES (?, ?, ?, ?)",
                 (example_id, label, datetime.now(UTC).isoformat(), json.dumps(payload)),
@@ -647,7 +658,7 @@ class AtlasStore:
 
     async def labeled_learning_examples(self) -> list[dict[str, object]]:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 """SELECT example_id, label, payload_json FROM learning_examples
                 WHERE label IN ('APPROVED_EQUIVALENT', 'REJECTED') ORDER BY created_at"""
@@ -667,7 +678,7 @@ class AtlasStore:
         """Compact, newest-first view of trusted labels (never UNLABELED observations)."""
         await self.initialize()
         limit = max(1, min(int(limit), 20))
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             rows = await (
                 await db.execute(
                     """SELECT example_id, label, created_at, payload_json
@@ -702,7 +713,7 @@ class AtlasStore:
 
     async def learning_counts(self) -> dict[str, int]:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 "SELECT label, COUNT(*) FROM learning_examples GROUP BY label"
             )
@@ -724,7 +735,7 @@ class AtlasStore:
         instead of starting every run at zero.
         """
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             rows = await (
                 await db.execute(
                     """SELECT json_extract(vc.payload_json,
@@ -744,7 +755,7 @@ class AtlasStore:
         await self.initialize()
         if not snapshots:
             return {"observed": 0, "new_versions": 0}
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             before = (
                 await (
                     await db.execute("SELECT COUNT(*) FROM market_evidence_snapshots")
@@ -781,7 +792,7 @@ class AtlasStore:
     async def save_validation_case(self, case: dict[str, object]) -> bool:
         await self.initialize()
         now = datetime.now(UTC).isoformat()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 """INSERT OR IGNORE INTO validation_cases
                 (pair_id, source_kind, decision_status, guarantee_a, guarantee_b,
@@ -814,7 +825,7 @@ class AtlasStore:
     ) -> list[dict[str, object]]:
         await self.initialize()
         now_iso = (now or datetime.now(UTC)).isoformat()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             due_clause = "AND (next_poll_at IS NULL OR next_poll_at <= ?)" if due_only else ""
             params: tuple[object, ...] = (now_iso, limit) if due_only else (limit,)
             rows = await (
@@ -870,7 +881,7 @@ class AtlasStore:
         """
         await self.initialize()
         now = datetime.now(UTC).isoformat()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 """UPDATE validation_cases SET tracking_status = ?, updated_at = ?,
                 last_checked_at = ?, pending_reason = COALESCE(?, pending_reason),
@@ -910,7 +921,7 @@ class AtlasStore:
         """Record why a case was deferred without pretending it was polled."""
         await self.initialize()
         now = datetime.now(UTC).isoformat()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 """UPDATE validation_cases SET updated_at = ?, pending_reason = ?,
                 next_poll_at = ? WHERE pair_id = ?""",
@@ -920,7 +931,7 @@ class AtlasStore:
 
     async def save_validation_outcome(self, outcome: dict[str, object]) -> None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 """INSERT OR REPLACE INTO validation_outcomes
                 (pair_id, resolved_at, relationship_status, outcome_a, outcome_b,
@@ -955,7 +966,7 @@ class AtlasStore:
         if not market_ids:
             return {}
         placeholders = ",".join("?" for _ in market_ids)
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             rows = await (
                 await db.execute(
                     f"""SELECT market_id, rules_hash, MIN(observed_at), MAX(observed_at),
@@ -990,7 +1001,7 @@ class AtlasStore:
         computable lag are skipped rather than counted as zero.
         """
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             rows = await (
                 await db.execute("SELECT payload_json FROM validation_outcomes")
             ).fetchall()
@@ -1024,7 +1035,7 @@ class AtlasStore:
 
     async def validation_summary(self) -> dict[str, object]:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             evidence = await (
                 await db.execute(
                     """SELECT COUNT(*), COUNT(DISTINCT market_id)
@@ -1073,7 +1084,7 @@ class AtlasStore:
 
     async def save_historical_backfill(self, report: dict[str, object]) -> None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 """INSERT INTO historical_backfills
                 (created_at, status, payload_json) VALUES (?, ?, ?)""",
@@ -1087,7 +1098,7 @@ class AtlasStore:
 
     async def latest_historical_backfill(self) -> dict[str, object] | None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             row = await (
                 await db.execute(
                     """SELECT payload_json FROM historical_backfills
@@ -1099,7 +1110,7 @@ class AtlasStore:
     async def recent_historical_backfills(self, limit: int = 6) -> list[dict[str, object]]:
         """Return the most recent persisted backfill reports, newest first."""
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             rows = await (
                 await db.execute(
                     """SELECT payload_json FROM historical_backfills
@@ -1111,7 +1122,7 @@ class AtlasStore:
 
     async def pending_trade_contexts(self) -> list[dict[str, object]]:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 """SELECT t.trade_id, o.pair_id, p.payload_json
                 FROM paper_trades t
@@ -1124,7 +1135,7 @@ class AtlasStore:
 
     async def save_paper_trade_outcome(self, trade_id: str, status: str, outcome_a: str | None, outcome_b: str | None) -> None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 "INSERT OR REPLACE INTO paper_trade_outcomes VALUES (?, ?, ?, ?, ?, ?)",
                 (
@@ -1136,7 +1147,7 @@ class AtlasStore:
 
     async def save_catalog_report(self, report: dict[str, object]) -> None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 "INSERT INTO catalog_reports (created_at, payload_json) VALUES (?, ?)",
                 (datetime.now(UTC).isoformat(), json.dumps(report)),
@@ -1145,7 +1156,7 @@ class AtlasStore:
 
     async def latest_catalog_report(self) -> dict[str, object] | None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             row = await (await db.execute(
                 "SELECT payload_json FROM catalog_reports ORDER BY report_id DESC LIMIT 1"
             )).fetchone()
@@ -1153,7 +1164,7 @@ class AtlasStore:
 
     async def save_gap_observation(self, observation: dict[str, object]) -> None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 """INSERT OR REPLACE INTO gap_observations
                    (observation_id, created_at, payload_json,
@@ -1178,7 +1189,7 @@ class AtlasStore:
         if not ids:
             return {}
         placeholders = ",".join("?" for _ in ids)
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             rows = await (
                 await db.execute(
                     f"""SELECT market_id, payload_json FROM market_evidence_snapshots
@@ -1198,7 +1209,7 @@ class AtlasStore:
     async def recent_gap_observations(self, limit: int = 20) -> list[dict[str, object]]:
         await self.initialize()
         limit = max(1, min(int(limit), 200))
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             rows = await (
                 await db.execute(
                     "SELECT payload_json FROM gap_observations ORDER BY created_at DESC LIMIT ?",
@@ -1216,7 +1227,7 @@ class AtlasStore:
         The paper $2k meter reads it with no `since`: about 33,000 rows on
         2026-10-06, against 440,000 in the table."""
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 "SELECT payload_json FROM gap_observations "
                 "WHERE executable = 1 AND created_at >= ? ORDER BY created_at",
@@ -1233,7 +1244,7 @@ class AtlasStore:
         `created_at` is the observation's own `observed_at`.
         """
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 "SELECT payload_json FROM gap_observations "
                 "WHERE created_at >= ? ORDER BY created_at",
@@ -1256,7 +1267,7 @@ class AtlasStore:
         from 2026-08-24 to 2026-10-06 to the newest 50,000 rows, four to six days.
         """
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             if limit is None:
                 rows = await (
                     await db.execute(
@@ -1283,7 +1294,7 @@ class AtlasStore:
         so it stays an indexed aggregate instead of re-parsing every payload.
         """
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             rows = await (
                 await db.execute(
                     """SELECT event_subject, COUNT(*), SUM(COALESCE(executable, 0)),
@@ -1309,13 +1320,13 @@ class AtlasStore:
     async def gap_observation_count(self) -> int:
         """Total recorded observations, so a truncated load can say so."""
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             row = await (await db.execute("SELECT COUNT(*) FROM gap_observations")).fetchone()
         return int(row[0]) if row else 0
 
     async def save_shadow_observation(self, observation: dict[str, object]) -> None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 "INSERT OR REPLACE INTO shadow_observations VALUES (?, ?, ?)",
                 (
@@ -1328,7 +1339,7 @@ class AtlasStore:
 
     async def latest_shadow_observation(self) -> dict[str, object] | None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             row = await (
                 await db.execute(
                     "SELECT payload_json FROM shadow_observations ORDER BY created_at DESC LIMIT 1"
@@ -1338,7 +1349,7 @@ class AtlasStore:
 
     async def shadow_validation_summary(self, limit: int = 5000) -> dict[str, object]:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             rows = await (
                 await db.execute(
                     "SELECT payload_json FROM shadow_observations ORDER BY created_at DESC LIMIT ?",
@@ -1373,7 +1384,7 @@ class AtlasStore:
 
     async def save_discovery_scan(self, result: dict[str, int]) -> None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             await db.execute(
                 """INSERT INTO discovery_scans
                 (scanned_at, kalshi_active, polymarket_active, comparisons, approved, review)
@@ -1388,7 +1399,7 @@ class AtlasStore:
 
     async def latest_discovery_scan(self) -> dict[str, int | str] | None:
         await self.initialize()
-        async with aiosqlite.connect(self.path) as db:
+        async with self._connect() as db:
             cursor = await db.execute(
                 """SELECT scanned_at, kalshi_active, polymarket_active, comparisons, approved, review
                 FROM discovery_scans ORDER BY scan_id DESC LIMIT 1"""
