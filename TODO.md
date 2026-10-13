@@ -61,12 +61,22 @@ Read from every job log, not from the panel alone.
     sentences is on a page read by a person and was found in a copy fetched that day.
   `test_no_machine_read_schedule_has_a_quote_the_nightly_check_skips` now fails the build
   if a schedule with no person-read page has such a list.
-- [ ] **The monitor crashes when a write meets the nightly VACUUM.** 2026-10-11 03:30:23
+- [x] **The monitor crashes when a write meets the nightly VACUUM.** 2026-10-11 03:30:23
   local: `sqlite3.OperationalError: database is locked` in `save_gap_observation`, inside
   the 14 s the backup's VACUUM held the database; launchd restarted it at once. Five such
   tracebacks are in the monitor log. Store connections use sqlite's default 5 s wait,
   and VACUUM takes longer as the database grows (1.88 GB on 10-12). Give the store's
   connections a wait longer than a VACUUM.
+  **Fixed 2026-10-13:** every store connection goes through `AtlasStore._connect()` and
+  waits `BUSY_TIMEOUT_SECONDS` (60 s). Reproduced with a 7 s lock: the old code raised
+  "database is locked" after 5.2 s, the new code wrote after 7.1 s. `tests/test_storage.py`.
+  The running monitor and API load it at their next restart.
+- [ ] **The nightly VACUUM rewrites the whole database to reclaim almost nothing.**
+  2026-10-13: 1,843 MB to 1,838 MB, 17 s of exclusive lock. It was added on 08-20 when
+  76% of the file was free pages; the nightly prune now frees about 5 MB a day. Run it
+  only when the free list is worth it (say over 10% of pages, `PRAGMA freelist_count`
+  against `page_count`), which would also have avoided the hours-long VACUUMs of 10-04
+  and 10-05.
 - [ ] **Arm A recorder coverage: 90.0%** on 10-12 (`atlas books coverage`); 1.1 h unknown
   in the six days since 10-06, one gap of an hour on 10-11 17:35Z.
 - [ ] OWNER: **automatic install of macOS updates is still on**

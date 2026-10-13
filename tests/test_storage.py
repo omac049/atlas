@@ -921,3 +921,49 @@ async def test_all_gap_observations_without_a_limit_reads_every_row_oldest_first
     loaded = await store.all_gap_observations(limit=None)
 
     assert [row["observation_id"] for row in loaded] == [f"obs-{index}" for index in range(5)]
+
+
+@pytest.mark.asyncio
+async def test_a_write_waits_out_a_lock_longer_than_sqlites_default(tmp_path, monkeypatch):
+    """2026-10-11 03:30: the monitor died with "database is locked" in
+    save_gap_observation. The nightly backup's VACUUM holds the database for 14 to
+    17 s and growing; the store's connections waited sqlite's default 5 s and gave
+    up. The wait is the store's own setting, and it is longer than a VACUUM."""
+    import sqlite3
+    import threading
+    import time
+
+    from atlas import storage
+
+    assert storage.BUSY_TIMEOUT_SECONDS >= 60
+
+    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
+    await store.initialize()
+    observation = {"observation_id": "o1", "observed_at": "2026-10-11T10:30:20+00:00"}
+
+    def hold_the_database(seconds: float) -> threading.Thread:
+        blocker = sqlite3.connect(store.path, isolation_level=None, check_same_thread=False)
+        blocker.execute("BEGIN EXCLUSIVE")
+
+        def release() -> None:
+            time.sleep(seconds)
+            blocker.execute("COMMIT")
+            blocker.close()
+
+        thread = threading.Thread(target=release)
+        thread.start()
+        return thread
+
+    # A wait shorter than the lock gives up, which is what the monitor did ...
+    monkeypatch.setattr(storage, "BUSY_TIMEOUT_SECONDS", 0.2)
+    holder = hold_the_database(1.0)
+    with pytest.raises(sqlite3.OperationalError, match="locked"):
+        await store.save_gap_observation(observation)
+    holder.join()
+
+    # ... and a wait longer than the lock goes through.
+    monkeypatch.setattr(storage, "BUSY_TIMEOUT_SECONDS", 10)
+    holder = hold_the_database(1.0)
+    await store.save_gap_observation(observation)
+    holder.join()
+    assert await store.gap_observation_count() == 1
