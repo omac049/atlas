@@ -15,6 +15,14 @@ by this script.
 
 Restore: stop the agents, ``gunzip -k data/backups/atlas-auto-<stamp>.sqlite3.gz``,
 and copy the resulting ``.sqlite3`` over ``data/atlas.sqlite3`` (deploy/README.md).
+
+Arm A's input is backed up by the same run, on its own and whatever happens to
+the main snapshot: the recorded order books (``data/making/books.sqlite3``) as
+``books-auto-*.sqlite3.gz`` with the same verification and rotation, and the
+archived October prints, each copied once into ``data/backups/tapes/``. The
+books cannot be re-recorded, and until 2026-10-13 nothing copied them. These
+copies sit on the same disk as the originals: they protect against a bad write
+or a deleted file, not against losing the machine.
 """
 
 import gzip
@@ -35,6 +43,12 @@ KEEP = 3
 PREFIX = "atlas-auto-"
 CHUNK = 8 * 1024 * 1024
 
+# Arm A (docs/decisions/2026-09-08-market-making-charter.md, Amendment 1).
+BOOKS_DB = REPO_ROOT / "data" / "making" / "books.sqlite3"
+BOOKS_PREFIX = "books-auto-"
+TAPES = REPO_ROOT / "data" / "making" / "tapes"
+ARM_A_TAPES = "KXFEDDECISION-26OCT-*.json"
+
 
 def log(message: str) -> None:
     LOG.parent.mkdir(parents=True, exist_ok=True)
@@ -53,13 +67,15 @@ def verify_sqlite(path: Path) -> int:
         ).fetchone()[0]
 
 
-def compress(path: Path) -> Path:
+def compress(path: Path, into: Path | None = None, keep: bool = False) -> Path:
     """Gzip a verified snapshot, prove the archive reads back whole, then remove the original.
 
     Reading the archive to the end checks gzip's CRC; comparing the byte count
     proves nothing was truncated. Only then is the uncompressed file deleted.
+    ``into`` writes the archive to another folder; ``keep`` leaves the original
+    in place, for a file something else still reads.
     """
-    target = path.with_name(path.name + ".gz")
+    target = (into or path.parent) / (path.name + ".gz")
     partial = target.with_name(target.name + ".partial")
     with path.open("rb") as source, gzip.open(partial, "wb", compresslevel=1) as sink:
         shutil.copyfileobj(source, sink, CHUNK)
@@ -72,16 +88,31 @@ def compress(path: Path) -> Path:
         partial.unlink(missing_ok=True)
         raise OSError(f"{path.name} reads back {restored} bytes compressed, expected {expected}")
     partial.replace(target)
-    path.unlink()
+    if not keep:
+        path.unlink()
     return target
 
 
 def main() -> None:
-    if not DB.exists():
-        log(f"ERROR source database missing at {DB}")
-        return
     BACKUP_DIR.mkdir(parents=True, exist_ok=True)
     stamp = time.strftime("%Y%m%d-%H%M", time.localtime())
+    snapshotted = snapshot_atlas(stamp)
+    # Arm A's data is a separate asset: back it up whatever happened above.
+    try:
+        snapshot_books(stamp)
+        copy_tapes()
+    except OSError as exc:
+        log(f"ERROR Arm A backup failed: {exc}")
+    # VACUUM only with a fresh, verified snapshot of the main database on disk.
+    if snapshotted:
+        vacuum_live_database()
+
+
+def snapshot_atlas(stamp: str) -> bool:
+    """Snapshot, verify, compress and rotate the main database. True when it all worked."""
+    if not DB.exists():
+        log(f"ERROR source database missing at {DB}")
+        return False
     target = BACKUP_DIR / f"{PREFIX}{stamp}.sqlite3"
 
     try:
@@ -96,7 +127,7 @@ def main() -> None:
     except sqlite3.Error as exc:
         log(f"ERROR backup failed: {exc}")
         target.unlink(missing_ok=True)
-        return
+        return False
 
     # A backup that cannot be opened is worse than none: it reads as protection
     # that does not exist. Verify before compressing or rotating anything.
@@ -105,14 +136,14 @@ def main() -> None:
     except sqlite3.Error as exc:
         log(f"ERROR verification failed, keeping older backups: {exc}")
         target.unlink(missing_ok=True)
-        return
+        return False
 
     raw_mb = target.stat().st_size / 1_048_576
     try:
         archive = compress(target)
     except OSError as exc:
         log(f"ERROR compression failed, keeping the uncompressed snapshot and older backups: {exc}")
-        return
+        return False
     packed_mb = archive.stat().st_size / 1_048_576
     log(f"backup ok: {archive.name} ({raw_mb:.0f} MB raw, {packed_mb:.0f} MB compressed, "
         f"{labels} trusted labels)")
@@ -131,8 +162,56 @@ def main() -> None:
     for stale in snapshots[:-KEEP]:
         stale.unlink()
         log(f"rotated out {stale.name}")
+    return True
 
-    vacuum_live_database()
+
+def snapshot_books(stamp: str) -> None:
+    """Arm A's recorded order books: snapshot, verify, compress, keep the newest KEEP.
+
+    The recorder writes every few seconds. The online backup holds a read lock
+    for the copy, and the recorder keeps the books it reads in memory until it
+    can write again (atlas/book_recorder.py), so nothing is lost while this runs.
+    """
+    if not BOOKS_DB.exists():
+        return
+    target = BACKUP_DIR / f"{BOOKS_PREFIX}{stamp}.sqlite3"
+    try:
+        with sqlite3.connect(f"file:{BOOKS_DB}?mode=ro", uri=True) as source, sqlite3.connect(
+            target
+        ) as destination:
+            source.backup(destination)
+            destination.execute("PRAGMA journal_mode=DELETE")
+        with sqlite3.connect(f"file:{target}?mode=ro", uri=True) as check:
+            if check.execute("PRAGMA quick_check").fetchone()[0] != "ok":
+                raise sqlite3.DatabaseError("quick_check did not return ok")
+            books = check.execute("SELECT COUNT(*) FROM orderbook_snapshots").fetchone()[0]
+    except sqlite3.Error as exc:
+        log(f"ERROR books backup failed, keeping older snapshots: {exc}")
+        target.unlink(missing_ok=True)
+        return
+    raw_mb = target.stat().st_size / 1_048_576
+    try:
+        archive = compress(target)
+    except OSError as exc:
+        log(f"ERROR books compression failed, keeping the uncompressed snapshot: {exc}")
+        return
+    packed_mb = archive.stat().st_size / 1_048_576
+    log(f"books backup ok: {archive.name} ({raw_mb:.0f} MB raw, {packed_mb:.0f} MB compressed, "
+        f"{books} recorded books)")
+    for stale in sorted(BACKUP_DIR.glob(f"{BOOKS_PREFIX}*.sqlite3.gz"))[:-KEEP]:
+        stale.unlink()
+        log(f"rotated out {stale.name}")
+
+
+def copy_tapes() -> None:
+    """Arm A's archived prints. A print never changes, so each file is copied once."""
+    folder = BACKUP_DIR / "tapes"
+    for tape in sorted(TAPES.glob(ARM_A_TAPES)):
+        if (folder / (tape.name + ".gz")).exists():
+            continue
+        folder.mkdir(parents=True, exist_ok=True)
+        compress(tape, into=folder, keep=True)
+        log(f"tape copied: {tape.name}")
 
 
 def vacuum_live_database() -> None:
