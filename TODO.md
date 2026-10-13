@@ -368,10 +368,32 @@ Read from every job log, not from the panel alone.
   floors, criteria, consequences. The recorder was off 18:59–19:03 UTC (a Run
   click on a removal command in a report); the gap is in the data as
   unknown-book markers.
-- [ ] 2026-10-13: archive the October tapes (`fetch_tape`) — Kalshi serves
+- [x] 2026-10-13: archive the October tapes (`fetch_tape`) — Kalshi serves
   prints for ~6 weeks and the window is 41 days.
   (Measured 2026-09-28: prints from 2026-07-31 are still served for these markets, 59
   days back, so the 41-day window has margin. The archive stays on the list.)
+  **Done 2026-10-13T17:23:20Z** with the frozen runner's own `fetch_tape`, unmodified
+  (`git diff 383d609 HEAD -- atlas/making.py docs/proof/run_making.py` prints nothing),
+  each market from its first recorded book to the archive time. In `data/making/tapes/`
+  (local, not in git):
+
+  | market | prints | first print (UTC) | file | sha256 (first 16) |
+  | --- | --- | --- | --- | --- |
+  | C25 | 327 | 2026-09-17T18:28:48 | `KXFEDDECISION-26OCT-C25__1789669307__1791912200.json` | `4ac282d33e09039d` |
+  | C26 | 49 | 2026-09-17T22:16:30 | `KXFEDDECISION-26OCT-C26__1789669308__1791912200.json` | `dd7eb4f06791deea` |
+  | H0 | 7,152 | 2026-09-17T18:26:28 | `KXFEDDECISION-26OCT-H0__1789669309__1791912200.json` | `271acd756038559a` |
+  | H25 | 5,232 | 2026-09-17T18:25:38 | `KXFEDDECISION-26OCT-H25__1789669310__1791912200.json` | `43082c9ba5d200eb` |
+  | H26 | 313 | 2026-09-17T18:35:52 | `KXFEDDECISION-26OCT-H26__1789669311__1791912200.json` | `fc61e417ef935f04` |
+
+  The front is whole: Kalshi still served prints from before the window that day (H0
+  back to at least 2026-09-16, H25 to 2026-09-15, with more pages). No print's content
+  was read or printed; only counts and times. The file names carry the archive's end
+  time, so they are not the cache files the 10-29 run will look for; they are used only
+  if the final fetch can no longer reach the window's start (Amendment 1, item 5).
+- [ ] **Arm A's input is not backed up.** `data/making/books.sqlite3` (410 MB on 10-13)
+  and `data/making/tapes/` exist only on this disk; the nightly backup covers
+  `data/atlas.sqlite3` alone. The recorded books cannot be re-recorded. Copy both
+  somewhere else before 10-29, or add them to the nightly backup.
 - [ ] 2026-10-29: coverage audit, then the one command in Amendment 1 §4.
 
 ## 2026-09-04 (b) — fourth hypothesis: DISPROVEN. The search is complete.
