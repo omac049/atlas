@@ -182,3 +182,19 @@ the restored one, and the last line switches the restored file back to WAL.
 Then bootstrap the agents again as in Install. Hand-made checkpoints and
 `data/backups/audit/` are never rotated.
 
+### Arm A's data
+
+The same nightly run backs up Arm A's input, whatever happens to the main snapshot:
+
+- `data/making/books.sqlite3` (the recorded order books, which cannot be re-recorded) as
+  `data/backups/books-auto-<stamp>.sqlite3.gz`: online snapshot, `quick_check`, read-back,
+  newest three kept. To restore, stop `com.atlas.books`, `gunzip -k` the snapshot and copy
+  it over `data/making/books.sqlite3`, then start the agent; the recorder writes an
+  unknown-book marker for the stretch it missed.
+- The archived October prints (`data/making/tapes/KXFEDDECISION-26OCT-*.json`), each
+  copied once to `data/backups/tapes/<name>.gz`. To restore one, `gunzip -k` it back into
+  `data/making/tapes/`.
+
+These copies are on the same disk as the originals. They cover a bad write or a deleted
+file, not the loss of the machine.
+

@@ -390,10 +390,20 @@ Read from every job log, not from the panel alone.
   was read or printed; only counts and times. The file names carry the archive's end
   time, so they are not the cache files the 10-29 run will look for; they are used only
   if the final fetch can no longer reach the window's start (Amendment 1, item 5).
-- [ ] **Arm A's input is not backed up.** `data/making/books.sqlite3` (410 MB on 10-13)
+- [x] **Arm A's input is not backed up.** `data/making/books.sqlite3` (410 MB on 10-13)
   and `data/making/tapes/` exist only on this disk; the nightly backup covers
   `data/atlas.sqlite3` alone. The recorded books cannot be re-recorded. Copy both
   somewhere else before 10-29, or add them to the nightly backup.
+  **Done 2026-10-13:** the nightly backup snapshots the books database
+  (`books-auto-*.sqlite3.gz`, verified, newest three kept) and copies each archived
+  October tape once, independently of the main snapshot (`tests/test_backup.py`). First
+  run by hand at 17:36Z: 1.6 s, 391 MB to 25 MB, 230,255 recorded books; the restored
+  copy passed `quick_check` with the same count; the recorder wrote through it with no
+  unknown-book marker; the five tape copies are byte-identical to the originals.
+- [ ] OWNER: **every Atlas backup is on the same disk as the data** (the main database,
+  and now Arm A's books and tapes). That covers a bad write or a deleted file, not a
+  lost or dead laptop. Decide where an off-machine copy should go; not the employer's
+  OneDrive.
 - [ ] 2026-10-29: coverage audit, then the one command in Amendment 1 §4.
 
 ## 2026-09-04 (b) — fourth hypothesis: DISPROVEN. The search is complete.
