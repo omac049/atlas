@@ -225,3 +225,24 @@ def test_reverb_bump_is_charged_and_labelled_within_the_published_bounds(entered
     bump = next(line for line in result["lines"] if line["id"] == "bump_fee")
     assert bump["amount"] == pytest.approx(charged, abs=0.005)
     assert bump["label"] == label
+
+
+def test_no_machine_read_schedule_has_a_quote_the_nightly_check_skips():
+    """The nightly check ignores every quote that was unmatched at the last review.
+    That is right for a sentence on a page only a person can read, and a blind spot
+    anywhere else: Shopify's Plus column changed in October 2026 unseen, and 41 of
+    Amazon's 56 quotes were on its list. A schedule whose pages are all machine-read
+    must have none."""
+    from feeverified import verify
+
+    fees = ROOT / "docs" / "fees"
+    state = json.loads((fees / "verification.json").read_text())["platforms"]
+    skipped = {}
+    for path in verify.schedules():
+        schedule = json.loads(path.read_text())
+        if any(source.get("verify") is False for source in schedule["sources"]):
+            continue
+        unmatched = state.get(schedule["platform"], {}).get("quotes_missing_at_review", [])
+        if unmatched:
+            skipped[schedule["platform"]] = len(unmatched)
+    assert skipped == {}

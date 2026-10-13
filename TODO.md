@@ -43,13 +43,24 @@ Read from every job log, not from the panel alone.
     article still says waived. Not a number the calculator uses.
   - Whatnot: one sentence about when a new seller's tiered rates start, reworded.
   The public pages read "under review" until the 04:20 check on 10-13 re-reads them.
-- [ ] **A quote that was unmatched at review is never checked again, so a real change
+- [x] **A quote that was unmatched at review is never checked again, so a real change
   there is invisible.** That is how Shopify's Plus column changed unnoticed. On 10-12,
   before this re-read: **Amazon 12 quotes unmatched with no person-read source to explain
   them** (41 were "known unmatched" at its 09-08 review), Poshmark 9 and GoFundMe 3 (both
-  have person-read sources that may account for them). Re-read those three the same way,
-  then make the nightly check report how many quotes it could not check on machine-read
-  pages, and treat that as "could not check", not "verified".
+  have person-read sources that may account for them).
+  **Closed 2026-10-12.** It was wider than the count: the nightly check skips every quote
+  on the review-time list even when it can now read it, so 41 of Amazon's 56 quotes were
+  unwatched. Every source page of the seven platforms with a list was fetched and every
+  quote tested against it. No rate differs anywhere.
+  - Amazon: twelve quotes carried "*" bullet marks and one a footnote mark the pages do
+    not have. Removed; 56 of 56 are machine-checked.
+  - GoFundMe: three quotes ended in an editor's bracketed label. Removed; 13 of 13.
+  - Cash App, eBay, Stripe, StubHub: lists dated from before the 09-28 matcher change;
+    every quote is on the page. Baselines refreshed, no schedule change.
+  - Poshmark (9) and Reverb (10) are the only lists left, and every one of those
+    sentences is on a page read by a person and was found in a copy fetched that day.
+  `test_no_machine_read_schedule_has_a_quote_the_nightly_check_skips` now fails the build
+  if a schedule with no person-read page has such a list.
 - [ ] **The monitor crashes when a write meets the nightly VACUUM.** 2026-10-11 03:30:23
   local: `sqlite3.OperationalError: database is locked` in `save_gap_observation`, inside
   the 14 s the backup's VACUUM held the database; launchd restarted it at once. Five such

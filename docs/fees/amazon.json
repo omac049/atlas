@@ -1,36 +1,36 @@
 {
   "platform": "amazon",
   "name": "Amazon (US marketplace, referral fees)",
-  "as_of": "2026-09-08",
+  "as_of": "2026-10-12",
   "sources": [
     {
       "url": "https://sell.amazon.com/pricing",
       "title": "How much does it cost to sell on Amazon? | Sell on Amazon (Standard selling fees)",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://sellercentral.amazon.com/help/hub/reference/external/G200336920",
       "title": "Selling on Amazon fee schedule (Seller Central help, public; 'This article applies to selling in: United States')",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://sellercentral.amazon.com/help/hub/reference/external/GTG4BAWSY39Z98Z3",
       "title": "Referral fees (Seller Central help, public)",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://sellercentral.amazon.com/help/hub/reference/external/GKD9U5REK5DKB38Y",
       "title": "Closing fees (Seller Central help, public)",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     },
     {
       "url": "https://sellercentral.amazon.com/help/hub/reference/external/GX7NRP7C7LKZLQV6",
       "title": "Seller Central help page GX7NRP7C7LKZLQV6 (FAILED: JS app shell only, body text 'You need to enable JavaScript to run this app.'; also tried https://sellercentral.amazon.com/gp/help/external/GX7NRP7C7LKZLQV6 with same result)",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-12",
       "last_updated_on_page": null
     }
   ],
@@ -42,35 +42,35 @@
     "Individual Selling Plan: No subscription fee",
     "Professional sellers: No per-item fee",
     "Individual sellers: $0.99 fee for each item sold",
-    "Referral fees vary by product category. For every item sold, you\u2019ll pay a percentage of the total price or a minimum amount, whichever is greater.\u00b9",
+    "Referral fees vary by product category. For every item sold, you\u2019ll pay a percentage of the total price or a minimum amount, whichever is greater.",
     "For all products, Amazon deducts the applicable referral fee percentage calculated on the total sales price, excluding any taxes calculated through Amazon tax calculation services. The total sales price is the total amount paid by the buyer, including the item price and any delivery or gift wrapping charges.",
     "Items in some categories have a per-item minimum referral fee as listed below (for example, sellers pay the greater of the referral fee or the per-item minimum referral fee).",
     "Referral fee = [(Item price + delivery charges + giftwrap charges) multiplied by the category referral fee rate] OR [applicable minimum referral fee], whichever is greater.",
     "Time of charge | When the buyer's order is shipped",
     "Amazon Device Accessories | 45% | $0.30",
     "Automotive and Powersports | 12% | $0.30",
-    "Baby Products | * 8% for products with a total sales price of $10.00 or less, and * 15% for products with a total sales price greater than $10.00 | $0.30",
+    "Baby Products | 8% for products with a total sales price of $10.00 or less, and 15% for products with a total sales price greater than $10.00 | $0.30",
     "Backpacks, Handbags, and Luggage | 15% | $0.30",
     "Base Equipment Power Tools | 12% | $0.30",
-    "Beauty, Health and Personal Care | * 8% for products with a total sales price of $10.00 or less, and * 15% for items with a total sales price greater than $10.00 | $0.30",
+    "Beauty, Health and Personal Care | 8% for products with a total sales price of $10.00 or less, and 15% for items with a total sales price greater than $10.00 | $0.30",
     "Business, Industrial, and Scientific Supplies | 12% | $0.30",
-    "Clothing and Accessories | * 5% for products with a total sales price of $15.00 or less * 10% for products with a total sales price greater than $15.00 and less than or equal to $20.00 * 17% for products with a total sales price greater than $20.00 | $0.30",
-    "Compact Appliances | * 15% for the portion of the total sales price up to $300.00, and * 8% for any portion of the total sales price greater than $300.00 | $0.30",
+    "Clothing and Accessories | 5% for products with a total sales price of $15.00 or less 10% for products with a total sales price greater than $15.00 and less than or equal to $20.00 17% for products with a total sales price greater than $20.00 | $0.30",
+    "Compact Appliances | 15% for the portion of the total sales price up to $300.00, and 8% for any portion of the total sales price greater than $300.00 | $0.30",
     "Computers | 8% | $0.30",
     "Consumer Electronics1 | 8% | $0.30",
-    "Electronics Accessories | * 15% for the portion of the total sales price up to $100.00, and * 8% for any portion of the total sales price greater than $100.00 | $0.30",
+    "Electronics Accessories | 15% for the portion of the total sales price up to $100.00, and 8% for any portion of the total sales price greater than $100.00 | $0.30",
     "Everything Else2 | 15% | $0.30",
     "Eyewear | 15% | $0.30",
-    "Fine Art | * 20% for the portion of the total sales price up to $100.00, * 15% for the portion of the total sales price greater than $100.00 up to $1,000.00, * 10% for the portion of the total sales price greater than $1,000.00 up to $5,000.00, and * 5% for the portion of the total sales price greater than $5,000.00 | --",
+    "Fine Art | 20% for the portion of the total sales price up to $100.00, 15% for the portion of the total sales price greater than $100.00 up to $1,000.00, 10% for the portion of the total sales price greater than $1,000.00 up to $5,000.00, and 5% for the portion of the total sales price greater than $5,000.00 | --",
     "Footwear | 15% | $0.30",
     "Full-Size Appliances | 8% | $0.30",
-    "Furniture | * 15% for the portion of the total sales price up to $200.00, and * 10% for any portion of the total sales price greater than $200.00 | $0.30",
+    "Furniture | 15% for the portion of the total sales price up to $200.00, and 10% for any portion of the total sales price greater than $200.00 | $0.30",
     "Gift Cards | 20% | --",
-    "Grocery and Gourmet | * 8% for products with a total sales price of $15.00 or less, and * 15% for products with a total sales price greater than $15.00 | --",
+    "Grocery and Gourmet | 8% for products with a total sales price of $15.00 or less, and 15% for products with a total sales price greater than $15.00 | --",
     "Home and Kitchen | 15% | $0.30",
-    "Jewelry | * 20% for the portion of the total sales price up to $250.00, and * 5% for any portion of the total sales price greater than $250.00 | $0.30",
+    "Jewelry | 20% for the portion of the total sales price up to $250.00, and 5% for any portion of the total sales price greater than $250.00 | $0.30",
     "Lawn and Garden | 15% | $0.30",
-    "Lawn Mowers and Snow Throwers | * 15% for products with a total sales price of up to $500.00 * 8% for products with a total sales price greater than $500.00 | $0.30",
+    "Lawn Mowers and Snow Throwers | 15% for products with a total sales price of up to $500.00 8% for products with a total sales price greater than $500.00 | $0.30",
     "Mattresses | 15% | $0.30",
     "Media - Books, DVD, Music, Software, Video | 15% | --",
     "Merchant Fulfilled Services3 | 20% | $0.30",
@@ -83,7 +83,7 @@
     "Toys and Games | 15% | $0.30",
     "Video Game Consoles | 8% | --",
     "Video Games and Gaming Accessories | 15% | --",
-    "Watches | * 16% for the portion of the total sales price up to $1,500.00, and * 3% for any portion of the total sales price greater than $1,500.00 | $0.30",
+    "Watches | 16% for the portion of the total sales price up to $1,500.00, and 3% for any portion of the total sales price greater than $1,500.00 | $0.30",
     "Sellers also pay a closing fee of $1.80 per item that is sold in the categories of Books, DVD, Music, Software & Computer/Video Games, Video Game Consoles, and Video Game Accessories.",
     "The closing fee is $1.80 per unit sold for products in the Books, DVD, Music, Software & Computer/Video Games, Video Game Consoles, and Video Game Accessories categories.",
     "4 In addition to the referral fee, media items incur a closing fee $1.80 per item.",
@@ -112,7 +112,8 @@
     "Referral fee base excludes taxes only when calculated through Amazon tax calculation services; the fee is charged when the order ships, not at sale.",
     "The Professional subscription is charged only 'when you have active listings'; merged multi-country accounts may see a different fee (page footnote).",
     "Rounding of fee amounts is not specified on any loaded page.",
-    "sell.amazon.com/pricing links 'Learn more about selling fees' to Seller Central G6F7CN3EQS7MEGCN ('Selling on Amazon fees guide'); not loaded, not needed for numbers."
+    "sell.amazon.com/pricing links 'Learn more about selling fees' to Seller Central G6F7CN3EQS7MEGCN ('Selling on Amazon fees guide'); not loaded, not needed for numbers.",
+    "Re-read 2026-10-12. Every one of the 56 quoted sentences was found on Amazon's pages by the checker's own reader, and no rate differs. Twelve quotes had carried '*' bullet marks, and one a footnote mark, that the pages do not have; those marks were removed so the nightly check can match the tiered referral-fee rows, which it had been skipping."
   ],
   "categories": {
     "amazon_device_accessories": {

@@ -16,6 +16,11 @@
      "at": "2026-09-08T17:59:13+00:00",
      "event": "reviewed",
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
+    },
+    {
+     "at": "2026-10-13T00:00:32+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-10-12: all 56 quoted sentences found on Amazon's pages and no rate differs. Twelve quotes carried bullet marks and one a footnote mark the pages do not have; removed, so the tiered referral-fee rows are machine-checked. The skip list held 41 quotes."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -62,85 +67,43 @@
     "Watches | * 16% for the portion of the total sales price up to $1,500.00, and * 3% for any portion of the total sales price greater than $1,500.00 | $0.30",
     "If you refund a buyer for an order for which you have already received payment, we refund you the amount of the referral fee you paid for the item minus the applicable refund administration fee, which is the lesser of $5.00 or 20% of the applicable referral fee."
    ],
-   "quotes_missing_at_review": [
-    "Individual $0.99 / item sold",
-    "Referral fees vary by product category. For every item sold, you\u2019ll pay a percentage of the total price or a minimum amount, whichever is greater.\u00b9",
-    "Time of charge | When the buyer's order is shipped",
-    "Amazon Device Accessories | 45% | $0.30",
-    "Automotive and Powersports | 12% | $0.30",
-    "Baby Products | * 8% for products with a total sales price of $10.00 or less, and * 15% for products with a total sales price greater than $10.00 | $0.30",
-    "Backpacks, Handbags, and Luggage | 15% | $0.30",
-    "Base Equipment Power Tools | 12% | $0.30",
-    "Beauty, Health and Personal Care | * 8% for products with a total sales price of $10.00 or less, and * 15% for items with a total sales price greater than $10.00 | $0.30",
-    "Business, Industrial, and Scientific Supplies | 12% | $0.30",
-    "Clothing and Accessories | * 5% for products with a total sales price of $15.00 or less * 10% for products with a total sales price greater than $15.00 and less than or equal to $20.00 * 17% for products with a total sales price greater than $20.00 | $0.30",
-    "Compact Appliances | * 15% for the portion of the total sales price up to $300.00, and * 8% for any portion of the total sales price greater than $300.00 | $0.30",
-    "Computers | 8% | $0.30",
-    "Consumer Electronics1 | 8% | $0.30",
-    "Electronics Accessories | * 15% for the portion of the total sales price up to $100.00, and * 8% for any portion of the total sales price greater than $100.00 | $0.30",
-    "Everything Else2 | 15% | $0.30",
-    "Eyewear | 15% | $0.30",
-    "Fine Art | * 20% for the portion of the total sales price up to $100.00, * 15% for the portion of the total sales price greater than $100.00 up to $1,000.00, * 10% for the portion of the total sales price greater than $1,000.00 up to $5,000.00, and * 5% for the portion of the total sales price greater than $5,000.00 | --",
-    "Footwear | 15% | $0.30",
-    "Full-Size Appliances | 8% | $0.30",
-    "Furniture | * 15% for the portion of the total sales price up to $200.00, and * 10% for any portion of the total sales price greater than $200.00 | $0.30",
-    "Gift Cards | 20% | --",
-    "Grocery and Gourmet | * 8% for products with a total sales price of $15.00 or less, and * 15% for products with a total sales price greater than $15.00 | --",
-    "Home and Kitchen | 15% | $0.30",
-    "Jewelry | * 20% for the portion of the total sales price up to $250.00, and * 5% for any portion of the total sales price greater than $250.00 | $0.30",
-    "Lawn and Garden | 15% | $0.30",
-    "Lawn Mowers and Snow Throwers | * 15% for products with a total sales price of up to $500.00 * 8% for products with a total sales price greater than $500.00 | $0.30",
-    "Mattresses | 15% | $0.30",
-    "Media - Books, DVD, Music, Software, Video | 15% | --",
-    "Merchant Fulfilled Services3 | 20% | $0.30",
-    "Musical Instruments and AV Production | 15% | $0.30",
-    "Office Products | 15% | $0.30",
-    "Pet Products | 15%, except 22% for veterinary diets | $0.30",
-    "Sports and Outdoors | 15% | $0.30",
-    "Tires | 10% | $0.30",
-    "Tools and Home Improvement | 15% | $0.30",
-    "Toys and Games | 15% | $0.30",
-    "Video Game Consoles | 8% | --",
-    "Video Games and Gaming Accessories | 15% | --",
-    "Watches | * 16% for the portion of the total sales price up to $1,500.00, and * 3% for any portion of the total sales price greater than $1,500.00 | $0.30",
-    "If you refund a buyer for an order for which you have already received payment, we refund you the amount of the referral fee you paid for the item minus the applicable refund administration fee, which is the lesser of $5.00 or 20% of the applicable referral fee."
-   ],
-   "reviewed_at": "2026-09-08T17:59:13+00:00",
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-10-13T00:00:32+00:00",
    "sources": {
     "https://sell.amazon.com/pricing": {
-     "fingerprint_drift": false,
-     "hash": "6e1fb02338b48a3d2b9e82ccfa16dc828a166ed632d48c1361426ddfeb6a7d68",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T17:59:13+00:00",
-     "status": "verified"
+     "hash": "64639ab87b7fdb3272aeac9d521baa46f0a5fde04c7e35d462d21cdeccacb186",
+     "last_checked_at": "2026-10-13T00:00:32+00:00",
+     "reviewed_at": "2026-10-13T00:00:32+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://sellercentral.amazon.com/help/hub/reference/external/G200336920": {
-     "fingerprint_drift": false,
-     "hash": "c34141ebff350a8197703bdb340547e82d9f1dfb45eaa59331810daf44ad4682",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T17:59:13+00:00",
-     "status": "verified"
+     "hash": "65a26c903d1842ad2e95a8d42295d62b5ec043755f46184d11380c97e9e67da8",
+     "last_checked_at": "2026-10-13T00:00:32+00:00",
+     "reviewed_at": "2026-10-13T00:00:32+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://sellercentral.amazon.com/help/hub/reference/external/GKD9U5REK5DKB38Y": {
-     "fingerprint_drift": false,
      "hash": "dd120964952a7ad7947fc0c863ddc60f57eb8f0cffdfc4022348da946503b3ee",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T17:59:13+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:00:32+00:00",
+     "reviewed_at": "2026-10-13T00:00:32+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://sellercentral.amazon.com/help/hub/reference/external/GTG4BAWSY39Z98Z3": {
-     "fingerprint_drift": false,
      "hash": "80c5d52a73516ecaa83f1e9fbea26996a5169a5bd88d3162aa5ba1d83023c3b8",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T17:59:13+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:00:32+00:00",
+     "reviewed_at": "2026-10-13T00:00:32+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://sellercentral.amazon.com/help/hub/reference/external/GX7NRP7C7LKZLQV6": {
-     "fingerprint_drift": false,
      "hash": "72efc80f02dd4547c9699ec1e2dad0cf06b77f11bc577a8e2c3ced1fc3e8fa8b",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T17:59:13+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:00:32+00:00",
+     "reviewed_at": "2026-10-13T00:00:32+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"
@@ -166,6 +129,11 @@
      "at": "2026-09-08T17:59:21+00:00",
      "event": "reviewed",
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
+    },
+    {
+     "at": "2026-10-13T00:01:08+00:00",
+     "event": "reviewed",
+     "note": "Baseline refreshed 2026-10-12, no change to the schedule: every quoted sentence was found on the page by the checker's own reader. The list of quotes the nightly check skips dated from before the matcher ignored spacing and table borders (2026-09-28), so it had been skipping sentences it could read."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -176,70 +144,64 @@
     "| Transfer to Linked Account (standard transfer) No fee to transfer money from your Cash App Balance to a Linked Account with the standard option. The money is typically available in 1-3 Business Days. | $0 |",
     "| Transfer to a Linked Account (Instant Transfer) Fee for expedited transfer from your Cash App Balance to a Linked Account. Funds are typically available within minutes. The specific fee amount is disclosed at the time of the transaction. | 0.5%-2.5% ($0.25-$1 min)** (the maximum fee shall not exceed $75)** |"
    ],
-   "quotes_missing_at_review": [
-    "| Sending money using your Cash App Balance or debit card in the U.S. | $0 |",
-    "| Receive money | $0 |",
-    "| Send from credit card | 3%** |",
-    "| Transfer to Linked Account (standard transfer) No fee to transfer money from your Cash App Balance to a Linked Account with the standard option. The money is typically available in 1-3 Business Days. | $0 |",
-    "| Transfer to a Linked Account (Instant Transfer) Fee for expedited transfer from your Cash App Balance to a Linked Account. Funds are typically available within minutes. The specific fee amount is disclosed at the time of the transaction. | 0.5%-2.5% ($0.25-$1 min)** (the maximum fee shall not exceed $75)** |"
-   ],
-   "reviewed_at": "2026-09-08T17:59:21+00:00",
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-10-13T00:01:08+00:00",
    "sources": {
     "https://cash.app/bank/no-fees": {
-     "fingerprint_drift": false,
-     "hash": "af2162b7f8707c9cdf55b0384a34f0907ba40c8482ecdc261429c0c17f5b6e16",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T17:59:21+00:00",
-     "status": "verified"
+     "hash": "e16a8d5d7747e458629f088447a4d91d393527a2f772cbe49b2f350928e75c42",
+     "last_checked_at": "2026-10-13T00:01:08+00:00",
+     "reviewed_at": "2026-10-13T00:01:08+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://cash.app/help/us/en-US/6521-cash-app-business-fees": {
-     "fingerprint_drift": false,
      "hash": "8a045d88e2e44ef2fb3aeffdecaefa869ef0a0110909c825525d0da68ecf90d7",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T17:59:21+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:01:08+00:00",
+     "reviewed_at": "2026-10-13T00:01:08+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://cash.app/help/us/en-us/3073-cash-out-speed-options": {
-     "fingerprint_drift": false,
      "hash": "7d4ccfbd03c55dbf147bdcf16b87fd2ed599e1e2a2b87f31b55a91fefbf9af85",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T17:59:21+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:01:08+00:00",
+     "reviewed_at": "2026-10-13T00:01:08+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://cash.app/help/us/en-us/6567-problems-linking-a-credit-card": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T17:59:21+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:01:08+00:00",
+     "reviewed_at": "2026-10-13T00:01:08+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://cash.app/legal/us/en-us/cash-payment-terms": {
-     "fingerprint_drift": false,
      "hash": "44d11b71f612a342e82e608e31fe7e674c413d81609ed660eea017be7d6c2afa",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T17:59:21+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:01:08+00:00",
+     "reviewed_at": "2026-10-13T00:01:08+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://cash.app/legal/us/en-us/tos": {
-     "fingerprint_drift": false,
      "hash": "9588ba4c65d9d5024ee73ea6767c07c998ea532119e51c1124d74e539779f2e1",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T17:59:21+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:01:08+00:00",
+     "reviewed_at": "2026-10-13T00:01:08+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://cash.app/send": {
-     "fingerprint_drift": false,
      "hash": "1750ccfca7930af9bba71c8fcfb315fefc1fc99df41fbba2e63021ade55d178b",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T17:59:21+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:01:08+00:00",
+     "reviewed_at": "2026-10-13T00:01:08+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://developers.cash.app/cash-app-pay-partner-api/api-reference/network-api/merchant-fee-plans": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T17:59:21+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:01:08+00:00",
+     "reviewed_at": "2026-10-13T00:01:08+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"
@@ -367,23 +329,26 @@
      "at": "2026-09-08T18:02:54+00:00",
      "event": "reviewed",
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
+    },
+    {
+     "at": "2026-10-13T00:04:25+00:00",
+     "event": "reviewed",
+     "note": "Baseline refreshed 2026-10-12, no change to the schedule: every quoted sentence was found on the page by the checker's own reader. The list of quotes the nightly check skips dated from before the matcher ignored spacing and table borders (2026-09-28), so it had been skipping sentences it could read."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "The total amount of the sale includes the item price, any handling charges, any shipping costs collected from the buyer (some exceptions apply), sales tax, and any other applicable fees."
    ],
-   "quotes_missing_at_review": [
-    "The total amount of the sale includes the item price, any handling charges, any shipping costs collected from the buyer (some exceptions apply), sales tax, and any other applicable fees."
-   ],
-   "reviewed_at": "2026-09-08T18:02:54+00:00",
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-10-13T00:04:25+00:00",
    "sources": {
     "https://www.ebay.com/help/selling/fees-credits-invoices/selling-fees?id=4822": {
-     "fingerprint_drift": false,
-     "hash": "dd04c11f51b81ab70c274af7e933ea6424a5b3862bd809ae00190ea5f5b712e7",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:02:54+00:00",
-     "status": "verified"
+     "hash": "939548b46d98f1e32be1cc579b8adbc98f760fe617a8149ca922746fd41a433e",
+     "last_checked_at": "2026-10-13T00:04:25+00:00",
+     "reviewed_at": "2026-10-13T00:04:25+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"
@@ -481,6 +446,11 @@
      "at": "2026-09-08T18:03:50+00:00",
      "event": "reviewed",
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
+    },
+    {
+     "at": "2026-10-13T00:00:41+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-10-12: every quoted sentence found and no rate differs. Three quotes ended in an editor's bracketed label that was never on the page; removed, so all 13 are machine-checked."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -490,62 +460,57 @@
     "Supporters who choose to make a recurring donation to an individual or charity on GoFundMe pay a 5% fee per donation to help support this feature. This fee does not apply to recurring donations made through GoFundMe Pro.",
     "If you contribute using a credit or debit card, standard processing fees may apply after your first contribution\u2014 2.2% per transaction. There are no fees for ACH contributions. (GoFundMe Giving Fund)"
    ],
-   "quotes_missing_at_review": [
-    "One transaction fee 2.9% + $0.30 Automatically deducted from each donation, so you never have to worry about paying a bill. International transaction and conversion fees may apply based on your payment method. (pricing page, United States, 'Individual or business' tab)",
-    "One transaction fee\u2014that\u2019s it* 2.2% + $0.30 Automatically deducted from each donation, so you never have to worry about paying a bill. (pricing page, United States, 'Certified nonprofit' tab)",
-    "Supporters who choose to make a recurring donation to an individual or charity on GoFundMe pay a 5% fee per donation to help support this feature. This fee does not apply to recurring donations made through GoFundMe Pro.",
-    "If you contribute using a credit or debit card, standard processing fees may apply after your first contribution\u2014 2.2% per transaction. There are no fees for ACH contributions. (GoFundMe Giving Fund)"
-   ],
-   "reviewed_at": "2026-09-08T18:03:50+00:00",
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-10-13T00:00:41+00:00",
    "sources": {
     "https://charity.gofundme.com/c/charity-pricing": {
-     "fingerprint_drift": false,
-     "hash": "32f1611783ea89c6e4a6e392491817f8b39cb6ea974d255d5b1c3abae6fbecfe",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:03:50+00:00",
-     "status": "verified"
+     "hash": "656eb0b9ca98f7abfd0a0510484bface55d9a68e6edb6bcf35a68a7211c7eb80",
+     "last_checked_at": "2026-10-13T00:00:41+00:00",
+     "reviewed_at": "2026-10-13T00:00:41+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://support.gofundme.com/hc/en-us/articles/115015446027-Extra-Charge-on-Statement": {
-     "fingerprint_drift": false,
      "hash": "3477df9d11c83c7d347380fa7a939c14dd5c7ecc1825b235e864a6778a02a25a",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:03:50+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:00:41+00:00",
+     "reviewed_at": "2026-10-13T00:00:41+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://support.gofundme.com/hc/en-us/articles/203604424-Learn-about-GoFundMe-fees": {
-     "fingerprint_drift": false,
      "hash": "543edd20dd0ff9c17f93a9a6ea1e3c951e98978c3134cfc215b4dd7eab51447a",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:03:50+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:00:41+00:00",
+     "reviewed_at": "2026-10-13T00:00:41+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://support.gofundme.com/hc/en-us/articles/360051144952-Choosing-a-tip-amount": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:03:50+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:00:41+00:00",
+     "reviewed_at": "2026-10-13T00:00:41+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://transparency.gofundme.com/hc/en-us/articles/25144121631643-Pricing-and-Fees": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:03:50+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:00:41+00:00",
+     "reviewed_at": "2026-10-13T00:00:41+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.gofundme.com/c/blog/gofundme-fees": {
-     "fingerprint_drift": false,
-     "hash": "fed683190df691a9fa9ad4a8f8e1ccd2dfe5715454c0dded05419908d77c499b",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:03:50+00:00",
-     "status": "verified"
+     "hash": "c6b4b6644e30b9d4d2183c7a9319fc3d57f645b1b44bc94aed727477b013c238",
+     "last_checked_at": "2026-10-13T00:00:41+00:00",
+     "reviewed_at": "2026-10-13T00:00:41+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.gofundme.com/c/pricing": {
-     "fingerprint_drift": false,
-     "hash": "eb4e78899ae09425acd6b14d03214ddc689906286a43fc50f7cf13fac14de746",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:03:50+00:00",
-     "status": "verified"
+     "hash": "84cd4d237017c00fc39470f382c4f3af15cba7ac6eeaed1273182bfca471f5ee",
+     "last_checked_at": "2026-10-13T00:00:41+00:00",
+     "reviewed_at": "2026-10-13T00:00:41+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"
@@ -736,6 +701,11 @@
      "at": "2026-09-08T18:05:17+00:00",
      "event": "reviewed",
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
+    },
+    {
+     "at": "2026-10-13T00:08:29+00:00",
+     "event": "reviewed",
+     "note": "Baseline refreshed 2026-10-12, no change to the schedule: the six sentences on the fee policy page are machine-checked, and the nine on the three help pages read by a person were all found in copies fetched that day."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -760,26 +730,24 @@
     "Orders are shipped via USPS Ground Advantage (2-5 business days).",
     "If you\u2019re purchasing multiple listings from the same closet, you can add them to a Bundle and pay a single $6.49 shipping fee, provided the total package weight does not exceed 5 lbs.",
     "If the total weight exceeds 5 lbs, any overweight shipping costs are the responsibility of the seller.",
-    "10.1-15 lbs: A brand-new tier for only $10.00.",
-    "Sellers, you only pay the difference between your original label and the upgraded label, and your entire order still ships together in one package.",
     "Poshmark is required to apply this additional tax to 80% of the seller fee on sales made by sellers with a return address in Texas.",
     "The tax rate imposed includes the 6.25% Texas state sales tax plus applicable local sales taxes (city, county, etc.) where the seller is located. Assuming the local sales tax rate is 2%, this results in a combined rate of 8.25%. This will be deducted from the seller\u2019s earnings at the time of sale."
    ],
-   "reviewed_at": "2026-09-08T18:05:17+00:00",
+   "reviewed_at": "2026-10-13T00:08:29+00:00",
    "sources": {
     "https://blog.poshmark.com/2026/02/13/shipping-heavier-items-on-poshmark-is-now-simpler-and-cheaper/": {
-     "fingerprint_drift": false,
-     "hash": "a68b8329697351482258abe260ac4ae9a42c0646f3a442e8ff9f8e49717314a7",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:05:17+00:00",
-     "status": "verified"
+     "hash": "af36cfd7aa0c25bf19fb9837f5ad437d9fe774454d108155d0fcce5dd3be6b00",
+     "last_checked_at": "2026-10-13T00:08:29+00:00",
+     "reviewed_at": "2026-10-13T00:08:29+00:00",
+     "status": "verified",
+     "via": "impersonated"
     },
     "https://poshmark.com/fee_policy": {
-     "fingerprint_drift": false,
      "hash": "9ca759ab9d3cfaeacf5f54907533f5fe3cfaa1d26ed30568d3de657eb203132e",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:05:17+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:08:29+00:00",
+     "reviewed_at": "2026-10-13T00:08:29+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"
@@ -1150,65 +1118,68 @@
      "at": "2026-09-08T18:12:05+00:00",
      "event": "reviewed",
      "note": "baseline with rendered-browser fetch and quote verification, 2026-09-08"
+    },
+    {
+     "at": "2026-10-13T00:05:13+00:00",
+     "event": "reviewed",
+     "note": "Baseline refreshed 2026-10-12, no change to the schedule: every quoted sentence was found on the page by the checker's own reader. The list of quotes the nightly check skips dated from before the matcher ignored spacing and table borders (2026-09-28), so it had been skipping sentences it could read."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
    "quotes_missing": [
     "| United States | 0.50 USD | 9,999 USD |"
    ],
-   "quotes_missing_at_review": [
-    "| United States | 0.50 USD | 9,999 USD |"
-   ],
-   "reviewed_at": "2026-09-08T18:12:05+00:00",
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-10-13T00:05:13+00:00",
    "sources": {
     "https://docs.stripe.com/payments/ach-direct-debit": {
-     "fingerprint_drift": false,
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:12:05+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:05:13+00:00",
+     "reviewed_at": "2026-10-13T00:05:13+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://docs.stripe.com/payouts/instant-payouts": {
-     "fingerprint_drift": false,
      "hash": "6fe07c7aba95518fb48029f087dbc8bf659e951c4c71f0c9c866f83399cad413",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:12:05+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:05:13+00:00",
+     "reviewed_at": "2026-10-13T00:05:13+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://stripe.com/legal/pricing-policy": {
-     "fingerprint_drift": false,
      "hash": "86350984efb01ae8ae8b2bd6a424ee8465b29d668a8b545f25e9d2ae9ce761f4",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:12:05+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:05:13+00:00",
+     "reviewed_at": "2026-10-13T00:05:13+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://stripe.com/pricing": {
-     "fingerprint_drift": true,
-     "hash": "743dc98c88cfe723ffe55189663b2a7d2bced2de00593cee306a79d6356bae89",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:12:05+00:00",
-     "status": "verified"
+     "hash": "c397892a7fd23857caac76eb5df85ea5787bada437ec805a36970384416e7934",
+     "last_checked_at": "2026-10-13T00:05:13+00:00",
+     "reviewed_at": "2026-10-13T00:05:13+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://stripe.com/pricing/local-payment-methods": {
-     "fingerprint_drift": false,
      "hash": "6c1752ada15e9e8840c8a21bb10afa6136726189cd843230609a566e85510db7",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:12:05+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:05:13+00:00",
+     "reviewed_at": "2026-10-13T00:05:13+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://support.stripe.com/questions/manually-entered-card-payments": {
-     "fingerprint_drift": false,
      "hash": "5d84fc71d1729a9a6844528e46de85de08592ec3c5ac64893e108048cb8e1ac9",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:12:05+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:05:13+00:00",
+     "reviewed_at": "2026-10-13T00:05:13+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://support.stripe.com/questions/rounding-rules-for-stripe-fees": {
-     "fingerprint_drift": false,
      "hash": "3d990df1b97e66a954a82b0ffd3b5d56244078d56841fdf7ed9a6430924f910d",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:12:05+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:05:13+00:00",
+     "reviewed_at": "2026-10-13T00:05:13+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"
@@ -1237,6 +1208,11 @@
       "When you sell tickets on StubHub, we don't charge extra fees for being paid through PayPal.",
       "If you ask PayPal to send you a check, there may be an extra service fee."
      ]
+    },
+    {
+     "at": "2026-10-13T00:07:45+00:00",
+     "event": "reviewed",
+     "note": "Baseline refreshed 2026-10-12, no change to the schedule: every quoted sentence was found on the page by the checker's own reader. The list of quotes the nightly check skips dated from before the matcher ignored spacing and table borders (2026-09-28), so it had been skipping sentences it could read."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -1244,81 +1220,78 @@
     "If you deliver your tickets on time and as promised, the sell fee is the only fee you pay to sell tickets. If you don\u2019t fulfill your seller responsibilities per our Global User Agreement and our Seller Policies, you\u2019ll be charged whichever is greater: 100% of the price of the tickets sold. The full amount incurred by us to remedy the issue for the buyer.",
     "We may charge fees for selling and/or buying Tickets through our Site and/or otherwise using our Services, as well as delivery or fulfillment fees (collectively referred to as \u201cService Fees\u201d). Service Fees may vary depending on various factors, including event type, Ticket type, optional features selected by you (e.g., Sponsored Listings), and location."
    ],
-   "quotes_missing_at_review": [
-    "If you deliver your tickets on time and as promised, the sell fee is the only fee you pay to sell tickets. If you don\u2019t fulfill your seller responsibilities per our Global User Agreement and our Seller Policies, you\u2019ll be charged whichever is greater: 100% of the price of the tickets sold. The full amount incurred by us to remedy the issue for the buyer.",
-    "We may charge fees for selling and/or buying Tickets through our Site and/or otherwise using our Services, as well as delivery or fulfillment fees (collectively referred to as \u201cService Fees\u201d). Service Fees may vary depending on various factors, including event type, Ticket type, optional features selected by you (e.g., Sponsored Listings), and location."
-   ],
-   "reviewed_at": "2026-09-08T18:13:51+00:00",
+   "quotes_missing_at_review": [],
+   "reviewed_at": "2026-10-13T00:07:45+00:00",
    "sources": {
     "https://newsroom.stubhub.com/2026/06/04/understanding-ticket-fees-why-they-exist-and-what-they-cover/": {
-     "fingerprint_drift": false,
      "hash": "35231c380913f985921903385867d439cde89238f29d5619818c226416f0e9a6",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:13:51+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:07:45+00:00",
+     "reviewed_at": "2026-10-13T00:07:45+00:00",
+     "status": "verified",
+     "via": "impersonated"
     },
     "https://support.stubhub.com/articles/61000276392-stubhubs-fees-to-buy-and-sell-tickets": {
-     "fingerprint_drift": false,
      "hash": "2c535dcd8f77baefdcc97ba115f5597e1f1120b76a17935ca5bbf49a5b2260a5",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:13:51+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:07:45+00:00",
+     "reviewed_at": "2026-10-13T00:07:45+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://support.stubhub.com/articles/61000276591-get-paid-for-sold-tickets": {
-     "fingerprint_drift": false,
      "hash": "363967c50c32376fcf1cb4e05dcbfc9cad2526163ee5929fe52cd65f9d7aa253",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:13:51+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:07:45+00:00",
+     "reviewed_at": "2026-10-13T00:07:45+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://support.stubhub.com/articles/61000276682-cancelled-sale-charges": {
-     "fingerprint_drift": false,
      "hash": "363967c50c32376fcf1cb4e05dcbfc9cad2526163ee5929fe52cd65f9d7aa253",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:13:51+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:07:45+00:00",
+     "reviewed_at": "2026-10-13T00:07:45+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://support.stubhub.com/articles/61000276706-expected-payout-from-sold-tickets": {
-     "fingerprint_drift": false,
      "hash": "363967c50c32376fcf1cb4e05dcbfc9cad2526163ee5929fe52cd65f9d7aa253",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:13:51+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:07:45+00:00",
+     "reviewed_at": "2026-10-13T00:07:45+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://support.stubhub.com/articles/61000276710-paypal-fees-when-selling-tickets": {
-     "fingerprint_drift": false,
      "hash": "363967c50c32376fcf1cb4e05dcbfc9cad2526163ee5929fe52cd65f9d7aa253",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:13:51+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:07:45+00:00",
+     "reviewed_at": "2026-10-13T00:07:45+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://support.stubhub.com/articles/61000276777-stubhubs-penalties-if-you-cant-deliver-tickets-you-sold": {
-     "fingerprint_drift": false,
      "hash": "363967c50c32376fcf1cb4e05dcbfc9cad2526163ee5929fe52cd65f9d7aa253",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:13:51+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:07:45+00:00",
+     "reviewed_at": "2026-10-13T00:07:45+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://support.stubhub.com/articles/61000276841-stubhubs-fees-to-sell-tickets": {
-     "fingerprint_drift": false,
      "hash": "363967c50c32376fcf1cb4e05dcbfc9cad2526163ee5929fe52cd65f9d7aa253",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:13:51+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:07:45+00:00",
+     "reviewed_at": "2026-10-13T00:07:45+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.stubhub.com/legal?section=sp": {
-     "fingerprint_drift": false,
      "hash": "9d7bf6cd1880860b0af56520699ca1e1d8c0b40d221dfc4297bbdbdc2a6041e2",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:13:51+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:07:45+00:00",
+     "reviewed_at": "2026-10-13T00:07:45+00:00",
+     "status": "verified",
+     "via": "rendered"
     },
     "https://www.stubhub.com/legal?section=ua": {
-     "fingerprint_drift": false,
      "hash": "acb92e4f854c6567c7694ea83f7521d2b684b26296f67b50eff2252b63a4d4b7",
-     "last_checked_at": "2026-09-08T18:49:32+00:00",
-     "reviewed_at": "2026-09-08T18:13:51+00:00",
-     "status": "verified"
+     "last_checked_at": "2026-10-13T00:07:45+00:00",
+     "reviewed_at": "2026-10-13T00:07:45+00:00",
+     "status": "verified",
+     "via": "rendered"
     }
    },
    "status": "verified"
