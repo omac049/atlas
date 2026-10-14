@@ -63,11 +63,11 @@ GO_MIN_OPPORTUNITIES_PER_MONTH = 10
 #    books". The median executable basket to date is ~$474 of capital for
 #    ~$4.74 of gross edge.
 #
-# PROVISIONAL: both numbers are placeholders pending owner sign-off. 15%
-# annualized is roughly the risk-free rate plus a premium for settlement
-# divergence, legging, and venue risk on an unverified twin; $500 is the
-# smallest basket worth an operator's attention. Neither is owner-signed yet —
-# record the decision before day 90 reads either as authoritative.
+# OWNER-SIGNED 2026-10-14 (docs/NINETY_DAY_STUDY.md, Amendments). Both were
+# placeholders until then. 15% annualized is roughly the risk-free rate plus a
+# premium for settlement divergence, legging, and venue risk on an unverified
+# twin; $500 is the smallest basket worth an operator's attention. Changing
+# either needs a new owner-signed amendment.
 GO_MIN_ANNUALIZED_RETURN_ON_LOCKED_CAPITAL = Decimal("0.15")
 GO_MIN_MEDIAN_BASKET_NOTIONAL_USD = Decimal(500)
 
@@ -565,7 +565,7 @@ def _go_decision(
                 GO_MIN_ANNUALIZED_RETURN_ON_LOCKED_CAPITAL
             ),
             "median_basket_notional_usd": str(GO_MIN_MEDIAN_BASKET_NOTIONAL_USD),
-            "provisional_pending_owner_signoff": [
+            "owner_signed_2026_10_14": [
                 "annualized_return_on_locked_capital",
                 "median_basket_notional_usd",
             ],

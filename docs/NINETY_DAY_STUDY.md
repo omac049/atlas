@@ -421,3 +421,40 @@ are the honest test of whether a tradeable gap ever opens at all.
     scheduled Monday files are full-history. A capped file is not comparable with a
     full-history file: read the earlier weeks from the full-history `weekly` table.
   - **Cost:** 9 s and 2.6 GB of memory for 440,290 rows; about 5 GB by day 90.
+
+- **2026-10-14 — the two go/no-go thresholds are owner-signed (no metric definition
+  changed; the values were already in `atlas/study.py`).** Owner sign-off: 2026-10-14,
+  in session ("Sign the thresholds now"), on the two placeholders proposed 2026-10-13.
+  - **What is signed:**
+    - Annualized return on locked-up capital must be at least **15%** (median over the
+      observed pairs; `GO_MIN_ANNUALIZED_RETURN_ON_LOCKED_CAPITAL`).
+    - Median executable basket must be at least **$500** of capital
+      (`GO_MIN_MEDIAN_BASKET_NOTIONAL_USD`).
+    - The frequency test (10 verified opportunities per 30 days) and the tradeable-venue
+      test are unchanged and were already signed by the charter.
+  - **Until now:** both were labelled `provisional_pending_owner_signoff` in every
+    report. That label is now `owner_signed_2026_10_14`, and the code comment says so.
+  - **What the signed thresholds say today** (full-history report, day 55, 2026-10-12;
+    the day-49 report agrees):
+
+    | Test | Measured | Signed threshold | Result |
+    | --- | --- | --- | --- |
+    | Frequency (verified per 30 days) | 252.6 | 10 | pass |
+    | Return on locked capital (median annualized) | 3.4% | 15% | **fail** |
+    | Median executable basket | $128 | $500 | **fail** |
+    | Tradeable US-venue evidence | 338 opportunities | present | pass |
+
+    On these numbers the go/no-go is **NO-GO**, and two of four tests fail. The two
+    failing measures have stayed in the same range in both full-history reports (the
+    return near 3%, the basket between $97 and $128).
+  - **Still not decided by this amendment:** the day-90 decision itself, which the charter
+    leaves to the owner, and the two legs the reports cannot measure: at least three
+    paying users, and the one-leg-fill rate in the phase-2 simulation.
+  - **Consequence:** this amendment does not stop or shorten the study. On the current
+    data the "continue toward execution" rule is not met, because two of its measurable
+    legs fail. The charter's pivot rule is separate: it applies if opportunities are rare
+    or evaporate after costs while the settlement-risk analysis is what users engage
+    with. Frequency passes here, and the user-engagement leg is not measured, so the
+    choice between those outcomes is the owner's at day 90.
+  - **Any change** to either threshold, or to what counts as a pass, needs a new
+    owner-signed amendment recorded here before the report that uses it.
