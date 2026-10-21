@@ -134,6 +134,79 @@ def test_weaker_means_that_still_find_every_quote_verify_the_page(one_platform):
     assert checked(path)["sources"]["https://example.test/fees"]["read_via"] == "impersonated"
 
 
+URL_A, URL_B = "https://example.test/overview", "https://example.test/rounding"
+OVERVIEW = f"<html><body><p>{'Fees explained. ' * 60}</p></body></html>"
+
+
+@pytest.fixture
+def two_pages(monkeypatch, tmp_path):
+    """One schedule citing two pages; the quote lives on B, and both were reviewed rendered."""
+    fees = tmp_path / "fees"
+    fees.mkdir()
+    (fees / "cashapp.json").write_text(json.dumps(
+        {"platform": "cashapp", "sources": [{"url": URL_A}, {"url": URL_B}], "quotes": [QUOTE]}
+    ))
+    state = {"platforms": {"cashapp": {
+        "status": "verified", "history": [], "quotes_missing_at_review": [],
+        "sources": {
+            URL_A: {"hash": verify.text_hash(OVERVIEW), "status": "verified", "via": "rendered"},
+            URL_B: {"hash": verify.text_hash(PAGE), "status": "verified", "via": "rendered"},
+        },
+    }}}
+    (fees / "verification.json").write_text(json.dumps(state))
+    monkeypatch.setattr(verify, "FEES_DIR", fees)
+    monkeypatch.setattr(verify, "STATE_PATH", fees / "verification.json")
+    monkeypatch.setattr(verify, "CHECK_PATH", tmp_path / "check.json")
+    monkeypatch.setattr(verify, "require_browser", lambda: None)
+    monkeypatch.setattr(verify, "close_browser", lambda: None)
+
+    def pages(first: dict, second: dict | None = None) -> None:
+        """What each URL returns: a string is a page read by the browser, an exception is raised.
+        `second` is what the confirming fetch of the same URL returns."""
+        calls = {URL_A: 0, URL_B: 0}
+
+        def fake(url):
+            answer = (first if calls[url] == 0 or second is None else second)[url]
+            calls[url] += 1
+            if isinstance(answer, Exception):
+                raise answer
+            return answer, "rendered"
+
+        monkeypatch.setattr(verify, "fetch_with_method", fake)
+
+    return pages, tmp_path / "check.json"
+
+
+def test_a_quote_on_a_page_that_could_not_be_read_is_not_a_changed_page(two_pages):
+    """2026-10-21: under load the support pages returned no text, the pages that did read lacked
+    the quotes that live on them, and Stripe and StubHub were published as changed fee pages."""
+    pages, path = two_pages
+    pages({URL_A: OVERVIEW, URL_B: RuntimeError("no readable text")})
+    assert verify.check_all() == {"verified": 0, "changed": 0, "unreachable": 1, "unreviewed": 0}
+    entry = checked(path)
+    assert entry["status"] == "unreachable" and entry["history"] == []
+    assert entry["not_evidence"]["sources"] == [URL_B]
+    assert entry["not_evidence"]["quotes"] == [QUOTE]
+
+
+def test_a_page_lost_on_the_confirming_fetch_is_not_evidence_either(two_pages):
+    pages, path = two_pages
+    pages({URL_A: OVERVIEW, URL_B: REWORDED},
+          second={URL_A: OVERVIEW, URL_B: RuntimeError("no readable text")})
+    assert verify.check_all()["unreachable"] == 1
+    entry = checked(path)
+    assert entry["status"] == "unreachable" and entry["history"] == []
+    assert entry["not_evidence"]["sources"] == [URL_B]
+
+
+def test_every_page_read_and_the_quote_absent_is_still_a_changed_page(two_pages):
+    pages, path = two_pages
+    pages({URL_A: OVERVIEW, URL_B: REWORDED})
+    assert verify.check_all()["changed"] == 1
+    entry = checked(path)
+    assert entry["history"][0]["quotes"] == [QUOTE] and "not_evidence" not in entry
+
+
 def test_evidence_is_compared_with_the_evidence_at_review():
     assert verify.weaker("plain", "rendered") and verify.weaker("impersonated", "rendered")
     assert not verify.weaker("rendered", "rendered") and not verify.weaker("plain", "plain")

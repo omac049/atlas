@@ -420,6 +420,7 @@ def check_all() -> dict:
         statuses = []
         texts = []
         downgraded = []  # sources read by weaker means tonight than at review
+        unreadable = []  # sources that gave no text at all, on either fetch
         for source in schedule["sources"]:
             if source.get("verify") is False:
                 continue
@@ -431,6 +432,7 @@ def check_all() -> dict:
             except Exception as exc:  # noqa: BLE001 - reported, never fatal
                 rec.update({"last_checked_at": now, "status": "unreachable", "error": str(exc)[:200]})
                 statuses.append("unreachable")
+                unreadable.append(url)
                 continue
             rec["read_via"] = method
             if weaker(method, reviewed_via):
@@ -465,6 +467,8 @@ def check_all() -> dict:
                     html2, method2 = fetch_with_method(source["url"])
                 except Exception as exc:  # noqa: BLE001 - the first pass already recorded reachability
                     rec["recheck_error"] = str(exc)[:120]
+                    if source["url"] not in unreadable:
+                        unreadable.append(source["url"])
                     continue
                 texts2.append(visible_text(html2))
                 if weaker(method2, rec.get("via", "rendered")) and source["url"] not in downgraded:
@@ -474,12 +478,16 @@ def check_all() -> dict:
                 newly_missing = [q for q in newly_missing if q in still_missing]
                 missing = [q for q in missing if q in known or q in still_missing]
         entry["quotes_missing"] = missing
-        if newly_missing and texts and downgraded:
+        blind = downgraded + [url for url in unreadable if url not in downgraded]
+        if newly_missing and texts and blind:
             # The quotes may sit on a page that could only be read as a shell
-            # tonight. That is "could not check", never "the page changed".
+            # tonight, or not at all (2026-10-21: Stripe's and StubHub's support pages gave
+            # no text under load and were published as changed fee pages). That is
+            # "could not check", never "the page changed".
             entry["not_evidence"] = {
-                "reason": "read by weaker means than at review; missing quotes are not evidence",
-                "sources": downgraded, "quotes": newly_missing[:5],
+                "reason": "a cited page was read by weaker means than at review, or not at "
+                          "all; missing quotes are not evidence",
+                "sources": blind, "quotes": newly_missing[:5],
             }
             statuses.append("unreachable")
         elif newly_missing and texts:
