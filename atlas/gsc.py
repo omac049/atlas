@@ -303,12 +303,19 @@ def fee_platform_names(fees_dir: Path = REPO_ROOT / "docs" / "fees") -> list[str
     return sorted(names)
 
 
+def _typed_by_a_person(text: str) -> bool:
+    """False for a pasted search-operator string such as `%site.support.upwork.com "..."`."""
+    return text[:1].isalnum() and "site:" not in text
+
+
 def term_matcher(site: str, fee_names: list[str]) -> Callable[[str], bool] | None:
     """The queries a charter's 'top 20' clause is about."""
     if site == "sc-domain:samebetornot.com":
         return lambda text: "kalshi" in text or "polymarket" in text
     if site == "sc-domain:verifiedfees.com":
-        return lambda text: "fee" in text and any(name in text for name in fee_names)
+        return lambda text: (
+            _typed_by_a_person(text) and "fee" in text and any(name in text for name in fee_names)
+        )
     return None
 
 
