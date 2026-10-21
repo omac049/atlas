@@ -44,8 +44,14 @@ Read from the jobs panel, every job log, Search Console and Google's own index s
   business days and the $0.10 minimum unchanged; "Withdrawals below this amount will fail."
   gone), re-read and re-pinned in #113. The public Stripe and StubHub pages read "under
   review" until the 04:20 check on 10-22 re-reads them.
-- [ ] OWNER: keep or retire the two demand-test sites. Keeping them costs two domain renewals
-  and an unattended nightly job; the charters say "stay up as a record".
+- [x] **Owner decision 10-21: keep both demand-test sites up, since they cost nothing to run.**
+  The nightly regeneration, fee check, publish and Search Console pull continue; nothing new
+  is built and no revenue charter opens (both charters read FAIL); a flagged fee page is still
+  re-read so the published numbers stay true. What remains is the two domain renewals, about a
+  year after purchase (samebetornot.com 2026-09-04, verifiedfees.com 2026-09-08; confirm the
+  dates at the registrar). OWNER, low priority: the Impact payment-details problem (09-12) and
+  the Intuit payout bank only matter if a sponsored link ever pays out, which at a handful of
+  visits a week is unlikely.
 - [ ] **Arm A:** recorder coverage **93.9%** on 10-21 (`atlas books coverage`), seven days to
   the 10-28 close. The runner and `atlas/making.py` are byte-identical to `383d609`; October
   tapes were archived 10-13 (360 files, 842 MB; also in the nightly backup since #105). The

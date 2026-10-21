@@ -410,7 +410,8 @@ earlier with the same cliff, on 10-03 (`docs/IDEATION.md`).
 **What follows (§3).** The site stays up as a record and nothing further is built; the
 revenue charter (first $100, then $500 a month) is not opened. The nightly check, build and
 publish keep running because they cost nothing and keep the published numbers true; no
-platform or page is added. Keeping the site costs the domain's renewal, and whether to keep
-it is the owner's call. Spend over the test: the domain (owner-paid) and $0 hosting; the
-build fit inside the two weeks allowed. The report's "Top 20" matcher is corrected so a
-pasted search-operator string cannot count as a fee query (#107).
+platform or page is added. Keeping the site costs the domain's renewal; **on 2026-10-21 the
+owner chose to keep it up, since it costs nothing to run.** Spend over the test: the domain
+(owner-paid) and $0 hosting; the build fit inside the two weeks allowed. The report's "Top
+20" matcher is corrected so a pasted search-operator string cannot count as a fee query
+(#107).
