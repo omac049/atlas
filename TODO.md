@@ -278,8 +278,9 @@ Read from every job log, not from the panel alone.
 - [ ] OWNER, optional: request indexing for `/reverb` and `/stubhub`, the two calculator
   pages Google has discovered but not crawled. `/quickbooks`, `/stripe` and `/etsy` are
   indexed; that request is closed.
-- [ ] `data/backups/atlas-pre-cleanup-20260917.sqlite3.gz` (212 MB) is past its keep-until
-  date of 2026-09-24; delete on the owner's word.
+- [x] `data/backups/atlas-pre-cleanup-20260917.sqlite3.gz` (212 MB) was past its keep-until
+  date of 2026-09-24. **Deleted 2026-10-21 on the owner's word** ("delete"). The nightly
+  `atlas-auto-*` and `books-auto-*` backups and the 2,000-row evidence file are untouched.
 
 ## 2026-09-28 — Fee Verified reported fee changes that had not happened, for twelve nights
 
@@ -435,8 +436,9 @@ Read from every job log, not from the panel alone.
   944,102 rows deleted after a verified backup; `data/atlas.sqlite3` went from
   3.06 GB to 1.05 GB, `integrity_check` ok, every other table unchanged. 2,000
   rows kept as evidence in `docs/proof/stream-books-sample-2026-09-17.jsonl.gz`.
-- [ ] (Carried to the 2026-09-28 list.) After 2026-09-24, once a week of nightly backups
+- [x] (Carried to the 2026-09-28 list.) After 2026-09-24, once a week of nightly backups
   of the smaller file exists: delete `data/backups/atlas-pre-cleanup-20260917.sqlite3.gz`.
+  Done 2026-10-21, on the owner's word.
 - [x] **Amendment 1 signed 2026-09-17** (#78, merged at the owner's instruction
   in session): the 2026-10-29 Arm A run reads the recorder's books. Same rule,
   floors, criteria, consequences. The recorder was off 18:59–19:03 UTC (a Run
