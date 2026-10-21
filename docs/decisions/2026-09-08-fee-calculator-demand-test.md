@@ -358,14 +358,15 @@ clock start.
 
 ## 10. Verdict — week six (2026-10-20): FAIL
 
-Written 2026-10-21 from the owner's personal Search Console, pulled nightly by `atlas gsc`
-into `data/gsc/` (not in git). The pass line is §3 and has not moved.
+Written 2026-10-21 from the owner's personal Search Console, pulled nightly by
+`atlas/gsc.py` into `data/gsc/` (not in git). The pass line is §3 and has not moved.
 
 **The reading.** On the verdict date the trailing 30 days held **1,761 impressions** (data
 through 10-19, the newest the 10-20 pull has); with 10-20's data it is 1,618. The line is
 2,000. The second clause is not established either: the report's "Top 20" line rests on
-queries with one to three impressions, which §5 does not count. §3 says "anything less" is a
-FAIL; the first clause alone decides it.
+queries with one to three impressions, and whether any of them has the 500 searches a month
+§5 requires was not measured. §3 says "anything less" is a FAIL; the first clause alone
+decides it.
 
 **How it got there.** The 30-day figure first crossed 2,000 on 09-26, stayed above it until
 10-17 and peaked at 2,834 on 10-07 (flat to 10-10), then fell below it as September's
@@ -393,17 +394,17 @@ Google last downloaded the sitemap on 2026-09-28.
 **Our side, checked 2026-10-21.** Every sampled page returns 200 and Google's fetch state is
 "successful"; robots.txt allows everything and names the sitemap; each page's canonical tag is
 its own address and Google chose the same one; there is no noindex in the markup or the
-headers; Search Console reports 0 sitemap errors and 0 warnings. Nothing on this evidence
-we broke explains the drop. It matches Google crawling the calculator pages and filing them as
+headers; Search Console reports 0 sitemap errors and 0 warnings. On this evidence nothing we
+broke explains the drop; it matches Google crawling the calculator pages and filing them as
 not worth indexing.
 
 **What the test answered.** §1 asked whether a site that computes each platform's fees from
 the platform's own published schedule could earn a top-20 position and 2,000 impressions in
 30 days within six weeks, with no social distribution and no paid traffic. It could not hold
 them: Google showed the pages for just over three weeks (09-12 to 10-04), then dropped most
-of what it had crawled. That is a result about this route for a six-week-old domain. It does not say nobody
-wants the calculators, and it cannot tell "no demand" from "no way for demand to find the
-site"; §5 rules out reading more into it. samebetornot.com failed its own line four days
+of what it had crawled. That is a result about this route for a six-week-old domain. It does
+not say nobody wants the calculators, and it cannot tell "no demand" from "no way for demand
+to find the site"; §5 rules out reading more into it. samebetornot.com failed its own line four days
 earlier with the same cliff, on 10-03 (`docs/IDEATION.md`).
 
 **What follows (§3).** The site stays up as a record and nothing further is built; the

@@ -24,8 +24,8 @@ Read from the jobs panel, every job log, Search Console and Google's own index s
   `docs/FINDINGS.md`.
 - [x] The nightly report printed "Top 20: yes" for verifiedfees.com on a pasted
   search-operator string (`%site.support.upwork.com "..."`). Matcher fixed (#107). The line
-  still rests on queries with one to three impressions, which §5 of the fee charter does not
-  count; the verdict does not use it.
+  still rests on queries with one to three impressions, and nobody has measured whether any
+  reaches the 500 searches a month §5 of the fee charter requires; the verdict does not use it.
 - [x] **Shopify and Square read "numbers under review"** from the 10-21 04:20 check. Both were
   real changes, re-read the same day with the checker's own reader, with no quote missing at
   review. Shopify raised its yearly-billing prices (Grow $79 to $89, Advanced $299 to $359;
