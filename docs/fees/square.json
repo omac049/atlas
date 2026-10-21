@@ -1,7 +1,7 @@
 {
   "platform": "square",
   "name": "Square",
-  "as_of": "2026-10-12",
+  "as_of": "2026-10-21",
   "sources": [
     {
       "url": "https://squareup.com/us/en/pricing",
@@ -12,7 +12,7 @@
     {
       "url": "https://squareup.com/help/us/en/article/5068-what-are-square-s-fees",
       "title": "Learn about Square fees (Square Support Center, US)",
-      "loaded": "2026-10-12",
+      "loaded": "2026-10-21",
       "last_updated_on_page": null
     },
     {
@@ -56,7 +56,7 @@
     "Square Plus and Square Premium each offer a free 30-day trial, and you can cancel or switch plans anytime. With Square Free, there are no monthly subscription costs \u2014 you only pay processing fees when you take a payment.",
     "Payments made with credit or debit cards issued in a different country than the location of your Square account incur a 1.5% international transaction fee, in addition to Square\u2019s base processing fees. International transaction fees apply to in-person, online, card-not-present (CNP), and Square API transactions, as well as all Square pricing tiers.",
     "International transaction fees don\u2019t apply to alternative payment methods such as Afterpay, ACH, Cash App Pay, Bitcoin, or EBT payments.",
-    "Here are the processing fees for legacy plan subscribers:\nSwiped Magstripe Cards: 2.6% + 15\u00a2 **\nSwiped or Inserted Chip Cards: 2.6% + 15\u00a2 **\nContactless (NFC) Payments: 2.6% + 15\u00a2 **\nTap to Pay on iPhone: 2.6% + 15\u00a2 **\nTap to Pay on Android: 2.6% + 15\u00a2 **\nPoint-of-Sale API Swiped or Inserted Payments: 2.6% + 15\u00a2 **\nSwiped Virtual Terminal Payments: 2.6% + 15\u00a2 **\nPayment Links Through Text in Virtual Terminal: 3.3% + 30\u00a2 **\nCard on File Transactions: 3.5% + 15\u00a2*\nManually Entered Card Payments: 3.5% + 15\u00a2*\nPoint-of-Sale API Keyed-In Payments: 3.5% + 15\u00a2*\nManually Entered Virtual Terminal Payments: 3.5% + 15\u00a2*\nSquare eCommerce API: 2.9% + 30\u00a2\nOnline payments: 3.3% + 30\u00a2 **\nSquare Invoices: 3.3% + 30\u00a2 **\nSquare Payment Links: 3.3% + 30\u00a2 **\nSubscription Payments: 3.3% + 30\u00a2 **\nCash App Pay (Card-Present Transactions): 2.6% + 15\u00a2 **\nCash App Pay (Card-Non-Present Transactions): 3.3% + 30\u00a2 **\nNeighborhoods on Cash App: 1% for participating Neighborhoods sellers on orders through Cash App.\nACH Transactions: 1%, minimum $1 **\n$0 fees for ACH transactions deposited into Square Checking\n$10 fee cap on all ACH bank transfer payments.\nInternational cards: 1.5% international transaction fee\nEBT processing fee: 1.8% + 5\u00a2 (waived during open beta)",
+    "Here are the processing fees for legacy plan subscribers:\nSwiped Magstripe Cards: 2.6% + 15\u00a2 **\nSwiped or Inserted Chip Cards: 2.6% + 15\u00a2 **\nContactless (NFC) Payments: 2.6% + 15\u00a2 **\nTap to Pay on iPhone: 2.6% + 15\u00a2 **\nTap to Pay on Android: 2.6% + 15\u00a2 **\nPoint-of-Sale API Swiped or Inserted Payments: 2.6% + 15\u00a2 **\nSwiped Virtual Terminal Payments: 2.6% + 15\u00a2 **\nPayment Links Through Text in Virtual Terminal: 3.3% + 30\u00a2 **\nCard on File Transactions: 3.5% + 15\u00a2*\nManually Entered Card Payments: 3.5% + 15\u00a2*\nPoint-of-Sale API Keyed-In Payments: 3.5% + 15\u00a2*\nManually Entered Virtual Terminal Payments: 3.5% + 15\u00a2*\nSquare eCommerce API: 2.9% + 30\u00a2\nOnline payments: 3.3% + 30\u00a2 **\nSquare Invoices: 3.3% + 30\u00a2 **\nSquare Payment Links: 3.3% + 30\u00a2 **\nSubscription Payments: 3.3% + 30\u00a2 **\nCash App Pay (Card-Present Transactions): 2.6% + 15\u00a2 **\nCash App Pay (Card-Non-Present Transactions): 3.3% + 30\u00a2 **\nNeighborhoods on Cash App: 1% for participating Neighborhoods sellers on orders through Cash App.\nACH Transactions: 1%, minimum $1 **\n$0 fees for ACH transactions deposited into Square Checking\n$10 fee cap on all ACH bank transfer payments.\nInternational cards: 1.5% international transaction fee\nEBT processing fee: 1.8% + 5\u00a2 per transaction. Fees may vary for sellers on custom rates.",
     "**Payment processing rates may vary based on plan type. Check your Pricing & subscriptions page in Square Dashboard for rates applicable to your plan.",
     "Bitcoin payments: 0% processing fees until December 31, 2026, after which it will be 1%.",
     "Square sellers using Afterpay get paid the full amount at the time of purchase, minus a processing fee on the total order. Enabling Afterpay with Square is free \u2014 there are no monthly fees or startup costs. You only pay when you make a sale. There are no processing fees charged on the remaining installments or if your customer makes a late payment.",
@@ -86,7 +86,8 @@
     "The pricing page's only 'as of' dates are for savings APY (Jan 23, 2026) and do not date the fee schedule.",
     "The in-person and online rates are the same for every card brand ('You can accept every major card \u2014 Visa, Mastercard, American Express, and Discover \u2014 all for the same processing fees').",
     "Cash App Pay accepted through Square is priced on Square's legacy list at 2.6% + 15\u00a2 (card-present) / 3.3% + 30\u00a2 (card-not-present); the new-plan table does not list Cash App Pay separately.",
-    "Re-read 2026-10-12. Square's pricing pages no longer carry the sentence that EBT processing fees are waived 'while the feature is in beta, through fall 2026': the EBT row now shows 1.8% + 5\u00a2 with no waiver. The help article 'What are Square's fees?' still says the EBT fee is 'waived during open beta'. This calculator does not cover EBT payments, so no number here changed."
+    "Re-read 2026-10-12. Square's pricing pages no longer carry the sentence that EBT processing fees are waived 'while the feature is in beta, through fall 2026': the EBT row now shows 1.8% + 5\u00a2 with no waiver. The help article 'What are Square's fees?' still says the EBT fee is 'waived during open beta'. This calculator does not cover EBT payments, so no number here changed.",
+    "Re-read 2026-10-21. The help article 'What are Square's fees?' now reads 'EBT processing fee: 1.8% + 5¢ per transaction. Fees may vary for sellers on custom rates.', with the waiver sentence gone, which agrees with the pricing page. Every other legacy-plan rate in that article is unchanged. This calculator does not cover EBT payments, so no number here changed."
   ],
   "rates": {
     "in_person": {
