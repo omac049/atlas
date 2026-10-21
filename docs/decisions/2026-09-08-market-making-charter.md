@@ -375,7 +375,9 @@ September FOMC settlement.
     marker.
   - **The invalid stream rows were deleted** the same hour, at the owner's
     instruction (they were half the database): 944,102 rows, after a verified
-    backup (`data/backups/atlas-pre-cleanup-20260917.sqlite3.gz`); the file
+    backup (`data/backups/atlas-pre-cleanup-20260917.sqlite3.gz`, since deleted
+    on 2026-10-21 at the owner's word; the nightly backups cover the database
+    and the evidence file below is kept); the file
     went from 3.06 GB to 1.05 GB, `integrity_check` ok, every other table
     unchanged. 2,000 consecutive rows are kept as evidence for the note above
     in `docs/proof/stream-books-sample-2026-09-17.jsonl.gz`: 1,500 of
