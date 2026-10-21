@@ -46,9 +46,16 @@ Read from the jobs panel, every job log, Search Console and Google's own index s
   purposes. At the pace since 10-13 (C25 about 13 a day, H26 about 8) C25 gets there near
   10-26 and H26 ends near 440; only an event-week pickup changes that. Stated now, as the
   amendment promised, so nobody finds it on 10-29. Nothing is adjusted.
-- [ ] OWNER: **automatic install of macOS updates is still on** (`AutomaticallyInstallMacOSUpdates
-  = 1`, checked 10-21; `softwareupdate --list` shows nothing waiting). An update installing
-  before 10-28 would stop the recorder at the login window, as on 09-22 and 10-06.
+- [x] **Automatic macOS installs cannot be turned off: the setting is locked by the employer's
+  device-management profile.** The owner's screenshot on 10-21 reads "These settings have been
+  configured by a profile", and the Mac is enrolled in Microsoft Intune
+  (`profiles status -type enrollment`). That is not something to work around on a managed
+  machine, and nothing is waiting to install (`softwareupdate --list`, 10-21). Both forced
+  installs so far landed at about 17:00 local (09-21 and 10-05) and left the Mac at the login
+  window until the next sign-in, which stops every launch agent. Accepted risk for Arm A's
+  last week: if the Mac ever shows the login screen, signing in restarts everything, the
+  recorder's gap is written as unknown-book markers, and coverage is reported, not used as a
+  filter (charter amendment 1). Do not ask the owner to change this setting again.
 - [x] The 90-day study, day 62 (10-19 report): 241 verified opportunities per 30 days against
   10 needed (passes), median annualized return on locked capital 5.1% against the signed 15%
   (fails), median basket $143.80 against the signed $500 (fails). NO-GO. Decides 11-17.
@@ -129,8 +136,8 @@ Read from every job log, not from the panel alone.
   and 10-05.
 - [ ] **Arm A recorder coverage: 90.0%** on 10-12 (`atlas books coverage`); 1.1 h unknown
   in the six days since 10-06, one gap of an hour on 10-11 17:35Z.
-- [ ] OWNER: **automatic install of macOS updates is still on**
-  (`AutomaticallyInstallMacOSUpdates = 1` on 10-12). See the 10-06 item below.
+- [x] Automatic install of macOS updates is still on: locked by the employer's profile and
+  cannot be changed; closed 10-21 (see the 10-21 entry at the top).
 
 ## 2026-09-28 — open items after the status check
 
@@ -173,10 +180,9 @@ Read from every job log, not from the panel alone.
   shows the user on the console from 17:07, which is misleading; the login-window log is
   the record. **The 2026-09-21 macOS 27 install did the same:** reboot at 17:07, the
   recorder's gap starts at 2026-09-22T00:03Z (17:03 local), sign-in the next morning.
-- [ ] OWNER: **turn off automatic install of macOS updates** (System Settings > General >
-  Software Update > Automatic updates: keep "Download", turn off "Install macOS updates"),
-  so an update happens only when someone is there to sign in afterwards. Until then, any
-  update can silently stop Atlas until the next sign-in. Arm A's run is 2026-10-29.
+- [x] **Not possible (closed 10-21):** turning off automatic install of macOS updates. The
+  setting is locked by the employer's device-management profile. Any update can still
+  silently stop Atlas until the next sign-in; the 10-21 entry at the top says what to do.
 - [x] **The site job died without a log line on 2026-10-04 and 10-05:** `atlas site build`
   ran past its 900 s limit and the uncaught `TimeoutExpired` ended the job. A build or
   publish overrun now writes an ERROR line (`tests/test_site_job.py`). `deploy/atlas_gsc.py`
