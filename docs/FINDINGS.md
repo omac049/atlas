@@ -46,6 +46,14 @@ not; where nothing happens for days, it has not been measured yet.
   sub-second feeds capture it before the public play-by-play finalizes the
   play. A person watching the game is structurally ten to twenty-five seconds
   behind the price, always.
+- **Correct pages did not earn a place in Google's index.** Two small sites built
+  from verified data (a Kalshi–Polymarket comparison and a seller-fee calculator)
+  were shown by Google for about three weeks, then mostly filed "Crawled –
+  currently not indexed"; daily impressions fell from over a hundred to near zero
+  on 2026-10-03 and 10-05, and both missed their 2,000-impression lines (1,364 and
+  1,761). Nothing on our side was broken. The pattern fits a six-week-old domain
+  with nothing pointing at it, which the no-social, no-paid rule leaves unaided;
+  the tests cannot say more than that.
 
 ## What the discipline caught
 
@@ -101,8 +109,9 @@ The method mattered more than any single result:
 - The fifth charter is half answered: Arm B FAIL (2026-09-15); Arm A waits on
   real order books, recorded since 2026-09-17 for its one widened run on
   2026-10-29. A second inconclusive counts as FAIL.
-- The remaining scheduled events (Sep 11 CPI, Sep 16 FOMC — including the
-  first end-to-end test of the revived label loop) run without intervention.
-- No product funnel was built, by the owner's rule: no theory survived to
-  justify one.
+- Both demand tests failed their pre-registered lines: samebetornot.com
+  (verdict 2026-10-16: 1,364 of 2,000 impressions in 30 days) and
+  verifiedfees.com (2026-10-20: 1,761 of 2,000). Both sites stay up as
+  records; nothing further is built and no revenue charter opens
+  ([IDEATION.md](IDEATION.md), [fee demand test](decisions/2026-09-08-fee-calculator-demand-test.md) §10).
 - The $2,000 is intact.
