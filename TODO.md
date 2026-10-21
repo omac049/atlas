@@ -16,8 +16,8 @@ Read from the jobs panel, every job log, Search Console and Google's own index s
   10-16): 1,364 of 2,000 impressions in the trailing 30 days (1,278 with the last day).
   verifiedfees.com (verdict 10-20): 1,761 of 2,000 (1,618). The 30-day counts had been above
   2,000 (samebetornot 09-16 to 10-09, verifiedfees 09-26 to 10-17) and fell as September's
-  impressions aged out; the daily count under them fell from 100+ to near zero on **10-03**
-  and **10-05**. Google's own status for 16 pages on each site: calculator and pair pages
+  impressions aged out; the daily count under them fell to near zero on **10-03**
+  (samebetornot) and **10-05** (verifiedfees). Google's own status for 16 pages on each site: calculator and pair pages
   "Crawled – currently not indexed" or unknown to Google; robots, canonical tags, status codes
   and sitemaps are clean on our side. Both sites stay up as records, nothing further is
   built, no revenue charter opens. `docs/IDEATION.md` (Verdict), the fee charter §10,
@@ -26,19 +26,29 @@ Read from the jobs panel, every job log, Search Console and Google's own index s
   search-operator string (`%site.support.upwork.com "..."`). Matcher fixed (#107). The line
   still rests on queries with one to three impressions, which §5 of the fee charter does not
   count; the verdict does not use it.
-- [ ] **Shopify and Square read "numbers under review"** since the 10-21 check. Shopify: three
-  plan-price quotes on the pricing page no longer match ("Pay yearly $29 / $79 / $299",
-  Grow $79, Advanced $299). Square: the block of legacy-plan processing fees in "What are
-  Square's fees?". Re-read with the checker's own reader, then `reviewed`.
+- [x] **Shopify and Square read "numbers under review"** from the 10-21 04:20 check. Both were
+  real changes, re-read the same day with the checker's own reader, with no quote missing at
+  review. Shopify raised its yearly-billing prices (Grow $79 to $89, Advanced $299 to $359;
+  the monthly prices, Plus and every card rate are unchanged). Square's help article now
+  states the EBT fee as 1.8% + 5¢ per transaction with the waiver gone; nothing the
+  calculator uses changed. The pages read "Verified" again at the next check run.
 - [ ] OWNER: keep or retire the two demand-test sites. Keeping them costs two domain renewals
   and an unattended nightly job; the charters say "stay up as a record".
 - [ ] **Arm A:** recorder coverage **93.9%** on 10-21 (`atlas books coverage`), seven days to
   the 10-28 close. The runner and `atlas/making.py` are byte-identical to `383d609`; October
   tapes were archived 10-13 (360 files, 842 MB; also in the nightly backup since #105). The
-  single run is 10-29.
+  single run is 10-29. Stored books spot-checked against Kalshi's live books on 10-21: best
+  price and size on both sides identical for all five markets, none crossed.
+  **Composition, not results (10-21):** non-block prints since the recorder started are H0
+  16,208 and H25 9,734, which clear §5's floor of 500; C25 435 and H26 381, which do not yet;
+  C26 69. §5 needs **four** settled markets at 500, so C25 and H26 must both get there before
+  the 10-28 close or the run is INCONCLUSIVE, which the charter counts as FAIL for product
+  purposes. At the pace since 10-13 (C25 about 13 a day, H26 about 8) C25 gets there near
+  10-26 and H26 ends near 440; only an event-week pickup changes that. Stated now, as the
+  amendment promised, so nobody finds it on 10-29. Nothing is adjusted.
 - [ ] OWNER: **automatic install of macOS updates is still on** (`AutomaticallyInstallMacOSUpdates
-  = 1`, checked 10-21). An update installing before 10-28 would stop the recorder at the login
-  window, as on 09-22 and 10-06.
+  = 1`, checked 10-21; `softwareupdate --list` shows nothing waiting). An update installing
+  before 10-28 would stop the recorder at the login window, as on 09-22 and 10-06.
 - [x] The 90-day study, day 62 (10-19 report): 241 verified opportunities per 30 days against
   10 needed (passes), median annualized return on locked capital 5.1% against the signed 15%
   (fails), median basket $143.80 against the signed $500 (fails). NO-GO. Decides 11-17.

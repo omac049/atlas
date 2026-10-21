@@ -235,7 +235,7 @@ pages' own addresses, there is no noindex, and Search Console reports 0 sitemap 
 Senate-control page was crawled on 10-03, the day the cliff began.
 
 **What the test answered.** It could not hold Google's attention: the pages were shown for
-about three weeks, then most of those crawled were filed as not worth indexing. That is a
+about four weeks (09-05 to 10-02), then most of those crawled were filed as not worth indexing. That is a
 result about this route for a six-week-old domain with no social or paid traffic; it cannot
 tell "no demand" from "no way for demand to find the site".
 
