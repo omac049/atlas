@@ -1539,6 +1539,11 @@
      "at": "2026-10-12T19:14:37+00:00",
      "event": "reviewed",
      "note": "Re-read 2026-10-12: Vinted rewrote the Price List on 10/08/2026. The Buyer Protection fee is now the Vinted fee and is described as usually 5% + $0.70 rather than by a fixed formula; the shipping and shipping-tax sentences are gone. Sellers still pay nothing; numbers unchanged."
+    },
+    {
+     "at": "2026-10-21T18:16:09+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-10-21: Vinted reworded the withdrawal help article (up to 5 business days and the 0.10 dollar minimum are unchanged; the sentence about withdrawals below the minimum failing is gone); the two quotes were re-pinned to the text the checker reads; no rate changed."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -1550,68 +1555,68 @@
     "Item Verification is currently available in France, Italy, Belgium, Germany, Spain, The Netherlands, the United Kingdom, Poland, Portugal, Romania, Denmark, Sweden, Lithuania and Finland."
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-10-12T19:14:37+00:00",
+   "reviewed_at": "2026-10-21T18:16:09+00:00",
    "sources": {
     "https://www.vinted.com/help/1147-item-verification-for-designer-items": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-10-12T19:14:37+00:00",
-     "reviewed_at": "2026-10-12T19:14:37+00:00",
+     "last_checked_at": "2026-10-21T18:16:09+00:00",
+     "reviewed_at": "2026-10-21T18:16:09+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/help/1555-us-uk-international-sales": {
      "hash": "d854e2a515d211ce17ec913a66cac93d30ea71e3056ded663e92c40e5feccc7c",
-     "last_checked_at": "2026-10-12T19:14:37+00:00",
-     "reviewed_at": "2026-10-12T19:14:37+00:00",
+     "last_checked_at": "2026-10-21T18:16:09+00:00",
+     "reviewed_at": "2026-10-21T18:16:09+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/help/342-buyer-protection-fee-on-vinted": {
      "hash": "c373352c0caafd1ccbc612dfce3fe7136da5af7f57c27389de5a6a3108f51b65",
-     "last_checked_at": "2026-10-12T19:14:37+00:00",
-     "reviewed_at": "2026-10-12T19:14:37+00:00",
+     "last_checked_at": "2026-10-21T18:16:09+00:00",
+     "reviewed_at": "2026-10-21T18:16:09+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/help/373-is-selling-on-vinted-free": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-10-12T19:14:37+00:00",
-     "reviewed_at": "2026-10-12T19:14:37+00:00",
+     "last_checked_at": "2026-10-21T18:16:09+00:00",
+     "reviewed_at": "2026-10-21T18:16:09+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/help/4/1577-payments-withdrawals": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-10-12T19:14:37+00:00",
-     "reviewed_at": "2026-10-12T19:14:37+00:00",
+     "last_checked_at": "2026-10-21T18:16:09+00:00",
+     "reviewed_at": "2026-10-21T18:16:09+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/help/432-withdrawals": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-10-12T19:14:37+00:00",
-     "reviewed_at": "2026-10-12T19:14:37+00:00",
+     "last_checked_at": "2026-10-21T18:16:09+00:00",
+     "reviewed_at": "2026-10-21T18:16:09+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/help/437-vinted-wallet-how-it-works": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-10-12T19:14:37+00:00",
-     "reviewed_at": "2026-10-12T19:14:37+00:00",
+     "last_checked_at": "2026-10-21T18:16:09+00:00",
+     "reviewed_at": "2026-10-21T18:16:09+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/help/68-how-to-withdraw-earnings": {
      "hash": "8308d8c01c3b0ff045ee7724576a7e4c76f1ff3611f9726791e3ad0cae9549de",
-     "last_checked_at": "2026-10-12T19:14:37+00:00",
-     "reviewed_at": "2026-10-12T19:14:37+00:00",
+     "last_checked_at": "2026-10-21T18:16:09+00:00",
+     "reviewed_at": "2026-10-21T18:16:09+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.vinted.com/pricelist": {
      "hash": "59333a95390015516a4270a98092c6eb77dd6a685a70b6bf91edbbd7a04cb741",
-     "last_checked_at": "2026-10-12T19:14:37+00:00",
-     "reviewed_at": "2026-10-12T19:14:37+00:00",
+     "last_checked_at": "2026-10-21T18:16:09+00:00",
+     "reviewed_at": "2026-10-21T18:16:09+00:00",
      "status": "verified",
      "via": "rendered"
     }
