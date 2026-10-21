@@ -31,7 +31,19 @@ Read from the jobs panel, every job log, Search Console and Google's own index s
   review. Shopify raised its yearly-billing prices (Grow $79 to $89, Advanced $299 to $359;
   the monthly prices, Plus and every card rate are unchanged). Square's help article now
   states the EBT fee as 1.8% + 5¢ per transaction with the waiver gone; nothing the
-  calculator uses changed. The pages read "Verified" again at the next check run.
+  calculator uses changed. Republished by hand at 18:07Z: both read "Verified".
+- [x] **That republish flagged three other platforms; none was a fee change that mattered, and
+  one exposed a gap in the checker.** The run took 38 minutes (28 is normal) under the Mac's
+  CI load. **Stripe and StubHub were transient:** their support pages returned "no readable
+  text", and the checker counted the quotes that live on them as gone, because it treated a
+  page read by *weaker means* as "could not check" but a page that *raised* only as
+  unreachable. Re-read minutes later every flagged quote was on its page (Stripe's support
+  page still flakes at moderate load). Fixed in #112 with tests: an unreadable source on
+  either fetch makes the missing quotes "not evidence" and the page reads "could not be
+  checked tonight". **Vinted was a real rewording** of its withdrawal article (up to 5
+  business days and the $0.10 minimum unchanged; "Withdrawals below this amount will fail."
+  gone), re-read and re-pinned in #113. The public Stripe and StubHub pages read "under
+  review" until the 04:20 check on 10-22 re-reads them.
 - [ ] OWNER: keep or retire the two demand-test sites. Keeping them costs two domain renewals
   and an unattended nightly job; the charters say "stay up as a record".
 - [ ] **Arm A:** recorder coverage **93.9%** on 10-21 (`atlas books coverage`), seven days to
