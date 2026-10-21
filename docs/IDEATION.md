@@ -241,7 +241,8 @@ tell "no demand" from "no way for demand to find the site".
 
 **What follows.** Per the kill rule: the site stays up as a record, nothing further is built,
 and no second charter (revenue gates) is opened. The nightly regeneration and publish cost
-nothing and keep running; ending them, or letting the domain lapse, is the owner's call. The
+nothing and keep running; ending them, or letting the domain lapse, was the owner's call, and
+**on 2026-10-21 the owner chose to keep the site up, since it costs nothing to run.** The
 same cliff hit `verifiedfees.com` two days later (`docs/decisions/2026-09-08-fee-calculator-demand-test.md`, §10).
 
 ## Deprioritized, not forgotten
