@@ -50,9 +50,19 @@ Preview locally with the `fees-site` entry in `.claude/launch.json` (port 8767).
    the baseline recorded at the last human review, the platform's pages show
    **under review** until step 2. If the page cannot be fetched, they show
    **could not check** with the last verified date. Nothing is assumed.
+   **Before editing anything, find out whether the flag is real.** Read the
+   platform's pages again with the checker's own reader (`verify.fetch_with_method`,
+   then `visible_text`) and test the flagged quotes with `missing_quotes`. A quote
+   that is on its page now was a flaky read, not a change: support sites often give
+   no text under load (a slow run, far over the usual 28 minutes, is the tell), so do
+   nothing and the next quiet check clears it. Only a quote absent from pages read in
+   full is a change. `data/fees/check.json` lists, under `not_evidence`, the pages
+   that gave no text.
 2. A human re-reads the page, edits `docs/fees/<platform>.json` if a number
-   changed, runs the tests (the platform's examples must still reproduce), then
+   changed (quotes re-pinned to the text the reader returns, never to a summary),
+   runs the tests (the platform's examples must still reproduce), then
    runs `reviewed <platform>`, which records a new baseline and a history entry.
+   Check that `quotes_missing_at_review` came back empty.
 3. The next build shows **verified** with both dates.
 
 ## Adding a platform
