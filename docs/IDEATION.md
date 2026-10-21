@@ -179,6 +179,12 @@ generation, pages, calculators, the disclosure language — is build work.
 |---|---|---|---|---|---|
 | 2026-09-07 | last 7 days (site live since 09-04) | 176 | 1 | 7.9 | 3 days of data; 68 URLs discovered 09-04. Pace ≈ 1,700 impressions / 30 days against the 2,000 pass line. |
 | 2026-09-11 | last 7 days, data through 2026-09-10 | 1,385 | 2 | 8.3 | first automated pull (loop 1, `docs/GSC.md`); 1,385 of 2,000 impressions in the trailing 30 days; best query "kalshi democrats win senate" at position 5.0 |
+| 2026-09-14 | last 7 days, data through 2026-09-13 | 1,297 | 1 | 9.6 | auto-pulled; 1,738 of 2,000 impressions in 30 days; the daily count fell from 201 (09-11) to 62 (09-12); best Kalshi/Polymarket query "kalshi democrats win senate" at 5.0 |
+| 2026-09-21 | last 7 days, data through 2026-09-20 | 515 | 0 | 14.6 | auto-pulled; 2,253 of 2,000 impressions in 30 days; best query "kalshi democrats win senate" at 5.0 |
+| 2026-09-28 | last 7 days, data through 2026-09-27 | 607 | 0 | 12.2 | auto-pulled; 2,860 of 2,000 impressions in 30 days; best query "kalshi democrats win senate" at 5.0 |
+| 2026-10-05 | last 7 days, data through 2026-10-04 | 479 | 2 | 13.0 | auto-pulled; 3,335 of 2,000 impressions in 30 days (the peak); the daily count fell to 9 on 10-03 and 6 on 10-04; best query "kalshi democrats win senate" at 5.0 |
+| 2026-10-12 | last 7 days, data through 2026-10-11 | 9 | 0 | 3.9 | auto-pulled; 1,762 of 2,000 impressions in 30 days; best query "senate control 2026 kalshi" at 5.0 |
+| 2026-10-16 | last 7 days, data through 2026-10-15 | 4 | 0 | 1.5 | **verdict date.** 1,364 of 2,000 impressions in 30 days (1,278 with 10-16's data); best query "senate control 2026 kalshi" at 5.0 |
 
 Reading, 2026-09-11 (first automated pull): 213 to 256 impressions a day at position 8 to 10, a pace of about 5,900 per 30 days against the 2,000 pass line, still led by the 2026 House and Senate control pairs. The numbers now come from the Search Console API nightly (`docs/GSC.md`) rather than from a person reading the dashboard.
 
@@ -195,9 +201,53 @@ page is reaching its query.
 Pass at 2026-10-16 needs ≥ 2,000 impressions in the trailing 30 days AND a
 top-20 page for a cluster term, AND one affiliate approval (see the test above).
 
+## Verdict, week six (2026-10-16): FAIL
+
+Written 2026-10-21 from the owner's personal Search Console (nightly pull, `data/gsc/`, not
+in git). The line is the one fixed in "The pre-registered demand test": it passes only if
+**both** hold — (1) ≥ 2,000 impressions in the trailing 30 days and a top-20 page for a
+cluster term, **or** ≥ 300 social clicks; (2) one affiliate program has approved the site.
+Fail either, kill.
+
+**Clause 1 fails on impressions.** On the verdict date the trailing 30 days held **1,364
+impressions** (data through 10-15, the newest the 10-16 pull had; 1,278 with 10-16's data)
+against 2,000. The top-20 half held ("senate control 2026 kalshi" at 5.0, "kalshi u.s. house
+2026" at 6.8), on a handful of impressions each. The social route was never open: the owner has
+no social accounts and the live pages carry no analytics tag, so no social click could be
+counted. **Clause 2 was not needed to decide.** The Dub program approved the owner on
+2026-09-08 but lands on the offshore venue and was not used (`docs/LAUNCH_KIT.md`); the
+Polymarket US application has no recorded answer.
+
+**How it got there.** The 30-day figure first crossed 2,000 on 09-16, peaked at 3,335 on
+10-04 and last held 2,000 on 10-09. Underneath it, the daily count: 172 to 265 impressions a
+day from 09-05 to 09-11 (positions 8 to 10), 33 to 167 a day from 09-12 to 10-02, then **9 on
+2026-10-03** and 0 to 6 a day since. The last seven days hold 1 impression. The run holds
+3,350 impressions and 4 clicks in 48 days.
+
+**What Google says about the pages** (URL Inspection API on the personal property,
+2026-10-21; 16 of the 96 sitemap URLs, sampled evenly): 5 are indexed (the home page and four
+CPI pair pages, crawled 09-18 and 09-19); 6 are "Crawled – currently not indexed"
+(/methodology, the Senate-control pair that earned the early impressions, and the Dec-FOMC,
+GDP and September-unemployment pairs, all crawled 10-03 to 10-05); 5 are unknown to Google
+(/is-kalshi-legit and four newer pairs). Our side is clean: every sampled page returns 200
+and Google's fetch state is "successful", robots.txt allows everything, canonical tags are the
+pages' own addresses, there is no noindex, and Search Console reports 0 sitemap errors. The
+Senate-control page was crawled on 10-03, the day the cliff began.
+
+**What the test answered.** It could not hold Google's attention: the pages were shown for
+about three weeks, then most of those crawled were filed as not worth indexing. That is a
+result about this route for a six-week-old domain with no social or paid traffic; it cannot
+tell "no demand" from "no way for demand to find the site".
+
+**What follows.** Per the kill rule: the site stays up as a record, nothing further is built,
+and no second charter (revenue gates) is opened. The nightly regeneration and publish cost
+nothing and keep running; ending them, or letting the domain lapse, is the owner's call. The
+same cliff hit `verifiedfees.com` two days later (`docs/decisions/2026-09-08-fee-calculator-demand-test.md`, §10).
+
 ## Deprioritized, not forgotten
 
 B (validation as a service) is the highest-probability *income* line if the
 goal ever shifts from passive to active; it needs no search demand because it
-sells by conversation. E (the "Tested" brand) is the natural editorial voice
-of G. Both wait behind G's six-week verdict.
+sells by conversation. E (the "Tested" brand) was the natural editorial voice
+of G. Both waited behind G's six-week verdict, now recorded above (FAIL); neither
+has been started.

@@ -4,6 +4,11 @@
 this file constituted sign-off on the scope, the budget, and the pass/fail line below.
 Nothing about the pass line may change after the site goes live.
 
+**Verdict, week six (2026-10-20): FAIL.** 1,761 impressions in the trailing 30 days on the
+verdict date against the 2,000 required (1,618 once 10-20's data arrived), and Google now
+shows the site almost nowhere. The numbers, the evidence, and what §3 says happens next are
+in §10.
+
 **Lineage.** Ideation round two (`docs/IDEATION-2.md`, merged 2026-09-08)
 fixed screening criteria before pulling data and found one space that passed
 all of them: calculators for the fees platforms charge sellers — eBay, PayPal,
@@ -346,3 +351,65 @@ clock start.
 | 2 | 2026-09-17 | 559 | 3 | 27.7 | /depop (4.0) | auto-pulled; 559 of 2,000 impressions in 30 days |
 | 2 | 2026-09-21 | 1,052 | 4 | 25.8 | /depop (4.0) | auto-pulled; 1,211 of 2,000 impressions in 30 days |
 | 3 | 2026-09-28 | 933 | 0 | 30.2 | /depop (4.0) | auto-pulled; 2,150 of 2,000 impressions in 30 days: the impression line is crossed three weeks before the 2026-10-20 verdict. Clicks: 4 in 30 days. Five to nine pages carried a false "under review" banner from 09-16 to 09-28 |
+| 4 | 2026-10-05 | 671 | 0 | 38.2 | /depop (4.0) | auto-pulled; 2,825 of 2,000 impressions in 30 days. The pull holds data through 10-04, the last normal day: 90 impressions |
+| 5 | 2026-10-12 | 9 | 0 | 46.8 | /depop (4.0) | auto-pulled; the 7-day count fell from 671 to 9 (4 impressions on 10-05, then 0 to 3 a day); the 30-day figure, 2,828, still held September |
+| 6 | 2026-10-19 | 1 | 0 | 4.0 | /depop (5.0) | auto-pulled; 1,911 of 2,000 impressions in 30 days |
+| 6 | 2026-10-20 | 1 | 0 | 4.0 | /grailed (7.0) | **verdict date.** 1,761 of 2,000 impressions in 30 days (1,618 with 10-20's data). The best-term cell rests on a single impression |
+
+## 10. Verdict — week six (2026-10-20): FAIL
+
+Written 2026-10-21 from the owner's personal Search Console, pulled nightly by `atlas gsc`
+into `data/gsc/` (not in git). The pass line is §3 and has not moved.
+
+**The reading.** On the verdict date the trailing 30 days held **1,761 impressions** (data
+through 10-19, the newest the 10-20 pull has); with 10-20's data it is 1,618. The line is
+2,000. The second clause is not established either: the report's "Top 20" line rests on
+queries with one to three impressions, which §5 does not count. §3 says "anything less" is a
+FAIL; the first clause alone decides it.
+
+**How it got there.** The 30-day figure first crossed 2,000 on 09-26, stayed above it until
+10-17 and peaked at 2,834 on 10-07 (flat to 10-10), then fell below it as September's
+impressions aged out. The cause is the daily count underneath:
+
+| Days | Impressions a day |
+|---|---|
+| 09-12 to 10-04 | 65 to 186 |
+| 10-05 | 4 |
+| 10-06 to 10-20 | 0 to 3 |
+
+The six weeks hold 2,835 impressions and 4 clicks in all.
+
+**What Google says about the pages** (URL Inspection API on the personal property,
+2026-10-21; 16 of the 51 sitemap URLs, sampled evenly):
+
+| Google's status | Pages |
+|---|---|
+| Submitted and indexed | 1: the home page (crawled 10-12) |
+| Crawled – currently not indexed | 8: /amazon, /ebay, /grailed, /patreon, /quickbooks, /square, /upwork, /whatnot. Google fetched each successfully between 09-14 and 10-11 and chose not to keep it |
+| URL is unknown to Google | 7: five "how much does X take" pages, /stubhub, /compare/payment-processors |
+
+Google last downloaded the sitemap on 2026-09-28.
+
+**Our side, checked 2026-10-21.** Every sampled page returns 200 and Google's fetch state is
+"successful"; robots.txt allows everything and names the sitemap; each page's canonical tag is
+its own address and Google chose the same one; there is no noindex in the markup or the
+headers; Search Console reports 0 sitemap errors and 0 warnings. Nothing on this evidence
+we broke explains the drop. It matches Google crawling the calculator pages and filing them as
+not worth indexing.
+
+**What the test answered.** §1 asked whether a site that computes each platform's fees from
+the platform's own published schedule could earn a top-20 position and 2,000 impressions in
+30 days within six weeks, with no social distribution and no paid traffic. It could not hold
+them: Google showed the pages for about three weeks, then dropped most of what it had
+crawled. That is a result about this route for a six-week-old domain. It does not say nobody
+wants the calculators, and it cannot tell "no demand" from "no way for demand to find the
+site"; §5 rules out reading more into it. samebetornot.com failed its own line four days
+earlier with the same cliff, on 10-03 (`docs/IDEATION.md`).
+
+**What follows (§3).** The site stays up as a record and nothing further is built; the
+revenue charter (first $100, then $500 a month) is not opened. The nightly check, build and
+publish keep running because they cost nothing and keep the published numbers true; no
+platform or page is added. Keeping the site costs the domain's renewal, and whether to keep
+it is the owner's call. Spend over the test: the domain (owner-paid) and $0 hosting; the
+build fit inside the two weeks allowed. The report's "Top 20" matcher is corrected so a
+pasted search-operator string cannot count as a fee query (#107).

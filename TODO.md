@@ -1,12 +1,52 @@
 # Atlas continuation checklist
 
-Last updated: 2026-09-28 (**status check found three silent failures and one real fee change, all fixed the same day:** samebetornot.com unpublished since 09-21 after the macOS 27 upgrade; Fee Verified showing false "under review" banners since 09-16; the dashboard's data call at 325 MB since 09-24; Whatnot's new tiered commission of 09-21. Arm A recorder at 86.3% coverage. 922 tests green.) Previous: 2026-09-17 (**Arm A's input was found invalid before it was run — the websocket book recorder never stored a real Kalshi book; a REST ground-truth recorder now covers the five October Fed-decision markets for the charter's single widened run on 2026-10-29.** Arm B: FAIL, 352 games. Study phase 2 live since 9/15.) Previous: 2026-09-04 (**fourth hypothesis DISPROVEN — the in-game price LEADS the game.** 676 lead changes across 262 games: median repricing lag −10.6s, 91% repriced before MLB's official timestamp, median stale liquidity in the human window zero contracts. The move is real (+11.2c net median) and already gone. Four hypotheses, four pre-registered negatives; the prediction-market edge search is complete. 658 tests green)
+Last updated: 2026-10-21 (**both demand tests missed their pass lines and are recorded FAIL:** samebetornot.com 1,364 of 2,000 impressions on 10-16, verifiedfees.com 1,761 of 2,000 on 10-20, each after Google dropped most of its pages from the index in early October. Arm A recorder coverage 93.9%, run 10-29; study day 62, NO-GO.) Previous: 2026-09-28 (**status check found three silent failures and one real fee change, all fixed the same day:** samebetornot.com unpublished since 09-21 after the macOS 27 upgrade; Fee Verified showing false "under review" banners since 09-16; the dashboard's data call at 325 MB since 09-24; Whatnot's new tiered commission of 09-21. Arm A recorder at 86.3% coverage. 922 tests green.) Previous: 2026-09-17 (**Arm A's input was found invalid before it was run — the websocket book recorder never stored a real Kalshi book; a REST ground-truth recorder now covers the five October Fed-decision markets for the charter's single widened run on 2026-10-29.** Arm B: FAIL, 352 games. Study phase 2 live since 9/15.) Previous: 2026-09-04 (**fourth hypothesis DISPROVEN — the in-game price LEADS the game.** 676 lead changes across 262 games: median repricing lag −10.6s, 91% repriced before MLB's official timestamp, median stale liquidity in the human window zero contracts. The move is real (+11.2c net median) and already gone. Four hypotheses, four pre-registered negatives; the prediction-market edge search is complete. 658 tests green)
 
 Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
 Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, bounded retry metadata; 450 tests green; 72 trusted labels)
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
+
+## 2026-10-21 — both demand tests missed their lines; Arm A on track
+
+Read from the jobs panel, every job log, Search Console and Google's own index status.
+
+- [x] **Both verdicts recorded, both FAIL; no pass line moved.** samebetornot.com (verdict
+  10-16): 1,364 of 2,000 impressions in the trailing 30 days (1,278 with the last day).
+  verifiedfees.com (verdict 10-20): 1,761 of 2,000 (1,618). The 30-day counts had been above
+  2,000 (samebetornot 09-16 to 10-09, verifiedfees 09-26 to 10-17) and fell as September's
+  impressions aged out; the daily count under them fell from 100+ to near zero on **10-03**
+  and **10-05**. Google's own status for 16 pages on each site: calculator and pair pages
+  "Crawled – currently not indexed" or unknown to Google; robots, canonical tags, status codes
+  and sitemaps are clean on our side. Both sites stay up as records, nothing further is
+  built, no revenue charter opens. `docs/IDEATION.md` (Verdict), the fee charter §10,
+  `docs/FINDINGS.md`.
+- [x] The nightly report printed "Top 20: yes" for verifiedfees.com on a pasted
+  search-operator string (`%site.support.upwork.com "..."`). Matcher fixed (#107). The line
+  still rests on queries with one to three impressions, which §5 of the fee charter does not
+  count; the verdict does not use it.
+- [ ] **Shopify and Square read "numbers under review"** since the 10-21 check. Shopify: three
+  plan-price quotes on the pricing page no longer match ("Pay yearly $29 / $79 / $299",
+  Grow $79, Advanced $299). Square: the block of legacy-plan processing fees in "What are
+  Square's fees?". Re-read with the checker's own reader, then `reviewed`.
+- [ ] OWNER: keep or retire the two demand-test sites. Keeping them costs two domain renewals
+  and an unattended nightly job; the charters say "stay up as a record".
+- [ ] **Arm A:** recorder coverage **93.9%** on 10-21 (`atlas books coverage`), seven days to
+  the 10-28 close. The runner and `atlas/making.py` are byte-identical to `383d609`; October
+  tapes were archived 10-13 (360 files, 842 MB; also in the nightly backup since #105). The
+  single run is 10-29.
+- [ ] OWNER: **automatic install of macOS updates is still on** (`AutomaticallyInstallMacOSUpdates
+  = 1`, checked 10-21). An update installing before 10-28 would stop the recorder at the login
+  window, as on 09-22 and 10-06.
+- [x] The 90-day study, day 62 (10-19 report): 241 verified opportunities per 30 days against
+  10 needed (passes), median annualized return on locked capital 5.1% against the signed 15%
+  (fails), median basket $143.80 against the signed $500 (fails). NO-GO. Decides 11-17.
+- [x] All six scheduled jobs read OK in the jobs panel on 10-21 (backup, site, fees, gsc, study,
+  intel). The monitor and API have run since 10-13 10:34, after the lock-wait fix (#103).
+- Context, not Atlas: the Mac's load average was 116 on 14 cores at 09:59 local, from three
+  self-hosted GitHub Actions runners testing another repository. The Arm A recorder's error
+  counts did not move.
 
 ## 2026-10-12 — status check, six nights after the 10-06 fixes
 
