@@ -215,3 +215,12 @@ def test_fee_terms_come_from_the_published_schedules():
     match = gsc.term_matcher("sc-domain:verifiedfees.com", names)
     assert match("tiktok shop fee calculator") and match("quickbooks payments fees")
     assert not match("ebay coupons")
+
+
+def test_a_pasted_search_operator_is_not_a_fee_query():
+    # 2026-10-21: the nightly report credited this string as the site's best fee query
+    # (position 6.0) and printed "Top 20: yes" on the verdict date.
+    match = gsc.term_matcher("sc-domain:verifiedfees.com", gsc.fee_platform_names())
+    assert not match('%site.support.upwork.com "learn about the freelancer service fee"')
+    assert not match("site:support.upwork.com service fee")
+    assert match("upwork service fee")
