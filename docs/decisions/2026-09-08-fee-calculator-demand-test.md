@@ -400,8 +400,8 @@ not worth indexing.
 **What the test answered.** §1 asked whether a site that computes each platform's fees from
 the platform's own published schedule could earn a top-20 position and 2,000 impressions in
 30 days within six weeks, with no social distribution and no paid traffic. It could not hold
-them: Google showed the pages for about three weeks, then dropped most of what it had
-crawled. That is a result about this route for a six-week-old domain. It does not say nobody
+them: Google showed the pages for just over three weeks (09-12 to 10-04), then dropped most
+of what it had crawled. That is a result about this route for a six-week-old domain. It does not say nobody
 wants the calculators, and it cannot tell "no demand" from "no way for demand to find the
 site"; §5 rules out reading more into it. samebetornot.com failed its own line four days
 earlier with the same cliff, on 10-03 (`docs/IDEATION.md`).

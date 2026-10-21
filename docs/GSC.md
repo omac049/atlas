@@ -89,6 +89,29 @@ The report gives the numbers. The verdict is still written by a person, who
 applies each charter's exclusions, such as brand-only queries and terms under
 500 searches a month.
 
+## Is Google keeping the pages? (index status)
+
+Impressions say what Google showed, not whether it still holds the pages. In October
+2026 both sites had most of their pages filed "Crawled – currently not indexed" and
+the daily impressions had fallen to near zero, yet the 30-day count still read above
+the pass line for days because September's impressions had not aged out. Ask Google
+directly with the URL Inspection API, using the same service account and read-only
+scope (no new permission; 2,000 inspections a day per property):
+
+- `POST https://searchconsole.googleapis.com/v1/urlInspection/index:inspect` with
+  `{"inspectionUrl": "<page>", "siteUrl": "sc-domain:<domain>"}`, a bearer token from
+  `gsc.load_key` and `gsc.access_token`.
+- Read `inspectionResult.indexStatusResult`: `coverageState` ("Submitted and indexed",
+  "Crawled – currently not indexed", "Discovered – currently not indexed", "URL is
+  unknown to Google"), `lastCrawlTime`, `googleCanonical` against `userCanonical`,
+  `robotsTxtState` and `pageFetchState`.
+- Sample the sitemap evenly (16 pages show the split) and print the tally. Never print
+  the token or the key.
+
+A page that returns 200, is allowed by robots.txt and still reads "Crawled – currently
+not indexed" is Google's judgment, not a fault on our side. Check this weekly in any
+future test, from the first week, instead of waiting for the impression count to turn.
+
 ## Guardrails
 
 - Read-only scope (`webmasters.readonly`), and the account is only a

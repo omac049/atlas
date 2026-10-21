@@ -48,9 +48,9 @@ not; where nothing happens for days, it has not been measured yet.
   behind the price, always.
 - **Correct pages did not earn a place in Google's index.** Two small sites built
   from verified data (a Kalshi–Polymarket comparison and a seller-fee calculator)
-  were shown by Google for about three weeks, then mostly filed "Crawled –
-  currently not indexed"; daily impressions fell from over a hundred to near zero
-  on 2026-10-03 and 10-05, and both missed their 2,000-impression lines (1,364 and
+  were shown by Google for three to four weeks, then mostly filed "Crawled –
+  currently not indexed"; daily impressions fell to near zero on 2026-10-03 and
+  10-05 respectively, and both missed their 2,000-impression lines (1,364 and
   1,761). Nothing on our side was broken. The pattern fits a six-week-old domain
   with nothing pointing at it, which the no-social, no-paid rule leaves unaided;
   the tests cannot say more than that.

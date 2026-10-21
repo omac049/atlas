@@ -939,6 +939,11 @@
      "at": "2026-10-12T19:15:06+00:00",
      "event": "reviewed",
      "note": "Re-read 2026-10-12: the comparison table now shows Plus card rates where it said Most competitive rates; the eight table rows were re-pinned, so all 38 quotes are machine-checked. The third-party transaction fees page dropped its sentence exempting Plus stores. Basic, Grow and Advanced rates are unchanged."
+    },
+    {
+     "at": "2026-10-21T17:18:20+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-10-21: Shopify raised the yearly-billing prices (Grow 79 to 89, Advanced 299 to 359); the Pay yearly row and the Grow and Advanced plan-card quotes and the plan_yearly_billed rates were updated; every other quote matches the cited pages."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -967,61 +972,61 @@
     "| Currency conversion fee | 1.5% | 2% | 2% |"
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-10-12T19:15:06+00:00",
+   "reviewed_at": "2026-10-21T17:18:20+00:00",
    "sources": {
     "https://help.shopify.com/en/manual/international/pricing/fees": {
      "hash": "952649a5398bb42cbadb9894e71a63e631fb16b13e39ae49b3ae3e4404c8a240",
-     "last_checked_at": "2026-10-12T19:15:06+00:00",
-     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "last_checked_at": "2026-10-21T17:18:20+00:00",
+     "reviewed_at": "2026-10-21T17:18:20+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/intro-to-shopify/pricing-plans/pricing-overview": {
      "hash": "6ec98ae4e141ce66800dbfedd602b3f85bcefc4888d82a86e694fa09440704d1",
-     "last_checked_at": "2026-10-12T19:15:06+00:00",
-     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "last_checked_at": "2026-10-21T17:18:20+00:00",
+     "reviewed_at": "2026-10-21T17:18:20+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/onboarding/cost-of-shopify-payments": {
      "hash": "b773367e4028ccf79f4f65e64e5b8e48d6d585e795f8a872de4df06ae30ad4f1",
-     "last_checked_at": "2026-10-12T19:15:06+00:00",
-     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "last_checked_at": "2026-10-21T17:18:20+00:00",
+     "reviewed_at": "2026-10-21T17:18:20+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/payouts/pay-periods-and-fees": {
      "hash": "d5499d4ec0d70e12558890b72d0196f3e453a7319ed360df0c02efa59ffc9616",
-     "last_checked_at": "2026-10-12T19:15:06+00:00",
-     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "last_checked_at": "2026-10-21T17:18:20+00:00",
+     "reviewed_at": "2026-10-21T17:18:20+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/credit-card-rates": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-10-12T19:15:06+00:00",
-     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "last_checked_at": "2026-10-21T17:18:20+00:00",
+     "reviewed_at": "2026-10-21T17:18:20+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/domestic-international-eu-credit-cards": {
      "hash": "02167c04c6781e066fa4ad2c4d343cb6a29fc7d4eacab8dc567439d4bed9515a",
-     "last_checked_at": "2026-10-12T19:15:06+00:00",
-     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "last_checked_at": "2026-10-21T17:18:20+00:00",
+     "reviewed_at": "2026-10-21T17:18:20+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/your-account/manage-billing/billing-charges/types-of-charges/third-party-charges/third-party-transaction-fees": {
      "hash": "6ec98ae4e141ce66800dbfedd602b3f85bcefc4888d82a86e694fa09440704d1",
-     "last_checked_at": "2026-10-12T19:15:06+00:00",
-     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "last_checked_at": "2026-10-21T17:18:20+00:00",
+     "reviewed_at": "2026-10-21T17:18:20+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.shopify.com/pricing": {
-     "hash": "8c1873c392431ffd447942e1ab34ab2819eff15a37bbed8ff3debef215bb6f9f",
-     "last_checked_at": "2026-10-12T19:15:06+00:00",
-     "reviewed_at": "2026-10-12T19:15:06+00:00",
+     "hash": "8e0c4882a8dad88940bafee3a95a2556f933d17eb07e918d2c5f9994c9399e02",
+     "last_checked_at": "2026-10-21T17:18:20+00:00",
+     "reviewed_at": "2026-10-21T17:18:20+00:00",
      "status": "verified",
      "via": "rendered"
     }
@@ -1049,6 +1054,11 @@
      "at": "2026-10-12T19:10:36+00:00",
      "event": "reviewed",
      "note": "Re-read 2026-10-12: the pricing pages no longer say EBT processing fees are waived through fall 2026; the EBT row reads 1.8% + 5 cents. The help article still says waived during open beta. No number the calculator uses changed."
+    },
+    {
+     "at": "2026-10-21T17:18:37+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-10-21: the help article now states the EBT fee as 1.8% + 5 cents per transaction with the waiver sentence gone; the legacy-plan quote was updated; every rate the calculator uses is unchanged."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -1057,40 +1067,40 @@
     "You won\u2019t pay any fees for Cash, Check, and Other Tender payment types."
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-10-12T19:10:36+00:00",
+   "reviewed_at": "2026-10-21T17:18:37+00:00",
    "sources": {
     "https://squareup.com/help/us/en/article/5068-what-are-square-s-fees": {
-     "hash": "16e776527f6056ebadb6bcde230e5701d1a0f001b5099d86344c746c968cd29d",
-     "last_checked_at": "2026-10-12T19:10:36+00:00",
-     "reviewed_at": "2026-10-12T19:10:36+00:00",
+     "hash": "91377703df88e66c59f2283942b402e24b36f6569e527577ebac86b365350afc",
+     "last_checked_at": "2026-10-21T17:18:37+00:00",
+     "reviewed_at": "2026-10-21T17:18:37+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://squareup.com/help/us/en/article/5092-rounding": {
-     "hash": "16e776527f6056ebadb6bcde230e5701d1a0f001b5099d86344c746c968cd29d",
-     "last_checked_at": "2026-10-12T19:10:36+00:00",
-     "reviewed_at": "2026-10-12T19:10:36+00:00",
+     "hash": "91377703df88e66c59f2283942b402e24b36f6569e527577ebac86b365350afc",
+     "last_checked_at": "2026-10-21T17:18:37+00:00",
+     "reviewed_at": "2026-10-21T17:18:37+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://squareup.com/us/en/payments/fee-calculator": {
      "hash": "ff542386906879c679f49aff400ae5c8d2163731f1558222f9fe61927987308a",
-     "last_checked_at": "2026-10-12T19:10:36+00:00",
-     "reviewed_at": "2026-10-12T19:10:36+00:00",
+     "last_checked_at": "2026-10-21T17:18:37+00:00",
+     "reviewed_at": "2026-10-21T17:18:37+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://squareup.com/us/en/payments/our-fees": {
      "hash": "f0ee876d5040a361eb3751d94b95b416181662a2b004af09a6954d8c5d2f06a5",
-     "last_checked_at": "2026-10-12T19:10:36+00:00",
-     "reviewed_at": "2026-10-12T19:10:36+00:00",
+     "last_checked_at": "2026-10-21T17:18:37+00:00",
+     "reviewed_at": "2026-10-21T17:18:37+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://squareup.com/us/en/pricing": {
-     "hash": "1d0a11b7d702b3e42f4d1788331bfb9d7814ef3349d8329c993ad0ec865b2ebf",
-     "last_checked_at": "2026-10-12T19:10:36+00:00",
-     "reviewed_at": "2026-10-12T19:10:36+00:00",
+     "hash": "d259e9c2b061da4843e799b5b33bf59d32ade02730ceaed72df5e621686e9416",
+     "last_checked_at": "2026-10-21T17:18:37+00:00",
+     "reviewed_at": "2026-10-21T17:18:37+00:00",
      "status": "verified",
      "via": "rendered"
     }
