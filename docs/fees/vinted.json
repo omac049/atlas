@@ -1,7 +1,7 @@
 {
   "platform": "vinted",
   "name": "Vinted (US)",
-  "as_of": "2026-10-12",
+  "as_of": "2026-10-21",
   "sources": [
     {
       "url": "https://www.vinted.com/pricelist",
@@ -24,7 +24,7 @@
     {
       "url": "https://www.vinted.com/help/68-how-to-withdraw-earnings",
       "title": "How to withdraw earnings | Vinted",
-      "loaded": "2026-10-12",
+      "loaded": "2026-10-21",
       "last_updated_on_page": null
     },
     {
@@ -70,9 +70,9 @@
     "The Vinted fee is a mandatory platform fee paid at checkout when you place an order through Vinted.",
     "The duration of the Item Bump may last for 3 or 7 calendar days.",
     "The Fee for Bumping Listed Items will vary depending on the chosen duration, item price, and the chosen territorial scope (local or international). Any applicable Sales Tax charged will be included in the price shown at a checkout.",
-    "They can take up to 5 business days to arrive in your bank account (Monday\u2013Friday, not including weekends and holidays).",
+    "It can take up to 5 business days for the funds to arrive in your bank account. Business days are Monday\u2013Friday, not including weekends and public holidays.",
     "You can withdraw earnings in dollars (USD) to supported accounts in banks or other financial institutions using account and routing numbers.",
-    "The minimum amount you can withdraw is $0.10. Withdrawals below this amount will fail.",
+    "The minimum amount you can withdraw is $0.10.",
     "When making international purchases on Vinted, the same Vinted fee applies as for domestic transactions.",
     "Our payment provider applies a 1.2% currency conversion fee to USD\u2194GBP transactions, which is included in the conversion rate provided at the checkout.",
     "Item Verification is currently available in France, Italy, Belgium, Germany, Spain, The Netherlands, the United Kingdom, Poland, Portugal, Romania, Denmark, Sweden, Lithuania and Finland.",
@@ -93,7 +93,8 @@
     "The Price List and help pages were served for the US locale (English, US; USD amounts); the same URL serves other countries' formulas under other locales.",
     "Failed pages: /help/432 (Withdrawals) redirected to the Help Centre home; the /help/4/1577 'Payments & withdrawals' topic index did not render server-side.",
     "Vinted is not a fee-on-seller marketplace, so a seller-fee calculator should return fee = 0 and net = item price; the Vinted fee is relevant only for showing the buyer's total (item + usually 5% + $0.70, plus shipping and tax).",
-    "Re-read 2026-10-12. Vinted rewrote the Price List on 10/08/2026. The fee is now called the Vinted fee throughout, and the Price List no longer gives a fixed formula: it says the fee 'typically includes a percentage of the item's or bundle's price, as well as a fixed fee \u2014 usually 5% + $0.70'. The sentences about who pays shipping and the taxes on shipping labels are gone from the page, as is the bundle wording, so this schedule no longer states them. Sellers still pay nothing; the numbers in this schedule are unchanged."
+    "Re-read 2026-10-12. Vinted rewrote the Price List on 10/08/2026. The fee is now called the Vinted fee throughout, and the Price List no longer gives a fixed formula: it says the fee 'typically includes a percentage of the item's or bundle's price, as well as a fixed fee \u2014 usually 5% + $0.70'. The sentences about who pays shipping and the taxes on shipping labels are gone from the page, as is the bundle wording, so this schedule no longer states them. Sellers still pay nothing; the numbers in this schedule are unchanged.",
+    "Re-read 2026-10-21. Vinted reworded its 'How to withdraw earnings' article: bank withdrawals 'can take up to 5 business days for the funds to arrive in your bank account. Business days are Monday–Friday, not including weekends and public holidays', and the minimum reads 'The minimum amount you can withdraw is $0.10.', with the sentence 'Withdrawals below this amount will fail.' gone from every readable page. The figures, up to 5 business days and a $0.10 minimum, and every rate are unchanged, and the calculator uses none of these sentences."
   ],
   "rates": {
     "selling_fee": 0.0,
