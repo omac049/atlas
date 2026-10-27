@@ -1,13 +1,13 @@
 {
   "platform": "shopify",
   "name": "Shopify",
-  "as_of": "2026-10-21",
+  "as_of": "2026-10-26",
   "sources": [
     {
       "url": "https://www.shopify.com/pricing",
       "title": "Shopify Pricing \u2014 You've got plans. Us too. (USA | English)",
-      "loaded": "2026-10-21",
-      "last_updated_on_page": "Footnote only: Balance earnings rate 'accurate as of October 20, 2026' (fee schedule itself is undated)"
+      "loaded": "2026-10-26",
+      "last_updated_on_page": "Footnote only: Balance earnings rate 'accurate as of October 23, 2026' (fee schedule itself is undated)"
     },
     {
       "url": "https://help.shopify.com/en/manual/payments/shopify-payments/onboarding/cost-of-shopify-payments",
@@ -63,9 +63,6 @@
     "Advanced\n$359/mo\nFor global reach",
     "Plus\nfrom $2,300/mo\nFor complex businesses\nTry for $399",
     "Card rates from 2.9% + 30\u00a2 USD",
-    "Card rates from 2.7% + 30\u00a2 USD",
-    "Card rates from 2.5% + 30\u00a2 USD",
-    "Card rates from 2.25% + 30\u00a2 USD",
     "| Online standard card rates | 2.9% + 30\u00a2 | 2.7% + 30\u00a2 | 2.5% + 30\u00a2 | 2.25% + 30\u00a2 |",
     "| Online premium card rates | 3.5% + 30\u00a2 | 3.3% + 30\u00a2 | 3.1% + 30\u00a2 | 2.95% + 30\u00a2 |",
     "| Online international rates | + 1% | + 1% | + 1% | + 1% |",
@@ -74,7 +71,7 @@
     "| USDC rates | 2.9% + 30\u00a2 | 2.7% + 30\u00a2 | 2.5% + 30\u00a2 | 2.25% + 30\u00a2 |",
     "| In-person manual rates | 3.5% + 10\u00a2 | 3.5% + 10\u00a2 | 3.5% + 10\u00a2 | 3.4% + 10\u00a2 |",
     "| Third-party transaction fees | 2% | 1% | 0.6% | 0.2% |",
-    "| POS Pro: Advanced tools for brick\u2011and\u2011mortar retailers | $89/mo per location | $89/mo per location | $89/mo per location | Includes 20 locations. Up to 200 with Shopify Payments. |",
+    "| POS Pro | $89/mo per location | $89/mo per location | $89/mo per location | Includes 20 locations. Up to 200 with Shopify Payments. |",
     "| Over 50 synced marketplace orders | 1% up to $99/mo | 1% up to $99/mo | 1% up to $99/mo | 1% up to $99/mo |",
     "There are no setup fees on any of our plans.\nThird-party transaction fees may apply when you use a third-party payment provider (instead of Shopify Payments). The rate depends on your plan.\nShopify charges a small fee to allow you to accept major credit cards, such as Visa and Mastercard, as payment in your store. These fees vary depending on the plan that you choose.",
     "Aside from the credit card rate and the subscription fees for your store's Shopify subscription plan, there are no monthly fees, no hidden fees, and no setup fees for Shopify Payments. When you use Shopify Payments as your sole payment provider, there are no third-party transaction fees for orders.",
@@ -105,7 +102,7 @@
   ],
   "notes": [
     "The pricing page defaults to the 'Pay yearly' toggle, so the headline prices ($29 / $89 / $359) are the annual-billing effective monthly rates; monthly billing is $39 / $105 / $399. Plus is 'Starts at $2,300 USD/mo' with no price under Pay yearly and a 'Try for $399' offer.",
-    "Plus card rates: until October 2026 the Plus column of the comparison table read 'Most competitive rates'. It now lists numbers: online standard 2.25% + 30\u00a2, online premium 2.95% + 30\u00a2, in person 2.3% + 10\u00a2, manually entered 3.4% + 10\u00a2, third-party transaction fee 0.2%. That agrees with the plan card's 'Card rates from 2.25% + 30\u00a2 USD'.",
+    "Plus card rates: until October 2026 the Plus column of the comparison table read 'Most competitive rates'. It now lists numbers: online standard 2.25% + 30\u00a2, online premium 2.95% + 30\u00a2, in person 2.3% + 10\u00a2, manually entered 3.4% + 10\u00a2, third-party transaction fee 0.2%. (The Plus plan card's 'Card rates from 2.25% + 30\u00a2 USD' line, which agreed with this, was removed on 2026-10-26.)",
     "The base for Shopify Payments card fees is not itemized on the loaded pages (fees are charged 'when you capture the payment for an order'); the third-party transaction fee formula explicitly includes tax and shipping. Calculator author must decide whether to apply card rates to the order total including shipping and tax (consistent with fees on the captured amount).",
     "'Online international rates + 1%' on the pricing page corresponds to the help center's '1% cross-border fee on all sales made with a credit card issued in another country' for US stores; the pricing page lists it only under online rates, so treatment of international cards in person is unspecified.",
     "Online 'premium' card rates apply to domestic commercial/corporate/business cards and all domestic American Express cards \u2014 a calculator needs the card type as an input.",
@@ -116,7 +113,8 @@
     "help.shopify.com returns an empty shell over plain HTTP; the pages were captured with a JavaScript-rendering fetch.",
     "Rates shown are for the USA | English locale; the page says pricing and payment options differ by country.",
     "Re-read 2026-10-12. Shopify's 'Third-party transaction fees' help page no longer carries the sentence that stores on the Plus plan using Shopify Payments as their sole provider have these fees waived, 'including fees on store credit and gift cards'. No loaded page now states a Plus exemption, so this schedule no longer claims one. The pricing page's comparison table now shows Plus rates where it said 'Most competitive rates', and nothing under Pay yearly for Plus; the eight table rows quoted here were re-pinned to the page as it reads today, so all 38 quotes are machine-checked. The calculator covers Basic, Grow and Advanced only; every rate it uses is unchanged.",
-    "Re-read 2026-10-21. Shopify raised the yearly-billing prices: Grow $79 to $89 a month and Advanced $299 to $359 (the 'Pay yearly' row and the Grow and Advanced plan cards). Basic's $29, the monthly-billing prices $39 / $105 / $399, Plus 'from $2,300' and every card rate on the page are unchanged. The calculator shows the yearly price in its plan note only; no fee it computes changed."
+    "Re-read 2026-10-21. Shopify raised the yearly-billing prices: Grow $79 to $89 a month and Advanced $299 to $359 (the 'Pay yearly' row and the Grow and Advanced plan cards). Basic's $29, the monthly-billing prices $39 / $105 / $399, Plus 'from $2,300' and every card rate on the page are unchanged. The calculator shows the yearly price in its plan note only; no fee it computes changed.",
+    "Re-read 2026-10-26. Shopify simplified the pricing page's plan cards: the 'Card rates from 2.7% / 2.5% / 2.25% + 30¢ USD' lines on the Grow, Advanced and Plus cards are gone (Basic's now reads 'Card rates from 2.9% + 30¢ USD online' in a separate block), and the comparison table's POS Pro row lost its description ('Advanced tools for brick-and-mortar retailers'). The three dropped quotes were removed and the POS Pro row re-pinned. No rate changed: the comparison table still lists every card rate, quoted above, for all four plans exactly as before."
   ],
   "rates": {
     "online_standard": {

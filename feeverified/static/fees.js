@@ -233,7 +233,7 @@
       lines.push({ id: "processing_fee", label: `Processing (${label(f.rate, f.fixed)})`, amount: f.fee });
     }
     let net = cents(amount - lines[0].amount);
-    if (i.instant_payout) { const ip = cents(net * r.instant_payout); lines.push({ id: "instant_payout", label: "Instant Payout (1.5%)", amount: ip }); }
+    if (i.instant_payout) { const ip = cents(Math.max(r.instant_payout_min, net * r.instant_payout)); lines.push({ id: "instant_payout", label: "Instant Payout (1.5%, min $0.50)", amount: ip }); }
     return finish(amount, lines);
   }
 
