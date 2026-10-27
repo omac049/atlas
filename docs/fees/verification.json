@@ -944,6 +944,11 @@
      "at": "2026-10-21T17:18:20+00:00",
      "event": "reviewed",
      "note": "Re-read 2026-10-21: Shopify raised the yearly-billing prices (Grow 79 to 89, Advanced 299 to 359); the Pay yearly row and the Grow and Advanced plan-card quotes and the plan_yearly_billed rates were updated; every other quote matches the cited pages."
+    },
+    {
+     "at": "2026-10-27T00:26:55+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-10-26: Shopify simplified the pricing page plan cards (card-rate lines for Grow, Advanced and Plus removed) and reworded the POS Pro table row; every card rate in the comparison table is unchanged; three quotes removed, one re-pinned."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -972,61 +977,61 @@
     "| Currency conversion fee | 1.5% | 2% | 2% |"
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-10-21T17:18:20+00:00",
+   "reviewed_at": "2026-10-27T00:26:55+00:00",
    "sources": {
     "https://help.shopify.com/en/manual/international/pricing/fees": {
      "hash": "952649a5398bb42cbadb9894e71a63e631fb16b13e39ae49b3ae3e4404c8a240",
-     "last_checked_at": "2026-10-21T17:18:20+00:00",
-     "reviewed_at": "2026-10-21T17:18:20+00:00",
+     "last_checked_at": "2026-10-27T00:26:55+00:00",
+     "reviewed_at": "2026-10-27T00:26:55+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/intro-to-shopify/pricing-plans/pricing-overview": {
      "hash": "6ec98ae4e141ce66800dbfedd602b3f85bcefc4888d82a86e694fa09440704d1",
-     "last_checked_at": "2026-10-21T17:18:20+00:00",
-     "reviewed_at": "2026-10-21T17:18:20+00:00",
+     "last_checked_at": "2026-10-27T00:26:55+00:00",
+     "reviewed_at": "2026-10-27T00:26:55+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/onboarding/cost-of-shopify-payments": {
      "hash": "b773367e4028ccf79f4f65e64e5b8e48d6d585e795f8a872de4df06ae30ad4f1",
-     "last_checked_at": "2026-10-21T17:18:20+00:00",
-     "reviewed_at": "2026-10-21T17:18:20+00:00",
+     "last_checked_at": "2026-10-27T00:26:55+00:00",
+     "reviewed_at": "2026-10-27T00:26:55+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/payouts/pay-periods-and-fees": {
      "hash": "d5499d4ec0d70e12558890b72d0196f3e453a7319ed360df0c02efa59ffc9616",
-     "last_checked_at": "2026-10-21T17:18:20+00:00",
-     "reviewed_at": "2026-10-21T17:18:20+00:00",
+     "last_checked_at": "2026-10-27T00:26:55+00:00",
+     "reviewed_at": "2026-10-27T00:26:55+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/credit-card-rates": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-10-21T17:18:20+00:00",
-     "reviewed_at": "2026-10-21T17:18:20+00:00",
+     "last_checked_at": "2026-10-27T00:26:55+00:00",
+     "reviewed_at": "2026-10-27T00:26:55+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/domestic-international-eu-credit-cards": {
      "hash": "02167c04c6781e066fa4ad2c4d343cb6a29fc7d4eacab8dc567439d4bed9515a",
-     "last_checked_at": "2026-10-21T17:18:20+00:00",
-     "reviewed_at": "2026-10-21T17:18:20+00:00",
+     "last_checked_at": "2026-10-27T00:26:55+00:00",
+     "reviewed_at": "2026-10-27T00:26:55+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/your-account/manage-billing/billing-charges/types-of-charges/third-party-charges/third-party-transaction-fees": {
      "hash": "6ec98ae4e141ce66800dbfedd602b3f85bcefc4888d82a86e694fa09440704d1",
-     "last_checked_at": "2026-10-21T17:18:20+00:00",
-     "reviewed_at": "2026-10-21T17:18:20+00:00",
+     "last_checked_at": "2026-10-27T00:26:55+00:00",
+     "reviewed_at": "2026-10-27T00:26:55+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.shopify.com/pricing": {
-     "hash": "8e0c4882a8dad88940bafee3a95a2556f933d17eb07e918d2c5f9994c9399e02",
-     "last_checked_at": "2026-10-21T17:18:20+00:00",
-     "reviewed_at": "2026-10-21T17:18:20+00:00",
+     "hash": "97c86f44d849a442b291af1de1dba66724e707d2b8dcd9381d04826902d3776c",
+     "last_checked_at": "2026-10-27T00:26:55+00:00",
+     "reviewed_at": "2026-10-27T00:26:55+00:00",
      "status": "verified",
      "via": "rendered"
     }
@@ -1133,6 +1138,11 @@
      "at": "2026-10-13T00:05:13+00:00",
      "event": "reviewed",
      "note": "Baseline refreshed 2026-10-12, no change to the schedule: every quoted sentence was found on the page by the checker's own reader. The list of quotes the nightly check skips dated from before the matcher ignored spacing and table borders (2026-09-28), so it had been skipping sentences it could read."
+    },
+    {
+     "at": "2026-10-27T00:27:10+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-10-26: the Instant Payouts fee moved to stripe.com/pricing (1.5%, minimum fee 50 cents) and the docs page dropped its percentage sentence; quote replaced, calculator now applies the 50 cent minimum, two derived examples added."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -1140,54 +1150,54 @@
     "| United States | 0.50 USD | 9,999 USD |"
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-10-13T00:05:13+00:00",
+   "reviewed_at": "2026-10-27T00:27:10+00:00",
    "sources": {
     "https://docs.stripe.com/payments/ach-direct-debit": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-10-13T00:05:13+00:00",
-     "reviewed_at": "2026-10-13T00:05:13+00:00",
+     "last_checked_at": "2026-10-27T00:27:10+00:00",
+     "reviewed_at": "2026-10-27T00:27:10+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://docs.stripe.com/payouts/instant-payouts": {
-     "hash": "6fe07c7aba95518fb48029f087dbc8bf659e951c4c71f0c9c866f83399cad413",
-     "last_checked_at": "2026-10-13T00:05:13+00:00",
-     "reviewed_at": "2026-10-13T00:05:13+00:00",
+     "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "last_checked_at": "2026-10-27T00:27:10+00:00",
+     "reviewed_at": "2026-10-27T00:27:10+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://stripe.com/legal/pricing-policy": {
      "hash": "86350984efb01ae8ae8b2bd6a424ee8465b29d668a8b545f25e9d2ae9ce761f4",
-     "last_checked_at": "2026-10-13T00:05:13+00:00",
-     "reviewed_at": "2026-10-13T00:05:13+00:00",
+     "last_checked_at": "2026-10-27T00:27:10+00:00",
+     "reviewed_at": "2026-10-27T00:27:10+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://stripe.com/pricing": {
-     "hash": "c397892a7fd23857caac76eb5df85ea5787bada437ec805a36970384416e7934",
-     "last_checked_at": "2026-10-13T00:05:13+00:00",
-     "reviewed_at": "2026-10-13T00:05:13+00:00",
+     "hash": "0c068f441524db0d09ef095d24f33b9c4e2d6b1d9fecbb86b34230a715bc8615",
+     "last_checked_at": "2026-10-27T00:27:10+00:00",
+     "reviewed_at": "2026-10-27T00:27:10+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://stripe.com/pricing/local-payment-methods": {
      "hash": "6c1752ada15e9e8840c8a21bb10afa6136726189cd843230609a566e85510db7",
-     "last_checked_at": "2026-10-13T00:05:13+00:00",
-     "reviewed_at": "2026-10-13T00:05:13+00:00",
+     "last_checked_at": "2026-10-27T00:27:10+00:00",
+     "reviewed_at": "2026-10-27T00:27:10+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://support.stripe.com/questions/manually-entered-card-payments": {
      "hash": "5d84fc71d1729a9a6844528e46de85de08592ec3c5ac64893e108048cb8e1ac9",
-     "last_checked_at": "2026-10-13T00:05:13+00:00",
-     "reviewed_at": "2026-10-13T00:05:13+00:00",
+     "last_checked_at": "2026-10-27T00:27:10+00:00",
+     "reviewed_at": "2026-10-27T00:27:10+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://support.stripe.com/questions/rounding-rules-for-stripe-fees": {
      "hash": "3d990df1b97e66a954a82b0ffd3b5d56244078d56841fdf7ed9a6430924f910d",
-     "last_checked_at": "2026-10-13T00:05:13+00:00",
-     "reviewed_at": "2026-10-13T00:05:13+00:00",
+     "last_checked_at": "2026-10-27T00:27:10+00:00",
+     "reviewed_at": "2026-10-27T00:27:10+00:00",
      "status": "verified",
      "via": "rendered"
     }
@@ -1654,6 +1664,11 @@
      "at": "2026-10-12T19:10:29+00:00",
      "event": "reviewed",
      "note": "Re-read 2026-10-12: Whatnot updated the fees article on October 1, 2026; the sentence on when a new seller moves to the tiered structure was reworded (the following Monday at 12:00 a.m.). The rate table is unchanged."
+    },
+    {
+     "at": "2026-10-27T00:29:01+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-10-26: Whatnot rewrote the Reduced commission on Coins and Money article on 2026-10-21 (new live-show categories, 4 percent stated in its VAT section); two quotes replaced by four from the new text; no rate changed."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -1665,40 +1680,40 @@
     "Seller-generated coupons: Reduce the final sale price, so fees apply to the discounted amount."
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-10-12T19:10:29+00:00",
+   "reviewed_at": "2026-10-27T00:29:01+00:00",
    "sources": {
     "https://help.whatnot.com/hc/en-us/articles/14477076380941-Reduced-commission-on-Coins-Money": {
-     "hash": "053189397dd56175d9f9190191aed341c1e9829512ab6f75e78093b3388951ac",
-     "last_checked_at": "2026-10-12T19:10:29+00:00",
-     "reviewed_at": "2026-10-12T19:10:29+00:00",
+     "hash": "00f5e00ee2f898b0697293aef652e3a06d21cb180e5274e5821e57a8806d259a",
+     "last_checked_at": "2026-10-27T00:29:01+00:00",
+     "reviewed_at": "2026-10-27T00:29:01+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/articles/27912945518733-Reduced-Commission-on-High-Value-Orders": {
-     "hash": "138a9f23169e48cced4ca4c4764938ff0a5e7d74b5bb81ef1e265da5248134d6",
-     "last_checked_at": "2026-10-12T19:10:29+00:00",
-     "reviewed_at": "2026-10-12T19:10:29+00:00",
+     "hash": "e2fa42f38b3a8af5c2c6256d3dcf3bdf5ec798c7cb4b4a1b653b1362bd23171b",
+     "last_checked_at": "2026-10-27T00:29:01+00:00",
+     "reviewed_at": "2026-10-27T00:29:01+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/articles/32083195713421-Taxes-on-Whatnot-commissions-and-fees": {
-     "hash": "e61b41fdf0f03d8bca6a4566d85ec20519cddb84a22ba31e04cab76782a8d8eb",
-     "last_checked_at": "2026-10-12T19:10:29+00:00",
-     "reviewed_at": "2026-10-12T19:10:29+00:00",
+     "hash": "7a6ef05f695466d6feb29732db132ee63fe5dad2cbe967b7cad9d26a479a8fbc",
+     "last_checked_at": "2026-10-27T00:29:01+00:00",
+     "reviewed_at": "2026-10-27T00:29:01+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/articles/4847069165965-Whatnot-seller-fees": {
-     "hash": "872f1b8d4b134c255b7c655bad5006c465aae6066358f5a0fcc13e727ae502c7",
-     "last_checked_at": "2026-10-12T19:10:29+00:00",
-     "reviewed_at": "2026-10-12T19:10:29+00:00",
+     "hash": "412562024a463054c4340748062fac2e4535aeb399c8f7c7eca27859d282bd48",
+     "last_checked_at": "2026-10-27T00:29:01+00:00",
+     "reviewed_at": "2026-10-27T00:29:01+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/sections/44398189207565-Fees-commissions": {
-     "hash": "28b5e8730c678f002edcb896c1a692119fc979468091f354f77dd15771aba2bf",
-     "last_checked_at": "2026-10-12T19:10:29+00:00",
-     "reviewed_at": "2026-10-12T19:10:29+00:00",
+     "hash": "a15cc174e56e324c179c631589da2a1a0d9d9d43c416c547f1db38481643a2de",
+     "last_checked_at": "2026-10-27T00:29:01+00:00",
+     "reviewed_at": "2026-10-27T00:29:01+00:00",
      "status": "verified",
      "via": "rendered"
     }

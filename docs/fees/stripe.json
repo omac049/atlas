@@ -1,12 +1,12 @@
 {
   "platform": "stripe",
   "name": "Stripe",
-  "as_of": "2026-09-08",
+  "as_of": "2026-10-26",
   "sources": [
     {
       "url": "https://stripe.com/pricing",
       "title": "Pricing & Fees | Stripe (United States, English)",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-26",
       "last_updated_on_page": null
     },
     {
@@ -24,7 +24,7 @@
     {
       "url": "https://docs.stripe.com/payouts/instant-payouts",
       "title": "Instant Payouts for Stripe Dashboard users \u2014 Stripe Docs",
-      "loaded": "2026-09-08",
+      "loaded": "2026-10-26",
       "last_updated_on_page": null
     },
     {
@@ -69,7 +69,7 @@
     "Post-payment invoices\nAutomatically generate an invoice after a one-time purchase.\n0.4%\non transaction total\n$2.00\ncap per invoice",
     "Transaction fees on cards entered manually in the Dashboard or with Terminal MOTO are 3.4% + 0.30 USD for businesses on standard pricing based in the US, and 3.4% + 0.30 CAD for businesses based in Canada, Standard card payments are 2.9% + 0.30 USD in the US, and 2.9% + 0.30 CAD in Canada.",
     "The first subscription payment using a card whose details have been typed into the Dashboard. All subsequent subscription payments using that card will be charged the standard 2.9% + 0.30 USD card processing fee.",
-    "Stripe charges Dashboard users a 1% fee for all Instant Payouts for CA, EU, UK, SG, NO, HK and MY, and a 1.5% fee for US, AU, NZ, and AE. Each Instant Payout transaction has a minimum and maximum amount dependent on the currency.",
+    "Instant payouts\nAccess funds within minutes through an eligible debit card or bank account. Alternatively, pay out your funds on our standard schedule for free.\n1.5%\nof Instant Payouts volume\nMinimum fee of 50¢",
     "| United States | 0.50 USD | 9,999 USD |",
     "You\u2019re limited to a maximum of 10 Instant Payouts per day.",
     "Fees: The Instant Payout fee is pre-deducted so the balance shown reflects what you\u2019d actually receive.",
@@ -94,7 +94,8 @@
     "Manual-entry pricing is stated two ways that agree: '+0.5% for manually entered cards' on the pricing page and '3.4% + 0.30 USD' on the support article (2.9% + 0.5% = 3.4%). The support article also says only the first subscription payment on a Dashboard-keyed card gets the higher rate.",
     "International (+1.5%) and currency-conversion (+1%) surcharges are listed separately and can both apply to one payment; the pages do not state whether surcharges are rounded separately or after summing \u2014 Pricing Policy 1.3 says 'each Stripe fee' is rounded.",
     "Refunds: Pricing Policy 1.4 says each successful refund is charged the fixed fee applicable to the refunded transaction (i.e. the $0.30). The pricing-page FAQ on refunds could not be read to confirm whether the percentage portion is also retained; calculator author must decide how to model refunds.",
-    "Instant Payouts: the 1.5% US fee is stated in docs (not on the pricing page); limits are $0.50 minimum and $9,999 maximum per payout, max 10 per day, US daily limit resets at midnight US Central Time; new accounts are not immediately eligible.",
+    "Instant Payouts: limits are $0.50 minimum and $9,999 maximum per payout, max 10 per day, US daily limit resets at midnight US Central Time; new accounts are not immediately eligible.",
+    "Re-read 2026-10-26. The Instant Payouts fee moved: stripe.com/pricing now states it ('1.5% of Instant Payouts volume', 'Minimum fee of 50¢', 'Pricing differs for Connect users'), and the docs page no longer gives any percentage or country list, only that Stripe assesses a fee on each Instant Payout. The 1.5% is unchanged. The 50¢ minimum fee is stated there and was not in this schedule or the calculator: an Instant Payout under about $33 costs 50¢, and the calculator now applies it. Only the US rate is covered.",
     "The hero shows '2.9% + $0.30' and the table shows '2.9% + 30\u00a2' \u2014 same rate. The page footer reads 'United States (English)', so these are US rates.",
     "Terminal (in-person) domestic cards are 2.7% + 5\u00a2, plus $0.10 per authorization for Tap to Pay and an optional $0.05 P2PE fee; international cards add 1.5% in person as well."
   ],
@@ -122,7 +123,8 @@
       0.06,
       0.3
     ],
-    "instant_payout": 0.015
+    "instant_payout": 0.015,
+    "instant_payout_min": 0.5
   },
   "summary": "Stripe charges 2.9% + 30\u00a2 per successful domestic card or wallet payment, 3.4% + 30\u00a2 for manually entered cards, +1.5% for cards issued outside the US, +1% when currency conversion applies, ACH at 0.8% capped at $5, and 2.7% + 5\u00a2 in person on Terminal. Each fee is rounded to the nearest cent.",
   "inputs": [
@@ -178,7 +180,7 @@
     },
     {
       "id": "instant_payout",
-      "label": "Instant Payout (1.5%)",
+      "label": "Instant Payout (1.5%, min $0.50)",
       "type": "bool",
       "default": false
     }
@@ -208,6 +210,36 @@
         "total_fees": 0.32
       },
       "quote": "0.025 rounds up to 0.03, 0.024 rounds down to 0.02",
+      "source_url": "https://stripe.com/pricing",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $20 card payment (fee $0.88, $19.12 left) paid out instantly costs the 50¢ minimum fee, since 1.5% of $19.12 is only $0.29.",
+      "inputs": {
+        "amount": 20,
+        "method": "card",
+        "instant_payout": true
+      },
+      "expected": {
+        "total_fees": 1.38,
+        "net": 18.62
+      },
+      "quote": "Minimum fee of 50¢",
+      "source_url": "https://stripe.com/pricing",
+      "derived": true
+    },
+    {
+      "description": "Arithmetic check derived from the published rates: a $1,000 card payment (fee $29.30, $970.70 left) paid out instantly costs 1.5%, $14.56, above the minimum.",
+      "inputs": {
+        "amount": 1000,
+        "method": "card",
+        "instant_payout": true
+      },
+      "expected": {
+        "total_fees": 43.86,
+        "net": 956.14
+      },
+      "quote": "1.5%\nof Instant Payouts volume",
       "source_url": "https://stripe.com/pricing",
       "derived": true
     }
