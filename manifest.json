@@ -1,10 +1,10 @@
 {
   "site_version": "0.3",
-  "generated_at": "2026-10-29T11:00:38.691488+00:00",
-  "pairs": 72,
+  "generated_at": "2026-10-30T11:00:51.658642+00:00",
+  "pairs": 74,
   "same_bet_pairs": 0,
   "tradeable_pairs": 49,
-  "pairs_with_quotes": 72,
+  "pairs_with_quotes": 74,
   "legal_states": 51,
   "comparison_rows": 15
 }
