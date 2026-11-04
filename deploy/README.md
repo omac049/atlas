@@ -187,3 +187,24 @@ The same nightly run backs up Arm A's input, whatever happens to the main snapsh
 These copies are on the same disk as the originals. They cover a bad write or a deleted
 file, not the loss of the machine.
 
+### Off-machine copy
+
+The same nightly run ends by copying to the owner's personal iCloud Drive, in the folder
+`Atlas-backups` (chosen 2026-11-04; never the employer's OneDrive):
+
+- The newest main and books snapshots, read back identical, newest seven of each kept.
+- One `tree-<folder>.tar.gz` per folder named in `OFFSITE_TREES`, rewritten only when that
+  folder's files change.
+- Nothing else. `keys/` and `.env` never go there, so losing the Mac means issuing new keys.
+
+A copy iCloud has not uploaded after a day, or a failed copy, is an `ERROR` in the backup
+log, which reads as FAILING in the jobs panel. It never costs the local backup.
+
+To restore, download the files from iCloud Drive into `data/backups/`, then
+`gunzip -k` a snapshot as above, and `tar -xzf data/backups/tree-<folder>.tar.gz -C data` for a
+folder (`tree-backups-audit` and `tree-making-tapes` unpack to `data/backups/audit` and
+`data/making/tapes`).
+
+Tested 2026-11-04: both database copies were removed from the Mac with `brctl evict` (0 bytes
+on disk), came back identical, and opened with `quick_check` ok and the expected row counts.
+
