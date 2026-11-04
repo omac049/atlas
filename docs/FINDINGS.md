@@ -1,6 +1,6 @@
 # What Atlas found
 
-*Six weeks, four hypotheses, four pre-registered negatives, zero dollars of
+*Five hypotheses, five pre-registered negatives, zero dollars of
 principal. This page is the whole story on one screen; every claim links to
 the charter and the evidence that produced it.*
 
@@ -19,7 +19,7 @@ Failing that, can what it learns be sold?
 | 2 | Settlement-machinery gaps (missing fallbacks, absent sources) predict disputed resolutions | **FAIL** | 15 famous disputes vs 45 rule-selected controls: median clarity score **65 vs 65**. No separation. | [proof charter](decisions/2026-08-31-fine-print-proof-charter.md) · [corpus](proof/test-a-corpus.json) · [result](proof/test-a-result.json) |
 | 3 | Predicate ambiguity ("what counts as a suit?") predicts disputes | **Abandoned at gate** | Instrument flagged **4 of 15** disputes against 60% required. Reading the misses showed disputes are three different things, and the theory covered one. | [charter](decisions/2026-09-02-predicate-ambiguity-charter.md) · [gate](proof/ambiguity-gate-result.json) |
 | 4 | The in-game price lags the game — a human with the public feed could take stale prices after a lead change | **DISPROVEN** | 676 lead changes across 262 games: the market repriced a median **10.6 seconds *before*** MLB's official play timestamp, in 91% of plays. The move is real (+11.2¢ net) and already gone. | [charter](decisions/2026-09-04-repricing-lag-charter.md) · [result](proof/repricing-result.json) |
-| 5 | Being the counterparty: a naive, rule-following market maker nets positive after fees | **Arm B (fast markets): FAIL.** Arm A (slow markets): not yet measured | 352 MLB games: net **−$4,492.52** on 227,154 contracts, 25.6% of games positive (60% required), −1.98¢ per contract (+0.5¢ required), worse at 5 s latency. Arm A's recorded order books were found invalid the day it was due, before any replay; real books are now being recorded for the charter's single widened run on 2026-10-29. | [charter](decisions/2026-09-08-market-making-charter.md) · [Arm B result](proof/making-result-armB.json.gz) |
+| 5 | Being the counterparty: a naive, rule-following market maker nets positive after fees | **FAIL in both arms.** Arm B (fast markets): FAIL. Arm A (slow markets): INCONCLUSIVE twice, which the charter counts as FAIL | 352 MLB games: net **−$4,492.52** on 227,154 contracts, 25.6% of games positive (60% required), −1.98¢ per contract (+0.5¢ required), worse at 5 s latency. Arm A, five October Fed markets on real recorded books: 3 markets cleared the 500-print floor against 4 needed; net **+$14.15** on 918 contracts, **1 of 5** markets positive (60% required), with each market's sign set by how it settled. | [charter](decisions/2026-09-08-market-making-charter.md) · [Arm A result](proof/making-result-armA.json.gz) · [Arm B result](proof/making-result-armB.json.gz) |
 
 The first four cover the space an outsider with public data can reach by
 *predicting*: whether the price is right across venues, whether the contract
@@ -27,7 +27,9 @@ text predicts trouble (two different ways), and whether the price is slow. The
 fourth charter said in advance it would be the last prediction hypothesis. It
 was. The fifth asks the one question left that predicts nothing: whether simply
 *being the counterparty* pays. Where professionals reprice in seconds, it does
-not; where nothing happens for days, it has not been measured yet.
+not; where nothing happens for days, a naive quoter is filled too rarely for the
+result to be anything but how one settlement went. Under the charter's own rule,
+that closes the automated-trading question.
 
 ## What each failure taught
 
@@ -46,6 +48,11 @@ not; where nothing happens for days, it has not been measured yet.
   sub-second feeds capture it before the public play-by-play finalizes the
   play. A person watching the game is structurally ten to twenty-five seconds
   behind the price, always.
+- **The slow market was not an open door.** October's Fed books were real and
+  deep. A 10-contract quote sat behind a median of about 10,500 to 26,000 contracts
+  until mid-October and far more after that, and got 107 fills in 41 days. It ended
+  long in both markets that traded: one settled its way (+$47.84) and the other did
+  not (−$33.69). That is a position, not a spread earned.
 - **Correct pages did not earn a place in Google's index.** Two small sites built
   from verified data (a Kalshi–Polymarket comparison and a seller-fee calculator)
   were shown by Google for three to four weeks, then mostly filed "Crawled –
@@ -99,16 +106,17 @@ The method mattered more than any single result:
   sampling around scheduled macro prints, and runs unattended.
 - A **method**: state the claim so it can fail, fix the thresholds before the
   data, test in days, publish the negative as loudly as a positive. It killed
-  four plausible ideas for the cost of the electricity.
+  five plausible ideas for the cost of the electricity.
 
 ## Where things stand
 
 - Atlas runs itself: monitor, watchdog, keep-awake, weekly study and intel
   reports, nightly backup with VACUUM. Paper-only, permanently.
 - The 90-day study decides 2026-11-17 and already reads NO-GO.
-- The fifth charter is half answered: Arm B FAIL (2026-09-15); Arm A waits on
-  real order books, recorded since 2026-09-17 for its one widened run on
-  2026-10-29. A second inconclusive counts as FAIL.
+- The fifth charter is answered: Arm B FAIL (2026-09-15); Arm A INCONCLUSIVE a
+  second time (run 2026-11-04, six days late; 3 markets of the 4 needed), which
+  counts as FAIL. The automated-trading question is closed unless genuinely new
+  information arrives: a new data source, venue or fee schedule.
 - Both demand tests failed their pre-registered lines: samebetornot.com
   (verdict 2026-10-16: 1,364 of 2,000 impressions in 30 days) and
   verifiedfees.com (2026-10-20: 1,761 of 2,000). Both sites stay up as
