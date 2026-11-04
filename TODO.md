@@ -34,8 +34,12 @@ Read from every job log, the jobs panel, the recorder, Kalshi's public tape and 
   code until it restarts; its first prune after that drops the 4,158 Fed-decision rows now past
   30 days (18.6 MB, from the old websocket recorder). Arm A's real books are in their own
   database, which prune never touches.
-- [ ] OWNER: where an off-machine copy of `data/` goes (open since 09-17, below). Every backup
-  is on this one employer-managed Mac, and `data/` is not in git. Settle it before any shutdown.
+- [x] **Off-machine copy: the owner's personal iCloud Drive, folder `Atlas-backups`** (owner's
+  choice of personal cloud, 11-04; iCloud was already signed in, while Cloudflare R2 would have
+  needed enabling in the dashboard). First copy made 11-04, 12 files, about 457 MB; the nightly
+  backup now repeats it (`deploy/README.md`). Removed from the Mac and downloaded back: identical,
+  `quick_check` ok, 95 labels and 413,987 books. Scanned first for secret-shaped text: none.
+  `keys/` and `.env` never go there. Not checked from another device.
 - [ ] OWNER: what stays on after 11-17. Stopping the monitor also stops samebetornot.com's data
   from changing.
 - [ ] `uv run` rewrites `uv.lock` (+138 lines) because the `fees` extra was never locked, which
@@ -566,7 +570,7 @@ Read from every job log, not from the panel alone.
   run by hand at 17:36Z: 1.6 s, 391 MB to 25 MB, 230,255 recorded books; the restored
   copy passed `quick_check` with the same count; the recorder wrote through it with no
   unknown-book marker; the five tape copies are byte-identical to the originals.
-- [ ] OWNER: **every Atlas backup is on the same disk as the data** (the main database,
+- [x] OWNER (answered 2026-11-04: personal iCloud Drive): **every Atlas backup is on the same disk as the data** (the main database,
   and now Arm A's books and tapes). That covers a bad write or a deleted file, not a
   lost or dead laptop. Decide where an off-machine copy should go; not the employer's
   OneDrive.

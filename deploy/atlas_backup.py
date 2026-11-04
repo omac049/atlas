@@ -23,17 +23,28 @@ archived October prints, each copied once into ``data/backups/tapes/``. The
 books cannot be re-recorded, and until 2026-10-13 nothing copied them. These
 copies sit on the same disk as the originals: they protect against a bad write
 or a deleted file, not against losing the machine.
+
+Losing the machine is what ``copy_offsite`` is for. It runs last and on its own:
+the newest snapshots, plus the evidence folders named in ``OFFSITE_TREES``, go to
+the owner's personal iCloud Drive (never the employer's OneDrive). A copy iCloud
+has not uploaded a day later is an error, because a copy that never left the Mac
+reads as protection that does not exist.
 """
 
 import gzip
+import hashlib
+import json
 import shutil
 import sqlite3
+import subprocess
+import tarfile
 import time
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DB = REPO_ROOT / "data" / "atlas.sqlite3"
-BACKUP_DIR = REPO_ROOT / "data" / "backups"
+DATA = REPO_ROOT / "data"
+DB = DATA / "atlas.sqlite3"
+BACKUP_DIR = DATA / "backups"
 LOG = Path.home() / "Library" / "Logs" / "atlas-backup.log"
 
 # Three days of history against a bad write. Compressed, each snapshot is about a
@@ -48,6 +59,22 @@ BOOKS_DB = REPO_ROOT / "data" / "making" / "books.sqlite3"
 BOOKS_PREFIX = "books-auto-"
 TAPES = REPO_ROOT / "data" / "making" / "tapes"
 ARM_A_TAPES = "KXFEDDECISION-26OCT-*.json"
+
+# The off-machine copy. Only what is named here ever leaves the Mac: never keys/ or .env.
+OFFSITE_DIR = Path.home() / "Library/Mobile Documents/com~apple~CloudDocs/Atlas-backups"
+OFFSITE_KEEP = 7
+OFFSITE_TREES = (
+    "archive", "backups/audit", "clarity", "fees", "gsc", "intel", "making/tapes", "replays",
+    "study", "training",
+)
+OFFSITE_STATE = "offsite-state.json"
+UPLOAD_GRACE_SECONDS = 24 * 3600
+# Foundation's own answer to "has iCloud uploaded this file?", from a script.
+UPLOADED_JS = (
+    "ObjC.import('Foundation');function run(argv){var v=Ref();"
+    "$.NSURL.fileURLWithPath(argv[0]).getResourceValueForKeyError("
+    "v,$.NSURLUbiquitousItemIsUploadedKey,null);return v[0].boolValue?'yes':'no';}"
+)
 
 
 def log(message: str) -> None:
@@ -106,6 +133,12 @@ def main() -> None:
     # VACUUM only with a fresh, verified snapshot of the main database on disk.
     if snapshotted:
         vacuum_live_database()
+    # Last, and on its own: a failed copy must not cost tonight's local backup. An ERROR
+    # after "backup ok" reads as FAILING in the jobs panel, which is what it should do.
+    try:
+        copy_offsite()
+    except (OSError, subprocess.SubprocessError, tarfile.TarError) as exc:
+        log(f"ERROR offsite copy failed: {exc}")
 
 
 def snapshot_atlas(stamp: str) -> bool:
@@ -212,6 +245,117 @@ def copy_tapes() -> None:
         folder.mkdir(parents=True, exist_ok=True)
         compress(tape, into=folder, keep=True)
         log(f"tape copied: {tape.name}")
+
+
+def is_uploaded(path: Path) -> bool:
+    done = subprocess.run(
+        ["/usr/bin/osascript", "-l", "JavaScript", "-e", UPLOADED_JS, str(path)],
+        capture_output=True, text=True, timeout=60, check=True,
+    )
+    return done.stdout.strip() == "yes"
+
+
+def copy_offsite() -> None:
+    """Copy the newest snapshots and the changed evidence folders off the machine."""
+    if not OFFSITE_DIR.parent.is_dir():
+        raise OSError(f"{OFFSITE_DIR.parent} is missing: is iCloud Drive signed in?")
+    OFFSITE_DIR.mkdir(exist_ok=True)
+    BACKUP_DIR.mkdir(parents=True, exist_ok=True)
+    # Checked first, so tonight's fresh copies are not what gets judged.
+    stalled = [path.name for path in _offsite_files()
+               if time.time() - path.stat().st_mtime > UPLOAD_GRACE_SECONDS
+               and not is_uploaded(path)]
+    copied = []
+    for prefix in (PREFIX, BOOKS_PREFIX):
+        for snapshot in sorted(BACKUP_DIR.glob(f"{prefix}*.sqlite3.gz"))[-1:]:
+            if not _offsite_has(snapshot.name):
+                _copy_verified(snapshot, OFFSITE_DIR / snapshot.name)
+                copied.append(snapshot.name)
+        _rotate_offsite(prefix)
+    copied += _copy_changed_trees()
+    log(f"offsite ok: {', '.join(copied) or 'nothing new'}")
+    if stalled:
+        raise OSError(f"not uploaded after a day: {', '.join(stalled)}")
+
+
+def _offsite_files() -> list[Path]:
+    """Files still on the Mac; a hidden placeholder means iCloud already has the file."""
+    return sorted(path for path in OFFSITE_DIR.iterdir()
+                  if path.is_file() and not path.name.startswith(".")
+                  and not path.name.endswith(".partial"))
+
+
+def _offsite_has(name: str) -> bool:
+    return (OFFSITE_DIR / name).exists() or (OFFSITE_DIR / f".{name}.icloud").exists()
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        while block := handle.read(CHUNK):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _copy_verified(source: Path, target: Path) -> None:
+    partial = target.with_name(target.name + ".partial")
+    shutil.copyfile(source, partial)
+    if _sha256(partial) != _sha256(source):
+        partial.unlink(missing_ok=True)
+        raise OSError(f"{target.name} did not read back identical")
+    partial.replace(target)
+
+
+def _rotate_offsite(prefix: str) -> None:
+    copies = {}
+    for path in OFFSITE_DIR.iterdir():
+        name = path.name.removeprefix(".").removesuffix(".icloud")
+        if name.startswith(prefix) and name.endswith(".sqlite3.gz"):
+            copies[name] = path
+    for name in sorted(copies)[:-OFFSITE_KEEP]:
+        copies[name].unlink()
+        log(f"offsite rotated out {name}")
+
+
+def _copy_changed_trees() -> list[str]:
+    """One archive per folder, rewritten only when the folder's files have changed."""
+    state_path = BACKUP_DIR / OFFSITE_STATE
+    state = json.loads(state_path.read_text()) if state_path.exists() else {}
+    copied = []
+    for tree in OFFSITE_TREES:
+        folder = DATA / tree
+        members = sorted(path for path in folder.rglob("*")
+                         if path.is_file() and path.name != ".DS_Store")
+        if not members:
+            continue
+        name = f"tree-{tree.replace('/', '-')}.tar.gz"
+        fingerprint = hashlib.sha256(json.dumps(
+            [[str(path.relative_to(DATA)), path.stat().st_size, path.stat().st_mtime_ns]
+             for path in members]
+        ).encode()).hexdigest()
+        if state.get(tree) == fingerprint and _offsite_has(name):
+            continue
+        _archive_tree(members, BACKUP_DIR / name)
+        try:
+            _copy_verified(BACKUP_DIR / name, OFFSITE_DIR / name)
+        finally:
+            (BACKUP_DIR / name).unlink(missing_ok=True)
+        state[tree] = fingerprint
+        state_path.write_text(json.dumps(state, indent=1))
+        copied.append(name)
+    return copied
+
+
+def _archive_tree(members: list[Path], archive: Path) -> None:
+    """Write the archive, then read it to the end: gzip's CRC proves it is whole."""
+    with tarfile.open(archive, "w:gz", compresslevel=1) as tar:
+        for path in members:
+            tar.add(path, arcname=str(path.relative_to(DATA)))
+    with tarfile.open(archive) as tar:
+        count = sum(1 for _ in tar)
+    if count != len(members):
+        archive.unlink(missing_ok=True)
+        raise OSError(f"{archive.name} holds {count} files, expected {len(members)}")
 
 
 def vacuum_live_database() -> None:

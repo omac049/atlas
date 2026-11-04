@@ -2,8 +2,11 @@
 
 import gzip
 import importlib.util
+import os
 import shutil
 import sqlite3
+import tarfile
+import time
 from pathlib import Path
 
 import pytest
@@ -30,6 +33,11 @@ def backup(tmp_path, monkeypatch):
     # Arm A's data: absent unless a test puts it there.
     monkeypatch.setattr(module, "BOOKS_DB", tmp_path / "making" / "books.sqlite3")
     monkeypatch.setattr(module, "TAPES", tmp_path / "making" / "tapes")
+    # Off-machine copy: never the real iCloud Drive from a test.
+    (tmp_path / "icloud").mkdir()
+    monkeypatch.setattr(module, "OFFSITE_DIR", tmp_path / "icloud" / "Atlas-backups")
+    monkeypatch.setattr(module, "DATA", tmp_path / "data")
+    monkeypatch.setattr(module, "is_uploaded", lambda path: True)
     return module
 
 
@@ -228,3 +236,120 @@ def test_arm_a_is_backed_up_even_when_the_main_database_is_missing(backup, tmp_p
     backup.main()
     assert len(list((tmp_path / "backups").glob("books-auto-*.sqlite3.gz"))) == 1
     assert "ERROR source database missing" in (tmp_path / "backup.log").read_text()
+
+
+def _seed_books(folder: Path, *stamps: str) -> None:
+    folder.mkdir(parents=True, exist_ok=True)
+    for stamp in stamps:
+        with gzip.open(folder / f"books-auto-{stamp}.sqlite3.gz", "wb") as handle:
+            handle.write(b"older books")
+
+
+def test_offsite_gets_the_newest_snapshots_read_back_identical(backup):
+    _seed(backup.BACKUP_DIR, "20261101-0330", "20261102-0330")
+    _seed_books(backup.BACKUP_DIR, "20261101-0330", "20261102-0330")
+
+    backup.copy_offsite()
+
+    names = sorted(path.name for path in backup.OFFSITE_DIR.iterdir())
+    assert names == ["atlas-auto-20261102-0330.sqlite3.gz", "books-auto-20261102-0330.sqlite3.gz"]
+    for name in names:
+        assert (backup.OFFSITE_DIR / name).read_bytes() == (backup.BACKUP_DIR / name).read_bytes()
+
+
+def test_offsite_rotation_keeps_seven_and_counts_files_icloud_moved_off_the_mac(backup):
+    backup.OFFSITE_DIR.mkdir()
+    # iCloud shows a file it has moved off the Mac as a hidden ".<name>.icloud" placeholder.
+    placeholder = backup.OFFSITE_DIR / ".atlas-auto-20261001-0330.sqlite3.gz.icloud"
+    placeholder.write_bytes(b"")
+    for day in range(2, 9):
+        (backup.OFFSITE_DIR / f"atlas-auto-202610{day:02d}-0330.sqlite3.gz").write_bytes(b"old")
+    keep_me = backup.OFFSITE_DIR / "notes-from-the-owner.txt"
+    keep_me.write_text("not ours to rotate")
+    _seed(backup.BACKUP_DIR, "20261102-0330")
+
+    backup.copy_offsite()
+
+    assert not placeholder.exists()
+    assert not (backup.OFFSITE_DIR / "atlas-auto-20261002-0330.sqlite3.gz").exists()
+    assert (backup.OFFSITE_DIR / "atlas-auto-20261003-0330.sqlite3.gz").exists()
+    assert (backup.OFFSITE_DIR / "atlas-auto-20261102-0330.sqlite3.gz").exists()
+    assert keep_me.exists()
+
+
+def test_offsite_trees_are_archived_once_until_they_change(backup, tmp_path):
+    report = backup.DATA / "study" / "report.json"
+    report.parent.mkdir(parents=True)
+    report.write_text("first")
+    archive = backup.OFFSITE_DIR / "tree-study.tar.gz"
+
+    backup.copy_offsite()
+    assert _member(archive, "study/report.json") == b"first"
+
+    written_at = archive.stat().st_mtime_ns
+    backup.copy_offsite()
+    assert archive.stat().st_mtime_ns == written_at
+
+    report.write_text("second, and longer")
+    backup.copy_offsite()
+    assert _member(archive, "study/report.json") == b"second, and longer"
+
+
+def test_a_tree_copy_deleted_from_icloud_is_written_again(backup):
+    report = backup.DATA / "study" / "report.json"
+    report.parent.mkdir(parents=True)
+    report.write_text("first")
+    backup.copy_offsite()
+    archive = backup.OFFSITE_DIR / "tree-study.tar.gz"
+    archive.unlink()
+
+    backup.copy_offsite()
+
+    assert _member(archive, "study/report.json") == b"first"
+
+
+def test_offsite_holds_only_the_trees_it_names(backup):
+    for name in ("keys/kalshi.pem", ".env", "playwright-browsers/chromium", "study/report.json"):
+        path = backup.DATA / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("x")
+
+    backup.copy_offsite()
+
+    assert [path.name for path in backup.OFFSITE_DIR.iterdir()] == ["tree-study.tar.gz"]
+    with tarfile.open(backup.OFFSITE_DIR / "tree-study.tar.gz") as tar:
+        assert tar.getnames() == ["study/report.json"]
+    assert not {"keys", ".env", "playwright-browsers"} & set(backup.OFFSITE_TREES)
+
+
+def test_a_failed_offsite_copy_is_an_error_and_costs_no_local_backup(backup, tmp_path):
+    shutil.rmtree(tmp_path / "icloud")
+
+    backup.main()
+
+    assert "ERROR offsite copy failed" in (tmp_path / "backup.log").read_text()
+    assert list(backup.BACKUP_DIR.glob("atlas-auto-*.sqlite3.gz"))
+
+
+def test_a_copy_not_uploaded_after_a_day_is_an_error_but_a_fresh_one_is_not(
+    backup, tmp_path, monkeypatch
+):
+    backup.OFFSITE_DIR.mkdir()
+    copy = backup.OFFSITE_DIR / "atlas-auto-20261101-0330.sqlite3.gz"
+    copy.write_bytes(b"old")
+    monkeypatch.setattr(backup, "is_uploaded", lambda path: False)
+
+    backup.main()
+    assert "ERROR" not in (tmp_path / "backup.log").read_text()
+
+    yesterday = time.time() - 25 * 3600
+    os.utime(copy, (yesterday, yesterday))
+    backup.main()
+    assert f"ERROR offsite copy failed: not uploaded after a day: {copy.name}" in (
+        tmp_path / "backup.log"
+    ).read_text()
+
+
+def _member(archive: Path, name: str) -> bytes:
+    with tarfile.open(archive) as tar:
+        return tar.extractfile(name).read()
