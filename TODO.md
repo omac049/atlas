@@ -73,6 +73,21 @@ the public trade tape.
   not apply** (now applied, two derived examples, checked in the built page). The 10-21
   false flag on StubHub cleared on its own after #112, and Vinted's real one after its
   re-pin in #113. The public pages clear at the 04:20 check on 10-27.
+- [x] **Fee flags from 10-31 and 11-04 (re-read 11-04): three real rewordings and two one-night
+  read failures; no fee moved.** Every page read in full twice with the checker's own reader.
+  Re-pinned: Whatnot's 10% Premier Shop discount ended 11-01 in tiered markets, as the schedule
+  already said it would (two quotes); Shopify now credits third-party fees on a refund only
+  where Shopify Payments isn't available, which leaves US stores as they were (one quote, one
+  structure line); Reverb raised its high-value payout check from $2,000 to $2,500 and added a
+  line on payouts after a long gap (two quotes, one structure line), payout timing the
+  calculator does not use. **Reverb's "could not check" hid a real change**, and the one
+  unreachable since 10-29 fits it: the check re-reads a page when a quote is missing, Reverb
+  answers a repeat read by a weaker method (reproduced today), and a weaker read is "not
+  evidence". So a flag with quotes under `not_evidence` still needs this read. Reverb's 10
+  quotes from pages the check skips were also found today. StubHub's PayPal page and Venmo's
+  crypto terms failed once on 11-04, then read 4 of 4 with fee fingerprints unchanged since
+  review; no edit, and they clear at the next quiet check. The public pages clear at the first
+  04:20 check after this merges and `~/Atlas` is pulled.
 - [x] The 90-day study, day 69 (10-26 report): 232 verified opportunities per 30 days against
   10 needed (passes); the return and basket tests fail, as above. Decides 11-17.
 - [x] Search Console, trailing 30 days to 10-25: samebetornot.com 691 impressions (1 in the

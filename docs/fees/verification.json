@@ -816,6 +816,11 @@
      "at": "2026-10-12T19:15:21+00:00",
      "event": "reviewed",
      "note": "Re-read 2026-10-12: the Bump help article now gives the minimum Bump percentage as 1% (was 0.5%); maximum still 30%. The Bump marketing page still says 0.5%; the calculator follows the help article. Selling fee, processing and cross-border fee unchanged. The Billing Policy and Bump page were read that day and every sentence quoted from them stands."
+    },
+    {
+     "at": "2026-11-04T21:03:19+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-11-04: the payout article raised the high-value check from 2,000 to 2,500 USD and added a line on payouts after a long gap; two quotes re-pinned. No fee changed."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -850,68 +855,68 @@
     "Reverb Safe Shipping - 1.5%-3% depending on the value of the item and the final shipping destination.",
     "Effective Date: June 5, 2023 Updated: September 9, 2025"
    ],
-   "reviewed_at": "2026-10-12T19:15:21+00:00",
+   "reviewed_at": "2026-11-04T21:03:19+00:00",
    "sources": {
     "https://help.reverb.com/hc/en-us/articles/40917616326171-How-long-does-it-take-to-get-paid": {
-     "hash": "89f55565903bcabed9f7a46c47bd1ffc387277c4219349884794d50489d01668",
-     "last_checked_at": "2026-10-12T19:15:21+00:00",
-     "reviewed_at": "2026-10-12T19:15:21+00:00",
+     "hash": "eef0346b6be33f5a46c8691848023ea7ad141a39740f1b30526ec1963d5ac8d2",
+     "last_checked_at": "2026-11-04T21:03:19+00:00",
+     "reviewed_at": "2026-11-04T21:03:19+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/40917652290843-What-fees-will-I-pay-for-selling-on-Reverb": {
      "hash": "3b2533d1bdbf572ca959927c49146fab53a8539570298ca7974b11a8f73afb1d",
-     "last_checked_at": "2026-10-12T19:15:21+00:00",
-     "reviewed_at": "2026-10-12T19:15:21+00:00",
+     "last_checked_at": "2026-11-04T21:03:19+00:00",
+     "reviewed_at": "2026-11-04T21:03:19+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988457586715-Why-was-I-charged-a-Bump-fee": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-10-12T19:15:21+00:00",
-     "reviewed_at": "2026-10-12T19:15:21+00:00",
+     "last_checked_at": "2026-11-04T21:03:19+00:00",
+     "reviewed_at": "2026-11-04T21:03:19+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988469262107-What-are-my-fees-as-a-Reverb-Preferred-Seller": {
      "hash": "7a1a00b2896ce6033f85a34ce06f16c736a8fe5459c6100c7fa5406e0bb8dbf2",
-     "last_checked_at": "2026-10-12T19:15:21+00:00",
-     "reviewed_at": "2026-10-12T19:15:21+00:00",
+     "last_checked_at": "2026-11-04T21:03:19+00:00",
+     "reviewed_at": "2026-11-04T21:03:19+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988473838491-Availability-and-processing-fees-for-Reverb-Payments": {
-     "hash": "ea3407603121d27f80e6871d4ee2eb36dafb9a02eaba1563579c813e79f0e58a",
-     "last_checked_at": "2026-10-12T19:15:21+00:00",
-     "reviewed_at": "2026-10-12T19:15:21+00:00",
+     "hash": "9fb0ad836db4589b7a22cd6e46a42ba75c6b1ed7165bfb85dab3cbf3cdef566c",
+     "last_checked_at": "2026-11-04T21:03:19+00:00",
+     "reviewed_at": "2026-11-04T21:03:19+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988523307291-Why-are-my-total-earnings-lower-than-what-I-sold-my-gear-for": {
      "hash": "e202314b1963cb20639973b86bf08877fcab2e4d7df663ed260f27cd68295c15",
-     "last_checked_at": "2026-10-12T19:15:21+00:00",
-     "reviewed_at": "2026-10-12T19:15:21+00:00",
+     "last_checked_at": "2026-11-04T21:03:19+00:00",
+     "reviewed_at": "2026-11-04T21:03:19+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988532258587-What-is-Bump-and-how-does-it-work": {
      "hash": "a25cfe072ddee2308d42a8413c6ad4a305f1152411c1cdc18a528332847f1a23",
-     "last_checked_at": "2026-10-12T19:15:21+00:00",
-     "reviewed_at": "2026-10-12T19:15:21+00:00",
+     "last_checked_at": "2026-11-04T21:03:19+00:00",
+     "reviewed_at": "2026-11-04T21:03:19+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.reverb.com/hc/en-us/articles/41988540155931-What-is-a-payment-processing-fee": {
      "hash": "3d3eae58aa4252fd65ebd7377f24ec3d800bdfad5787a549e904a632334fcf4d",
-     "last_checked_at": "2026-10-12T19:15:21+00:00",
-     "reviewed_at": "2026-10-12T19:15:21+00:00",
+     "last_checked_at": "2026-11-04T21:03:19+00:00",
+     "reviewed_at": "2026-11-04T21:03:19+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://reverb.com/selling/selling-fees": {
      "hash": "bcd4f2efba2603ae9579448671026888ccd760624657f168d8585280c32d54d6",
-     "last_checked_at": "2026-10-12T19:15:21+00:00",
-     "reviewed_at": "2026-10-12T19:15:21+00:00",
+     "last_checked_at": "2026-11-04T21:03:19+00:00",
+     "reviewed_at": "2026-11-04T21:03:19+00:00",
      "status": "verified",
      "via": "rendered"
     }
@@ -949,6 +954,11 @@
      "at": "2026-10-27T00:26:55+00:00",
      "event": "reviewed",
      "note": "Re-read 2026-10-26: Shopify simplified the pricing page plan cards (card-rate lines for Grow, Advanced and Plus removed) and reworded the POS Pro table row; every card rate in the comparison table is unchanged; three quotes removed, one re-pinned."
+    },
+    {
+     "at": "2026-11-04T21:02:56+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-11-04: the third-party transaction fees help page now splits its refund sentence by country; re-pinned. No rate changed."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -977,61 +987,61 @@
     "| Currency conversion fee | 1.5% | 2% | 2% |"
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-10-27T00:26:55+00:00",
+   "reviewed_at": "2026-11-04T21:02:56+00:00",
    "sources": {
     "https://help.shopify.com/en/manual/international/pricing/fees": {
      "hash": "952649a5398bb42cbadb9894e71a63e631fb16b13e39ae49b3ae3e4404c8a240",
-     "last_checked_at": "2026-10-27T00:26:55+00:00",
-     "reviewed_at": "2026-10-27T00:26:55+00:00",
+     "last_checked_at": "2026-11-04T21:02:56+00:00",
+     "reviewed_at": "2026-11-04T21:02:56+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/intro-to-shopify/pricing-plans/pricing-overview": {
      "hash": "6ec98ae4e141ce66800dbfedd602b3f85bcefc4888d82a86e694fa09440704d1",
-     "last_checked_at": "2026-10-27T00:26:55+00:00",
-     "reviewed_at": "2026-10-27T00:26:55+00:00",
+     "last_checked_at": "2026-11-04T21:02:56+00:00",
+     "reviewed_at": "2026-11-04T21:02:56+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/onboarding/cost-of-shopify-payments": {
      "hash": "b773367e4028ccf79f4f65e64e5b8e48d6d585e795f8a872de4df06ae30ad4f1",
-     "last_checked_at": "2026-10-27T00:26:55+00:00",
-     "reviewed_at": "2026-10-27T00:26:55+00:00",
+     "last_checked_at": "2026-11-04T21:02:56+00:00",
+     "reviewed_at": "2026-11-04T21:02:56+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/payouts/pay-periods-and-fees": {
      "hash": "d5499d4ec0d70e12558890b72d0196f3e453a7319ed360df0c02efa59ffc9616",
-     "last_checked_at": "2026-10-27T00:26:55+00:00",
-     "reviewed_at": "2026-10-27T00:26:55+00:00",
+     "last_checked_at": "2026-11-04T21:02:56+00:00",
+     "reviewed_at": "2026-11-04T21:02:56+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/credit-card-rates": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-10-27T00:26:55+00:00",
-     "reviewed_at": "2026-10-27T00:26:55+00:00",
+     "last_checked_at": "2026-11-04T21:02:56+00:00",
+     "reviewed_at": "2026-11-04T21:02:56+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/payments/shopify-payments/transactions/domestic-international-eu-credit-cards": {
      "hash": "02167c04c6781e066fa4ad2c4d343cb6a29fc7d4eacab8dc567439d4bed9515a",
-     "last_checked_at": "2026-10-27T00:26:55+00:00",
-     "reviewed_at": "2026-10-27T00:26:55+00:00",
+     "last_checked_at": "2026-11-04T21:02:56+00:00",
+     "reviewed_at": "2026-11-04T21:02:56+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.shopify.com/en/manual/your-account/manage-billing/billing-charges/types-of-charges/third-party-charges/third-party-transaction-fees": {
      "hash": "6ec98ae4e141ce66800dbfedd602b3f85bcefc4888d82a86e694fa09440704d1",
-     "last_checked_at": "2026-10-27T00:26:55+00:00",
-     "reviewed_at": "2026-10-27T00:26:55+00:00",
+     "last_checked_at": "2026-11-04T21:02:56+00:00",
+     "reviewed_at": "2026-11-04T21:02:56+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://www.shopify.com/pricing": {
-     "hash": "97c86f44d849a442b291af1de1dba66724e707d2b8dcd9381d04826902d3776c",
-     "last_checked_at": "2026-10-27T00:26:55+00:00",
-     "reviewed_at": "2026-10-27T00:26:55+00:00",
+     "hash": "22ed04c571be2affd853b29bb086e899b54af38d073069df3505993d3f3539d1",
+     "last_checked_at": "2026-11-04T21:02:56+00:00",
+     "reviewed_at": "2026-11-04T21:02:56+00:00",
      "status": "verified",
      "via": "rendered"
     }
@@ -1669,6 +1679,11 @@
      "at": "2026-10-27T00:29:01+00:00",
      "event": "reviewed",
      "note": "Re-read 2026-10-26: Whatnot rewrote the Reduced commission on Coins and Money article on 2026-10-21 (new live-show categories, 4 percent stated in its VAT section); two quotes replaced by four from the new text; no rate changed."
+    },
+    {
+     "at": "2026-11-04T21:03:14+00:00",
+     "event": "reviewed",
+     "note": "Re-read 2026-11-04: the fees article updated 2026-11-01 says the Premier Shop discount ended in tiered markets and continues in Japan; two quotes replaced. No rate changed."
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -1680,40 +1695,40 @@
     "Seller-generated coupons: Reduce the final sale price, so fees apply to the discounted amount."
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-10-27T00:29:01+00:00",
+   "reviewed_at": "2026-11-04T21:03:14+00:00",
    "sources": {
     "https://help.whatnot.com/hc/en-us/articles/14477076380941-Reduced-commission-on-Coins-Money": {
-     "hash": "00f5e00ee2f898b0697293aef652e3a06d21cb180e5274e5821e57a8806d259a",
-     "last_checked_at": "2026-10-27T00:29:01+00:00",
-     "reviewed_at": "2026-10-27T00:29:01+00:00",
+     "hash": "abab2a87205c2507ece11df87c6df09370790155628875f45b5b4c7d0f314de8",
+     "last_checked_at": "2026-11-04T21:03:14+00:00",
+     "reviewed_at": "2026-11-04T21:03:14+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/articles/27912945518733-Reduced-Commission-on-High-Value-Orders": {
-     "hash": "e2fa42f38b3a8af5c2c6256d3dcf3bdf5ec798c7cb4b4a1b653b1362bd23171b",
-     "last_checked_at": "2026-10-27T00:29:01+00:00",
-     "reviewed_at": "2026-10-27T00:29:01+00:00",
+     "hash": "83f0d2ae13a62ac95ad47cd1d7b64bc03cc1597ae11385cd0869441d3cdde86d",
+     "last_checked_at": "2026-11-04T21:03:14+00:00",
+     "reviewed_at": "2026-11-04T21:03:14+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/articles/32083195713421-Taxes-on-Whatnot-commissions-and-fees": {
-     "hash": "7a6ef05f695466d6feb29732db132ee63fe5dad2cbe967b7cad9d26a479a8fbc",
-     "last_checked_at": "2026-10-27T00:29:01+00:00",
-     "reviewed_at": "2026-10-27T00:29:01+00:00",
+     "hash": "dc84202db72b41d6e26db66a81a14d7a6f4b14ec19c380a2fab90bdfd5c8a0f7",
+     "last_checked_at": "2026-11-04T21:03:14+00:00",
+     "reviewed_at": "2026-11-04T21:03:14+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/articles/4847069165965-Whatnot-seller-fees": {
-     "hash": "412562024a463054c4340748062fac2e4535aeb399c8f7c7eca27859d282bd48",
-     "last_checked_at": "2026-10-27T00:29:01+00:00",
-     "reviewed_at": "2026-10-27T00:29:01+00:00",
+     "hash": "3cd0f421781a2aed461665dd2dce13aae83004c47e8e59ae0cfbdb0d81ee0581",
+     "last_checked_at": "2026-11-04T21:03:14+00:00",
+     "reviewed_at": "2026-11-04T21:03:14+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://help.whatnot.com/hc/en-us/sections/44398189207565-Fees-commissions": {
-     "hash": "a15cc174e56e324c179c631589da2a1a0d9d9d43c416c547f1db38481643a2de",
-     "last_checked_at": "2026-10-27T00:29:01+00:00",
-     "reviewed_at": "2026-10-27T00:29:01+00:00",
+     "hash": "7c590bcec62336dd77e5853cc191d5016bcd9d93ff702a8528aa8dc5b3e7898b",
+     "last_checked_at": "2026-11-04T21:03:14+00:00",
+     "reviewed_at": "2026-11-04T21:03:14+00:00",
      "status": "verified",
      "via": "rendered"
     }

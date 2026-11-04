@@ -1,13 +1,13 @@
 {
   "platform": "shopify",
   "name": "Shopify",
-  "as_of": "2026-10-26",
+  "as_of": "2026-11-04",
   "sources": [
     {
       "url": "https://www.shopify.com/pricing",
       "title": "Shopify Pricing \u2014 You've got plans. Us too. (USA | English)",
-      "loaded": "2026-10-26",
-      "last_updated_on_page": "Footnote only: Balance earnings rate 'accurate as of October 23, 2026' (fee schedule itself is undated)"
+      "loaded": "2026-11-04",
+      "last_updated_on_page": "Footnote only: Balance earnings rate 'accurate as of November 3, 2026' (fee schedule itself is undated)"
     },
     {
       "url": "https://help.shopify.com/en/manual/payments/shopify-payments/onboarding/cost-of-shopify-payments",
@@ -24,7 +24,7 @@
     {
       "url": "https://help.shopify.com/en/manual/your-account/manage-billing/billing-charges/types-of-charges/third-party-charges/third-party-transaction-fees",
       "title": "Shopify Help Center \u2014 Third-party transaction fees on your Shopify bills",
-      "loaded": "2026-10-12",
+      "loaded": "2026-11-04",
       "last_updated_on_page": null
     },
     {
@@ -53,7 +53,7 @@
     }
   ],
   "scope": "Shopify Payments card rates and third-party transaction fees for US stores by plan. Subscriptions are shown as context, not per-sale; POS Pro, Plus custom rates and Shop Pay Installments are out of scope.",
-  "structure": "Two separate fees. (1) Shopify Payments card processing: fee = rate x amount + fixed cents, charged when you capture payment; the rate depends on plan (Basic / Grow / Advanced / Plus) and channel \u2014 online standard cards 2.9% / 2.7% / 2.5% (+ 30\u00a2), online premium cards (commercial/corporate/business cards and all domestic Amex) 3.5% / 3.3% / 3.1% (+ 30\u00a2), in-person cards 2.6% / 2.5% / 2.4% (+ 10\u00a2), in-person manual entry 3.5% + 10\u00a2 on every plan; cards issued outside the US add 1% ('cross-border fee'); paying in a non-payout currency adds a 1.5% currency conversion fee (US). The loaded pages do not itemize the base for card fees beyond 'the payment for an order' (i.e. the captured order amount). (2) Third-party transaction fee, charged by Shopify only when a third-party payment provider processes the payment (or on the store-credit/gift-card portion for stores created on or after May 12, 2025): 2% / 1% / 0.6% / 0.2% of [(cost of products - discounts) + tax + shipping charges]; waived entirely when Shopify Payments is the sole provider; if Shopify Payments runs alongside a third-party provider, Shopify Payments transactions also carry a 1.25% premium. Neither card fees nor third-party fees are returned on refunds. No rounding rule is published.",
+  "structure": "Two separate fees. (1) Shopify Payments card processing: fee = rate x amount + fixed cents, charged when you capture payment; the rate depends on plan (Basic / Grow / Advanced / Plus) and channel \u2014 online standard cards 2.9% / 2.7% / 2.5% (+ 30\u00a2), online premium cards (commercial/corporate/business cards and all domestic Amex) 3.5% / 3.3% / 3.1% (+ 30\u00a2), in-person cards 2.6% / 2.5% / 2.4% (+ 10\u00a2), in-person manual entry 3.5% + 10\u00a2 on every plan; cards issued outside the US add 1% ('cross-border fee'); paying in a non-payout currency adds a 1.5% currency conversion fee (US). The loaded pages do not itemize the base for card fees beyond 'the payment for an order' (i.e. the captured order amount). (2) Third-party transaction fee, charged by Shopify only when a third-party payment provider processes the payment (or on the store-credit/gift-card portion for stores created on or after May 12, 2025): 2% / 1% / 0.6% / 0.2% of [(cost of products - discounts) + tax + shipping charges]; waived entirely when Shopify Payments is the sole provider; if Shopify Payments runs alongside a third-party provider, Shopify Payments transactions also carry a 1.25% premium. Card fees are not returned on refunds, and neither are third-party fees where Shopify Payments is available, as it is in the US (elsewhere Shopify credits the third-party fee in proportion to the refund). No rounding rule is published.",
   "quotes": [
     "Try 3 days free, then $1/month for 3 months.",
     "| Pay monthly | $39 USD/mo | $105 USD/mo | $399 USD/mo | Starts at $2,300 USD/mo |",
@@ -81,7 +81,7 @@
     "If your online store is based in the United States and you process payments by using Shopify Payments, then you're charged a 1% cross-border fee on all sales made with a credit card issued in another country.",
     "Manually entered payments are subject to higher fees because card details are often collected over the phone or through other unencrypted methods, increasing the risk of fraud.",
     "Shopify uses this formula to calculate third-party transaction fees for a 30-day period:\n[(cost of products - discounts) + tax + shipping charges] x rate\nThe rate for third-party transaction charges varies depending on your pricing plan.",
-    "Transaction fees don't apply for POS orders or for manual payment methods, which include cash on delivery (COD), bank deposits, checks, test orders, and draft orders marked as paid or pending. Third-party transaction fees aren't returned to you when you issue an order refund.",
+    "Transaction fees don't apply for POS orders or for manual payment methods, which include cash on delivery (COD), bank deposits, checks, test orders, and draft orders marked as paid or pending. If Shopify Payments is available in your store's country, then third-party transaction fees aren't returned to you when you refund an order. If Shopify Payments isn't available in your store's country, then you're credited the transaction fee in proportion to the amount that you refund.",
     "Transaction fees are in addition to processing fees charged by your third-party payment provider.",
     "For Shopify stores created on or after May 12, 2025, orders that include store credit or gift cards as a payment method are charged third-party transaction fees on the amount paid for using store credit or gift cards. Store credit and gift card transaction fees don't apply to Shopify stores created before May 12, 2025.",
     "Credit card transaction fees aren't returned to you when you issue a refund.",
@@ -114,7 +114,8 @@
     "Rates shown are for the USA | English locale; the page says pricing and payment options differ by country.",
     "Re-read 2026-10-12. Shopify's 'Third-party transaction fees' help page no longer carries the sentence that stores on the Plus plan using Shopify Payments as their sole provider have these fees waived, 'including fees on store credit and gift cards'. No loaded page now states a Plus exemption, so this schedule no longer claims one. The pricing page's comparison table now shows Plus rates where it said 'Most competitive rates', and nothing under Pay yearly for Plus; the eight table rows quoted here were re-pinned to the page as it reads today, so all 38 quotes are machine-checked. The calculator covers Basic, Grow and Advanced only; every rate it uses is unchanged.",
     "Re-read 2026-10-21. Shopify raised the yearly-billing prices: Grow $79 to $89 a month and Advanced $299 to $359 (the 'Pay yearly' row and the Grow and Advanced plan cards). Basic's $29, the monthly-billing prices $39 / $105 / $399, Plus 'from $2,300' and every card rate on the page are unchanged. The calculator shows the yearly price in its plan note only; no fee it computes changed.",
-    "Re-read 2026-10-26. Shopify simplified the pricing page's plan cards: the 'Card rates from 2.7% / 2.5% / 2.25% + 30¢ USD' lines on the Grow, Advanced and Plus cards are gone (Basic's now reads 'Card rates from 2.9% + 30¢ USD online' in a separate block), and the comparison table's POS Pro row lost its description ('Advanced tools for brick-and-mortar retailers'). The three dropped quotes were removed and the POS Pro row re-pinned. No rate changed: the comparison table still lists every card rate, quoted above, for all four plans exactly as before."
+    "Re-read 2026-10-26. Shopify simplified the pricing page's plan cards: the 'Card rates from 2.7% / 2.5% / 2.25% + 30¢ USD' lines on the Grow, Advanced and Plus cards are gone (Basic's now reads 'Card rates from 2.9% + 30¢ USD online' in a separate block), and the comparison table's POS Pro row lost its description ('Advanced tools for brick-and-mortar retailers'). The three dropped quotes were removed and the POS Pro row re-pinned. No rate changed: the comparison table still lists every card rate, quoted above, for all four plans exactly as before.",
+    "Re-read 2026-11-04. Shopify's 'Third-party transaction fees' help page now splits its refund sentence by country: where Shopify Payments is available, third-party transaction fees aren't returned when you refund an order; where it isn't, the fee is credited in proportion to the refund. This schedule covers US stores, so what it said for them still holds; the quote was re-pinned and the structure line now states the split. No rate changed: all 35 quotes match pages read in full, with this one re-pinned. The pricing page's Balance earnings-rate footnote moved to November 3, 2026; the calculator does not use that rate."
   ],
   "rates": {
     "online_standard": {
