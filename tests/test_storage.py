@@ -736,6 +736,35 @@ async def test_prune_deletes_old_orderbook_snapshots_and_keeps_recent(tmp_path):
 
 
 @pytest.mark.asyncio
+async def test_prune_treats_fed_decision_books_like_any_other_market(tmp_path):
+    """The fifth charter's Arm A exemption ended once its result was written."""
+    from datetime import UTC, datetime, timedelta
+
+    path = tmp_path / "atlas.sqlite3"
+    store = AtlasStore(str(path))
+    await store.initialize()
+    now = datetime.now(UTC)
+    async with aiosqlite.connect(path) as db:
+        for market_id, age_days in (
+            ("kalshi:KXFEDDECISION-26SEP-H0", 40),
+            ("kalshi:KXFEDDECISION-26DEC-H0", 1),
+        ):
+            await db.execute(
+                "INSERT INTO orderbook_snapshots (market_id, venue, timestamp, payload_json)"
+                " VALUES (?, ?, ?, ?)",
+                (market_id, "kalshi", (now - timedelta(days=age_days)).isoformat(), "{}"),
+            )
+        await db.commit()
+
+    deleted = await store.prune()
+
+    assert deleted["orderbook_snapshots"] == 1
+    async with aiosqlite.connect(path) as db:
+        rows = await (await db.execute("SELECT market_id FROM orderbook_snapshots")).fetchall()
+    assert [row[0] for row in rows] == ["kalshi:KXFEDDECISION-26DEC-H0"]
+
+
+@pytest.mark.asyncio
 async def test_prune_keeps_only_the_newest_20_report_rows(tmp_path):
     store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
     for index in range(25):
@@ -819,29 +848,6 @@ async def test_prune_never_touches_the_evidence_or_label_chain(tmp_path):
     async with aiosqlite.connect(store.path) as db:
         row = await (await db.execute("SELECT COUNT(*) FROM paper_trade_outcomes")).fetchone()
     assert row[0] == 1
-
-
-async def test_prune_keeps_fed_decision_books_for_the_open_charter(tmp_path):
-    from datetime import UTC, datetime, timedelta
-
-    from atlas.models import OrderBook, OrderBookLevel, VenueName
-
-    store = AtlasStore(str(tmp_path / "atlas.sqlite3"))
-    now = datetime(2026, 9, 20, tzinfo=UTC)
-    old = now - timedelta(days=31)
-    level = [OrderBookLevel(price="0.5", quantity="10")]
-    for market_id, stamp in (
-        ("kalshi:KXFEDDECISION-26SEP-H0", old),  # Arm A input: kept although old
-        ("kalshi:KXATPGSPREAD-26SEP06PAUALC-ALC4", old),  # ordinary: pruned
-        ("kalshi:KXFEDDECISION-26OCT-H0", now),  # fresh: kept
-    ):
-        await store.save_orderbook(OrderBook(venue=VenueName("kalshi"), market_id=market_id,
-                                             timestamp=stamp, yes_bids=level))
-    deleted = await store.prune(now=now)
-    assert deleted["orderbook_snapshots"] == 1
-    remaining = sorted(book.market_id for book in await store.latest_orderbooks(10))
-    assert remaining == ["kalshi:KXFEDDECISION-26OCT-H0", "kalshi:KXFEDDECISION-26SEP-H0"]
-
 
 
 def _run_with(pairs: int) -> dict:
