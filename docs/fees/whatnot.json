@@ -1,13 +1,13 @@
 {
   "platform": "whatnot",
   "name": "Whatnot",
-  "as_of": "2026-10-26",
+  "as_of": "2026-11-04",
   "sources": [
     {
       "url": "https://help.whatnot.com/hc/en-us/articles/4847069165965-Whatnot-seller-fees",
       "title": "Whatnot seller fees – Whatnot Help Center",
-      "loaded": "2026-10-12",
-      "last_updated_on_page": "October 1, 2026 at 10:59 AM"
+      "loaded": "2026-11-04",
+      "last_updated_on_page": "November 1, 2026 at 3:00 PM"
     },
     {
       "url": "https://help.whatnot.com/hc/en-us/articles/14477076380941-Reduced-commission-on-Coins-Money",
@@ -34,7 +34,7 @@
       "last_updated_on_page": null
     }
   ],
-  "scope": "Seller commission and payment processing on US Whatnot sales under the tiered commission structure that took effect September 21, 2026. State sales tax on fees, the Premier Shop discount and promotional rates are described but not computed.",
+  "scope": "Seller commission and payment processing on US Whatnot sales under the tiered commission structure that took effect September 21, 2026. State sales tax on fees and promotional rates are described but not computed.",
   "structure": "Two fees are deducted per checkout transaction. Commission is a percentage of the item's sale price; shipping and taxes paid by the buyer are not included. Since September 21, 2026 the rate depends on two things: the category group of the sale, and the tier the seller unlocked with total sales across all categories in the previous four-week period. US tiers: Standard $0 – $14,999, Tier 1 $15,000 – $34,999, Tier 2 $35,000 – $49,999, Tier 3 $50,000 – $99,999, Tier 4 $100,000 – $249,999, Tier 5 $250,000 – $499,999, Tier 6 $500,000+. US rates from Standard to Tier 6: Sports and TCG 8% falling to 6.5%; Fashion 8% falling to 4.5%; Other Collectibles 8% falling to 5%; Coins 4% falling to 3.5%; Other 8% falling to 4%. A rate is locked for the whole four-week period: crossing into a higher tier lowers the rate for the next period, not the current one, and tiers reset every 28 days. Payment processing is 2.9% of the total order value paid by the buyer (item price, buyer-paid shipping and taxes) plus a fixed $0.30 per transaction, and is not reduced by the tier. In select categories the commission is 0% on the portion of an individual order's price above $1,500, a limited-time promotion, while processing still applies to the full amount. For live sales the rate follows the category of the show; for marketplace sales, the category of the product.",
   "quotes": [
     "Our new commission rate structure took effect September 21, 2026 for existing sellers.",
@@ -50,8 +50,8 @@
     "Payment processing fees are calculated on the total order value paid by the buyer, including the item price, buyer-paid shipping, and taxes, plus a fixed transaction fee.",
     "US, Canada, Australia: 2.9% + $0.30 per transaction",
     "What doesn't. Private shows, local pickup orders, and cancelled orders are subtracted from your total.",
-    "your Premier Shop discount applies on top of your new commission rate. For example, if your rate is 5%, the 10% Premier Shop discount brings it to 4.5%.",
-    "Premier Shop no longer includes a commission discount.",
+    "As of November 1, 2026, Premier Shop no longer includes a 10% commission discount in markets with tiered commission rates.",
+    "In Japan, where tiered commission rates aren't available, Premier Shop sellers continue to receive a 10% commission discount.",
     "Rates as low as 3% are custom rates available to our highest-volume sellers who work directly with a dedicated account manager on custom terms.",
     "For live sales: the rate is based on the category of the show. For marketplace (non-live) sales: the rate is based on the category of the product.",
     "Eligible Coins & Money sales on Whatnot receive a reduced commission rate.",
@@ -67,7 +67,7 @@
   ],
   "excluded": [
     "Other markets: Whatnot publishes separate tier tables for Canada, the United Kingdom, France, Belgium, Germany, Austria, the Netherlands and Australia, and flat rates for Japan; EU and UK rates are subject to VAT and their processing fee is 2.42% + €/£0.25",
-    "Premier Shop discount (10% off the commission rate through October 31, 2026; none from November 1, 2026)",
+    "Premier Shop discount (10% off the commission rate until November 1, 2026, when it ended in every market with tiered rates; it continues only in Japan)",
     "Promotional rates (new-seller 0% fees, launch and limited-time category promotions) and custom rates for the highest-volume sellers",
     "The flat rates that applied through September 27, 2026 to sellers who gained selling access after September 21, including the 4% Pallets rate",
     "Show Promotion and Boost fees (amounts not on the loaded pages)",
@@ -80,12 +80,13 @@
     "The fee page names six category groups (Sports, TCG, Fashion, Other Collectibles, Coins, Other) and does not list which product categories fall in each; a seller's own rate card is in Seller Hub.",
     "Tier is set by total sales in all categories over the previous four-week period; private shows, local pickup orders and cancelled orders do not count.",
     "High-value orders: the promotion's article is dated July 31, 2026, before the tiered structure, and its example uses the 8% standard rate on the first $1,500. How the promotion combines with a lower tier rate is not stated on the loaded pages; this calculator applies the selected tier's rate to the first $1,500. The promotion is limited-time and Whatnot may end it at any time. Eligible categories: Comics & Anime, Toys & Hobbies, Coins & Money, Trading Card Games, Entertainment Cards, Sports Singles subcategories, Bags & Accessories, Jewelry & Watches; sports breaks and Surprise Products are excluded.",
-    "Premier Shop: through October 31, 2026 the 10% Premier Shop discount applies on top of the tier rate (5% becomes 4.5%); from November 1, 2026 it no longer includes a commission discount. Not computed here.",
+    "Premier Shop: as of November 1, 2026 it no longer includes a 10% commission discount in markets with tiered rates, the US among them. Japan, which has no tiered rates, keeps the discount. Not computed here.",
     "Rates 'as low as 3%' are custom rates for the highest-volume sellers and are not on the public table.",
     "The 'Sell More, Earn More' article, the earlier test of tiered rates, is no longer published (404 on 2026-09-28).",
     "Payment processing uses the buyer's total including sales tax, so an exact fee needs shipping and buyer tax as inputs.",
     "Taxes on fees: sellers in DC, HI, NM, WV pay state sales tax on the commission; sellers in CT (special 1% rate), HI, NM, OH, SD, TX (standard rate reduced by 20%) and WV pay it on the payment processing fee. Not computed.",
-    "Re-read 2026-10-12. Whatnot updated the fees article on October 1, 2026: it now says a seller who joined after September 21, 2026 moved to the new structure at 12:00 a.m. local time on the following Monday, and that this continues for new sellers (its example: access on Wednesday, October 7 activates the new rates on Monday, October 12). The page does not say what rate a new seller pays before that Monday. The rate table is unchanged."
+    "Re-read 2026-10-12. Whatnot updated the fees article on October 1, 2026: it now says a seller who joined after September 21, 2026 moved to the new structure at 12:00 a.m. local time on the following Monday, and that this continues for new sellers (its example: access on Wednesday, October 7 activates the new rates on Monday, October 12). The page does not say what rate a new seller pays before that Monday. The rate table is unchanged.",
+    "Re-read 2026-11-04. Whatnot updated the fees article on November 1, 2026. Its Premier Shop answer now says the 10% commission discount ended that day in markets with tiered rates and continues in Japan, which is what this schedule already said would happen. The two old quotes were replaced. The US rate table, the tiers and payment processing all still match the page, and the calculator never computed the discount, so no published fee moved."
   ],
   "rates": {
     "tier_order": [
