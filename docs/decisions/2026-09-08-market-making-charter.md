@@ -11,6 +11,10 @@ recorded on that pull request. It changes where Arm A's single widened run reads
 books from, because the books the charter assumed turned out not to exist. It
 changes no rule, parameter, floor, criterion or consequence.
 
+**Result, recorded 2026-11-04.** Arm B: FAIL. Arm A: INCONCLUSIVE for the second
+time, which §9 counts as FAIL for product purposes. **Under §9 the automated-trading
+question is closed.** The evidence is the last entry in §11.
+
 **Lineage.** Hypotheses one through four tested whether an outsider with public
 data can be *right* about a price (cross-venue gaps, fine-print machinery,
 predicate ambiguity) or *early* to it (in-game repricing). All four returned
@@ -388,6 +392,69 @@ September FOMC settlement.
     book after fifteen minutes of live deltas: 9 of 9 watched markets matched
     on best bid and ask (`KXFEDDECISION-26OCT-H0`: 51/52¢ both ways). It is not
     Arm A's data source — §12.1 is — and nothing reads it for this charter.
+
+- 2026-11-04, 20:48 UTC: **Arm A's single widened run: INCONCLUSIVE.** This is the
+  second inconclusive, which §9 counts as FAIL for product purposes. With Arm B's
+  FAIL, it closes the automated-trading question under §9.
+  - **Sample (§5): 3 markets, 4 needed.** Non-block prints in the window: H0 27,706,
+    H25 13,156 and C25 674 clear the floor of 500; H26 491 and C26 105 do not.
+    Nothing is padded.
+  - **Primary (s = 2¢, q = 10, L = 1 s, Δ = 30 s):** net **+$14.15** on 917.86
+    contracts, **1 of 5 markets positive** (20%, ≥60% required), +1.54¢ per contract.
+    Slow run (L = 5 s): net +$17.53 on 865.86 contracts, 1 of 5 positive, +2.02¢ per
+    contract. Criteria 1 and 3 hold; criterion 2 does not, so criterion 4 does not.
+
+    | Market | Settled | Quotes | Fills | Contracts | Fees | Net | Net at L = 5 s |
+    |---|---|---|---|---|---|---|---|
+    | C25 | NO | 0 | 0 | 0 | $0.00 | $0.00 | $0.00 |
+    | C26 | NO | 0 | 0 | 0 | $0.00 | $0.00 | $0.00 |
+    | H0 | YES | 214,860 | 54 | 475.62 | $2.07 | +$47.84 | +$43.85 |
+    | H25 | NO | 180,354 | 53 | 442.24 | $2.03 | −$33.69 | −$26.32 |
+    | H26 | NO | 53,202 | 0 | 0 | $0.00 | $0.00 | $0.00 |
+
+  - **H26's nine missing prints decided nothing.** On an adequate sample the same
+    numbers read FAIL, on criterion 2, and no PASS was within reach: C25 and C26 had
+    no YES bid to take a mid from, as §12 stated in advance, H26 filled nothing, and
+    H25 lost. Counting only the two markets that traded, 1 of 2 is 50%. No row of the
+    48-row sensitivity grid has more than 20% of markets positive (reported, never
+    decisive, §4).
+  - **What the +$14.15 is.** The rule ended long in both markets that traded (H0
+    +84.38 contracts, H25 +61.76), so each market's sign followed its settlement: H0
+    paid $1 a contract and H25 paid nothing. §8 said this in advance: winning on one
+    Fed market is not a result. There were 107 fills in 41 days, and none after
+    2026-10-16 04:07 UTC.
+  - **Why so few fills: the queue.** A read-only diagnostic, not part of the artifact
+    and using no parameter but §4's, found the books real and never crossed when
+    quoted. The median displayed size ahead of a 10-contract quote was about 10,500
+    to 26,000 contracts through 10-15 and 83,000 to 621,000 from 10-27 to the close.
+    From 10-22 on, taker flow did not beat that queue in any 30-second interval on
+    either market. This is §8's named bound: cancellations ahead are ignored, which
+    is conservative, so real queues would have moved faster by an amount this replay
+    cannot measure.
+  - **Coverage (§12, reported, not a filter):** 91.88% overall, 91.87% to 91.89% per
+    market, to the 17:59 UTC close. About 80 hours sit under unknown-book markers,
+    including the 17.5-hour network outage of 10-22/23.
+  - **The run was six days late, and no input changed.** §9 and §12 dated it
+    2026-10-29. It is a manual step that no scheduled job runs, and it was missed; a
+    status check on 2026-11-04 found it, and the owner said to run it. The command is
+    §12.4's. `git diff 383d609 HEAD -- atlas/making.py docs/proof/run_making.py`
+    printed nothing, and `instrument_commit` reads `9b8d6d2`. The recorder had
+    finished cleanly at the 10-28 close. Kalshi still served the whole window: every
+    print in the 10-13 archive is in the final fetch, so nothing was restored (§12.5).
+  - **What Claude knew before the run:** Arm B's result, each market's public
+    settlement, and the print counts (composition; H26's 491 and the expected
+    INCONCLUSIVE were told to the owner before the go-ahead). No fill, fee or P&L was
+    computed for any Arm A market before this run.
+  - **Checked after the run:** each of the 107 fills names a tape print at or through
+    its quote; the net recomputed from the fills matches the artifact to the cent; the
+    print counts match a separate count of Kalshi's tape.
+  - Artifact: `docs/proof/making-result-armA.json.gz` (`gunzip -k` restores the JSON,
+    which git ignores; §12.4's command regenerates it from the cached tapes).
+  - **Consequence (§9).** No shadow trial opens. No further prediction-market trading
+    charter is drafted without genuinely new information: a new data source, a new
+    venue or a new fee schedule. The paper-only invariant stands. §12's remaining
+    steps, removing `com.atlas.books` and the Fed-decision prune exemption (#64), are
+    a separate change.
 
 ## 12. Amendment 1 — the widened Arm A run reads the venue's own books
 

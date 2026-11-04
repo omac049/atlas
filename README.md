@@ -28,7 +28,7 @@ Do not add a live order client casually. Any future execution capability must be
 
 ## The research phase is complete — read this first
 
-Four pre-registered hypotheses, four negatives, six weeks, no principal spent.
+Five pre-registered hypotheses, five negatives, no principal spent.
 The one-page record, with every verdict linked to its charter and evidence:
 **[docs/FINDINGS.md](docs/FINDINGS.md)**. The system keeps running as a
 paper-only instrument; the sections below describe how.

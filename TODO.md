@@ -1,12 +1,44 @@
 # Atlas continuation checklist
 
-Last updated: 2026-10-26 (**the owner asked whether Atlas can launch with real money: no.** Every pre-registered test is negative or closing, and no order path exists by design. A 17.5-hour network outage on 10-22/23 cost Arm A coverage (now 92.1%); Arm A needs H26 to reach 500 prints by the 10-28 close or it is inconclusive. Study day 69, NO-GO.) Previous: 2026-10-21 (**both demand tests missed their pass lines and are recorded FAIL:** samebetornot.com 1,364 of 2,000 impressions on 10-16, verifiedfees.com 1,761 of 2,000 on 10-20, each after Google dropped most of its pages from the index in early October. Arm A recorder coverage 93.9%, run 10-29; study day 62, NO-GO.) Previous: 2026-09-28 (**status check found three silent failures and one real fee change, all fixed the same day:** samebetornot.com unpublished since 09-21 after the macOS 27 upgrade; Fee Verified showing false "under review" banners since 09-16; the dashboard's data call at 325 MB since 09-24; Whatnot's new tiered commission of 09-21. Arm A recorder at 86.3% coverage. 922 tests green.) Previous: 2026-09-17 (**Arm A's input was found invalid before it was run — the websocket book recorder never stored a real Kalshi book; a REST ground-truth recorder now covers the five October Fed-decision markets for the charter's single widened run on 2026-10-29.** Arm B: FAIL, 352 games. Study phase 2 live since 9/15.) Previous: 2026-09-04 (**fourth hypothesis DISPROVEN — the in-game price LEADS the game.** 676 lead changes across 262 games: median repricing lag −10.6s, 91% repriced before MLB's official timestamp, median stale liquidity in the human window zero contracts. The move is real (+11.2c net median) and already gone. Four hypotheses, four pre-registered negatives; the prediction-market edge search is complete. 658 tests green)
+Last updated: 2026-11-04 (**Arm A ran, six days late, and reads INCONCLUSIVE: 3 markets cleared the print floor, 4 needed; net +$14.15, 1 of 5 markets positive. It counts as FAIL, so with Arm B the automated-trading question is closed.** Study day 76, NO-GO, decides 11-17.) Previous: 2026-10-26 (**the owner asked whether Atlas can launch with real money: no.** Every pre-registered test is negative or closing, and no order path exists by design. A 17.5-hour network outage on 10-22/23 cost Arm A coverage (now 92.1%); Arm A needs H26 to reach 500 prints by the 10-28 close or it is inconclusive. Study day 69, NO-GO.) Previous: 2026-10-21 (**both demand tests missed their pass lines and are recorded FAIL:** samebetornot.com 1,364 of 2,000 impressions on 10-16, verifiedfees.com 1,761 of 2,000 on 10-20, each after Google dropped most of its pages from the index in early October. Arm A recorder coverage 93.9%, run 10-29; study day 62, NO-GO.) Previous: 2026-09-28 (**status check found three silent failures and one real fee change, all fixed the same day:** samebetornot.com unpublished since 09-21 after the macOS 27 upgrade; Fee Verified showing false "under review" banners since 09-16; the dashboard's data call at 325 MB since 09-24; Whatnot's new tiered commission of 09-21. Arm A recorder at 86.3% coverage. 922 tests green.) Previous: 2026-09-17 (**Arm A's input was found invalid before it was run — the websocket book recorder never stored a real Kalshi book; a REST ground-truth recorder now covers the five October Fed-decision markets for the charter's single widened run on 2026-10-29.** Arm B: FAIL, 352 games. Study phase 2 live since 9/15.) Previous: 2026-09-04 (**fourth hypothesis DISPROVEN — the in-game price LEADS the game.** 676 lead changes across 262 games: median repricing lag −10.6s, 91% repriced before MLB's official timestamp, median stale liquidity in the human window zero contracts. The move is real (+11.2c net median) and already gone. Four hypotheses, four pre-registered negatives; the prediction-market edge search is complete. 658 tests green)
 
 Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
 Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, bounded retry metadata; 450 tests green; 72 trusted labels)
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
+
+## 2026-11-04 — Arm A ran: INCONCLUSIVE, and the trading question is closed
+
+Read from every job log, the jobs panel, the recorder, Kalshi's public tape and the run.
+
+- [x] **Arm A's single widened run: INCONCLUSIVE, which §9 counts as FAIL.** H0, H25 and C25
+  cleared the 500-print floor; H26 stopped at 491 and C26 at 105; 4 markets were needed. Net
+  +$14.15 on 917.86 contracts, 1 of 5 markets positive (60% required), so the same numbers
+  read FAIL on an adequate sample. Full record: charter §11; artifact
+  `docs/proof/making-result-armA.json.gz`.
+- [x] **The run was due 10-29 and was missed for six days:** it is a manual step no job runs,
+  and the jobs panel cannot show it. The recorder had finished cleanly at the 10-28 close and
+  Kalshi still served every print, so no input changed. On a status check, compare the dates
+  named here with what actually landed.
+- [x] All six jobs read OK and both sites were generated today. The night of 11-03 was missed:
+  the Mac rebooted 11-02 17:08 local and sat at the login window until about 08:54 on 11-03
+  (monitor log silent 15.9 h). Every job ran normally on 11-04; no action.
+- [x] The 90-day study, day 76 (11-02 report): 225.5 verified opportunities per 30 days against
+  10 needed (passes); median annualized return 6.9% against the signed 15% (fails); median
+  basket $48 against the signed $500 (fails). NO-GO. Decides 11-17.
+- [x] Search Console, trailing 30 days to 11-03: samebetornot.com 18 impressions,
+  verifiedfees.com 10.
+- [ ] Charter §12, after the run: remove `com.atlas.books` (stopping an agent needs the owner's
+  OK) and the Fed-decision prune exemption (`PRUNE_ORDERBOOK_RETAIN_PREFIXES`, #64).
+- [ ] OWNER: where an off-machine copy of `data/` goes (open since 09-17, below). Every backup
+  is on this one employer-managed Mac, and `data/` is not in git. Settle it before any shutdown.
+- [ ] OWNER: what stays on after 11-17. Stopping the monitor also stops samebetornot.com's data
+  from changing.
+- [ ] `uv run` rewrites `uv.lock` (+138 lines) because the `fees` extra was never locked, which
+  dirties the checkout the nightly jobs read. Refresh the lock in a small PR.
+- [ ] 2026-11-17: record the study's decision, then refresh the README's stale status lines
+  ("Last verified" 08-20, "day 2 of 90").
 
 ## 2026-10-26 — status check, and the real-money question
 
@@ -27,7 +59,7 @@ the public trade tape.
   found all 22 pages unreachable and its publish failed; everything recovered on 10-24. The
   Arm A recorder logged about 12,600 failed polls per market; coverage is 92.1% (reported,
   not a filter, amendment 1). All six jobs read OK on 10-26; no restart (up 21 days).
-- [ ] **Arm A, composition not results (10-26 17:20 local):** non-block prints since the
+- [x] **Arm A, composition not results (10-26 17:20 local):** non-block prints since the
   recorder started are H0 25,163, H25 11,564 and C25 551, which clear §5's floor of 500;
   H26 427 (73 short) and C26 78. Four markets are needed, so **H26 must reach 500 before
   the 10-28 announcement (18:00Z) or the run is INCONCLUSIVE**, which counts as FAIL for
@@ -92,7 +124,7 @@ Read from the jobs panel, every job log, Search Console and Google's own index s
   dates at the registrar). OWNER, low priority: the Impact payment-details problem (09-12) and
   the Intuit payout bank only matter if a sponsored link ever pays out, which at a handful of
   visits a week is unlikely.
-- [ ] **Arm A:** recorder coverage **93.9%** on 10-21 (`atlas books coverage`), seven days to
+- [x] **Arm A:** recorder coverage **93.9%** on 10-21 (`atlas books coverage`), seven days to
   the 10-28 close. The runner and `atlas/making.py` are byte-identical to `383d609`; October
   tapes were archived 10-13 (360 files, 842 MB; also in the nightly backup since #105). The
   single run is 10-29. Stored books spot-checked against Kalshi's live books on 10-21: best
@@ -192,7 +224,7 @@ Read from every job log, not from the panel alone.
   only when the free list is worth it (say over 10% of pages, `PRAGMA freelist_count`
   against `page_count`), which would also have avoided the hours-long VACUUMs of 10-04
   and 10-05.
-- [ ] **Arm A recorder coverage: 90.0%** on 10-12 (`atlas books coverage`); 1.1 h unknown
+- [x] **Arm A recorder coverage: 90.0%** on 10-12 (`atlas books coverage`); 1.1 h unknown
   in the six days since 10-06, one gap of an hour on 10-11 17:35Z.
 - [x] Automatic install of macOS updates is still on: locked by the employer's profile and
   cannot be changed; closed 10-21 (see the 10-21 entry at the top).
@@ -303,7 +335,7 @@ Read from every job log, not from the panel alone.
   and `deploy/README.md` still says 60 s. Either copy the installed settings into
   `deploy/` (and the README) or reinstall from `deploy/`; until then a reinstall
   silently undoes whoever made the change.
-- [ ] **Arm A recorder coverage to date: 87.2%** (`atlas books coverage`, 2026-10-06:
+- [x] **Arm A recorder coverage to date: 87.2%** (`atlas books coverage`, 2026-10-06:
   19.2 days, about 59 hours unknown per market, the same for all five). Three stretches
   are 51.5 of those hours: 2026-09-22 00:03Z to 15:58Z (15.9 h, the macOS 27 install
   waiting at the login window), 09-22 20:07Z to 09-23 16:07Z (20.0 h, the user was
@@ -520,7 +552,8 @@ Read from every job log, not from the panel alone.
   and now Arm A's books and tapes). That covers a bad write or a deleted file, not a
   lost or dead laptop. Decide where an off-machine copy should go; not the employer's
   OneDrive.
-- [ ] 2026-10-29: coverage audit, then the one command in Amendment 1 §4.
+- [x] 2026-10-29: coverage audit, then the one command in Amendment 1 §4. Run 2026-11-04,
+  six days late; INCONCLUSIVE (charter §11).
 
 ## 2026-09-04 (b) — fourth hypothesis: DISPROVEN. The search is complete.
 
@@ -1645,7 +1678,7 @@ evidence. The point of the 90 days is to let this accumulate.
   families are already on `main` with tests; the branches are dead duplicates.
 - [x] Demand-test site generator (`atlas site build`, `docs/SITE.md`) — owner: domain, hosting, Search Console, affiliate applications
 - [ ] samebetornot.com affiliates: Polymarket US application emailed 2026-09-08 (owner), awaiting reply → if approved, wire the link into the referral/fee pages as sponsored with the on-page disclosure; the Dub Polymarket program (approved 2026-09-08) lands on polymarket.com and is not used
-- [ ] Fifth charter (market making, paper-only replay): signed 2026-09-08 (#32); instrument frozen 2026-09-15 at `383d609` (#65); **Arm B done 2026-09-15: FAIL** (352 games, net −$4,492.52, 25.6% of markets positive, −1.98¢/contract; artifact `docs/proof/making-result-armB.json.gz`; the §11.3 hold was broken by accident and is recorded in the charter); **Arm A 2026-09-17: NOT RUN — its recorded books are invalid** (charter note of that date; INCONCLUSIVE under §5, no fill/fee/P&L computed); the single widened run on 2026-10-29 reads `data/making/books.sqlite3` *if* the owner signs the amendment; archive the October tapes before Kalshi's ~6-week print retention reaches the window's start (first pass 2026-10-13, final fetch right after the 2026-10-28 close); after the run: write the result into the charter and `docs/FINDINGS.md`, remove `com.atlas.books` and the Fed-decision prune exemption (#64)
+- [ ] Fifth charter (market making, paper-only replay): signed 2026-09-08 (#32); instrument frozen 2026-09-15 at `383d609` (#65); **Arm B done 2026-09-15: FAIL** (352 games, net −$4,492.52, 25.6% of markets positive, −1.98¢/contract; artifact `docs/proof/making-result-armB.json.gz`; the §11.3 hold was broken by accident and is recorded in the charter); **Arm A 2026-09-17: NOT RUN — its recorded books are invalid** (charter note of that date; INCONCLUSIVE under §5, no fill/fee/P&L computed); the single widened run on 2026-10-29 reads `data/making/books.sqlite3` *if* the owner signs the amendment; archive the October tapes before Kalshi's ~6-week print retention reaches the window's start (first pass 2026-10-13, final fetch right after the 2026-10-28 close); after the run: write the result into the charter and `docs/FINDINGS.md`, remove `com.atlas.books` and the Fed-decision prune exemption (#64). **Arm A ran 2026-11-04: INCONCLUSIVE, counts as FAIL; result written; the two removals remain**
 - [x] Fee Verified build (charter merged 2026-09-08): 17 platform schedules with quotes + published examples; shared JS engine; nightly verification; live on Cloudflare Pages 2026-09-08 (`docs/FEES.md`)
 - [x] Fee Verified go-live: `verifiedfees.com` live 2026-09-08; sitemap submitted 2026-09-08 → **clock started, verdict 2026-10-20** (`docs/decisions/2026-09-08-fee-calculator-demand-test.md`); nightly proven end to end
 - [x] Fee Verified hosting, owner: `www.verifiedfees.com` attached 2026-09-09; Security issues cleared 2026-09-09
