@@ -29,8 +29,11 @@ Read from every job log, the jobs panel, the recorder, Kalshi's public tape and 
   basket $48 against the signed $500 (fails). NO-GO. Decides 11-17.
 - [x] Search Console, trailing 30 days to 11-03: samebetornot.com 18 impressions,
   verifiedfees.com 10.
-- [ ] Charter §12, after the run: remove `com.atlas.books` (stopping an agent needs the owner's
-  OK) and the Fed-decision prune exemption (`PRUNE_ORDERBOOK_RETAIN_PREFIXES`, #64).
+- [x] Charter §12, after the run: `com.atlas.books` removed from the Mac on the owner's OK
+  (11-04) and the Fed-decision prune exemption (#64) removed. The running monitor keeps the old
+  code until it restarts; its first prune after that drops the 4,158 Fed-decision rows now past
+  30 days (18.6 MB, from the old websocket recorder). Arm A's real books are in their own
+  database, which prune never touches.
 - [ ] OWNER: where an off-machine copy of `data/` goes (open since 09-17, below). Every backup
   is on this one employer-managed Mac, and `data/` is not in git. Settle it before any shutdown.
 - [ ] OWNER: what stays on after 11-17. Stopping the monitor also stops samebetornot.com's data
@@ -1693,7 +1696,7 @@ evidence. The point of the 90 days is to let this accumulate.
   families are already on `main` with tests; the branches are dead duplicates.
 - [x] Demand-test site generator (`atlas site build`, `docs/SITE.md`) — owner: domain, hosting, Search Console, affiliate applications
 - [ ] samebetornot.com affiliates: Polymarket US application emailed 2026-09-08 (owner), awaiting reply → if approved, wire the link into the referral/fee pages as sponsored with the on-page disclosure; the Dub Polymarket program (approved 2026-09-08) lands on polymarket.com and is not used
-- [ ] Fifth charter (market making, paper-only replay): signed 2026-09-08 (#32); instrument frozen 2026-09-15 at `383d609` (#65); **Arm B done 2026-09-15: FAIL** (352 games, net −$4,492.52, 25.6% of markets positive, −1.98¢/contract; artifact `docs/proof/making-result-armB.json.gz`; the §11.3 hold was broken by accident and is recorded in the charter); **Arm A 2026-09-17: NOT RUN — its recorded books are invalid** (charter note of that date; INCONCLUSIVE under §5, no fill/fee/P&L computed); the single widened run on 2026-10-29 reads `data/making/books.sqlite3` *if* the owner signs the amendment; archive the October tapes before Kalshi's ~6-week print retention reaches the window's start (first pass 2026-10-13, final fetch right after the 2026-10-28 close); after the run: write the result into the charter and `docs/FINDINGS.md`, remove `com.atlas.books` and the Fed-decision prune exemption (#64). **Arm A ran 2026-11-04: INCONCLUSIVE, counts as FAIL; result written; the two removals remain**
+- [x] Fifth charter (market making, paper-only replay): signed 2026-09-08 (#32); instrument frozen 2026-09-15 at `383d609` (#65); **Arm B done 2026-09-15: FAIL** (352 games, net −$4,492.52, 25.6% of markets positive, −1.98¢/contract; artifact `docs/proof/making-result-armB.json.gz`; the §11.3 hold was broken by accident and is recorded in the charter); **Arm A 2026-09-17: NOT RUN — its recorded books are invalid** (charter note of that date; INCONCLUSIVE under §5, no fill/fee/P&L computed); the single widened run on 2026-10-29 reads `data/making/books.sqlite3` *if* the owner signs the amendment; archive the October tapes before Kalshi's ~6-week print retention reaches the window's start (first pass 2026-10-13, final fetch right after the 2026-10-28 close); after the run: write the result into the charter and `docs/FINDINGS.md`, remove `com.atlas.books` and the Fed-decision prune exemption (#64). **Arm A ran 2026-11-04: INCONCLUSIVE, counts as FAIL; result written; recorder and exemption removed**
 - [x] Fee Verified build (charter merged 2026-09-08): 17 platform schedules with quotes + published examples; shared JS engine; nightly verification; live on Cloudflare Pages 2026-09-08 (`docs/FEES.md`)
 - [x] Fee Verified go-live: `verifiedfees.com` live 2026-09-08; sitemap submitted 2026-09-08 → **clock started, verdict 2026-10-20** (`docs/decisions/2026-09-08-fee-calculator-demand-test.md`); nightly proven end to end
 - [x] Fee Verified hosting, owner: `www.verifiedfees.com` attached 2026-09-09; Security issues cleared 2026-09-09
