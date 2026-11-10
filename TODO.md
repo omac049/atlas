@@ -42,8 +42,12 @@ Read from every job log, the jobs panel, the recorder, Kalshi's public tape and 
   `keys/` and `.env` never go there. Not checked from another device.
 - [ ] OWNER: what stays on after 11-17. Stopping the monitor also stops samebetornot.com's data
   from changing.
-- [ ] `uv run` rewrites `uv.lock` (+138 lines) because the `fees` extra was never locked, which
+- [x] `uv run` rewrites `uv.lock` (+138 lines) because the `fees` extra was never locked, which
   dirties the checkout the nightly jobs read. Refresh the lock in a small PR.
+  **Done 2026-11-10:** the lock now holds the `fees` extra at the versions already installed
+  (playwright 1.62.0, curl-cffi 0.16.3, greenlet 3.5.5, pyee 13.0.1). A plain `uv lock` picked
+  playwright 1.65.0, which wants a browser build the checker does not have (the 09-16 failure),
+  so the versions were pinned to the installed ones. Nothing was installed or removed.
 - [ ] 2026-11-17: record the study's decision, then refresh the README's stale status lines
   ("Last verified" 08-20, "day 2 of 90").
 
