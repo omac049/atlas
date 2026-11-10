@@ -1,36 +1,36 @@
 {
   "platform": "amazon",
   "name": "Amazon (US marketplace, referral fees)",
-  "as_of": "2026-10-12",
+  "as_of": "2026-11-10",
   "sources": [
     {
       "url": "https://sell.amazon.com/pricing",
       "title": "How much does it cost to sell on Amazon? | Sell on Amazon (Standard selling fees)",
-      "loaded": "2026-10-12",
+      "loaded": "2026-11-10",
       "last_updated_on_page": null
     },
     {
       "url": "https://sellercentral.amazon.com/help/hub/reference/external/G200336920",
       "title": "Selling on Amazon fee schedule (Seller Central help, public; 'This article applies to selling in: United States')",
-      "loaded": "2026-10-12",
+      "loaded": "2026-11-10",
       "last_updated_on_page": null
     },
     {
       "url": "https://sellercentral.amazon.com/help/hub/reference/external/GTG4BAWSY39Z98Z3",
       "title": "Referral fees (Seller Central help, public)",
-      "loaded": "2026-10-12",
+      "loaded": "2026-11-10",
       "last_updated_on_page": null
     },
     {
       "url": "https://sellercentral.amazon.com/help/hub/reference/external/GKD9U5REK5DKB38Y",
       "title": "Closing fees (Seller Central help, public)",
-      "loaded": "2026-10-12",
+      "loaded": "2026-11-10",
       "last_updated_on_page": null
     },
     {
       "url": "https://sellercentral.amazon.com/help/hub/reference/external/GX7NRP7C7LKZLQV6",
       "title": "Seller Central help page GX7NRP7C7LKZLQV6 (FAILED: JS app shell only, body text 'You need to enable JavaScript to run this app.'; also tried https://sellercentral.amazon.com/gp/help/external/GX7NRP7C7LKZLQV6 with same result)",
-      "loaded": "2026-10-12",
+      "loaded": "2026-11-10",
       "last_updated_on_page": null
     }
   ],
@@ -43,10 +43,10 @@
     "Professional sellers: No per-item fee",
     "Individual sellers: $0.99 fee for each item sold",
     "Referral fees vary by product category. For every item sold, you\u2019ll pay a percentage of the total price or a minimum amount, whichever is greater.",
-    "For all products, Amazon deducts the applicable referral fee percentage calculated on the total sales price, excluding any taxes calculated through Amazon tax calculation services. The total sales price is the total amount paid by the buyer, including the item price and any delivery or gift wrapping charges.",
-    "Items in some categories have a per-item minimum referral fee as listed below (for example, sellers pay the greater of the referral fee or the per-item minimum referral fee).",
-    "Referral fee = [(Item price + delivery charges + giftwrap charges) multiplied by the category referral fee rate] OR [applicable minimum referral fee], whichever is greater.",
-    "Time of charge | When the buyer's order is shipped",
+    "For all products, we deduct the applicable referral fee percentage calculated on the total sales price, excluding any taxes calculated through our tax calculation services. The total sales price is the total amount paid by the customer, including the item price and any delivery or gift-wrapping charges.",
+    "We deduct the greater of the applicable referral fee percentage or applicable per-item minimum referral fee.",
+    "Referral fee = [(Item price + delivery charges + gift-wrapping charges) multiplied by the category referral fee rate] OR [applicable minimum referral fee], whichever is greater.",
+    "Time of charge | When the customer's order is shipped",
     "Amazon Device Accessories | 45% | $0.30",
     "Automotive and Powersports | 12% | $0.30",
     "Baby Products | 8% for products with a total sales price of $10.00 or less, and 15% for products with a total sales price greater than $10.00 | $0.30",
@@ -84,13 +84,12 @@
     "Video Game Consoles | 8% | --",
     "Video Games and Gaming Accessories | 15% | --",
     "Watches | 16% for the portion of the total sales price up to $1,500.00, and 3% for any portion of the total sales price greater than $1,500.00 | $0.30",
-    "Sellers also pay a closing fee of $1.80 per item that is sold in the categories of Books, DVD, Music, Software & Computer/Video Games, Video Game Consoles, and Video Game Accessories.",
+    "You also pay a closing fee of $1.80 per item that is sold in the categories of Books, DVD, Music, Software & Computer/Video Games, Video Game Consoles, and Video Game Accessories.",
     "The closing fee is $1.80 per unit sold for products in the Books, DVD, Music, Software & Computer/Video Games, Video Game Consoles, and Video Game Accessories categories.",
     "4 In addition to the referral fee, media items incur a closing fee $1.80 per item.",
-    "If you refund a buyer for an order for which you have already received payment, we refund you the amount of the referral fee you paid for the item minus the applicable refund administration fee, which is the lesser of $5.00 or 20% of the applicable referral fee.",
-    "The rental book service fee is $5.00 per book rented to a customer.",
+    "If you refund a customer for an order for which you have already received payment, we refund you the amount of the referral fee you paid for the item minus the applicable refund administration fee, which is the lesser of $5.00 or 20% of the applicable referral fee.",
     "We charge a monthly high-volume listing fee of $0.001 per eligible SKU to cover our system costs associated with cataloging and maintaining large numbers of SKUs on Amazon.com.",
-    "Amazon collects the lower of the applicable fees stated below and any fees communicated to you by Amazon (such as promotional fees that Amazon may provide from time to time).",
+    "We collect the lower of the applicable fees stated below and any fees communicated to you by us (such as promotional fees that we may provide from time to time).",
     "1 An item\u2019s total price includes its list price, as well as shipping costs and any gift-wrapping charges."
   ],
   "excluded": [
@@ -113,7 +112,8 @@
     "The Professional subscription is charged only 'when you have active listings'; merged multi-country accounts may see a different fee (page footnote).",
     "Rounding of fee amounts is not specified on any loaded page.",
     "sell.amazon.com/pricing links 'Learn more about selling fees' to Seller Central G6F7CN3EQS7MEGCN ('Selling on Amazon fees guide'); not loaded, not needed for numbers.",
-    "Re-read 2026-10-12. Every one of the 56 quoted sentences was found on Amazon's pages by the checker's own reader, and no rate differs. Twelve quotes had carried '*' bullet marks, and one a footnote mark, that the pages do not have; those marks were removed so the nightly check can match the tiered referral-fee rows, which it had been skipping."
+    "Re-read 2026-10-12. Every one of the 56 quoted sentences was found on Amazon's pages by the checker's own reader, and no rate differs. Twelve quotes had carried '*' bullet marks, and one a footnote mark, that the pages do not have; those marks were removed so the nightly check can match the tiered referral-fee rows, which it had been skipping.",
+    "Re-read 2026-11-10. Amazon reworded its fee pages: 'Amazon' became 'we', 'buyer' became 'customer', 'giftwrap' became 'gift-wrapping', and the sentence introducing per-item minimums now reads 'We deduct the greater of the applicable referral fee percentage or applicable per-item minimum referral fee.' Seven quotes re-pinned to today's text. No rate differs: every category row, the $0.30 minimums, the $1.80 closing fee and the refund administration fee still match. The fee schedule page no longer states the rental book service fee ($5.00 per book), only a link to a separate article this schedule does not cite; that quote was removed. This calculator never covered book rentals."
   ],
   "categories": {
     "amazon_device_accessories": {
@@ -516,7 +516,7 @@
       "expected": {
         "referral_fee": 4.95
       },
-      "quote": "Item price = $25.00 Delivery charges = $4.50 Gift-wrap charges = $3.50 Total sales price = Item price + delivery charges + giftwrap charges = $33.00 Referral fee = Higher of (15% multiplied by $33.00) or $0.30 = $4.95",
+      "quote": "Item price = $25.00 Delivery charges = $4.50 Gift-wrapping charges = $3.50 Total sales price = Item price + delivery charges + gift-wrapping charges = $33.00 Referral fee = Higher of (15% multiplied by $33.00) or $0.30 = $4.95",
       "source_url": "https://sellercentral.amazon.com/help/hub/reference/external/GTG4BAWSY39Z98Z3"
     },
     {
