@@ -1,12 +1,45 @@
 # Atlas continuation checklist
 
-Last updated: 2026-11-04 (**Arm A ran, six days late, and reads INCONCLUSIVE: 3 markets cleared the print floor, 4 needed; net +$14.15, 1 of 5 markets positive. It counts as FAIL, so with Arm B the automated-trading question is closed.** Study day 76, NO-GO, decides 11-17.) Previous: 2026-10-26 (**the owner asked whether Atlas can launch with real money: no.** Every pre-registered test is negative or closing, and no order path exists by design. A 17.5-hour network outage on 10-22/23 cost Arm A coverage (now 92.1%); Arm A needs H26 to reach 500 prints by the 10-28 close or it is inconclusive. Study day 69, NO-GO.) Previous: 2026-10-21 (**both demand tests missed their pass lines and are recorded FAIL:** samebetornot.com 1,364 of 2,000 impressions on 10-16, verifiedfees.com 1,761 of 2,000 on 10-20, each after Google dropped most of its pages from the index in early October. Arm A recorder coverage 93.9%, run 10-29; study day 62, NO-GO.) Previous: 2026-09-28 (**status check found three silent failures and one real fee change, all fixed the same day:** samebetornot.com unpublished since 09-21 after the macOS 27 upgrade; Fee Verified showing false "under review" banners since 09-16; the dashboard's data call at 325 MB since 09-24; Whatnot's new tiered commission of 09-21. Arm A recorder at 86.3% coverage. 922 tests green.) Previous: 2026-09-17 (**Arm A's input was found invalid before it was run — the websocket book recorder never stored a real Kalshi book; a REST ground-truth recorder now covers the five October Fed-decision markets for the charter's single widened run on 2026-10-29.** Arm B: FAIL, 352 games. Study phase 2 live since 9/15.) Previous: 2026-09-04 (**fourth hypothesis DISPROVEN — the in-game price LEADS the game.** 676 lead changes across 262 games: median repricing lag −10.6s, 91% repriced before MLB's official timestamp, median stale liquidity in the human window zero contracts. The move is real (+11.2c net median) and already gone. Four hypotheses, four pre-registered negatives; the prediction-market edge search is complete. 658 tests green)
+Last updated: 2026-11-10 (**review for wrap-up: everything runs, 986 tests green, study day 83 still NO-GO; three fee flags were rewordings and are re-pinned, the lock file is fixed.** Decides 11-17.) Previous: 2026-11-04 (**Arm A ran, six days late, and reads INCONCLUSIVE: 3 markets cleared the print floor, 4 needed; net +$14.15, 1 of 5 markets positive. It counts as FAIL, so with Arm B the automated-trading question is closed.** Study day 76, NO-GO, decides 11-17.) Previous: 2026-10-26 (**the owner asked whether Atlas can launch with real money: no.** Every pre-registered test is negative or closing, and no order path exists by design. A 17.5-hour network outage on 10-22/23 cost Arm A coverage (now 92.1%); Arm A needs H26 to reach 500 prints by the 10-28 close or it is inconclusive. Study day 69, NO-GO.) Previous: 2026-10-21 (**both demand tests missed their pass lines and are recorded FAIL:** samebetornot.com 1,364 of 2,000 impressions on 10-16, verifiedfees.com 1,761 of 2,000 on 10-20, each after Google dropped most of its pages from the index in early October. Arm A recorder coverage 93.9%, run 10-29; study day 62, NO-GO.) Previous: 2026-09-28 (**status check found three silent failures and one real fee change, all fixed the same day:** samebetornot.com unpublished since 09-21 after the macOS 27 upgrade; Fee Verified showing false "under review" banners since 09-16; the dashboard's data call at 325 MB since 09-24; Whatnot's new tiered commission of 09-21. Arm A recorder at 86.3% coverage. 922 tests green.) Previous: 2026-09-17 (**Arm A's input was found invalid before it was run — the websocket book recorder never stored a real Kalshi book; a REST ground-truth recorder now covers the five October Fed-decision markets for the charter's single widened run on 2026-10-29.** Arm B: FAIL, 352 games. Study phase 2 live since 9/15.) Previous: 2026-09-04 (**fourth hypothesis DISPROVEN — the in-game price LEADS the game.** 676 lead changes across 262 games: median repricing lag −10.6s, 91% repriced before MLB's official timestamp, median stale liquidity in the human window zero contracts. The move is real (+11.2c net median) and already gone. Four hypotheses, four pre-registered negatives; the prediction-market edge search is complete. 658 tests green)
 
 Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
 Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, bounded retry metadata; 450 tests green; 72 trusted labels)
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
+
+## 2026-11-10 — review for wrap-up
+
+Read from every job log, the jobs panel, the fee check, the study report and the test run.
+
+- [x] **Everything runs.** 986 tests pass, ruff clean. All six jobs read OK and ran today; the
+  monitor and API have been up since the 11-03 sign-in; `/health` reports
+  `trading_enabled=false`; both sites answer; last night's backup reached iCloud.
+- [x] The 90-day study, day 83 (11-09 report): 221 verified opportunities per 30 days against
+  10 needed (passes); median annualized return 6.7% against the signed 15% (fails); median
+  basket $52.80 against the signed $500 (fails). NO-GO. Decides 11-17.
+- [x] Search Console, trailing 30 days to 11-09: samebetornot.com 12 impressions,
+  verifiedfees.com 3.
+- [x] **Fee flags since 11-06 (re-read 11-10): three rewordings, no fee moved.** Every page of
+  the four flagged platforms was read in full with the checker's own reader, and again when the
+  baselines were taken. Amazon reworded its fee pages ("Amazon" to "we", "buyer" to "customer",
+  "giftwrap" to "gift-wrapping"): seven quotes re-pinned, and the rental book fee quote removed
+  because the fee schedule no longer states it (the calculator never covered rentals). Square
+  added "Fees may vary for sellers on custom rates." to its EBT row (1.8% + 5¢ unchanged).
+  Stripe corrected "Smart Dispute fee" to "Smart Disputes fee" (30% unchanged). The public
+  pages clear at the first 04:20 check after this merges and `~/Atlas` is pulled.
+- [ ] **Venmo reads "could not check" every night since 11-02:** `venmo.com/legal/crypto-terms/`
+  answers the 04:20 check with HTTP 403, but read in full on 11-10 mid-afternoon (142,048
+  characters, no quote missing). Not a fee change. Cause unknown (time of day, or the run's
+  earlier requests); the page stays "could not check" with its last verified date until it
+  reads at night again.
+- [x] `uv.lock` now holds the `fees` extra (#124).
+- [x] Branches: 22 merged local branches deleted; on GitHub `arm-a-amendment`, `fees-build` and
+  `fees-live` deleted (their work is on main). `watchdog-restart-loop` (the capacity recorder)
+  and `site-clean-urls` (three doc commits) hold work that never reached main and are kept.
+- [ ] The installed launch agents still differ from `deploy/` (`Nice 10` on nine; the watchdog
+  at 300 s, not 60 s). Moot if the agents are stopped after 11-17; otherwise pick one.
+- [ ] OWNER, 11-17: the day-90 decision, what stays on, and the two domain renewals.
 
 ## 2026-11-04 — Arm A ran: INCONCLUSIVE, and the trading question is closed
 

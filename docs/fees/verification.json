@@ -21,6 +21,11 @@
      "at": "2026-10-13T00:00:32+00:00",
      "event": "reviewed",
      "note": "Re-read 2026-10-12: all 56 quoted sentences found on Amazon's pages and no rate differs. Twelve quotes carried bullet marks and one a footnote mark the pages do not have; removed, so the tiered referral-fee rows are machine-checked. The skip list held 41 quotes."
+    },
+    {
+     "at": "2026-11-10T21:50:05+00:00",
+     "event": "reviewed",
+     "note": "re-read 2026-11-10: Amazon reworded its fee pages (we/customer/gift-wrapping); seven quotes re-pinned, rental book fee quote removed; no rate differs"
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -68,40 +73,40 @@
     "If you refund a buyer for an order for which you have already received payment, we refund you the amount of the referral fee you paid for the item minus the applicable refund administration fee, which is the lesser of $5.00 or 20% of the applicable referral fee."
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-10-13T00:00:32+00:00",
+   "reviewed_at": "2026-11-10T21:50:05+00:00",
    "sources": {
     "https://sell.amazon.com/pricing": {
-     "hash": "64639ab87b7fdb3272aeac9d521baa46f0a5fde04c7e35d462d21cdeccacb186",
-     "last_checked_at": "2026-10-13T00:00:32+00:00",
-     "reviewed_at": "2026-10-13T00:00:32+00:00",
+     "hash": "62379e21ea679f9773e9beeaffc70a5cb7a26b8d0f0c21ae2b431ae20d8f483f",
+     "last_checked_at": "2026-11-10T21:50:05+00:00",
+     "reviewed_at": "2026-11-10T21:50:05+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://sellercentral.amazon.com/help/hub/reference/external/G200336920": {
-     "hash": "65a26c903d1842ad2e95a8d42295d62b5ec043755f46184d11380c97e9e67da8",
-     "last_checked_at": "2026-10-13T00:00:32+00:00",
-     "reviewed_at": "2026-10-13T00:00:32+00:00",
+     "hash": "515355b4b9a16019353a0d0f4b3881371c21194bd5aa45078a552dcf379be5ee",
+     "last_checked_at": "2026-11-10T21:50:05+00:00",
+     "reviewed_at": "2026-11-10T21:50:05+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://sellercentral.amazon.com/help/hub/reference/external/GKD9U5REK5DKB38Y": {
      "hash": "dd120964952a7ad7947fc0c863ddc60f57eb8f0cffdfc4022348da946503b3ee",
-     "last_checked_at": "2026-10-13T00:00:32+00:00",
-     "reviewed_at": "2026-10-13T00:00:32+00:00",
+     "last_checked_at": "2026-11-10T21:50:05+00:00",
+     "reviewed_at": "2026-11-10T21:50:05+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://sellercentral.amazon.com/help/hub/reference/external/GTG4BAWSY39Z98Z3": {
-     "hash": "80c5d52a73516ecaa83f1e9fbea26996a5169a5bd88d3162aa5ba1d83023c3b8",
-     "last_checked_at": "2026-10-13T00:00:32+00:00",
-     "reviewed_at": "2026-10-13T00:00:32+00:00",
+     "hash": "6886d48cbf14486de29b6a053f34b6b2865ccb86fdf996d799ec2630c3b449a0",
+     "last_checked_at": "2026-11-10T21:50:05+00:00",
+     "reviewed_at": "2026-11-10T21:50:05+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://sellercentral.amazon.com/help/hub/reference/external/GX7NRP7C7LKZLQV6": {
      "hash": "72efc80f02dd4547c9699ec1e2dad0cf06b77f11bc577a8e2c3ced1fc3e8fa8b",
-     "last_checked_at": "2026-10-13T00:00:32+00:00",
-     "reviewed_at": "2026-10-13T00:00:32+00:00",
+     "last_checked_at": "2026-11-10T21:50:05+00:00",
+     "reviewed_at": "2026-11-10T21:50:05+00:00",
      "status": "verified",
      "via": "rendered"
     }
@@ -1074,6 +1079,11 @@
      "at": "2026-10-21T17:18:37+00:00",
      "event": "reviewed",
      "note": "Re-read 2026-10-21: the help article now states the EBT fee as 1.8% + 5 cents per transaction with the waiver sentence gone; the legacy-plan quote was updated; every rate the calculator uses is unchanged."
+    },
+    {
+     "at": "2026-11-10T21:50:14+00:00",
+     "event": "reviewed",
+     "note": "re-read 2026-11-10: EBT row gained 'Fees may vary for sellers on custom rates.'; rate unchanged, one quote re-pinned"
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -1082,40 +1092,40 @@
     "You won\u2019t pay any fees for Cash, Check, and Other Tender payment types."
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-10-21T17:18:37+00:00",
+   "reviewed_at": "2026-11-10T21:50:14+00:00",
    "sources": {
     "https://squareup.com/help/us/en/article/5068-what-are-square-s-fees": {
      "hash": "91377703df88e66c59f2283942b402e24b36f6569e527577ebac86b365350afc",
-     "last_checked_at": "2026-10-21T17:18:37+00:00",
-     "reviewed_at": "2026-10-21T17:18:37+00:00",
+     "last_checked_at": "2026-11-10T21:50:14+00:00",
+     "reviewed_at": "2026-11-10T21:50:14+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://squareup.com/help/us/en/article/5092-rounding": {
      "hash": "91377703df88e66c59f2283942b402e24b36f6569e527577ebac86b365350afc",
-     "last_checked_at": "2026-10-21T17:18:37+00:00",
-     "reviewed_at": "2026-10-21T17:18:37+00:00",
+     "last_checked_at": "2026-11-10T21:50:14+00:00",
+     "reviewed_at": "2026-11-10T21:50:14+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://squareup.com/us/en/payments/fee-calculator": {
      "hash": "ff542386906879c679f49aff400ae5c8d2163731f1558222f9fe61927987308a",
-     "last_checked_at": "2026-10-21T17:18:37+00:00",
-     "reviewed_at": "2026-10-21T17:18:37+00:00",
+     "last_checked_at": "2026-11-10T21:50:14+00:00",
+     "reviewed_at": "2026-11-10T21:50:14+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://squareup.com/us/en/payments/our-fees": {
      "hash": "f0ee876d5040a361eb3751d94b95b416181662a2b004af09a6954d8c5d2f06a5",
-     "last_checked_at": "2026-10-21T17:18:37+00:00",
-     "reviewed_at": "2026-10-21T17:18:37+00:00",
+     "last_checked_at": "2026-11-10T21:50:14+00:00",
+     "reviewed_at": "2026-11-10T21:50:14+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://squareup.com/us/en/pricing": {
      "hash": "d259e9c2b061da4843e799b5b33bf59d32ade02730ceaed72df5e621686e9416",
-     "last_checked_at": "2026-10-21T17:18:37+00:00",
-     "reviewed_at": "2026-10-21T17:18:37+00:00",
+     "last_checked_at": "2026-11-10T21:50:14+00:00",
+     "reviewed_at": "2026-11-10T21:50:14+00:00",
      "status": "verified",
      "via": "rendered"
     }
@@ -1153,6 +1163,11 @@
      "at": "2026-10-27T00:27:10+00:00",
      "event": "reviewed",
      "note": "Re-read 2026-10-26: the Instant Payouts fee moved to stripe.com/pricing (1.5%, minimum fee 50 cents) and the docs page dropped its percentage sentence; quote replaced, calculator now applies the 50 cent minimum, two derived examples added."
+    },
+    {
+     "at": "2026-11-10T21:54:10+00:00",
+     "event": "reviewed",
+     "note": "re-read 2026-11-10: 'Smart Dispute fee' corrected to 'Smart Disputes fee'; 30% unchanged, one quote re-pinned"
     }
    ],
    "last_checked_at": "2026-09-08T18:49:32+00:00",
@@ -1160,54 +1175,54 @@
     "| United States | 0.50 USD | 9,999 USD |"
    ],
    "quotes_missing_at_review": [],
-   "reviewed_at": "2026-10-27T00:27:10+00:00",
+   "reviewed_at": "2026-11-10T21:54:10+00:00",
    "sources": {
     "https://docs.stripe.com/payments/ach-direct-debit": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-10-27T00:27:10+00:00",
-     "reviewed_at": "2026-10-27T00:27:10+00:00",
+     "last_checked_at": "2026-11-10T21:54:10+00:00",
+     "reviewed_at": "2026-11-10T21:54:10+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://docs.stripe.com/payouts/instant-payouts": {
      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-     "last_checked_at": "2026-10-27T00:27:10+00:00",
-     "reviewed_at": "2026-10-27T00:27:10+00:00",
+     "last_checked_at": "2026-11-10T21:54:10+00:00",
+     "reviewed_at": "2026-11-10T21:54:10+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://stripe.com/legal/pricing-policy": {
      "hash": "86350984efb01ae8ae8b2bd6a424ee8465b29d668a8b545f25e9d2ae9ce761f4",
-     "last_checked_at": "2026-10-27T00:27:10+00:00",
-     "reviewed_at": "2026-10-27T00:27:10+00:00",
+     "last_checked_at": "2026-11-10T21:54:10+00:00",
+     "reviewed_at": "2026-11-10T21:54:10+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://stripe.com/pricing": {
-     "hash": "0c068f441524db0d09ef095d24f33b9c4e2d6b1d9fecbb86b34230a715bc8615",
-     "last_checked_at": "2026-10-27T00:27:10+00:00",
-     "reviewed_at": "2026-10-27T00:27:10+00:00",
+     "hash": "865ee7dce4ee557510b3bfd4e5fe45982dd9d26cebca150ad6e7b5ce6e47a28f",
+     "last_checked_at": "2026-11-10T21:54:10+00:00",
+     "reviewed_at": "2026-11-10T21:54:10+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://stripe.com/pricing/local-payment-methods": {
      "hash": "6c1752ada15e9e8840c8a21bb10afa6136726189cd843230609a566e85510db7",
-     "last_checked_at": "2026-10-27T00:27:10+00:00",
-     "reviewed_at": "2026-10-27T00:27:10+00:00",
+     "last_checked_at": "2026-11-10T21:54:10+00:00",
+     "reviewed_at": "2026-11-10T21:54:10+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://support.stripe.com/questions/manually-entered-card-payments": {
      "hash": "5d84fc71d1729a9a6844528e46de85de08592ec3c5ac64893e108048cb8e1ac9",
-     "last_checked_at": "2026-10-27T00:27:10+00:00",
-     "reviewed_at": "2026-10-27T00:27:10+00:00",
+     "last_checked_at": "2026-11-10T21:54:10+00:00",
+     "reviewed_at": "2026-11-10T21:54:10+00:00",
      "status": "verified",
      "via": "rendered"
     },
     "https://support.stripe.com/questions/rounding-rules-for-stripe-fees": {
      "hash": "3d990df1b97e66a954a82b0ffd3b5d56244078d56841fdf7ed9a6430924f910d",
-     "last_checked_at": "2026-10-27T00:27:10+00:00",
-     "reviewed_at": "2026-10-27T00:27:10+00:00",
+     "last_checked_at": "2026-11-10T21:54:10+00:00",
+     "reviewed_at": "2026-11-10T21:54:10+00:00",
      "status": "verified",
      "via": "rendered"
     }
