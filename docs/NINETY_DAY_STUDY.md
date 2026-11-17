@@ -458,3 +458,86 @@ are the honest test of whether a tradeable gap ever opens at all.
     choice between those outcomes is the owner's at day 90.
   - **Any change** to either threshold, or to what counts as a pass, needs a new
     owner-signed amendment recorded here before the report that uses it.
+
+## Day-90 result (2026-11-17)
+
+**Status: awaiting the owner's decision until the pull request that adds this section is
+merged. Merging it is the owner's sign-off.** The charter leaves the day-90 decision to the
+owner; this section records what was measured and decides nothing.
+
+Source: `data/study/study-report-20261117.json` and `data/study/latency-report-20261117.json`,
+written by one run of `atlas gaps study` on 2026-11-17 (793,181 observations, the full
+history; rate window 98 days), next to the scheduled Monday file
+`study-report-20261116.json`. Verifier, normalizers and `atlas/study.py` are unchanged for
+this run.
+
+**Which day is day 90.** This charter names 2026-11-17 as day 90. `atlas/study.py` counts the
+start date, 2026-08-19, as day 1, so its day 90 is 2026-11-16 and the 11-17 file reads
+`study_day: 91`. Nothing was adjusted. Both files are given below and they agree on every
+test.
+
+### The go/no-go tests, against the signed thresholds
+
+| Test | 11-16 file (code's day 90) | 11-17 file (charter's day 90) | Threshold | Result |
+| --- | --- | --- | --- | --- |
+| Frequency (verified opportunities per 30 days) | 227.0 | 226.5 | 10 (charter) | pass |
+| Return on locked capital (median annualized) | 6.19% | 6.17% | 15% (owner-signed 2026-10-14) | **fail** |
+| Median executable basket | $52.80 | $52.80 | $500 (owner-signed 2026-10-14) | **fail** |
+| Tradeable US-venue evidence | 440 opportunities | 440 opportunities | present (charter) | pass |
+
+`meets_go_threshold.go` is **false** in both files: **NO-GO**, two of four tests fail. It has
+read NO-GO in every report since the 2026-08-20 amendment.
+
+Behind those numbers, from the 11-17 file: 830 distinct opportunities from 122 distinct
+pairs; 740 of them verified (28 that cleared the verifier, 712 blocked on venue wording
+alone). On the tradeable venue alone (Polymarket US): 440 opportunities from 91 pairs, and a
+median annualized return of 11.85%, also under 15%. Survival: 1,015 runs, 815 of them seen
+in a single sweep only; median run 75.8 minutes. Families added after the start (chamber
+control, NFL player props) stay out of the go/no-go, as the Scope section requires: 105
+opportunities.
+
+### The five day-90 criteria
+
+"Continue toward execution" needs all five.
+
+| # | Criterion | What was measured | Reading |
+| --- | --- | --- | --- |
+| 1 | At least 10 verified opportunities per 30 days | 226.5 | met. The report's count does not require both legs to be sized, which the criterion's wording asks for; that stricter count was never computed |
+| 2 | Positive edge after conservative fees and the phase-2 latency adjustment | After fees: every counted observation is positive by definition, and the median return on locked capital is 6.17% against the signed 15%. After latency: 2,948 of 2,951 measurable observations still showed a gap 2 seconds later (369 of 370 at 250 ms) | **the signed return test fails.** The latency replay shows the gaps do not vanish in 2 seconds, on a partial sample (see limits) |
+| 3 | Executable size that matters | Median basket $52.80 against the signed $500 | **not met** |
+| 4 | Low frequency of one-leg-only fills in the phase-2 simulation | 0 one-leg-only at every delay (0 of 2,951 at 2 s); 69 partial fills at 2 s | measured on a partial sample. **No pass line for "low" was ever signed**, so it has no pass or fail |
+| 5 | At least 3 users who would pay for alerts or data | nothing | **never measured.** Phase 3 (showing the alert view to 5–10 traders) has no record in this repository. The nearest evidence is the two public demand tests, which both missed their lines (`docs/FINDINGS.md`) |
+
+Limits of the latency replay, so criteria 2 and 4 are not over-read:
+
+- It covers 3,732 of 12,171 eligible observations (31%), all from 2026-09-15 on, when burst
+  sampling was added. The count was 4,029 in the 11-16 file. The likely cause is the monitor's
+  nightly prune removing book samples older than 30 days (not confirmed here); if so, the
+  replay cannot be regenerated for the earlier weeks.
+- Its median gap after delay is about 40 cents, while the study's weekly median gap is 1 to
+  2 cents. The burst sample is therefore weighted toward a few very wide `REVIEW_REQUIRED`
+  gaps (for example October unemployment at 42 cents on 58 to 71 contracts of depth). Those are
+  candidates, not proven twins, and the replay says nothing about whether they settle alike.
+- The Polymarket US book is sampled every 2.5 seconds, so at delays under that the
+  Polymarket leg is often one reading.
+
+### What this adds up to
+
+- The "continue toward execution" rule is **not met**: criteria 2 and 3 fail on signed
+  thresholds, criterion 5 was never measured, and criterion 4 has no signed pass line.
+- The pivot rule's first half holds: opportunities are frequent but small and low-return
+  once capital lock-up is charged. Its second half (that users engage with the
+  settlement-risk analysis) was not shown: both demand tests failed.
+- The owner dropped the execution track on 2026-08-20 on the same two measures. Ninety days
+  of data did not change them: across the eight full-history reports (2026-10-06 to 11-17)
+  the median return stayed between 3.0% and 6.9% and the median basket between $48 and $144,
+  against 15% and $500.
+
+### What merging records
+
+- The study closed on day 90 reading NO-GO, and the "continue toward execution" rule is not
+  met. Atlas stays paper-only; no execution path exists or is planned.
+- The study is over, so the frozen-rules policy above ends with it. No rule change is
+  proposed here.
+- Not recorded by the merge: what keeps running after the study. That choice is separate
+  and is the owner's (`TODO.md`, 2026-11-17).
