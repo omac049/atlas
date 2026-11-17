@@ -1,12 +1,66 @@
 # Atlas continuation checklist
 
-Last updated: 2026-11-10 (**review for wrap-up: everything runs, 986 tests green, study day 83 still NO-GO; three fee flags were rewordings and are re-pinned, the lock file is fixed.** Decides 11-17.) Previous: 2026-11-04 (**Arm A ran, six days late, and reads INCONCLUSIVE: 3 markets cleared the print floor, 4 needed; net +$14.15, 1 of 5 markets positive. It counts as FAIL, so with Arm B the automated-trading question is closed.** Study day 76, NO-GO, decides 11-17.) Previous: 2026-10-26 (**the owner asked whether Atlas can launch with real money: no.** Every pre-registered test is negative or closing, and no order path exists by design. A 17.5-hour network outage on 10-22/23 cost Arm A coverage (now 92.1%); Arm A needs H26 to reach 500 prints by the 10-28 close or it is inconclusive. Study day 69, NO-GO.) Previous: 2026-10-21 (**both demand tests missed their pass lines and are recorded FAIL:** samebetornot.com 1,364 of 2,000 impressions on 10-16, verifiedfees.com 1,761 of 2,000 on 10-20, each after Google dropped most of its pages from the index in early October. Arm A recorder coverage 93.9%, run 10-29; study day 62, NO-GO.) Previous: 2026-09-28 (**status check found three silent failures and one real fee change, all fixed the same day:** samebetornot.com unpublished since 09-21 after the macOS 27 upgrade; Fee Verified showing false "under review" banners since 09-16; the dashboard's data call at 325 MB since 09-24; Whatnot's new tiered commission of 09-21. Arm A recorder at 86.3% coverage. 922 tests green.) Previous: 2026-09-17 (**Arm A's input was found invalid before it was run — the websocket book recorder never stored a real Kalshi book; a REST ground-truth recorder now covers the five October Fed-decision markets for the charter's single widened run on 2026-10-29.** Arm B: FAIL, 352 games. Study phase 2 live since 9/15.) Previous: 2026-09-04 (**fourth hypothesis DISPROVEN — the in-game price LEADS the game.** 676 lead changes across 262 games: median repricing lag −10.6s, 91% repriced before MLB's official timestamp, median stale liquidity in the human window zero contracts. The move is real (+11.2c net median) and already gone. Four hypotheses, four pre-registered negatives; the prediction-market edge search is complete. 658 tests green)
+Last updated: 2026-11-17 (**day 90: the study's final report reads NO-GO, two of four signed tests fail, and the record is prepared for the owner's sign-off; everything runs and every nightly backup reached iCloud.** Two owner decisions are open: sign off the record, and what stays on.) Previous: 2026-11-10 (**review for wrap-up: everything runs, 986 tests green, study day 83 still NO-GO; three fee flags were rewordings and are re-pinned, the lock file is fixed.** Decides 11-17.) Previous: 2026-11-04 (**Arm A ran, six days late, and reads INCONCLUSIVE: 3 markets cleared the print floor, 4 needed; net +$14.15, 1 of 5 markets positive. It counts as FAIL, so with Arm B the automated-trading question is closed.** Study day 76, NO-GO, decides 11-17.) Previous: 2026-10-26 (**the owner asked whether Atlas can launch with real money: no.** Every pre-registered test is negative or closing, and no order path exists by design. A 17.5-hour network outage on 10-22/23 cost Arm A coverage (now 92.1%); Arm A needs H26 to reach 500 prints by the 10-28 close or it is inconclusive. Study day 69, NO-GO.) Previous: 2026-10-21 (**both demand tests missed their pass lines and are recorded FAIL:** samebetornot.com 1,364 of 2,000 impressions on 10-16, verifiedfees.com 1,761 of 2,000 on 10-20, each after Google dropped most of its pages from the index in early October. Arm A recorder coverage 93.9%, run 10-29; study day 62, NO-GO.) Previous: 2026-09-28 (**status check found three silent failures and one real fee change, all fixed the same day:** samebetornot.com unpublished since 09-21 after the macOS 27 upgrade; Fee Verified showing false "under review" banners since 09-16; the dashboard's data call at 325 MB since 09-24; Whatnot's new tiered commission of 09-21. Arm A recorder at 86.3% coverage. 922 tests green.) Previous: 2026-09-17 (**Arm A's input was found invalid before it was run — the websocket book recorder never stored a real Kalshi book; a REST ground-truth recorder now covers the five October Fed-decision markets for the charter's single widened run on 2026-10-29.** Arm B: FAIL, 352 games. Study phase 2 live since 9/15.) Previous: 2026-09-04 (**fourth hypothesis DISPROVEN — the in-game price LEADS the game.** 676 lead changes across 262 games: median repricing lag −10.6s, 91% repriced before MLB's official timestamp, median stale liquidity in the human window zero contracts. The move is real (+11.2c net median) and already gone. Four hypotheses, four pre-registered negatives; the prediction-market edge search is complete. 658 tests green)
 
 Current handoff note (2026-08-20): the runtime has **81 trusted labels** (10 approved, 71 rejected), 388 unlabeled observations, learning readiness `READY` with no blockers. The governing activity is now the **90-day opportunity study** — day 2 of 90, decides 2026-11-17, charter in `docs/NINETY_DAY_STUDY.md`. The verifier and normalizers are **frozen for measurement** while it runs; any rule change needs owner sign-off *plus* an amendment note in the charter. The next dated commitment is **phase 2 by day 31 (2026-09-18)**. The older historical notes below retain prior run counts for provenance; they are not the current state.
 
 Previous entry: 2026-08-17 (adaptive settlement polling integrated: readiness ordering, venue-specific evidence classification, durable pending reasons, next-poll timestamps, bounded retry metadata; 450 tests green; 72 trusted labels)
 
 Previous entry: 2026-08-14 (387 tests green; **50-label balanced-dataset milestone COMPLETE at 52 trusted labels** — payrolls/core-PCE/GDP families shipped from captured real texts before the Kalshi pruning window, the per-event rejection cap is now persisted cross-run, and the backfill pair cap truncates the priority-sorted list so venue ladders can no longer crowd out labelable pairs)
+
+## 2026-11-17 — day 90: the study's result, prepared for the owner
+
+Read from every job log, the jobs panel, both live sites, the iCloud folder, one final run of
+`atlas gaps study`, the test run and the dashboard. Run by the scheduled close-out task.
+
+- [ ] **OWNER: sign off the day-90 record by merging the close-out pull request.** Until then
+  the result in `docs/NINETY_DAY_STUDY.md` ("Day-90 result") and `docs/FINDINGS.md` is
+  labelled as awaiting the owner's decision.
+- [x] **Final report (`data/study/study-report-20261117.json`): NO-GO.** 226.5 verified
+  opportunities per 30 days against 10 (passes); median annualized return on locked capital
+  6.17% against the signed 15% (fails); median basket $52.80 against the signed $500 (fails);
+  tradeable-venue evidence present, 440 opportunities (passes). 793,181 observations.
+- [x] **The five day-90 criteria:** frequency met; edge after costs fails the signed return
+  test; size not met; one-leg-only fills 0 of 2,951 in the simulation, with no signed pass
+  line; three paying users **never measured** (phase 3 has no record here). The latency
+  replay covers 31% of eligible observations and leans on a few very wide unverified gaps.
+- [x] **Day count:** the charter calls 11-17 day 90; `atlas/study.py` counts 11-16 as day 90
+  and stamps the 11-17 file day 91. Both files agree on every test. Nothing adjusted.
+- [x] **All six jobs read OK and ran today; both sites were generated today**
+  (samebetornot.com 11:00 UTC, verifiedfees.com 11:56 UTC). `/health` reports
+  `trading_enabled=false`. No error line in any job log since 11-10 except one Search
+  Console read timeout on 11-12, which recovered on 11-13. Durations against a week ago:
+  backup 44 s (55 s), site 61 s (52 s), fee check 36 min (34 min), Search Console 5 s (7 s),
+  study 75 s (under 60 s), intel 31 s (under 60 s). The fee check is one minute over the
+  25 to 35 minutes `deploy/README.md` calls healthy.
+- [x] **The Mac restarted twice on 11-16** (10:12 and 17:08 local). The API, monitor and
+  keep-awake agents came back by themselves both times, and the monitor recorded 8,987
+  observations that day against 9,409 the day before. Cause not looked into.
+- [x] **Off-machine copy: an `offsite ok` line on every night from 11-05 to 11-17 (13 of 13),
+  no `ERROR offsite` line ever.** The newest snapshot (`atlas-auto-20261117-0330.sqlite3.gz`)
+  is in iCloud Drive, byte-identical to the local copy, and `is_uploaded` reads True for it
+  and for the books snapshot. Not checked from another device.
+- [x] **`~/Atlas` had not been pulled since #125 merged on 11-10,** so the nightly fee check
+  kept reading the old quotes and verifiedfees.com has shown Amazon, Square and Stripe as
+  "under review" for seven nights after their re-read. Fast-forwarded on 11-17 (two commits,
+  fee files and `TODO.md` only); they should clear at the 04:20 check on 11-18.
+- [ ] **Etsy has been flagged "under review" since the 11-12 check.** Not re-read here.
+  Venmo still reads "could not check" (the nightly HTTP 403, open since 11-02).
+- [x] Search Console, trailing 30 days to 11-16: samebetornot.com 11 impressions,
+  verifiedfees.com 3.
+- [x] samebetornot.com dropped from 94 pages to 77 on 11-05 and its "also on" count from 2
+  to 0, then grew back to 109 pages. Seen in the site log, not looked into; the timing
+  matches the Fed-decision rows leaving at the first prune after the 11-03 monitor restart.
+- [x] Validation for the README's "Last verified" line: `986 passed, 1 warning`, ruff
+  `All checks passed!`, `/api/overview` 200, dashboard loaded with no console errors and
+  six jobs OK.
+- [ ] **OWNER: what stays on.** Ten agents are loaded. Data collection is the monitor, the
+  keep-awake agent and the Monday study and intel reports. Stopping the monitor freezes
+  samebetornot.com's data (its nightly rebuild would go on re-reading venue pages for the
+  pairs it already has). The watchdog restarts a silent monitor, so it must be changed or
+  stopped with it. The fee check, its site, Search Console and the backup do not need the
+  monitor. Nothing was stopped.
+- [ ] OWNER: the two domain renewals (carried from 11-10).
 
 ## 2026-11-10 — review for wrap-up
 
@@ -81,8 +135,9 @@ Read from every job log, the jobs panel, the recorder, Kalshi's public tape and 
   (playwright 1.62.0, curl-cffi 0.16.3, greenlet 3.5.5, pyee 13.0.1). A plain `uv lock` picked
   playwright 1.65.0, which wants a browser build the checker does not have (the 09-16 failure),
   so the versions were pinned to the installed ones. Nothing was installed or removed.
-- [ ] 2026-11-17: record the study's decision, then refresh the README's stale status lines
-  ("Last verified" 08-20, "day 2 of 90").
+- [x] 2026-11-17: record the study's decision, then refresh the README's stale status lines
+  ("Last verified" 08-20, "day 2 of 90"). **Prepared 2026-11-17** in the close-out pull
+  request; the decision itself is recorded when the owner merges it.
 
 ## 2026-10-26 — status check, and the real-money question
 

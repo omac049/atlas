@@ -15,7 +15,7 @@ Failing that, can what it learns be sold?
 
 | # | Hypothesis | Verdict | The number that decided it | Record |
 |---|---|---|---|---|
-| 1 | Cross-venue arbitrage: the same event is priced differently on two venues, and the gap can be locked | **Dead** | Against the only venue a US account can trade, 27 twin pairs and 0 executable gaps; every recorded gap was against the offshore venue. Best case 3.4% annualized on capital locked 5–8 months, on $33 books. | [90-day study](NINETY_DAY_STUDY.md) |
+| 1 | Cross-venue arbitrage: the same event is priced differently on two venues, and the gap can be locked | **Dead** | Against the only venue a US account can trade, 27 twin pairs and 0 executable gaps; every recorded gap was against the offshore venue. Best case 3.4% annualized on capital locked 5–8 months, on $33 books. Day 90 (2026-11-17, awaiting the owner's decision): still NO-GO, median 6.2% annualized against 15% and a $53 median basket against $500. | [90-day study](NINETY_DAY_STUDY.md) |
 | 2 | Settlement-machinery gaps (missing fallbacks, absent sources) predict disputed resolutions | **FAIL** | 15 famous disputes vs 45 rule-selected controls: median clarity score **65 vs 65**. No separation. | [proof charter](decisions/2026-08-31-fine-print-proof-charter.md) · [corpus](proof/test-a-corpus.json) · [result](proof/test-a-result.json) |
 | 3 | Predicate ambiguity ("what counts as a suit?") predicts disputes | **Abandoned at gate** | Instrument flagged **4 of 15** disputes against 60% required. Reading the misses showed disputes are three different things, and the theory covered one. | [charter](decisions/2026-09-02-predicate-ambiguity-charter.md) · [gate](proof/ambiguity-gate-result.json) |
 | 4 | The in-game price lags the game — a human with the public feed could take stale prices after a lead change | **DISPROVEN** | 676 lead changes across 262 games: the market repriced a median **10.6 seconds *before*** MLB's official play timestamp, in 91% of plays. The move is real (+11.2¢ net) and already gone. | [charter](decisions/2026-09-04-repricing-lag-charter.md) · [result](proof/repricing-result.json) |
@@ -112,7 +112,13 @@ The method mattered more than any single result:
 
 - Atlas runs itself: monitor, watchdog, keep-awake, weekly study and intel
   reports, nightly backup with VACUUM. Paper-only, permanently.
-- The 90-day study decides 2026-11-17 and already reads NO-GO.
+- The 90-day study reached day 90 on 2026-11-17 reading **NO-GO**: 226.5 verified
+  opportunities per 30 days (10 needed, passes), median annualized return on locked
+  capital 6.17% (15% signed, fails), median basket $52.80 ($500 signed, fails). Of the
+  charter's five criteria two fail, one was never measured (three paying users) and one
+  has no signed pass line (one-leg fills: 0 in the simulation). **Awaiting the owner's
+  decision until the pull request recording it is merged**
+  ([day-90 result](NINETY_DAY_STUDY.md#day-90-result-2026-11-17)).
 - The fifth charter is answered: Arm B FAIL (2026-09-15); Arm A INCONCLUSIVE a
   second time (run 2026-11-04, six days late; 3 markets of the 4 needed), which
   counts as FAIL. The automated-trading question is closed unless genuinely new
